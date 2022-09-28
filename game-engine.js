@@ -12,8 +12,8 @@ const defaultSettings = {
   color: "white",
   applyColor: true,
   positionCanvas: true,
-  positionX: "right",
-  positionY: "bottom",
+  positionX: "middle",
+  positionY: "middle",
 };
 
 class Game {
@@ -56,8 +56,6 @@ class Game {
     if (applyBackground) document.body.style.background = background;
     if (applyColor) canvas.style.background = color;
     if (positionCanvas) {
-      document.body.style.padding = 0;
-      document.body.style.margin = 0;
       const { clientWidth, clientHeight } = document.documentElement;
       canvas.style.position = "absolute";
       switch (positionX) {
