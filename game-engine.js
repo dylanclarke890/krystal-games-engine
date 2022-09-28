@@ -5,11 +5,15 @@ const defaultSettings = {
   createCanvas: true,
   context: "2d",
   width: 500,
+  borderWidth: 1,
   height: 500,
   background: "black",
   applyBackground: true,
   color: "white",
   applyColor: true,
+  positionCanvas: true,
+  positionX: "right",
+  positionY: "bottom",
 };
 
 class Game {
@@ -30,6 +34,10 @@ class Game {
       applyBackground,
       color,
       applyColor,
+      positionCanvas,
+      positionX,
+      positionY,
+      borderWidth,
     } = this.settings;
 
     let canvas;
@@ -47,6 +55,41 @@ class Game {
 
     if (applyBackground) document.body.style.background = background;
     if (applyColor) canvas.style.background = color;
+    if (positionCanvas) {
+      document.body.style.padding = 0;
+      document.body.style.margin = 0;
+      const { clientWidth, clientHeight } = document.documentElement;
+      canvas.style.position = "absolute";
+      switch (positionX) {
+        case "middle":
+          canvas.style.left = (clientWidth - canvas.width) / 2 + "px";
+          break;
+        case "right":
+          canvas.style.left = clientWidth - canvas.width + "px";
+          break;
+        case "left":
+        default:
+          canvas.style.left = 0;
+          break;
+      }
+
+      switch (positionY) {
+        case "middle":
+          canvas.style.top =
+            (clientHeight - canvas.height) / 2 + window.pageYOffset + "px";
+          break;
+        case "bottom":
+          canvas.style.top = clientHeight - canvas.height - borderWidth + "px";
+          break;
+        case "top":
+        default:
+          canvas.style.top = 0;
+          break;
+      }
+
+      console.log(clientWidth, clientHeight);
+      console.log(canvas.style.left, canvas.style.top);
+    }
 
     const ctx = canvas.getContext(context);
     this.ctx = ctx;
