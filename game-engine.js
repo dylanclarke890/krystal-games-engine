@@ -6,10 +6,14 @@ const defaultSettings = {
   context: "2d",
   width: 500,
   height: 500,
+  background: "black",
+  applyBackground: true,
+  color: "white",
+  applyColor: true,
 };
 
 class Game {
-  constructor({ ...settings }) {
+  constructor({ ...settings } = {}) {
     this.settings = { ...defaultSettings, ...settings }; // TODO: update assignment to deeply assign values.
   }
 
@@ -22,6 +26,10 @@ class Game {
       overwritePageTitle,
       width,
       height,
+      background,
+      applyBackground,
+      color,
+      applyColor,
     } = this.settings;
 
     let canvas;
@@ -37,9 +45,14 @@ class Game {
     canvas.height = height;
     canvas.style.height = height;
 
+    if (applyBackground) document.body.style.background = background;
+    if (applyColor) canvas.style.background = color;
+
     const ctx = canvas.getContext(context);
     this.ctx = ctx;
 
     if (overwritePageTitle) document.title = name;
+
+    if (createCanvas) document.body.appendChild(canvas);
   }
 }
