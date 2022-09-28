@@ -84,9 +84,6 @@ class Game {
           canvas.style.top = 0;
           break;
       }
-
-      console.log(clientWidth, clientHeight);
-      console.log(canvas.style.left, canvas.style.top);
     }
 
     const ctx = canvas.getContext(context);
