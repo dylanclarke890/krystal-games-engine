@@ -14,11 +14,14 @@ const defaultSettings = {
   positionCanvas: true,
   positionX: "middle",
   positionY: "middle",
+  fps: 60,
 };
 
 class Game {
   constructor({ ...settings } = {}) {
     this.settings = { ...defaultSettings, ...settings }; // TODO: update assignment to deeply assign values.
+    this.settings.fpsInterval = 1000 / settings.fps || defaultSettings.fps;
+    this.stop = false;
   }
 
   create() {
@@ -92,5 +95,28 @@ class Game {
     if (overwritePageTitle) document.title = name;
 
     if (createCanvas) document.body.appendChild(canvas);
+  }
+
+  start() {
+    let now, lastFrame;
+    const animate = (newtime) => {
+      if (this.stop) return;
+      requestAnimationFrame(animate);
+      now = newtime;
+      const elapsed = now - lastFrame;
+      if (elapsed > this.settings.fpsInterval) {
+        lastFrame = now - (elapsed % this.settings.fpsInterval);
+        this.update();
+      }
+    };
+
+    lastFrame = window.performance.now();
+    animate();
+  }
+
+  update() {
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.ctx.fillStyle = "blue";
+    this.ctx.fillRect(100, 100, 100, 100);
   }
 }
