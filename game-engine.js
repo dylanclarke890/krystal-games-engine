@@ -21,7 +21,7 @@ class Game {
   constructor({ ...settings } = {}) {
     this.settings = { ...defaultSettings, ...settings }; // TODO: update assignment to deeply assign values.
     this.settings.fpsInterval = 1000 / settings.fps || defaultSettings.fps;
-    this.stop = false;
+    this.looping = false;
   }
 
   create() {
@@ -100,7 +100,7 @@ class Game {
   start() {
     let now, lastFrame;
     const animate = (newtime) => {
-      if (this.stop) return;
+      if (!this.looping) return;
       requestAnimationFrame(animate);
       now = newtime;
       const elapsed = now - lastFrame;
@@ -111,6 +111,7 @@ class Game {
     };
 
     lastFrame = window.performance.now();
+    this.looping = true;
     animate();
   }
 
@@ -118,5 +119,9 @@ class Game {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.fillStyle = "blue";
     this.ctx.fillRect(100, 100, 100, 100);
+  }
+
+  stop() {
+    this.looping = false;
   }
 }
