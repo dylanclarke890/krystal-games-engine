@@ -12,6 +12,7 @@ const defaultSettings = {
   color: "white",
   applyColor: true,
   positionCanvas: true,
+  position: "relative",
   positionX: "middle",
   positionY: "middle",
   fps: 60,
@@ -38,12 +39,13 @@ class Game {
       color,
       applyColor,
       positionCanvas,
+      position,
       positionX,
       positionY,
       borderWidth,
     } = this.settings;
 
-    let canvas;
+    let canvas; // TODO: check for existing canvas element first.
     if (createCanvas) {
       canvas = document.createElement("canvas");
       canvas.id = id;
@@ -60,7 +62,7 @@ class Game {
     if (applyColor) canvas.style.background = color;
     if (positionCanvas) {
       const { clientWidth, clientHeight } = document.documentElement;
-      canvas.style.position = "absolute";
+      canvas.style.position = position;
       switch (positionX) {
         case "middle":
           canvas.style.left = (clientWidth - canvas.width) / 2 + "px";
