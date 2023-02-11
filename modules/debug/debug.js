@@ -48,7 +48,7 @@ export class GameDebugger {
     style.id = "debug-styles";
     style.rel = "stylesheet";
     style.type = "text/css";
-    style.href = "assets/css/debug.css";
+    style.href = "canvas-game-engine/modules/debug/debug.css";
     document.body.appendChild(style);
   }
 

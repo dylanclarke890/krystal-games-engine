@@ -1,0 +1,55 @@
+.debug-heading {
+  margin-bottom: 1rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+#debug-active-entities-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.debug-active-entities-item {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.debug-subpanel {
+  background: rgb(56, 53, 53);
+  border-radius: 12px;
+  color: rgb(202, 199, 199);
+  padding: 0.5rem 1rem 1rem 1rem;
+}
+
+#debug-performance,
+#debug-entity,
+#debug-bulk-actions,
+#debug-active-entities {
+  position: absolute;
+  width: max-content;
+  cursor: move;
+}
+
+#debug-entity table {
+  border-spacing: 10px 5px;
+}
+
+.dual-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+}
+
+.toggle {
+  cursor: pointer;
+}
+
+#debug-entity-options {
+  padding: 0;
+  margin: 0 0.7rem 0.7rem 0.7rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+}
