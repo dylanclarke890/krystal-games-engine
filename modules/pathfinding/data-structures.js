@@ -337,6 +337,49 @@ export class MinHeap {
   heapify(arr) {
     for (let i = 0; i < arr.length; i++) this.push(arr[i]);
   }
+
+  /*
+    Update the position of the given item in the heap.
+    This function should be called every time the item is being modified.
+  */
+  updateItem(item) {
+    const pos = this.items.indexOf(item);
+    if (pos === -1) return;
+    this._siftdown(0, pos);
+    return this._siftup(pos);
+  }
+
+  _siftdown(startpos, pos) {
+    const newitem = this.items[pos];
+    while (pos > startpos) {
+      const parentpos = (pos - 1) >> 1;
+      const parent = this.items[parentpos];
+      if (this.selector(newitem, parent) < 0) {
+        this.items[pos] = parent;
+        pos = parentpos;
+        continue;
+      }
+      break;
+    }
+    return (this.items[pos] = newitem);
+  }
+
+  _siftup(pos) {
+    const endpos = this.items.length;
+    const startpos = pos;
+    const newitem = this.items[pos];
+    let childpos = 2 * pos + 1;
+    while (childpos < endpos) {
+      const rightpos = childpos + 1;
+      if (rightpos < endpos && !(this.selector(this.items[childpos], this.items[rightpos]) < 0))
+        childpos = rightpos;
+      this.items[pos] = this.items[childpos];
+      pos = childpos;
+      childpos = 2 * pos + 1;
+    }
+    this.items[pos] = newitem;
+    return this._siftdown(startpos, pos);
+  }
 }
 
 const posy = (i) => Math.floor(Math.log2(i + 1)) * 50 + 20;
