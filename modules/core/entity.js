@@ -49,9 +49,9 @@ export class Entity {
   currentAnim = null;
   /** @type {keyof Entity.TYPE} */
   type = Entity.TYPE.NONE;
-  /** @type {keyof Entity.TYPE} */
+  /** @type {typeof Entity.TYPE} */
   checkAgainst = Entity.TYPE.NONE;
-  /** @type {keyof Entity.COLLIDES} */
+  /** @type {typeof Entity.COLLIDES} */
   collides = Entity.COLLIDES.NEVER;
   slopeStanding = { min: toRad(44), max: toRad(136) };
   killed = false;
