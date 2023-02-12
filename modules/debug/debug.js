@@ -4,6 +4,7 @@ import { boolToOnOff } from "../lib/number-utils.js";
 import { $new, $el } from "../lib/dom-utils.js";
 import { dragElement } from "../lib/ui-effects.js";
 import { PerformanceStats } from "./performance-stats.js";
+import { debugConfig } from "./config.js";
 
 export class GameDebugger {
   /** @type {Game} */
@@ -112,7 +113,8 @@ export class GameDebugger {
     statsContainer.id = "debug-performance";
     statsContainer.classList.add("debug-subpanel");
     statsContainer.append(this.#newHeading("Performance"));
-    this.stats = new PerformanceStats({ target: statsContainer, height: 72, width: 144 });
+    const { h, w } = debugConfig.panels.stats;
+    this.stats = new PerformanceStats({ target: statsContainer, height: h, width: w });
     this.DOMElements.statsContainer = statsContainer;
     return statsContainer;
   }
@@ -132,22 +134,26 @@ export class GameDebugger {
 
   #addContainerEvents() {
     const { selectedEntity, statsContainer, bulkActions, activeEntityList } = this.DOMElements;
+
     selectedEntity.draggable = true;
     statsContainer.draggable = true;
     bulkActions.draggable = true;
     activeEntityList.draggable = true;
+
     dragElement(selectedEntity);
     dragElement(statsContainer);
     dragElement(bulkActions);
     dragElement(activeEntityList);
-    statsContainer.style.left = "10px";
-    statsContainer.style.top = "10px";
-    bulkActions.style.left = "200px";
-    bulkActions.style.top = "10px";
-    selectedEntity.style.left = "10px";
-    selectedEntity.style.top = "170px";
-    activeEntityList.style.left = "10px";
-    activeEntityList.style.top = "420px";
+
+    const { actions, activeEntites, currentEntity, stats } = debugConfig.panels;
+    statsContainer.style.left = `${stats.x}px`;
+    statsContainer.style.top = `${stats.y}px`;
+    bulkActions.style.left = `${actions.x}px`;
+    bulkActions.style.top = `${actions.y}px`;
+    selectedEntity.style.left = `${currentEntity.x}px`;
+    selectedEntity.style.top = `${currentEntity.y}px`;
+    activeEntityList.style.left = `${activeEntites.x}px`;
+    activeEntityList.style.top = `${activeEntites.y}px`;
 
     const forEachEntity = (cb) => {
       for (let i = 0; i < this.game.entities.length; i++) cb(this.game.entities[i]);
