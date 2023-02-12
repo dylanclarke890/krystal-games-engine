@@ -186,7 +186,7 @@ export class Game {
    * @param {number} x
    * @param {number} y
    * @param {[Object.<string, any>]} settings
-   * @returns {new (...args) => EntityType}
+   * @returns {new EntityType(...args)}
    */
   spawnEntity(type, x, y, settings) {
     settings ??= {};
