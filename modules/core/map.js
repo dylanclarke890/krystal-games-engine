@@ -10,9 +10,10 @@ export class GameMap {
   pxWidth = 1;
   pxHeight = 1;
   data = [[]];
-  name = null;
-  /** @type {System} */
-  system = null;
+  /** @type {string} */
+  name;
+  /** @type {import("./system.js").System} */
+  system;
 
   constructor({ system, tilesize, data }) {
     Guard.againstNull({ system });
@@ -123,7 +124,7 @@ export class BackgroundMap extends GameMap {
     chunk.height = h;
 
     const chunkContext = chunk.getContext("2d");
-    this.system.scaleMode(chunk, chunkContext);
+    this.system.scaleMode(chunkContext);
 
     const screenContext = this.system.ctx;
     this.system.ctx = chunkContext;
