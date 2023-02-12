@@ -94,6 +94,20 @@ export class Entity {
     Object.assign(this, settings);
   }
 
+  kill() {
+    this.game.removeEntity(this);
+  }
+
+  /**
+   * @param {number} amount
+   */
+  receiveDamage(amount) {
+    this.health -= amount;
+    if (this.health <= 0) this.kill();
+  }
+
+  //#region Drawing
+
   createAnimationSheet(path, size = this.size) {
     this.animSheet = this.game.media.createAnimationSheet({ path, size });
   }
@@ -105,6 +119,16 @@ export class Entity {
     if (!this.currentAnim) this.currentAnim = animation;
     return animation;
   }
+
+  draw() {
+    if (!this.currentAnim) return;
+    const { x, y } = this.game.screen.rounded;
+    this.currentAnim.draw(this.pos.x - this.offset.x - x, this.pos.y - this.offset.y - y);
+  }
+
+  //#endregion Drawing
+
+  //#region Updating
 
   update() {
     this.last.x = this.pos.x;
@@ -139,6 +163,10 @@ export class Entity {
     }
     return constrain(vel, -max, max);
   }
+
+  //#endregion Updating
+
+  //#region Collision
 
   /**
    * @param {MovementTrace} res
@@ -181,24 +209,6 @@ export class Entity {
     }
   }
 
-  draw() {
-    if (!this.currentAnim) return;
-    const { x, y } = this.game.screen.rounded;
-    this.currentAnim.draw(this.pos.x - this.offset.x - x, this.pos.y - this.offset.y - y);
-  }
-
-  kill() {
-    this.game.removeEntity(this);
-  }
-
-  /**
-   * @param {number} amount
-   */
-  receiveDamage(amount) {
-    this.health -= amount;
-    if (this.health <= 0) this.kill();
-  }
-
   /**
    * @param {Entity} other
    */
@@ -211,24 +221,9 @@ export class Entity {
     );
   }
 
-  /**
-   * @param {Entity} other
-   */
-  distanceTo(other) {
-    const xd = this.pos.x + this.size.x / 2 - (other.pos.x + other.size.x / 2);
-    const yd = this.pos.y + this.size.y / 2 - (other.pos.y + other.size.y / 2);
-    return Math.sqrt(xd * xd + yd * yd);
-  }
+  //#endregion Collision
 
-  /**
-   * @param {Entity} other
-   */
-  angleTo(other) {
-    return Math.atan2(
-      other.pos.y + other.size.y / 2 - (this.pos.y + this.size.y / 2),
-      other.pos.x + other.size.x / 2 - (this.pos.x + this.size.x / 2)
-    );
-  }
+  //#region Movement
 
   /**
    * @param {Entity} other
@@ -395,10 +390,39 @@ export class Entity {
     }
   }
 
+  //#endregion Movement
+
+  //#region Entity Utils
+
+  /**
+   * @param {Entity} other
+   */
+  distanceTo(other) {
+    const xd = this.pos.x + this.size.x / 2 - (other.pos.x + other.size.x / 2);
+    const yd = this.pos.y + this.size.y / 2 - (other.pos.y + other.size.y / 2);
+    return Math.sqrt(xd * xd + yd * yd);
+  }
+
+  /**
+   * @param {Entity} other
+   */
+  angleTo(other) {
+    return Math.atan2(
+      other.pos.y + other.size.y / 2 - (this.pos.y + this.size.y / 2),
+      other.pos.x + other.size.x / 2 - (this.pos.x + this.size.x / 2)
+    );
+  }
+
+  //#endregion Entity Utils
+
+  //#region Stubs
+
   check() {}
   collideWith() {}
   ready() {}
   erase() {}
+
+  //#endregion Stubs
 }
 
 /**
