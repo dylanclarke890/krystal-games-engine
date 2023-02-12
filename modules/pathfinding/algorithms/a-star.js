@@ -10,12 +10,6 @@ export class AStar {
   diagonalMovement;
   /** @type {number} */
   weight;
-  /**
-   * Size of the unit traversing the path in cells
-   * @example tilesize = 32 & unit = {x: 64, y: 32}, unitSize = {x: 2, y: 1}; // (64 / 32 = 2 etc)
-   * @type {{x:number, y: number}}
-   */
-  unitSize = { x: 1, y: 1 };
 
   /** A* path finder.
    * @constructor
@@ -24,7 +18,7 @@ export class AStar {
    * @param {function} opt.heuristic Heuristic function to estimate the distance.
    * (Defaults to "manhattan".
    * @param {number} opt.weight Weight to apply to the heuristic to allow for
-   *     suboptimal paths, in order to speed up the search.
+   * suboptimal paths, in order to speed up the search.
    */
   constructor(opt = {}) {
     this.heuristic = opt.heuristic || Heuristic.manhattan;
@@ -46,6 +40,7 @@ export class AStar {
    * should be the y position of the topmost cell of the unit
    * @param {number} endX Tne ending x position.
    * @param {number} endY Tne ending y position.
+   * @param {import("../data-structures.js").Grid} grid The grid to traverse.
    * @return {number[][]} The found path, including both start and
    * end positions, or an empty array if failure.
    */
@@ -73,11 +68,12 @@ export class AStar {
 
       // get neigbours of the current node
       const neighbors = grid.getNeighbors(node, this.diagonalMovement);
-      for (let i = 0, l = neighbors.length; i < l; ++i) {
+
+      for (let i = 0; i < neighbors.length; ++i) {
         const neighbor = neighbors[i];
         if (neighbor.closed) continue;
 
-        let x = neighbor.x,
+        const x = neighbor.x,
           y = neighbor.y;
 
         // get the distance between current node and the neighbor
