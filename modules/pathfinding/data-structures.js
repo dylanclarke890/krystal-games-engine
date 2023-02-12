@@ -1,34 +1,37 @@
-var PF = PF || {};
-PF.Data = PF.Data || {};
+import { DiagonalMovement } from "./constants.js";
 
 /**
  * A node in a grid.
  * This class holds some basic information about a node and custom
  * attributes may be added, depending on the algorithms' needs.
  * @constructor
- * @param {number} x - The x coordinate of the node on the grid.
- * @param {number} y - The y coordinate of the node on the grid.
- * @param {boolean} [walkable] - Whether this node is walkable.
+ * @param {number}
+ * @param {number}
+ * @param {boolean} [walkable]
  */
-PF.Data.Node = class {
+export class Node {
+  /**
+   * The x coordinate of the node on the grid.
+   * @type number
+   */
+  x;
+  /**
+   * The y coordinate of the node on the grid.
+   * @type number
+   */
+  y;
+  /**
+   * Whether this node can be walked through.
+   * @type boolean
+   */
+  walkable;
+
   constructor(x, y, walkable) {
-    /**
-     * The x coordinate of the node on the grid.
-     * @type number
-     */
     this.x = x;
-    /**
-     * The y coordinate of the node on the grid.
-     * @type number
-     */
     this.y = y;
-    /**
-     * Whether this node can be walked through.
-     * @type boolean
-     */
     this.walkable = walkable === undefined ? true : walkable;
   }
-};
+}
 
 /**
  * The Grid class, which serves as the encapsulation of the layout of the nodes.
@@ -36,31 +39,32 @@ PF.Data.Node = class {
  * @param {number|Array<Array<(number|boolean)>>} width Number of columns of the grid
  * @param {number} height Number of rows of the grid.
  * @param {Array<Array<(number|boolean)>>} [matrix] - A 0-1 matrix
- * @param {HTMLElement} element An element to dispatch events to.
  * representing the walkable status of the nodes(0 or false for walkable).
  * If the matrix is not supplied, all the nodes will be walkable.  */
-PF.Data.Grid = class {
-  constructor({ width, height, matrix, element }) {
+export class Grid {
+  /**
+   * The number of columns of the grid.
+   * @type number
+   */
+  width;
+  /**
+   * The number of rows of the grid.
+   * @type number
+   */
+  height;
+  /**
+   * A 2D array of nodes.
+   */
+  nodes;
+
+  constructor({ width, height, matrix }) {
     if (matrix != null) {
       height = matrix.length;
       width = matrix[0].length;
     }
 
-    /**
-     * The number of columns of the grid.
-     * @type number
-     */
     this.width = width;
-
-    /**
-     * The number of rows of the grid.
-     * @type number
-     */
     this.height = height;
-
-    /**
-     * A 2D array of nodes.
-     */
     this.nodes = this.#constructNodes(width, height, matrix);
   }
 
@@ -71,23 +75,23 @@ PF.Data.Grid = class {
    * @param {number} h
    * @param {Array<Array<number|boolean>>} [matrix] - A 0-1 matrix representing
    * the walkable status of the nodes.
-   * @see PF.Data.Grid
+   * @see Grid
    */
   #constructNodes(w, h, matrix) {
     const nodes = new Array(h);
     for (let i = 0; i < h; i++) {
       nodes[i] = new Array(w);
-      for (let j = 0; j < w; j++) nodes[i][j] = new PF.Data.Node(j, i);
+      for (let j = 0; j < w; j++) nodes[i][j] = new Node(j, i);
     }
 
     if (matrix === undefined) return nodes;
-    if (matrix.length !== h || matrix[0].length !== w)
-      throw new Error("Matrix size does not fit");
+    if (matrix.length !== h || matrix[0].length !== w) throw new Error("Matrix size does not fit");
 
     // falsy vals mean walkable
     for (let i = 0; i < h; i++)
-      for (let j = 0; j < w; j++)
-        if (matrix[i][j]) nodes[i][j].walkable = false;
+      for (let j = 0; j < w; j++) {
+        nodes[i][j].walkable = !matrix[i][j];
+      }
 
     return nodes;
   }
@@ -143,7 +147,7 @@ PF.Data.Grid = class {
    *  When allowDiagonal is true, if offsets[i] is valid, then
    *  diagonalOffsets[i] and
    *  diagonalOffsets[(i + 1) % 4] is valid.
-   * @param {PF.Data.Node} node
+   * @param {Node} node
    * @param {DiagonalMovement} diagonalMovement
    */
   getNeighbors(node, diagonalMovement) {
@@ -182,21 +186,21 @@ PF.Data.Grid = class {
       d3 = false;
 
     switch (diagonalMovement) {
-      case PF.enums.DiagonalMovement.Never:
+      case DiagonalMovement.Never:
         return neighbors;
-      case PF.enums.DiagonalMovement.Always:
+      case DiagonalMovement.Always:
         d0 = true;
         d1 = true;
         d2 = true;
         d3 = true;
         break;
-      case PF.enums.DiagonalMovement.OnlyWhenNoObstacles:
+      case DiagonalMovement.OnlyWhenNoObstacles:
         d0 = s3 && s0;
         d1 = s0 && s1;
         d2 = s1 && s2;
         d3 = s2 && s3;
         break;
-      case PF.enums.DiagonalMovement.IfAtMostOneObstacle:
+      case DiagonalMovement.IfAtMostOneObstacle:
         d0 = s3 || s0;
         d1 = s0 || s1;
         d2 = s1 || s2;
@@ -207,41 +211,36 @@ PF.Data.Grid = class {
     }
 
     // ↖
-    if (d0 && this.isWalkableAt(x - 1, y - 1))
-      neighbors.push(nodes[y - 1][x - 1]);
+    if (d0 && this.isWalkableAt(x - 1, y - 1)) neighbors.push(nodes[y - 1][x - 1]);
     // ↗
-    if (d1 && this.isWalkableAt(x + 1, y - 1))
-      neighbors.push(nodes[y - 1][x + 1]);
+    if (d1 && this.isWalkableAt(x + 1, y - 1)) neighbors.push(nodes[y - 1][x + 1]);
     // ↘
-    if (d2 && this.isWalkableAt(x + 1, y + 1))
-      neighbors.push(nodes[y + 1][x + 1]);
+    if (d2 && this.isWalkableAt(x + 1, y + 1)) neighbors.push(nodes[y + 1][x + 1]);
     // ↙
-    if (d3 && this.isWalkableAt(x - 1, y + 1))
-      neighbors.push(nodes[y + 1][x - 1]);
+    if (d3 && this.isWalkableAt(x - 1, y + 1)) neighbors.push(nodes[y + 1][x - 1]);
 
     return neighbors;
   }
   /**
    * Get a clone of this grid.
-   * @return {PF.Data.Grid} Cloned grid.
+   * @return {Grid} Cloned grid.
    */
   clone() {
     const { width, height, nodes } = this;
-    const newGrid = new PF.Data.Grid({ width, height }),
+    const newGrid = new Grid({ width, height }),
       newNodes = new Array(height);
 
     for (let i = 0; i < height; i++) {
       newNodes[i] = new Array(width);
-      for (let j = 0; j < width; j++)
-        newNodes[i][j] = new PF.Data.Node(j, i, nodes[i][j].walkable);
+      for (let j = 0; j < width; j++) newNodes[i][j] = new Node(j, i, nodes[i][j].walkable);
     }
     newGrid.nodes = newNodes;
 
     return newGrid;
   }
-};
+}
 
-PF.Data.Queue = class {
+export class Queue {
   get size() {
     return this.arr.length;
   }
@@ -269,268 +268,107 @@ PF.Data.Queue = class {
   contains(v) {
     return this.arr.includes(v);
   }
-};
-
-/*
-Default comparison function to fallback to.
-*/
-function defaultComparer(x, y) {
-  return x < y ? -1 : x > y ? 1 : 0;
 }
 
-/*
-Insert item x in list a, and keep it sorted assuming a is sorted.
-If x is already in a, insert it to the right of the rightmost x.
-Optional args lo (default 0) and hi (default a.length) bound the slice
-of a to be searched.
-*/
-function insort(a, x, lo, hi, cmp) {
-  cmp = cmp || defaultComparer;
-  lo = lo || 0;
-  hi = hi || a.length;
-  if (lo < 0) throw new Error("lo must be non-negative");
-  while (lo < hi) {
-    const mid = Math.floor((lo + hi) / 2);
-    if (cmp(x, a[mid]) < 0) hi = mid;
-    else lo = mid + 1;
+export class MinHeap {
+  constructor(selector) {
+    this.items = [];
+    this.selector = selector;
   }
-  return a.splice(lo, lo - lo, ...[].concat(x)), x;
-}
 
-/*
-Push item onto heap, maintaining the heap invariant.
-*/
-function heappush(array, item, cmp) {
-  cmp = cmp || defaultComparer;
-  array.push(item);
-  return _siftdown(array, 0, array.length - 1, cmp);
-}
-
-/*
-Pop the smallest item off the heap, maintaining the heap invariant.
-*/
-const heappop = function (array, cmp) {
-  cmp = cmp || defaultComparer;
-  let returnitem;
-  const lastelt = array.pop();
-  if (array.length) {
-    returnitem = array[0];
-    array[0] = lastelt;
-    _siftup(array, 0, cmp);
-  } else returnitem = lastelt;
-  return returnitem;
-};
-
-/*
-Pop and return the current smallest value, and add the new item.
-This is more efficient than heappop() followed by heappush(), and can be
-more appropriate when using a fixed size heap. Note that the value
-returned may be larger than item! That constrains reasonable use of
-this routine unless written as part of a conditional replacement:
-    if item > array[0]
-      item = heapreplace(array, item)
-*/
-const heapreplace = function (array, item, cmp) {
-  cmp = cmp || defaultComparer;
-  const returnitem = array[0];
-  array[0] = item;
-  _siftup(array, 0, cmp);
-  return returnitem;
-};
-
-/*
-Fast version of a heappush followed by a heappop.
-*/
-const heappushpop = function (array, item, cmp) {
-  cmp = cmp || defaultComparer;
-  if (array.length && cmp(array[0], item) < 0) {
-    [item, array[0]] = Array.from([array[0], item]);
-    _siftup(array, 0, cmp);
+  seek() {
+    return this.items[0];
   }
-  return item;
-};
 
-/*
-Transform list into a heap, in-place, in O(array.length) time.
-*/
-const heapify = function (array, cmp) {
-  cmp = cmp || defaultComparer;
-  return __range__(0, Math.floor(array.length / 2), false)
-    .reverse()
-    .map((i) => _siftup(array, i, cmp));
-};
-
-/*
-Update the position of the given item in the heap.
-This function should be called every time the item is being modified.
-*/
-const updateItem = function (array, item, cmp) {
-  cmp = cmp || defaultComparer;
-  const pos = array.indexOf(item);
-  if (pos === -1) return;
-  _siftdown(array, 0, pos, cmp);
-  return _siftup(array, pos, cmp);
-};
-
-/*
-Find the n largest elements in a dataset.
-*/
-const nlargest = function (array, n, cmp) {
-  cmp = cmp || defaultComparer;
-  const result = array.slice(0, n);
-  if (!result.length) return result;
-  heapify(result, cmp);
-  for (let elem of array.slice(n)) heappushpop(result, elem, cmp);
-  return result.sort(cmp).reverse();
-};
-
-/*
-Find the n smallest elements in a dataset.
-*/
-const nsmallest = function (array, n, cmp) {
-  cmp = cmp || defaultComparer;
-  if (n * 10 <= array.length) {
-    const result = array.slice(0, n).sort(cmp);
-    if (!result.length) return result;
-    let los = result[result.length - 1];
-    for (let elem of array.slice(n)) {
-      if (cmp(elem, los) < 0) {
-        insort(result, elem, 0, null, cmp);
-        result.pop();
-        los = result[result.length - 1];
-      }
+  push(item) {
+    let i = this.items.length;
+    this.items.push(item);
+    while (
+      i > 0 &&
+      this.selector(this.items[Math.floor((i + 1) / 2 - 1)]) > this.selector(this.items[i])
+    ) {
+      let t = this.items[i];
+      this.items[i] = this.items[Math.floor((i + 1) / 2 - 1)];
+      this.items[Math.floor((i + 1) / 2 - 1)] = t;
+      i = Math.floor((i + 1) / 2 - 1);
     }
-    return result;
-  }
-
-  heapify(array, cmp);
-  return __range__(0, Math.min(n, array.length), false).map(() =>
-    heappop(array, cmp)
-  );
-};
-
-function _siftdown(array, startpos, pos, cmp) {
-  cmp = cmp || defaultComparer;
-  const newitem = array[pos];
-  while (pos > startpos) {
-    const parentpos = (pos - 1) >> 1;
-    const parent = array[parentpos];
-    if (cmp(newitem, parent) < 0) {
-      array[pos] = parent;
-      pos = parentpos;
-      continue;
-    }
-    break;
-  }
-  return (array[pos] = newitem);
-}
-
-function _siftup(array, pos, cmp) {
-  cmp = cmp || defaultComparer;
-  const endpos = array.length;
-  const startpos = pos;
-  const newitem = array[pos];
-  let childpos = 2 * pos + 1;
-  while (childpos < endpos) {
-    const rightpos = childpos + 1;
-    if (rightpos < endpos && !(cmp(array[childpos], array[rightpos]) < 0))
-      childpos = rightpos;
-    array[pos] = array[childpos];
-    pos = childpos;
-    childpos = 2 * pos + 1;
-  }
-  array[pos] = newitem;
-  return _siftdown(array, startpos, pos, cmp);
-}
-
-function __range__(left, right, inclusive) {
-  let range = [];
-  let ascending = left < right;
-  let end = !inclusive ? right : ascending ? right + 1 : right - 1;
-  for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
-    range.push(i);
-  }
-  return range;
-}
-
-PF.Data.Heap = class {
-  constructor(cmp) {
-    cmp = cmp || defaultComparer;
-    this.cmp = cmp;
-    this.nodes = [];
-  }
-
-  push(x) {
-    return heappush(this.nodes, x, this.cmp);
-  }
-
-  insert(x) {
-    return this.push(x);
   }
 
   pop() {
-    return heappop(this.nodes, this.cmp);
+    if (this.items.length <= 1) return this.items.pop();
+    const ret = this.items[0];
+    this.items[0] = this.items.pop();
+    let i = 0;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      let lowest =
+        this.selector(this.items[(i + 1) * 2]) < this.selector(this.items[(i + 1) * 2 - 1])
+          ? (i + 1) * 2
+          : (i + 1) * 2 - 1;
+      if (this.selector(this.items[i]) > this.selector(this.items[lowest])) {
+        let t = this.items[i];
+        this.items[i] = this.items[lowest];
+        this.items[lowest] = t;
+        i = lowest;
+      } else break;
+    }
+    return ret;
   }
 
-  peek() {
-    return this.nodes[0];
+  delete(item) {
+    let i = this.items.indexOf(item);
+    // heapify
+    this.items[i] = this.items.pop();
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      let lowest =
+        this.selector(this.items[(i + 1) * 2]) < this.selector(this.items[(i + 1) * 2 - 1])
+          ? (i + 1) * 2
+          : (i + 1) * 2 - 1;
+      if (this.selector(this.items[i]) > this.selector(this.items[lowest])) {
+        let t = this.items[i];
+        this.items[i] = this.items[lowest];
+        this.items[lowest] = t;
+        i = lowest;
+      } else break;
+    }
   }
 
-  top() {
-    return this.peek();
+  heapify(arr) {
+    for (let i = 0; i < arr.length; i++) this.push(arr[i]);
   }
+}
 
-  front() {
-    return this.peek();
+const posy = (i) => Math.floor(Math.log2(i + 1)) * 50 + 20;
+
+const posx = (i) => {
+  const level = Math.floor(Math.log2(i + 1));
+  const len = Math.pow(2, level);
+  const j = i - len + 2;
+  const k = j / (len + 1) - 0.5;
+  const x = k * 600 + 300;
+  return x;
+};
+
+export const visualize = (ctx, arr) => {
+  ctx.strokeStyle = "#FF0000";
+  ctx.font = "14px Arial";
+  ctx.clearRect(0, 0, 600, 600);
+  for (let i = 0; i < arr.length; i++) {
+    ctx.beginPath();
+    ctx.moveTo(posx(i), posy(i));
+    const j = Math.floor((i + 1) / 2 - 1);
+    ctx.lineTo(posx(j), posy(j));
+    ctx.stroke();
   }
-
-  contains(x) {
-    return this.nodes.indexOf(x) !== -1;
-  }
-
-  has(x) {
-    return this.contains(x);
-  }
-
-  replace(x) {
-    return heapreplace(this.nodes, x, this.cmp);
-  }
-
-  pushpop(x) {
-    return heappushpop(this.nodes, x, this.cmp);
-  }
-
-  heapify() {
-    return heapify(this.nodes, this.cmp);
-  }
-
-  updateItem(x) {
-    return updateItem(this.nodes, x, this.cmp);
-  }
-
-  clear() {
-    return (this.nodes = []);
-  }
-
-  empty() {
-    return this.nodes.length === 0;
-  }
-
-  size() {
-    return this.nodes.length;
-  }
-
-  clone() {
-    const heap = new PF.Data.Heap();
-    heap.nodes = this.nodes.slice(0);
-    return heap;
-  }
-
-  copy() {
-    return this.clone();
-  }
-
-  toArray() {
-    return this.nodes.slice(0);
+  for (let i = 0; i < arr.length; i++) {
+    ctx.beginPath();
+    ctx.arc(posx(i), posy(i), 12, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.fillStyle = "#99ff99";
+    ctx.fill();
+    ctx.fillStyle = "#000000";
+    console.log(posx(i), posy(i));
+    ctx.fillText(arr[i], posx(i) - 4, posy(i) + 4);
   }
 };
