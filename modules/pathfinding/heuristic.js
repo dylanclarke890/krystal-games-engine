@@ -1,16 +1,14 @@
-var PF = PF || {};
-
 /**
- * * @description A collection of heuristic functions.
+ * A collection of heuristic functions.
  */
-PF.Heuristic = {
+export const Heuristic = {
   /**
    * Manhattan distance.
    * @param {number} dx - Difference in x.
    * @param {number} dy - Difference in y.
    * @return {number} dx + dy
    */
-  manhattan: function (dx, dy) {
+  manhattan(dx, dy) {
     return dx + dy;
   },
 
@@ -20,7 +18,7 @@ PF.Heuristic = {
    * @param {number} dy - Difference in y.
    * @return {number} sqrt(dx * dx + dy * dy)
    */
-  euclidean: function (dx, dy) {
+  euclidean(dx, dy) {
     return Math.sqrt(dx * dx + dy * dy);
   },
 
@@ -30,7 +28,7 @@ PF.Heuristic = {
    * @param {number} dy - Difference in y.
    * @return {number} sqrt(dx * dx + dy * dy) for grids
    */
-  octile: function (dx, dy) {
+  octile(dx, dy) {
     const F = Math.SQRT2 - 1;
     return dx < dy ? F * dx + dy : F * dy + dx;
   },
@@ -41,7 +39,7 @@ PF.Heuristic = {
    * @param {number} dy - Difference in y.
    * @return {number} max(dx, dy)
    */
-  chebyshev: function (dx, dy) {
+  chebyshev(dx, dy) {
     return Math.max(dx, dy);
   },
 };
