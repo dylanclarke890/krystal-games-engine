@@ -2,6 +2,7 @@ import { Algorithm, DiagonalMovement, HeuristicType } from "./constants.js";
 import { AStar } from "./algorithms/a-star.js";
 import { Heuristic } from "./heuristic.js";
 import { Grid } from "./data-structures.js";
+import { compressPath } from "./utils.js";
 
 export class PathFinder {
   constructor({ algorithm, heuristic, bi, allowDiagonal, crossCorners, weight }) {
@@ -62,9 +63,9 @@ export class PathFinder {
     }
   }
 
-  findPath(x0, y0, x1, y1, grid) {
+  findPath(x0, y0, x1, y1, grid, compress = false) {
     if (!(grid instanceof Grid)) grid = new Grid({ matrix: grid });
-
-    return this.finder.findPath(x0, y0, x1, y1, grid);
+    const pathFound = this.finder.findPath(x0, y0, x1, y1, grid);
+    return compress ? compressPath(pathFound) : pathFound;
   }
 }
