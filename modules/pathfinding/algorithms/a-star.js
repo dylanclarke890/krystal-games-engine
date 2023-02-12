@@ -1,3 +1,8 @@
+import { DiagonalMovement } from "../constants.js";
+import { MinHeap } from "../data-structures.js";
+import { Heuristic } from "../heuristic.js";
+import { backtrace } from "../utils.js";
+
 export class AStar {
   /** A* path finder.
    * @constructor
@@ -12,21 +17,22 @@ export class AStar {
     opt = opt || {};
     this.heuristic = opt.heuristic || Heuristic.manhattan;
     this.weight = opt.weight || 1;
-    this.diagonalMovement = opt.diagonalMovement || PF.enums.DiagonalMovement.Never;
+    this.diagonalMovement = opt.diagonalMovement || DiagonalMovement.Never;
     // When diagonal movement is allowed the manhattan heuristic is not
     // admissible. It should be octile instead
     this.heuristic =
-      this.diagonalMovement === PF.enums.DiagonalMovement.Never
-        ? opt.heuristic || PF.Heuristic.manhattan
-        : opt.heuristic || PF.Heuristic.octile;
+      this.diagonalMovement === DiagonalMovement.Never
+        ? opt.heuristic || Heuristic.manhattan
+        : opt.heuristic || Heuristic.octile;
   }
+
   /**
    * Find and return the the path.
    * @return {Array<Array<number>>} The path, including both start and
    *     end positions.
    */
   findPath(startX, startY, endX, endY, grid) {
-    const openList = new PF.Data.Heap((nodeA, nodeB) => nodeA.f - nodeB.f);
+    const openList = new MinHeap((nodeA, nodeB) => nodeA.f - nodeB.f);
     const startNode = grid.getNodeAt(startX, startY),
       endNode = grid.getNodeAt(endX, endY);
 
@@ -45,7 +51,7 @@ export class AStar {
       node.closed = true;
 
       // if reached the end position, construct the path and return it
-      if (node === endNode) return PF.utils.backtrace(endNode);
+      if (node === endNode) return backtrace(endNode);
 
       // get neigbours of the current node
       const neighbors = grid.getNeighbors(node, this.diagonalMovement);
