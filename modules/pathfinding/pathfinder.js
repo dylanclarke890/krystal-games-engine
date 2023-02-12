@@ -1,31 +1,26 @@
-PF.PathFinder = class {
-  constructor({
-    algorithmType,
-    heuristicType,
-    bi,
-    allowDiagonal,
-    crossCorners,
-    weight,
-  }) {
+import { Heuristic } from "./enums.js";
+import { Algorithm, DiagonalMovement, HeuristicType } from "./constants.js";
+
+export class PathFinder {
+  constructor({ algorithmType, heuristicType, bi, allowDiagonal, crossCorners, weight }) {
     let heuristic;
     switch (heuristicType) {
       default:
-      case PF.enums.Heuristic.Manhattan:
-        heuristic = PF.Heuristic.manhattan;
+      case HeuristicType.Manhattan:
+        heuristic = Heuristic.manhattan;
         break;
-      case PF.enums.Heuristic.Euclidean:
-        heuristic = PF.Heuristic.euclidean;
+      case HeuristicType.Euclidean:
+        heuristic = Heuristic.euclidean;
         break;
-      case PF.enums.Heuristic.Octile:
-        heuristic = PF.Heuristic.octile;
+      case HeuristicType.Octile:
+        heuristic = Heuristic.octile;
         break;
-      case PF.enums.Heuristic.Chebyshev:
-        heuristic = PF.Heuristic.chebyshev;
+      case HeuristicType.Chebyshev:
+        heuristic = Heuristic.chebyshev;
         break;
     }
 
-    const { Never, IfAtMostOneObstacle, OnlyWhenNoObstacles } =
-      PF.enums.DiagonalMovement;
+    const { Never, IfAtMostOneObstacle, OnlyWhenNoObstacles } = DiagonalMovement;
     const diagonalMovement = allowDiagonal
       ? crossCorners
         ? IfAtMostOneObstacle
@@ -40,36 +35,24 @@ PF.PathFinder = class {
       weight,
     };
 
-    const {
-      BreadthFirst,
-      BiBreadthFirst,
-      AStar,
-      BiAStar,
-      BestFirst,
-      BiBestFirst,
-      Dijkstra,
-      BiDijkstra,
-      IDAStar,
-      JumpPoint,
-    } = PF.Algorithms;
     switch (algorithmType) {
       default:
-      case PF.enums.Algo.AStar:
+      case Algorithm.AStar:
         this.finder = bi ? new BiAStar(opt) : new AStar(opt);
         break;
-      case PF.enums.Algo.BestFirst:
+      case Algorithm.BestFirst:
         this.finder = bi ? new BiBestFirst(opt) : new BestFirst(opt);
         break;
-      case PF.enums.Algo.BreadthFirst:
+      case Algorithm.BreadthFirst:
         this.finder = bi ? new BiBreadthFirst(opt) : new BreadthFirst(opt);
         break;
-      case PF.enums.Algo.Dijkstra:
+      case Algorithm.Dijkstra:
         this.finder = bi ? new BiDijkstra(opt) : new Dijkstra(opt);
         break;
-      case PF.enums.Algo.IDAStar:
+      case Algorithm.IDAStar:
         this.finder = new IDAStar(opt);
         break;
-      case PF.enums.Algo.JumpPoint:
+      case Algorithm.JumpPoint:
         this.finder = new JumpPoint(opt);
         break;
     }
@@ -78,4 +61,4 @@ PF.PathFinder = class {
   findPath(x0, y0, x1, y1, grid) {
     return this.finder.findPath(x0, y0, x1, y1, grid);
   }
-};
+}

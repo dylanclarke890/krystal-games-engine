@@ -5,7 +5,7 @@ export const DiagonalMovement = {
   OnlyWhenNoObstacles: 4,
 };
 
-export const Algo = {
+export const Algorithm = {
   AStar: 1,
   BiAStar: 2,
   BestFirst: 3,
@@ -18,7 +18,7 @@ export const Algo = {
   JumpPoint: 10,
 };
 
-export const Heuristic = {
+export const HeuristicType = {
   Manhattan: 1,
   Euclidean: 2,
   Octile: 3,
