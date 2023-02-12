@@ -4,6 +4,19 @@ import { Heuristic } from "../heuristic.js";
 import { backtrace } from "../utils.js";
 
 export class AStar {
+  /** @type {Heuristic} */
+  heuristic;
+  /** @type {DiagonalMovement} */
+  diagonalMovement;
+  /** @type {number} */
+  weight;
+  /**
+   * Size of the unit traversing the path in cells
+   * @example tilesize = 32 & unit = {x: 64, y: 32}, unitSize = {x: 2, y: 1}; // (64 / 32 = 2 etc)
+   * @type {{x:number, y: number}}
+   */
+  unitSize = { x: 1, y: 1 };
+
   /** A* path finder.
    * @constructor
    * @param {Object} opt
@@ -13,8 +26,7 @@ export class AStar {
    * @param {number} opt.weight Weight to apply to the heuristic to allow for
    *     suboptimal paths, in order to speed up the search.
    */
-  constructor(opt) {
-    opt = opt || {};
+  constructor(opt = {}) {
     this.heuristic = opt.heuristic || Heuristic.manhattan;
     this.weight = opt.weight || 1;
     this.diagonalMovement = opt.diagonalMovement || DiagonalMovement.Never;
@@ -28,8 +40,14 @@ export class AStar {
 
   /**
    * Find and return the the path.
-   * @return {Array<Array<number>>} The path, including both start and
-   *     end positions.
+   * @param {number} startX The starting x position. If using a unitSize.x greater than 1,
+   * should be the x position of the leftmost cell of the unit
+   * @param {number} startY The starting y position. If using a unitSize.y greater than 1,
+   * should be the y position of the topmost cell of the unit
+   * @param {number} endX Tne ending x position.
+   * @param {number} endY Tne ending y position.
+   * @return {number[][]} The found path, including both start and
+   * end positions, or an empty array if failure.
    */
   findPath(startX, startY, endX, endY, grid) {
     const openList = new Heap((nodeA, nodeB) => nodeA.f - nodeB.f);
@@ -85,8 +103,8 @@ export class AStar {
             openList.updateItem(neighbor);
           }
         }
-      } // end for each neighbor
-    } // end of while
+      }
+    }
 
     return []; // failed to find the path
   }
