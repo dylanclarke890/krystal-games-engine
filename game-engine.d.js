@@ -61,6 +61,26 @@
 
 // #endregion LIB
 
+//#region PATHFINDING
+
+/// <reference path="modules/pathfinding/algorithms/a-star.js"/>
+/// <reference path="modules/pathfinding/algorithms/best-first.js"/>
+/// <reference path="modules/pathfinding/algorithms/bi-a-star.js"/>
+/// <reference path="modules/pathfinding/algorithms/bi-best-first.js"/>
+/// <reference path="modules/pathfinding/algorithms/bi-breadth-first.js"/>
+/// <reference path="modules/pathfinding/algorithms/bi-dijkstra.js"/>
+/// <reference path="modules/pathfinding/algorithms/breadth-first.js"/>
+/// <reference path="modules/pathfinding/algorithms/dijkstra.js"/>
+/// <reference path="modules/pathfinding/algorithms/ida-star.js"/>
+/// <reference path="modules/pathfinding/algorithms/jump-point.js"/>
+/// <reference path="modules/pathfinding/constants.js"/>
+/// <reference path="modules/pathfinding/data-structures.js"/>
+/// <reference path="modules/pathfinding/heuristic.js"/>
+/// <reference path="modules/pathfinding/pathfinder.js"/>
+/// <reference path="modules/pathfinding/utils.js"/>
+
+//#endregion PATHFINDING
+
 //#region PLUGINS
 
 /// <reference path="modules/plugins/cheat-codes.js"/>

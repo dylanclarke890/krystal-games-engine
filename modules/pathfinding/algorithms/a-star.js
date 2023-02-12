@@ -1,4 +1,4 @@
-PF.Algorithms.AStar = class {
+export class AStar {
   /** A* path finder.
    * @constructor
    * @param {Object} opt
@@ -10,10 +10,9 @@ PF.Algorithms.AStar = class {
    */
   constructor(opt) {
     opt = opt || {};
-    this.heuristic = opt.heuristic || PF.Heuristic.manhattan;
+    this.heuristic = opt.heuristic || Heuristic.manhattan;
     this.weight = opt.weight || 1;
-    this.diagonalMovement =
-      opt.diagonalMovement || PF.enums.DiagonalMovement.Never;
+    this.diagonalMovement = opt.diagonalMovement || PF.enums.DiagonalMovement.Never;
     // When diagonal movement is allowed the manhattan heuristic is not
     // admissible. It should be octile instead
     this.heuristic =
@@ -59,17 +58,14 @@ PF.Algorithms.AStar = class {
 
         // get the distance between current node and the neighbor
         // and calculate the next g score
-        const ng =
-          node.g + (x - node.x === 0 || y - node.y === 0 ? 1 : Math.SQRT2);
+        const ng = node.g + (x - node.x === 0 || y - node.y === 0 ? 1 : Math.SQRT2);
 
         // check if the neighbor has not been inspected yet, or
         // can be reached with smaller cost from the current node
         if (!neighbor.opened || ng < neighbor.g) {
           neighbor.g = ng;
           neighbor.h =
-            neighbor.h ||
-            this.weight *
-              this.heuristic(Math.abs(x - endX), Math.abs(y - endY));
+            neighbor.h || this.weight * this.heuristic(Math.abs(x - endX), Math.abs(y - endY));
           neighbor.f = neighbor.g + neighbor.h;
           neighbor.parent = node;
 
@@ -88,4 +84,4 @@ PF.Algorithms.AStar = class {
 
     return []; // failed to find the path
   }
-};
+}
