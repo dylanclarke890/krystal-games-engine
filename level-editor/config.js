@@ -3,9 +3,9 @@ export const levelEditorConfig = {
     /** Takes an array of glob regexes which specify where to load entities from.
      *  Can be individual files or entire directories.
      *  @example 'entityFiles': ['lib/game/powerups/*.js', 'lib/game/entities/laser.js'] */
-    entityFiles: ["random/entities"],
+    entityFiles: ["entities/turret.js"],
     /** Default path for the level file selection box. */
-    levelPath: "random/levels",
+    levelPath: "levels/",
     /** True to prettify the JSON saved to file. */
     prettyPrint: true,
   },
@@ -69,7 +69,9 @@ export const levelEditorConfig = {
    *  The tilesize only specifies the size in the image - resizing to final
    *  size for each layer happens in level editor. */
   collisionTiles: {
-    path: "assets/images/level-editor/collisiontiles-64.png",
+    path: "canvas-game-engine/level-editor/images/collisiontiles-64.png",
     tilesize: 64,
   },
+  /** Default path to use to load tilesets from. */
+  tilesDirectory: "assets/images/tiles",
 };

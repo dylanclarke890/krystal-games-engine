@@ -290,9 +290,8 @@ export class EditEntities {
 
   newEntityClick(ev) {
     this.hideMenu();
-    const newEntity = this.spawnEntity(ev.target.id, 0, 0, {});
+    const newEntity = this.spawnEntity(ev.target.id, this.selector.pos.x, this.selector.pos.y, {});
     this.selectEntity(newEntity);
-    this.moveSelectedEntity(this.selector.pos.x, this.selector.pos.y);
     this.editor.setModified();
     this.undo.commitEntityCreate(newEntity);
     this.editor.draw();
