@@ -1,5 +1,5 @@
 import { DiagonalMovement } from "../constants.js";
-import { MinHeap } from "../data-structures.js";
+import { Heap } from "../data-structures.js";
 import { Heuristic } from "../heuristic.js";
 import { backtrace } from "../utils.js";
 

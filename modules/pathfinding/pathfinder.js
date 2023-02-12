@@ -41,6 +41,7 @@ export class PathFinder {
       default:
       case Algorithm.AStar:
         this.finder = new AStar(opt);
+        if (bi) this.finder = new AStar(opt);
         // if (bi) this.finder = new BiAStar(opt);
         break;
       // case Algorithm.BestFirst:

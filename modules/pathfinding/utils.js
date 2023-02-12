@@ -111,9 +111,7 @@ export function smoothenPath(grid, path) {
   const newPath = [[sx, sy]];
 
   for (let i = 2; i < path.length; ++i) {
-    let currCoords = path[i];
-    let ex = currCoords[0];
-    let ey = currCoords[1];
+    let [ex, ey] = path[i];
     const line = interpolate(sx, sy, ex, ey);
 
     let blocked = false;
