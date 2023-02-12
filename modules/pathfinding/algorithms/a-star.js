@@ -32,7 +32,7 @@ export class AStar {
    *     end positions.
    */
   findPath(startX, startY, endX, endY, grid) {
-    const openList = new MinHeap((nodeA, nodeB) => nodeA.f - nodeB.f);
+    const openList = new Heap((nodeA, nodeB) => nodeA.f - nodeB.f);
     const startNode = grid.getNodeAt(startX, startY),
       endNode = grid.getNodeAt(endX, endY);
 

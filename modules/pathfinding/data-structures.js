@@ -270,148 +270,275 @@ export class Queue {
   }
 }
 
-export class MinHeap {
-  constructor(selector) {
-    this.items = [];
-    this.selector = selector;
-  }
+//#region Heap
 
-  seek() {
-    return this.items[0];
-  }
+/*
+Default comparison function to fallback to.
+*/
+function defaultComparer(x, y) {
+  return x < y ? -1 : x > y ? 1 : 0;
+}
 
-  push(item) {
-    let i = this.items.length;
-    this.items.push(item);
-    while (
-      i > 0 &&
-      this.selector(this.items[Math.floor((i + 1) / 2 - 1)]) > this.selector(this.items[i])
-    ) {
-      let t = this.items[i];
-      this.items[i] = this.items[Math.floor((i + 1) / 2 - 1)];
-      this.items[Math.floor((i + 1) / 2 - 1)] = t;
-      i = Math.floor((i + 1) / 2 - 1);
+/*
+Insert item x in list a, and keep it sorted assuming a is sorted.
+If x is already in a, insert it to the right of the rightmost x.
+Optional args lo (default 0) and hi (default a.length) bound the slice
+of a to be searched.
+*/
+function insort(a, x, lo, hi, cmp) {
+  cmp = cmp || defaultComparer;
+  lo = lo || 0;
+  hi = hi || a.length;
+  if (lo < 0) throw new Error("lo must be non-negative");
+  while (lo < hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (cmp(x, a[mid]) < 0) hi = mid;
+    else lo = mid + 1;
+  }
+  return a.splice(lo, lo - lo, ...[].concat(x)), x;
+}
+
+/*
+Push item onto heap, maintaining the heap invariant.
+*/
+function heappush(array, item, cmp) {
+  cmp = cmp || defaultComparer;
+  array.push(item);
+  return _siftdown(array, 0, array.length - 1, cmp);
+}
+
+/*
+Pop the smallest item off the heap, maintaining the heap invariant.
+*/
+const heappop = function (array, cmp) {
+  cmp = cmp || defaultComparer;
+  let returnitem;
+  const lastelt = array.pop();
+  if (array.length) {
+    returnitem = array[0];
+    array[0] = lastelt;
+    _siftup(array, 0, cmp);
+  } else returnitem = lastelt;
+  return returnitem;
+};
+
+/*
+Pop and return the current smallest value, and add the new item.
+This is more efficient than heappop() followed by heappush(), and can be
+more appropriate when using a fixed size heap. Note that the value
+returned may be larger than item! That constrains reasonable use of
+this routine unless written as part of a conditional replacement:
+    if item > array[0]
+      item = heapreplace(array, item)
+*/
+const heapreplace = function (array, item, cmp) {
+  cmp = cmp || defaultComparer;
+  const returnitem = array[0];
+  array[0] = item;
+  _siftup(array, 0, cmp);
+  return returnitem;
+};
+
+/*
+Fast version of a heappush followed by a heappop.
+*/
+const heappushpop = function (array, item, cmp) {
+  cmp = cmp || defaultComparer;
+  if (array.length && cmp(array[0], item) < 0) {
+    [item, array[0]] = Array.from([array[0], item]);
+    _siftup(array, 0, cmp);
+  }
+  return item;
+};
+
+/*
+Transform list into a heap, in-place, in O(array.length) time.
+*/
+const heapify = function (array, cmp) {
+  cmp = cmp || defaultComparer;
+  return __range__(0, Math.floor(array.length / 2), false)
+    .reverse()
+    .map((i) => _siftup(array, i, cmp));
+};
+
+/*
+Update the position of the given item in the heap.
+This function should be called every time the item is being modified.
+*/
+const updateItem = function (array, item, cmp) {
+  cmp = cmp || defaultComparer;
+  const pos = array.indexOf(item);
+  if (pos === -1) return;
+  _siftdown(array, 0, pos, cmp);
+  return _siftup(array, pos, cmp);
+};
+
+/*
+Find the n largest elements in a dataset.
+*/
+const nlargest = function (array, n, cmp) {
+  cmp = cmp || defaultComparer;
+  const result = array.slice(0, n);
+  if (!result.length) return result;
+  heapify(result, cmp);
+  for (let elem of array.slice(n)) heappushpop(result, elem, cmp);
+  return result.sort(cmp).reverse();
+};
+
+/*
+Find the n smallest elements in a dataset.
+*/
+const nsmallest = function (array, n, cmp) {
+  cmp = cmp || defaultComparer;
+  if (n * 10 <= array.length) {
+    const result = array.slice(0, n).sort(cmp);
+    if (!result.length) return result;
+    let los = result[result.length - 1];
+    for (let elem of array.slice(n)) {
+      if (cmp(elem, los) < 0) {
+        insort(result, elem, 0, null, cmp);
+        result.pop();
+        los = result[result.length - 1];
+      }
     }
+    return result;
+  }
+
+  heapify(array, cmp);
+  return __range__(0, Math.min(n, array.length), false).map(() => heappop(array, cmp));
+};
+
+function _siftdown(array, startpos, pos, cmp) {
+  cmp = cmp || defaultComparer;
+  const newitem = array[pos];
+  while (pos > startpos) {
+    const parentpos = (pos - 1) >> 1;
+    const parent = array[parentpos];
+    if (cmp(newitem, parent) < 0) {
+      array[pos] = parent;
+      pos = parentpos;
+      continue;
+    }
+    break;
+  }
+  return (array[pos] = newitem);
+}
+
+function _siftup(array, pos, cmp) {
+  cmp = cmp || defaultComparer;
+  const endpos = array.length;
+  const startpos = pos;
+  const newitem = array[pos];
+  let childpos = 2 * pos + 1;
+  while (childpos < endpos) {
+    const rightpos = childpos + 1;
+    if (rightpos < endpos && !(cmp(array[childpos], array[rightpos]) < 0)) childpos = rightpos;
+    array[pos] = array[childpos];
+    pos = childpos;
+    childpos = 2 * pos + 1;
+  }
+  array[pos] = newitem;
+  return _siftdown(array, startpos, pos, cmp);
+}
+
+function __range__(left, right, inclusive) {
+  let range = [];
+  let ascending = left < right;
+  let end = !inclusive ? right : ascending ? right + 1 : right - 1;
+  for (let i = left; ascending ? i < end : i > end; ascending ? i++ : i--) {
+    range.push(i);
+  }
+  return range;
+}
+
+export class Heap {
+  constructor(cmp) {
+    cmp = cmp || defaultComparer;
+    this.cmp = cmp;
+    this.nodes = [];
+  }
+
+  push(x) {
+    return heappush(this.nodes, x, this.cmp);
+  }
+
+  insert(x) {
+    return this.push(x);
   }
 
   pop() {
-    if (this.items.length <= 1) return this.items.pop();
-    const ret = this.items[0];
-    this.items[0] = this.items.pop();
-    let i = 0;
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      let lowest =
-        this.selector(this.items[(i + 1) * 2]) < this.selector(this.items[(i + 1) * 2 - 1])
-          ? (i + 1) * 2
-          : (i + 1) * 2 - 1;
-      if (this.selector(this.items[i]) > this.selector(this.items[lowest])) {
-        let t = this.items[i];
-        this.items[i] = this.items[lowest];
-        this.items[lowest] = t;
-        i = lowest;
-      } else break;
-    }
-    return ret;
+    return heappop(this.nodes, this.cmp);
   }
 
-  delete(item) {
-    let i = this.items.indexOf(item);
-    // heapify
-    this.items[i] = this.items.pop();
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      let lowest =
-        this.selector(this.items[(i + 1) * 2]) < this.selector(this.items[(i + 1) * 2 - 1])
-          ? (i + 1) * 2
-          : (i + 1) * 2 - 1;
-      if (this.selector(this.items[i]) > this.selector(this.items[lowest])) {
-        let t = this.items[i];
-        this.items[i] = this.items[lowest];
-        this.items[lowest] = t;
-        i = lowest;
-      } else break;
-    }
+  peek() {
+    return this.nodes[0];
   }
 
-  heapify(arr) {
-    for (let i = 0; i < arr.length; i++) this.push(arr[i]);
+  top() {
+    return this.peek();
   }
 
-  /*
-    Update the position of the given item in the heap.
-    This function should be called every time the item is being modified.
-  */
-  updateItem(item) {
-    const pos = this.items.indexOf(item);
-    if (pos === -1) return;
-    this._siftdown(0, pos);
-    return this._siftup(pos);
+  front() {
+    return this.peek();
   }
 
-  _siftdown(startpos, pos) {
-    const newitem = this.items[pos];
-    while (pos > startpos) {
-      const parentpos = (pos - 1) >> 1;
-      const parent = this.items[parentpos];
-      if (this.selector(newitem, parent) < 0) {
-        this.items[pos] = parent;
-        pos = parentpos;
-        continue;
-      }
-      break;
-    }
-    return (this.items[pos] = newitem);
+  contains(x) {
+    return this.nodes.indexOf(x) !== -1;
   }
 
-  _siftup(pos) {
-    const endpos = this.items.length;
-    const startpos = pos;
-    const newitem = this.items[pos];
-    let childpos = 2 * pos + 1;
-    while (childpos < endpos) {
-      const rightpos = childpos + 1;
-      if (rightpos < endpos && !(this.selector(this.items[childpos], this.items[rightpos]) < 0))
-        childpos = rightpos;
-      this.items[pos] = this.items[childpos];
-      pos = childpos;
-      childpos = 2 * pos + 1;
-    }
-    this.items[pos] = newitem;
-    return this._siftdown(startpos, pos);
+  has(x) {
+    return this.contains(x);
+  }
+
+  replace(x) {
+    return heapreplace(this.nodes, x, this.cmp);
+  }
+
+  pushpop(x) {
+    return heappushpop(this.nodes, x, this.cmp);
+  }
+
+  heapify() {
+    return heapify(this.nodes, this.cmp);
+  }
+
+  updateItem(x) {
+    return updateItem(this.nodes, x, this.cmp);
+  }
+
+  nsmallest(n) {
+    return nlargest(this.nodes, n, this.cmp);
+  }
+
+  nlargest(n) {
+    return nsmallest(this.nodes, n, this.cmp);
+  }
+
+  clear() {
+    return (this.nodes = []);
+  }
+
+  empty() {
+    return this.nodes.length === 0;
+  }
+
+  size() {
+    return this.nodes.length;
+  }
+
+  clone() {
+    const heap = new Heap();
+    heap.nodes = this.nodes.slice(0);
+    return heap;
+  }
+
+  copy() {
+    return this.clone();
+  }
+
+  toArray() {
+    return this.nodes.slice(0);
   }
 }
 
-const posy = (i) => Math.floor(Math.log2(i + 1)) * 50 + 20;
-
-const posx = (i) => {
-  const level = Math.floor(Math.log2(i + 1));
-  const len = Math.pow(2, level);
-  const j = i - len + 2;
-  const k = j / (len + 1) - 0.5;
-  const x = k * 600 + 300;
-  return x;
-};
-
-export const visualize = (ctx, arr) => {
-  ctx.strokeStyle = "#FF0000";
-  ctx.font = "14px Arial";
-  ctx.clearRect(0, 0, 600, 600);
-  for (let i = 0; i < arr.length; i++) {
-    ctx.beginPath();
-    ctx.moveTo(posx(i), posy(i));
-    const j = Math.floor((i + 1) / 2 - 1);
-    ctx.lineTo(posx(j), posy(j));
-    ctx.stroke();
-  }
-  for (let i = 0; i < arr.length; i++) {
-    ctx.beginPath();
-    ctx.arc(posx(i), posy(i), 12, 0, 2 * Math.PI);
-    ctx.stroke();
-    ctx.fillStyle = "#99ff99";
-    ctx.fill();
-    ctx.fillStyle = "#000000";
-    console.log(posx(i), posy(i));
-    ctx.fillText(arr[i], posx(i) - 4, posy(i) + 4);
-  }
-};
+//#endregion Heap
