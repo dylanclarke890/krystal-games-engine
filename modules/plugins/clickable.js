@@ -3,6 +3,7 @@ let isMouseEventBound = false;
 
 export const ClickableMixin = (superclass) =>
   class extends superclass {
+    _clickableIgnore = false;
     constructor(opts) {
       super(opts);
 
@@ -34,6 +35,7 @@ export const ClickableMixin = (superclass) =>
     }
 
     inMouseFocus() {
+      if (this._clickableIgnore) return false;
       const posX = this.pos.x,
         mouseX = this.game.input.mouse.x,
         screenX = this.game.screen.actual.x;
