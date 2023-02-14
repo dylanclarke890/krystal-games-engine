@@ -178,8 +178,7 @@ export class Input {
     const internalWidth = system.canvas.offsetWidth || system.realWidth;
     const scale = system.scale * (internalWidth / system.realWidth);
 
-    let pos = { left: 0, top: 0 };
-    if (system.canvas.getBoundingClientRect) pos = system.canvas.getBoundingClientRect();
+    const pos = system.canvas.getBoundingClientRect();
     const { clientX, clientY } = event.touches ? event.touches[0] : event;
     this.mouse.x = (clientX - pos.left) / scale;
     this.mouse.y = (clientY - pos.top) / scale;
