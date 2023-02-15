@@ -44,7 +44,6 @@
 
 // #region LIB
 
-/// <reference path="modules/lib/bezier.js"/>
 /// <reference path="modules/lib/cookie.js"/>
 /// <reference path="modules/lib/event-chain.js"/>
 /// <reference path="modules/lib/guard.js"/>
@@ -57,10 +56,11 @@
 
 // #region LIB/UTILS
 
-/// <reference path="modules/lib/utils/array-utils.js"/>
-/// <reference path="modules/lib/utils/dom-utils.js"/>
-/// <reference path="modules/lib/utils/number-utils.js"/>
-/// <reference path="modules/lib/utils/string-utils.js"/>
+/// <reference path="modules/lib/utils/array.js"/>
+/// <reference path="modules/lib/utils/bezier.js"/>
+/// <reference path="modules/lib/utils/dom.js"/>
+/// <reference path="modules/lib/utils/number.js"/>
+/// <reference path="modules/lib/utils/string.js"/>
 
 // #endregion LIB/UTILS
 
