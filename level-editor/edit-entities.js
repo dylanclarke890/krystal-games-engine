@@ -1,9 +1,9 @@
 import { Guard } from "../modules/lib/guard.js";
-import { $el, $new, loadScript } from "../modules/lib/dom-utils.js";
+import { $el, $new, loadScript } from "../modules/lib/utils/dom-utils.js";
 
 import { Register } from "../modules/core/register.js";
 import { Game } from "../modules/core/game.js";
-import { removeItem } from "../modules/lib/array-utils.js";
+import { removeItem } from "../modules/lib/utils/array-utils.js";
 
 export class EditEntities {
   active = true;

@@ -1,4 +1,4 @@
-import { $new } from "../modules/lib/dom-utils.js";
+import { $new } from "../modules/lib/utils/dom-utils.js";
 import { plugin } from "../modules/lib/inject.js";
 
 import { System } from "../modules/core/system.js";

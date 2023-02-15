@@ -44,20 +44,26 @@
 
 // #region LIB
 
-/// <reference path="modules/lib/array-utils.js"/>
 /// <reference path="modules/lib/bezier.js"/>
 /// <reference path="modules/lib/cookie.js"/>
-/// <reference path="modules/lib/dom-utils.js"/>
 /// <reference path="modules/lib/event-chain.js"/>
 /// <reference path="modules/lib/guard.js"/>
 /// <reference path="modules/lib/inject.js"/>
 /// <reference path="modules/lib/mixin.js"/>
-/// <reference path="modules/lib/number-utils.js"/>
-/// <reference path="modules/lib/string-utils.js"/>
 /// <reference path="modules/lib/timer.js"/>
 /// <reference path="modules/lib/ui-effects.js"/>
 /// <reference path="modules/lib/user-agent.js"/>
 /// <reference path="modules/lib/vendor-attributes.js"/>
+
+// #region LIB/UTILS
+
+/// <reference path="modules/lib/utils/array-utils.js"/>
+/// <reference path="modules/lib/utils/dom-utils.js"/>
+/// <reference path="modules/lib/utils/number-utils.js"/>
+/// <reference path="modules/lib/utils/string-utils.js"/>
+
+// #endregion LIB/UTILS
+
 
 // #endregion LIB
 

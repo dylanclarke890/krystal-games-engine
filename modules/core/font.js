@@ -1,5 +1,5 @@
 import { Guard } from "../lib/guard.js";
-import { uniqueId } from "../lib/string-utils.js";
+import { uniqueId } from "../lib/utils/string-utils.js";
 import { Register } from "./register.js";
 
 export class Font {

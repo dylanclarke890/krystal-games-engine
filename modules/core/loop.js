@@ -1,4 +1,4 @@
-import { $el } from "../lib/dom-utils.js";
+import { $el } from "../lib/utils/dom-utils.js";
 import { Guard } from "../lib/guard.js";
 import { Timer } from "../lib/timer.js";
 

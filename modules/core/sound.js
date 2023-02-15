@@ -1,6 +1,6 @@
 import { VendorAttributes } from "../lib/vendor-attributes.js";
-import { constrain, map } from "../lib/number-utils.js";
-import { removeItem } from "../lib/array-utils.js";
+import { constrain, map } from "../lib/utils/number-utils.js";
+import { removeItem } from "../lib/utils/array-utils.js";
 import { UserAgent } from "../lib/user-agent.js";
 import { Guard } from "../lib/guard.js";
 import { Timer } from "../lib/timer.js";

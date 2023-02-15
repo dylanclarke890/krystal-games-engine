@@ -1,6 +1,6 @@
 import { GameLoader } from "../core/loader.js";
 import { Register } from "../core/register.js";
-import { map } from "../lib/number-utils.js";
+import { map } from "../lib/utils/number-utils.js";
 
 export class SplashLoaderMixin extends GameLoader {
   states = {

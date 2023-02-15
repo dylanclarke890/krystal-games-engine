@@ -1,5 +1,5 @@
 import { Guard } from "../modules/lib/guard.js";
-import { constrain } from "../modules/lib/number-utils.js";
+import { constrain } from "../modules/lib/utils/number-utils.js";
 
 export class TileSelect {
   layer = null;

@@ -1,4 +1,4 @@
-import { removeItem } from "../lib/array-utils.js";
+import { removeItem } from "../lib/utils/array-utils.js";
 
 export const ObservablePlugin = [
   { name: "_listeners", value: {}, isStatic: false },

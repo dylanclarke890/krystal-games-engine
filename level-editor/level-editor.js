@@ -1,6 +1,6 @@
-import { constrain } from "../modules/lib/number-utils.js";
-import { formatAsJSON, hyphenToCamelCase } from "../modules/lib/string-utils.js";
-import { $el } from "../modules/lib/dom-utils.js";
+import { constrain } from "../modules/lib/utils/number-utils.js";
+import { formatAsJSON, hyphenToCamelCase } from "../modules/lib/utils/string-utils.js";
+import { $el } from "../modules/lib/utils/dom-utils.js";
 import { slideToggle, fadeOut } from "../modules/lib/ui-effects.js";
 import { getCookie, setCookie } from "../modules/lib/cookie.js";
 import { Guard } from "../modules/lib/guard.js";
