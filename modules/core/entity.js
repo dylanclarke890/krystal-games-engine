@@ -1,4 +1,4 @@
-import { constrain, toRad } from "../lib/utils/number-utils.js";
+import { constrain, toRad } from "../lib/utils/number.js";
 import { Guard } from "../lib/guard.js";
 import { Register } from "./register.js";
 import { GameAnimation } from "./animation.js";

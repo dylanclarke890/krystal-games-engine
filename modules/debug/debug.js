@@ -1,7 +1,7 @@
 import { Guard } from "../lib/guard.js";
 import { plugin } from "../lib/inject.js";
-import { boolToOnOff } from "../lib/utils/number-utils.js";
-import { $new, $el } from "../lib/utils/dom-utils.js";
+import { boolToOnOff } from "../lib/utils/number.js";
+import { $new, $el } from "../lib/utils/dom.js";
 import { dragElement } from "../lib/ui-effects.js";
 import { PerformanceStats } from "./performance-stats.js";
 import { debugConfig } from "./config.js";

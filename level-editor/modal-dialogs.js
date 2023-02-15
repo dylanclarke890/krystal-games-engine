@@ -1,4 +1,4 @@
-import { $new } from "../modules/lib/utils/dom-utils.js";
+import { $new } from "../modules/lib/utils/dom.js";
 import { Guard } from "../modules/lib/guard.js";
 import { fadeOut, fadeIn } from "../modules/lib/ui-effects.js";
 import { SelectFileDropdown } from "./select-file-dropdown.js";

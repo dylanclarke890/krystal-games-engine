@@ -1,4 +1,4 @@
-import { uniqueId } from "../lib/utils/string-utils.js";
+import { uniqueId } from "../lib/utils/string.js";
 import { Guard } from "../lib/guard.js";
 
 /**

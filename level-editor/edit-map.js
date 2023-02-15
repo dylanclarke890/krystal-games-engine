@@ -1,5 +1,5 @@
-import { $new, $el } from "../modules/lib/utils/dom-utils.js";
-import { toInt } from "../modules/lib/utils/number-utils.js";
+import { $new, $el } from "../modules/lib/utils/dom.js";
+import { toInt } from "../modules/lib/utils/number.js";
 import { Guard } from "../modules/lib/guard.js";
 
 import { GameImage } from "../modules/core/image.js";

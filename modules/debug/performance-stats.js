@@ -1,4 +1,4 @@
-import { $new } from "../lib/utils/dom-utils.js";
+import { $new } from "../lib/utils/dom.js";
 
 class PanelColorScheme {
   constructor(bg, fg) {

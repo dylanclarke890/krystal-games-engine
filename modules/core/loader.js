@@ -1,4 +1,4 @@
-import { removeItem } from "../lib/utils/array-utils.js";
+import { removeItem } from "../lib/utils/array.js";
 import { Guard } from "../lib/guard.js";
 import { Register } from "./register.js";
 

@@ -1,7 +1,7 @@
-import { $new } from "../lib/utils/dom-utils.js";
+import { $new } from "../lib/utils/dom.js";
 import { Guard } from "../lib/guard.js";
 import { GameImage } from "../core/image.js";
-import { toInt } from "../lib/utils/number-utils.js";
+import { toInt } from "../lib/utils/number.js";
 
 export class GameMap {
   tilesize = 8;

@@ -1,6 +1,6 @@
 import { plugin } from "../lib/inject.js";
 import { Timer } from "../lib/timer.js";
-import { uniqueId } from "../lib/utils/string-utils.js";
+import { uniqueId } from "../lib/utils/string.js";
 import { Guard } from "../lib/guard.js";
 
 // When the input stream gets this big, cut it down to the maximum size of the biggest combo.
