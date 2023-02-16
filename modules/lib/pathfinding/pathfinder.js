@@ -1,5 +1,5 @@
 import { Algorithm, DiagonalMovement, HeuristicType } from "./constants.js";
-import { AStar } from "../lib/pathfinding/algorithms/a-star.js";
+import { AStar } from "./algorithms/a-star.js";
 import { Heuristic } from "./heuristic.js";
 import { Grid } from "./data-structures.js";
 import { compressPath, smoothenPath } from "./utils.js";

@@ -1,7 +1,7 @@
 import { DiagonalMovement } from "../constants.js";
-import { Heap } from "../../../pathfinding/data-structures.js";
-import { Heuristic } from "../../../pathfinding/heuristic.js";
-import { backtrace } from "../../../pathfinding/utils.js";
+import { Heap } from "../data-structures.js";
+import { Heuristic } from "../heuristic.js";
+import { backtrace } from "../utils.js";
 
 export class AStar {
   /** @type {Heuristic} */
