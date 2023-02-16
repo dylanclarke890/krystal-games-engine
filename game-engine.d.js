@@ -115,7 +115,7 @@
 
 //#region LIB.SANITY
 
-/// <reference path="modules/lib/sanity/check.js"/>
+/// <reference path="modules/lib/sanity/assert.js"/>
 /// <reference path="modules/lib/sanity/guard.js"/>
 
 //#endregion LIB.SANITY
