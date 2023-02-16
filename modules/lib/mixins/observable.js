@@ -1,36 +1,24 @@
 import { removeItem } from "../utils/array.js";
 
-// TODO - convert to mixin
-export const ObservablePlugin = [
-  { name: "_listeners", value: {}, isStatic: false },
-  {
-    name: "on",
-    value(eventName, handler) {
+export const ObservableMixin = (superclass) =>
+  class extends superclass {
+    _listeners = {};
+
+    on(eventName, handler) {
       const listeners = (this._listeners[eventName] ??= []);
       listeners.push(handler);
-    },
-    overrideBase: true,
-    isStatic: false,
-  },
-  {
-    name: "off",
-    value(eventName, handler) {
+    }
+
+    off(eventName, handler) {
       const listeners = this._listeners[eventName];
       if (!listeners) return;
       if (handler) removeItem(listeners, handler);
-      else this._listeners = [];
-    },
-    overrideBase: true,
-    isStatic: false,
-  },
-  {
-    name: "trigger",
-    value(eventName, data) {
+      else this._listeners[eventName] = [];
+    }
+
+    trigger(eventName, data) {
       const listeners = this._listeners[eventName];
       if (!listeners) return;
       for (let i = 0; i < listeners.length; i++) listeners[i].apply(this, data);
-    },
-    overrideBase: true,
-    isStatic: false,
-  },
-];
+    }
+  };
