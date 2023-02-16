@@ -1,4 +1,4 @@
-import { GameLoader } from "../core/loader.js";
+import { GameLoader } from "../../core/loader.js";
 
 export class PreLoader extends GameLoader {
   imageObj = null;
