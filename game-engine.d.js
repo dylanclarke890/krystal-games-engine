@@ -14,6 +14,7 @@
 /// <reference path="modules/core/runner.js"/>
 /// <reference path="modules/core/sound.js"/>
 /// <reference path="modules/core/system.js"/>
+/// <reference path="modules/core/timer.js"/>
 
 // #endregion CORE
 
@@ -49,7 +50,6 @@
 /// <reference path="modules/lib/guard.js"/>
 /// <reference path="modules/lib/inject.js"/>
 /// <reference path="modules/lib/mixin.js"/>
-/// <reference path="modules/lib/timer.js"/>
 /// <reference path="modules/lib/ui-effects.js"/>
 /// <reference path="modules/lib/user-agent.js"/>
 /// <reference path="modules/lib/vendor-attributes.js"/>
