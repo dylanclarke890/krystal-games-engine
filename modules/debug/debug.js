@@ -1,5 +1,5 @@
 import { Guard } from "../lib/guard.js";
-import { plugin } from "../lib/inject.js";
+import { plugin } from "../lib/plugin.js";
 import { boolToOnOff } from "../lib/utils/number.js";
 import { $new, $el } from "../lib/utils/dom.js";
 import { dragElement } from "../lib/ui-effects.js";

@@ -48,8 +48,8 @@
 /// <reference path="modules/lib/cookie.js"/>
 /// <reference path="modules/lib/event-chain.js"/>
 /// <reference path="modules/lib/guard.js"/>
-/// <reference path="modules/lib/inject.js"/>
 /// <reference path="modules/lib/mixin.js"/>
+/// <reference path="modules/lib/plugin.js"/>
 /// <reference path="modules/lib/ui-effects.js"/>
 /// <reference path="modules/lib/user-agent.js"/>
 /// <reference path="modules/lib/vendor-attributes.js"/>
