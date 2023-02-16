@@ -19,7 +19,7 @@ export class Persistence {
             return;
           }
 
-          if (!this.persistence.killedEntities) this.persistence.killedEntities = [];
+          this.persistence.killedEntities ??= [];
           this.persistence.killedEntities.push(entity);
           this.base(entity);
         },

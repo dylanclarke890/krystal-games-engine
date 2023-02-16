@@ -25,85 +25,86 @@ const GAMEPAD = {
   PAD_RIGHT: GAMEPAD_BUTTON_OFFSET + 15,
 };
 
-const inputOverrides = [
-  {
-    name: "gamepad",
-    value: null,
-  },
-  {
-    name: "lastButtons",
-    value: {},
-  },
-  {
-    name: "hasButtonObject",
-    value: !!window.GamepadButton,
-  },
-  {
-    name: "getFirstGamepadSnapshot",
-    value: function () {
-      const gamepads = navigator.getGamepads();
-      for (let i = 0; i < gamepads.length; i++) if (gamepads[i]) return gamepads[i];
-      return null;
+export const GamePadPlugin = {
+  input: [
+    {
+      name: "gamepad",
+      value: null,
     },
-  },
-  {
-    name: "pollGamepad",
-    value: function () {
-      this.gamepad = this.getFirstGamepadSnapshot();
-      if (!this.gamepad) return; // No gamepad snapshot
+    {
+      name: "lastButtons",
+      value: {},
+    },
+    {
+      name: "hasButtonObject",
+      value: !!window.GamepadButton,
+    },
+    {
+      name: "getFirstGamepadSnapshot",
+      value() {
+        const gamepads = navigator.getGamepads();
+        for (let i = 0; i < gamepads.length; i++) if (gamepads[i]) return gamepads[i];
+        return null;
+      },
+    },
+    {
+      name: "pollGamepad",
+      value() {
+        this.gamepad = this.getFirstGamepadSnapshot();
+        if (!this.gamepad) return; // No gamepad snapshot
 
-      // Iterate over all buttons, see if they're bound and check for their state
-      for (let b = 0; b < this.gamepad.buttons.length; b++) {
-        const action = this.bindings[b + GAMEPAD_BUTTON_OFFSET];
-        let currentState = false;
-        if (!action) {
+        // Iterate over all buttons, see if they're bound and check for their state
+        for (let b = 0; b < this.gamepad.buttons.length; b++) {
+          const action = this.bindings[b + GAMEPAD_BUTTON_OFFSET];
+          let currentState = false;
+          if (!action) {
+            this.lastButtons[b] = currentState;
+            return;
+          }
+          const button = this.gamepad.buttons[b];
+          currentState =
+            button.pressed != null
+              ? button.pressed // W3C Standard
+              : button; // Current Chrome version
+
+          const prevState = this.lastButtons[b];
+
+          // Was not pressed, but is now
+          if (!prevState && currentState) {
+            this.actions[action] = true;
+            this.presses[action] = true;
+          }
+          // Was pressed, but is no more
+          else if (prevState && !currentState) this.delayedKeyup[action] = true;
           this.lastButtons[b] = currentState;
-          return;
         }
-        const button = this.gamepad.buttons[b];
-        currentState =
-          button.pressed != null
-            ? button.pressed // W3C Standard
-            : button; // Current Chrome version
-
-        const prevState = this.lastButtons[b];
-
-        // Was not pressed, but is now
-        if (!prevState && currentState) {
-          this.actions[action] = true;
-          this.presses[action] = true;
-        }
-        // Was pressed, but is no more
-        else if (prevState && !currentState) this.delayedKeyup[action] = true;
-        this.lastButtons[b] = currentState;
-      }
+      },
     },
-  },
-  {
-    name: "GAMEPAD",
-    value: GAMEPAD,
-    isStatic: true,
-  },
-];
-
-const gameOverrides = [
-  {
-    name: "update",
-    value() {
-      this.input.pollGamepad();
-      this.parent();
+    {
+      name: "GAMEPAD",
+      value: GAMEPAD,
+      isStatic: true,
     },
-    needsBase: true,
-  },
-];
+  ],
+  game: [
+    {
+      name: "update",
+      value() {
+        this.input.pollGamepad();
+        this.base();
+      },
+      needsBase: true,
+    },
+  ],
+};
 
 let gamepadsInitialised = false;
 export function initGamepads() {
   VendorAttributes.normalize(navigator, "getGamepads");
   if (gamepadsInitialised) return;
   if (!navigator.getGamepads || !navigator.getGamepads()) return; // No Gamepad support; nothing to do here
-  plugin(inputOverrides).to(Input);
+  plugin(GamePadPlugin.input).to(Input);
   // Always poll gamepad before each frame
-  plugin(gameOverrides).to(Game);
+  plugin(GamePadPlugin.game).to(Game);
   gamepadsInitialised = true;
 }
