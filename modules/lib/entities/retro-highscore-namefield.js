@@ -1,9 +1,9 @@
-import { Guard } from "../lib/guard.js";
+import { Guard } from "../guard.js";
 
-import { Font } from "../core/font.js";
-import { Input } from "../core/input.js";
-import { Entity } from "../core/entity.js";
-import { Register } from "../core/register.js";
+import { Font } from "../../core/font.js";
+import { Input } from "../../core/input.js";
+import { Entity } from "../../core/entity.js";
+import { Register } from "../../core/register.js";
 
 /**
  * @example

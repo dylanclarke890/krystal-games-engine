@@ -1,5 +1,5 @@
-import { Entity } from "../core/entity.js";
-import { Timer } from "../lib/timer.js";
+import { Entity } from "../../core/entity.js";
+import { Timer } from "../timer.js";
 
 export class EntityScreenShaker extends Entity {
   //damped harmonic oscillator about the origin 0,0.  follows the eqn:

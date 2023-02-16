@@ -1,5 +1,6 @@
-import { removeItem } from "../lib/utils/array.js";
+import { removeItem } from "../utils/array.js";
 
+// TODO - convert to mixin
 export const ObservablePlugin = [
   { name: "_listeners", value: {}, isStatic: false },
   {
