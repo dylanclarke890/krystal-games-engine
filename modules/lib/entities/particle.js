@@ -1,7 +1,7 @@
 import { Entity } from "../../core/entity.js";
 import { Register } from "../../core/register.js";
 import { map } from "../canvas-game-engine/modules/lib/number-utils.js";
-import { Timer } from "../timer.js";
+import { Timer } from "../../core/timer.js";
 
 /**
  * Base entity class for particle entities. Subclass your own particles from

@@ -1,6 +1,6 @@
 import { Entity } from "../../core/entity.js";
 import { Register } from "../../core/register.js";
-import { Timer } from "../timer.js";
+import { Timer } from "../../core/timer.js";
 import { Particle } from "./particle.js";
 
 /**

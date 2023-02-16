@@ -1,4 +1,4 @@
-import { Timer } from "../timer.js";
+import { Timer } from "../../core/timer.js";
 
 export const FadeEntityMixin = (superclass) =>
   class extends superclass {

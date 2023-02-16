@@ -42,7 +42,7 @@
 
 //#endregion LEVEL-EDITOR
 
-// #region LIB
+//#region LIB
 
 /// <reference path="modules/lib/cookie.js"/>
 /// <reference path="modules/lib/event-chain.js"/>
@@ -54,7 +54,71 @@
 /// <reference path="modules/lib/user-agent.js"/>
 /// <reference path="modules/lib/vendor-attributes.js"/>
 
-// #region LIB/UTILS
+//#region LIB.ENTITIES
+/// <reference path="modules/lib/entities/damage-zone.js"/>
+/// <reference path="modules/lib/entities/debris.js"/>
+/// <reference path="modules/lib/entities/delay.js"/>
+/// <reference path="modules/lib/entities/earthquake.js"/>
+/// <reference path="modules/lib/entities/hurt.js"/>
+/// <reference path="modules/lib/entities/level-change.js"/>
+/// <reference path="modules/lib/entities/mover.js"/>
+/// <reference path="modules/lib/entities/particle.js"/>
+/// <reference path="modules/lib/entities/retro-highscore-namefield.js"/>
+/// <reference path="modules/lib/entities/screen-shaker.js"/>
+/// <reference path="modules/lib/entities/trigger.js"/>
+/// <reference path="modules/lib/entities/void.js"/>
+//#endregion LIB.ENTITIES
+
+//#region LIB.LOADERS
+/// <reference path="modules/lib/loaders/simple-loader.js"/>
+/// <reference path="modules/lib/loaders/splash-loader.js"/>
+//#endregion LIB.LOADERS
+
+//#region LIB.MIXINS
+/// <reference path="modules/lib/mixins/clickable.js"/>
+/// <reference path="modules/lib/mixins/edges.js"/>
+/// <reference path="modules/lib/mixins/fade-entity.js"/>
+/// <reference path="modules/lib/mixins/fixed-entity.js"/>
+/// <reference path="modules/lib/mixins/observable.js"/>
+/// <reference path="modules/lib/mixins/state-machine.js"/>
+//#endregion LIB.MIXINS
+
+//#region LIB.PATHFINDING
+
+/// <reference path="modules/lib/pathfinding/algorithms/a-star.js"/>
+/// <reference path="modules/lib/pathfinding/algorithms/best-first.js"/>
+/// <reference path="modules/lib/pathfinding/algorithms/bi-a-star.js"/>
+/// <reference path="modules/lib/pathfinding/algorithms/bi-best-first.js"/>
+/// <reference path="modules/lib/pathfinding/algorithms/bi-breadth-first.js"/>
+/// <reference path="modules/lib/pathfinding/algorithms/bi-dijkstra.js"/>
+/// <reference path="modules/lib/pathfinding/algorithms/breadth-first.js"/>
+/// <reference path="modules/lib/pathfinding/algorithms/dijkstra.js"/>
+/// <reference path="modules/lib/pathfinding/algorithms/ida-star.js"/>
+/// <reference path="modules/lib/pathfinding/algorithms/jump-point.js"/>
+/// <reference path="modules/lib/pathfinding/constants.js"/>
+/// <reference path="modules/lib/pathfinding/data-structures.js"/>
+/// <reference path="modules/lib/pathfinding/heuristic.js"/>
+/// <reference path="modules/lib/pathfinding/pathfinder.js"/>
+/// <reference path="modules/lib/pathfinding/utils.js"/>
+
+//#endregion LIB.PATHFINDING
+
+//#region LIB.PLUGINS
+
+/// <reference path="modules/lib/plugins/cheat-codes.js"/>
+/// <reference path="modules/lib/plugins/clear-map-tile.js"/>
+/// <reference path="modules/lib/plugins/combo-manager.js"/>
+/// <reference path="modules/lib/plugins/distance-based-sound.js"/>
+/// <reference path="modules/lib/plugins/fixed-tick.js"/>
+/// <reference path="modules/lib/plugins/infinite-levels.js"/>
+/// <reference path="modules/lib/plugins/map-minifier.js"/>
+/// <reference path="modules/lib/plugins/persist-level-state.js"/>
+/// <reference path="modules/lib/plugins/screen-fader.js"/>
+/// <reference path="modules/lib/plugins/touch-button.js"/>
+
+//#endregion LIB.PLUGINS
+
+//#region LIB.UTILS
 
 /// <reference path="modules/lib/utils/array.js"/>
 /// <reference path="modules/lib/utils/bezier.js"/>
@@ -62,53 +126,8 @@
 /// <reference path="modules/lib/utils/number.js"/>
 /// <reference path="modules/lib/utils/string.js"/>
 
-// #endregion LIB/UTILS
+//#endregion LIB.UTILS
+
+//#endregion LIB
 
 
-// #endregion LIB
-
-//#region PATHFINDING
-
-/// <reference path="modules/pathfinding/algorithms/a-star.js"/>
-/// <reference path="modules/pathfinding/algorithms/best-first.js"/>
-/// <reference path="modules/pathfinding/algorithms/bi-a-star.js"/>
-/// <reference path="modules/pathfinding/algorithms/bi-best-first.js"/>
-/// <reference path="modules/pathfinding/algorithms/bi-breadth-first.js"/>
-/// <reference path="modules/pathfinding/algorithms/bi-dijkstra.js"/>
-/// <reference path="modules/pathfinding/algorithms/breadth-first.js"/>
-/// <reference path="modules/pathfinding/algorithms/dijkstra.js"/>
-/// <reference path="modules/pathfinding/algorithms/ida-star.js"/>
-/// <reference path="modules/pathfinding/algorithms/jump-point.js"/>
-/// <reference path="modules/pathfinding/constants.js"/>
-/// <reference path="modules/pathfinding/data-structures.js"/>
-/// <reference path="modules/pathfinding/heuristic.js"/>
-/// <reference path="modules/pathfinding/pathfinder.js"/>
-/// <reference path="modules/pathfinding/utils.js"/>
-
-//#endregion PATHFINDING
-
-//#region PLUGINS
-
-/// <reference path="modules/plugins/cheat-codes.js"/>
-/// <reference path="modules/plugins/clear-map-tile.js"/>
-/// <reference path="modules/plugins/clickable.js"/>
-/// <reference path="modules/plugins/combo-manager.js"/>
-/// <reference path="modules/plugins/damage-zone-entity.js"/>
-/// <reference path="modules/plugins/distance-based-sound.js"/>
-/// <reference path="modules/plugins/edges.js"/>
-/// <reference path="modules/plugins/fade-entity.js"/>
-/// <reference path="modules/plugins/fixed-entity.js"/>
-/// <reference path="modules/plugins/fixed-tick.js"/>
-/// <reference path="modules/plugins/infinite-levels.js"/>
-/// <reference path="modules/plugins/map-minifier.js"/>
-/// <reference path="modules/plugins/observable.js"/>
-/// <reference path="modules/plugins/persist-level-state.js"/>
-/// <reference path="modules/plugins/retro-highscore-namefield.js"/>
-/// <reference path="modules/plugins/screen-fader.js"/>
-/// <reference path="modules/plugins/screen-shaker.js"/>
-/// <reference path="modules/plugins/simple-loader.js"/>
-/// <reference path="modules/plugins/splash-loader.js"/>
-/// <reference path="modules/plugins/state-machine.js"/>
-/// <reference path="modules/plugins/touch-button.js"/>
-
-//#endregion PLUGINS

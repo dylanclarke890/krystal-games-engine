@@ -1,4 +1,4 @@
-import { Timer } from "./timer.js";
+import { Timer } from "../core/timer.js";
 import { Guard } from "./guard.js";
 
 export class EventChain {

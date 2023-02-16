@@ -3,7 +3,7 @@ import { constrain, map } from "../lib/utils/number.js";
 import { removeItem } from "../lib/utils/array.js";
 import { UserAgent } from "../lib/user-agent.js";
 import { Guard } from "../lib/guard.js";
-import { Timer } from "../lib/timer.js";
+import { Timer } from "./timer.js";
 
 import { Register } from "./register.js";
 
