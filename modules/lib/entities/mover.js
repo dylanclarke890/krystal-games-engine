@@ -1,5 +1,5 @@
-import { Entity } from "../canvas-game-engine/modules/core/entity.js";
-import { Register } from "../canvas-game-engine/modules/core/register.js";
+import { Entity } from "../../core/entity.js";
+import { Register } from "../../core/register.js";
 
 /**
  * Simple Mover that visits all its targets in an ordered fashion. You can use
@@ -22,23 +22,17 @@ export class EntityMover extends Entity {
   checkAgainst = Entity.TYPE.NONE;
   collides = Entity.COLLIDES.FIXED;
 
-  target = null;
-  targets = [];
   currentTarget = 0;
   speed = 20;
   gravityFactor = 0;
 
   constructor(opts) {
     super(opts);
-    this.addAnim("idle", 1, [0]);
-    this.createAnimationSheet("assets/entities/mover.png", { x: 24, y: 8 });
-    // Transform the target object into an ordered array of targets
-    this.targets = Object.keys(this.target).sort();
   }
 
   update() {
     let oldDistance = 0;
-    const target = this.game.getEntityByName(this.targets[this.currentTarget]);
+    const target = this.targets[this.currentTarget];
     if (target) {
       oldDistance = this.distanceTo(target);
       const angle = this.angleTo(target);
