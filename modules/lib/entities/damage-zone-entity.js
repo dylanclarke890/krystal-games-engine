@@ -1,4 +1,4 @@
-import { Entity } from "../core/entity.js";
+import { Entity } from "../../core/entity.js";
 
 export class EntityDamageZone extends Entity {
   _levelEditorDrawBox = true;
