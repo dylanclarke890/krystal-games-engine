@@ -1,7 +1,7 @@
 import { Game } from "../../core/game.js";
 import { Input } from "../../core/input.js";
 import { plugin } from "../plugin.js";
-import { VendorAttributes } from "../vendor-attributes.js";
+import { VendorAttributes } from "../utils/vendor-attributes.js";
 
 // Assign some values to the Gamepad buttons. We use an offset of 256 here so we don't collide with
 // the keyboard buttons when binding.

@@ -2,7 +2,7 @@ import { Guard } from "../lib/guard.js";
 import { plugin } from "../lib/plugin.js";
 import { boolToOnOff } from "../lib/utils/number.js";
 import { $new, $el } from "../lib/utils/dom.js";
-import { dragElement } from "../lib/ui-effects.js";
+import { dragElement } from "../lib/utils/ui-effects.js";
 import { PerformanceStats } from "./performance-stats.js";
 import { debugConfig } from "./config.js";
 

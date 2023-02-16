@@ -1,7 +1,7 @@
-import { VendorAttributes } from "../lib/vendor-attributes.js";
+import { VendorAttributes } from "../lib/utils/vendor-attributes.js";
 import { constrain, map } from "../lib/utils/number.js";
 import { removeItem } from "../lib/utils/array.js";
-import { UserAgent } from "../lib/user-agent.js";
+import { UserAgent } from "../lib/utils/user-agent.js";
 import { Guard } from "../lib/guard.js";
 import { Timer } from "./timer.js";
 

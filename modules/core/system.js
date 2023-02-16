@@ -1,7 +1,7 @@
 import { Guard } from "../lib/guard.js";
 import { uniqueId } from "../lib/utils/string.js";
 import { $el, $new } from "../lib/utils/dom.js";
-import { VendorAttributes } from "../lib/vendor-attributes.js";
+import { VendorAttributes } from "../lib/utils/vendor-attributes.js";
 
 export class System {
   /** @type {import("./runner.js").GameRunner} */

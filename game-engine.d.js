@@ -45,14 +45,10 @@
 
 //#region LIB
 
-/// <reference path="modules/lib/cookie.js"/>
 /// <reference path="modules/lib/event-chain.js"/>
 /// <reference path="modules/lib/guard.js"/>
 /// <reference path="modules/lib/mixin.js"/>
 /// <reference path="modules/lib/plugin.js"/>
-/// <reference path="modules/lib/ui-effects.js"/>
-/// <reference path="modules/lib/user-agent.js"/>
-/// <reference path="modules/lib/vendor-attributes.js"/>
 
 //#region LIB.ENTITIES
 /// <reference path="modules/lib/entities/damage-zone.js"/>
@@ -122,9 +118,13 @@
 
 /// <reference path="modules/lib/utils/array.js"/>
 /// <reference path="modules/lib/utils/bezier.js"/>
+/// <reference path="modules/lib/utils/cookie.js"/>
 /// <reference path="modules/lib/utils/dom.js"/>
 /// <reference path="modules/lib/utils/number.js"/>
+/// <reference path="modules/lib/utils/ui-effects.js"/>
+/// <reference path="modules/lib/utils/user-agent.js"/>
 /// <reference path="modules/lib/utils/string.js"/>
+/// <reference path="modules/lib/utils/vendor-attributes.js"/>
 
 //#endregion LIB.UTILS
 

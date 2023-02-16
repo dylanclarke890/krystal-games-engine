@@ -1,4 +1,4 @@
-import { UserAgent } from "../lib/user-agent.js";
+import { UserAgent } from "../lib/utils/user-agent.js";
 import { Guard } from "../lib/guard.js";
 
 export class Input {
