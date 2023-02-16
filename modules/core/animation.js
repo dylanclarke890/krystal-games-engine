@@ -1,4 +1,6 @@
+import { Assert } from "../lib/sanity/assert.js";
 import { Guard } from "../lib/sanity/guard.js";
+import { arrayFromInterval } from "../lib/utils/array.js";
 import { Timer } from "./timer.js";
 
 export class GameAnimationSheet {
@@ -42,7 +44,7 @@ export class GameAnimation {
     this.#timer = new Timer();
     this.#sheet = sheet;
     this.#frameTime = frameTime;
-    this.#sequence = sequence;
+    this.#sequence = Assert.isType(sequence, "string") ? arrayFromInterval(sequence) : sequence;
     this.#stop = !!stop;
     this.#tile = this.#sequence[0];
 
