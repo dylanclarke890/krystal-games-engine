@@ -3,7 +3,7 @@ import { formatAsJSON, hyphenToCamelCase } from "../modules/lib/utils/string.js"
 import { $el } from "../modules/lib/utils/dom.js";
 import { slideToggle, fadeOut } from "../modules/lib/utils/ui-effects.js";
 import { getCookie, setCookie } from "../modules/lib/utils/cookie.js";
-import { Guard } from "../modules/lib/guard.js";
+import { Guard } from "../modules/lib/sanity/guard.js";
 
 import { Register } from "../modules/core/register.js";
 import { GameAudio } from "../modules/core/sound.js";

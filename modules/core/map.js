@@ -1,5 +1,5 @@
 import { $new } from "../lib/utils/dom.js";
-import { Guard } from "../lib/guard.js";
+import { Guard } from "../lib/sanity/guard.js";
 import { GameImage } from "../core/image.js";
 import { toInt } from "../lib/utils/number.js";
 

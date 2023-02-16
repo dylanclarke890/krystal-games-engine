@@ -1,5 +1,5 @@
 import { UserAgent } from "../lib/utils/user-agent.js";
-import { Guard } from "../lib/guard.js";
+import { Guard } from "../lib/sanity/guard.js";
 
 export class Input {
   static KEY = {

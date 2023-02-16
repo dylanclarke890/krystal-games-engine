@@ -1,4 +1,4 @@
-import { Guard } from "../lib/guard.js";
+import { Guard } from "../lib/sanity/guard.js";
 import { removeItem } from "../lib/utils/array.js";
 
 import { Register } from "../core/register.js";

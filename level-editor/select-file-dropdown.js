@@ -1,4 +1,4 @@
-import { Guard } from "../modules/lib/guard.js";
+import { Guard } from "../modules/lib/sanity/guard.js";
 import { $new, $el, getInnerHeight, getInnerWidth } from "../modules/lib/utils/dom.js";
 import { slideUp, slideDown } from "../modules/lib/utils/ui-effects.js";
 

@@ -1,4 +1,4 @@
-import { Guard } from "../modules/lib/guard.js";
+import { Guard } from "../modules/lib/sanity/guard.js";
 import { constrain } from "../modules/lib/utils/number.js";
 
 export class TileSelect {

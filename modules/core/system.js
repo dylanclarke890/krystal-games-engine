@@ -1,4 +1,4 @@
-import { Guard } from "../lib/guard.js";
+import { Guard } from "../lib/sanity/guard.js";
 import { uniqueId } from "../lib/utils/string.js";
 import { $el, $new } from "../lib/utils/dom.js";
 import { VendorAttributes } from "../lib/utils/vendor-attributes.js";

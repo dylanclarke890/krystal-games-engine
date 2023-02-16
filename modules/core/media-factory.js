@@ -1,4 +1,4 @@
-import { Guard } from "../lib/guard.js";
+import { Guard } from "../lib/sanity/guard.js";
 import { Register } from "./register.js";
 import { Font } from "./font.js";
 import { Sound } from "./sound.js";
@@ -55,14 +55,14 @@ export class MediaFactory {
   }
 
   /**
-   * @returns {Font} 
+   * @returns {Font}
    */
   createFont({ path, name } = {}) {
     return this.#createAsset(path, { name }, "font");
   }
 
   /**
-   * @returns {GameAnimationSheet} 
+   * @returns {GameAnimationSheet}
    */
   createAnimationSheet({ path, size }) {
     return this.#createAsset(path, { size, mediaFactory: this }, "animation");

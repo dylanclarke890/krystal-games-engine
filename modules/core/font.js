@@ -1,4 +1,4 @@
-import { Guard } from "../lib/guard.js";
+import { Guard } from "../lib/sanity/guard.js";
 import { uniqueId } from "../lib/utils/string.js";
 import { Register } from "./register.js";
 

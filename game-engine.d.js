@@ -46,7 +46,6 @@
 //#region LIB
 
 /// <reference path="modules/lib/event-chain.js"/>
-/// <reference path="modules/lib/guard.js"/>
 /// <reference path="modules/lib/mixin.js"/>
 /// <reference path="modules/lib/plugin.js"/>
 
@@ -113,6 +112,14 @@
 /// <reference path="modules/lib/plugins/touch-button.js"/>
 
 //#endregion LIB.PLUGINS
+
+//#region LIB.SANITY
+
+/// <reference path="modules/lib/sanity/check.js"/>
+/// <reference path="modules/lib/sanity/guard.js"/>
+
+//#endregion LIB.SANITY
+
 
 //#region LIB.UTILS
 

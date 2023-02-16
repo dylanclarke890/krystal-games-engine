@@ -1,4 +1,4 @@
-import { Guard } from "../guard.js";
+import { Guard } from "../sanity/guard.js";
 
 import { Font } from "../../core/font.js";
 import { Input } from "../../core/input.js";

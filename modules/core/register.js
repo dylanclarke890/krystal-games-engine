@@ -1,5 +1,5 @@
 import { uniqueId } from "../lib/utils/string.js";
-import { Guard } from "../lib/guard.js";
+import { Guard } from "../lib/sanity/guard.js";
 
 /**
  * To be used when the asset passed to MediaFactory.create-* is just a path to the resource, instead of one of the various

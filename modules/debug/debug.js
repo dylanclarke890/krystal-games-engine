@@ -1,4 +1,4 @@
-import { Guard } from "../lib/guard.js";
+import { Guard } from "../lib/sanity/guard.js";
 import { plugin } from "../lib/plugin.js";
 import { boolToOnOff } from "../lib/utils/number.js";
 import { $new, $el } from "../lib/utils/dom.js";

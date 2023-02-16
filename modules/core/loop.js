@@ -1,5 +1,5 @@
 import { $el } from "../lib/utils/dom.js";
-import { Guard } from "../lib/guard.js";
+import { Guard } from "../lib/sanity/guard.js";
 import { Timer } from "./timer.js";
 
 export class GameLoop {

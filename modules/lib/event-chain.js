@@ -1,5 +1,5 @@
 import { Timer } from "../core/timer.js";
-import { Guard } from "./guard.js";
+import { Guard } from "./sanity/guard.js";
 
 export class EventChain {
   #breakConditions;

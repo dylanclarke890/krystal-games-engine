@@ -1,4 +1,4 @@
-import { Guard } from "../lib/guard.js";
+import { Guard } from "../lib/sanity/guard.js";
 import { Register } from "./register.js";
 import { $new } from "../lib/utils/dom.js";
 

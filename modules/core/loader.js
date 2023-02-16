@@ -1,5 +1,5 @@
 import { removeItem } from "../lib/utils/array.js";
-import { Guard } from "../lib/guard.js";
+import { Guard } from "../lib/sanity/guard.js";
 import { Register } from "./register.js";
 
 export class GameLoader {
