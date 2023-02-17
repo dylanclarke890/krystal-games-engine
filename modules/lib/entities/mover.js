@@ -44,18 +44,21 @@ export class EntityMover extends Entity {
     }
 
     super.update();
+    if (!target) return;
 
     // Are we close to the target or has the distance actually increased? -> Set new target
     const newDistance = this.distanceTo(target);
-    if (target && (newDistance > oldDistance || newDistance < 0.5)) {
+    if (newDistance > oldDistance || newDistance < 0.5) {
       this.pos.x = target.pos.x + target.size.x / 2 - this.size.x / 2;
       this.pos.y = target.pos.y + target.size.y / 2 - this.size.y / 2;
       this.currentTarget++;
       if (this.currentTarget >= this.targets.length)
-        if (this.killOnEndReached) this.kill();
+        if (this.cbOnEndReached) this.onEndReached();
         else this.currentTarget = 0;
     }
   }
+
+  onEndReached() {}
 }
 
 Register.entityType(EntityMover);
