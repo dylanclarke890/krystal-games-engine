@@ -1,4 +1,5 @@
 import { Timer } from "../core/timer.js";
+import { Assert } from "./sanity/assert.js";
 import { Guard } from "./sanity/guard.js";
 
 export class EventChain {
@@ -64,11 +65,12 @@ export class EventChain {
     every: (duration, action) => {
       const waitLink = this.#linkMap.get(this.#chain.length - 1);
       if (!waitLink?.isWaitLink) EventChain.#mustFollowWaitLink("every");
-      const timer = new Timer(duration);
+      const getDuration = () => (Assert.isType(duration, "function") ? duration() : duration);
+      const timer = new Timer(getDuration());
       waitLink.callbacks.push(() => {
         if (timer.delta() < 0) return;
         action();
-        timer.set(duration);
+        timer.set(getDuration());
       });
     },
     whilst: (action) => {
@@ -213,7 +215,7 @@ export class EventChain {
    * Performs an action at regular intervals until the previous 'wait' link
    * has completed. Throws an error if the previous link in the event chain is not 'wait' or another link
    * type that can follow 'wait'.
-   * @param {number} duration Function to invoke at set interval.
+   * @param {number | () => number} duration Either a duration or a function that returns the duration.
    * @param {() => void} action Function to invoke at set interval.
    * @throws {TypeError}
    */
