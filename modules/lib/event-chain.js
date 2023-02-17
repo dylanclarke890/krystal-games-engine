@@ -92,11 +92,8 @@ export class EventChain {
     },
     thenUntil: (predicate, action) => {
       return () => {
-        if (predicate()) {
-          this.#nextLink();
-          return;
-        }
-        action();
+        if (predicate()) this.#nextLink();
+        else action();
       };
     },
     repeat: (amount) => {
@@ -107,12 +104,11 @@ export class EventChain {
       }
       return () => {
         const { totalRepeats, repeatsLeft } = this.#linkMap.get(stepKey);
-        if (repeatsLeft <= 0) {
-          this.#nextLink();
-          return;
+        if (repeatsLeft <= 0) this.#nextLink();
+        else {
+          this.#linkMap.set(stepKey, { totalRepeats, repeatsLeft: repeatsLeft - 1 });
+          this.reset();
         }
-        this.#linkMap.set(stepKey, { totalRepeats, repeatsLeft: repeatsLeft - 1 });
-        this.reset();
       };
     },
     repeatUntil: (predicate) => {
@@ -123,11 +119,8 @@ export class EventChain {
       }
       return () => {
         const { predicate } = this.#linkMap.get(stepKey);
-        if (predicate()) {
-          this.#nextLink();
-          return;
-        }
-        this.reset();
+        if (predicate()) this.#nextLink();
+        else this.reset();
       };
     },
   };
@@ -172,14 +165,13 @@ export class EventChain {
    * @param {number} duration Amount of time to wait in seconds.
    */
   wait(duration) {
-    duration ??= 1;
     this.#linkMap.set(this.#chain.length, {
       timer: new Timer(),
       predicates: [],
       callbacks: [],
       isWaitLink: true,
     });
-    this.#createLink(() => this.#actions.wait(duration));
+    this.#createLink(() => this.#actions.wait(duration ?? 1));
     return this;
   }
 
@@ -215,14 +207,13 @@ export class EventChain {
    * Performs an action at regular intervals until the previous 'wait' link
    * has completed. Throws an error if the previous link in the event chain is not 'wait' or another link
    * type that can follow 'wait'.
-   * @param {number | () => number} duration Either a duration or a function that returns the duration.
+   * @param {[number | () => number]} duration Either a duration or a function that returns the duration.
    * @param {() => void} action Function to invoke at set interval.
    * @throws {TypeError}
    */
   every(duration, action) {
     Guard.isTypeOf({ action }, "function");
-    duration ??= 1;
-    this.#actions.every(duration, action);
+    this.#actions.every(duration ?? 1, action);
     return this;
   }
 
@@ -277,8 +268,7 @@ export class EventChain {
    * @param {number} amount Amount of times to repeat the link. Defaults to Infinity.
    */
   repeat(amount) {
-    amount ??= Infinity;
-    this.#createLink(() => this.#actions.repeat(amount));
+    this.#createLink(() => this.#actions.repeat(amount ?? Infinity));
     return this;
   }
 
@@ -319,12 +309,8 @@ export class EventChain {
   update() {
     if (this.stopped) this.stopped = this.#startConditions.some((predicate) => predicate());
     this.#invokeCurrentLinkHandler();
-
-    if (this.#breakConditions.some((predicate) => predicate())) {
-      this.stop();
-      return;
-    }
-    this.#chainLinkUpdates();
+    if (this.#breakConditions.some((predicate) => predicate())) this.stop();
+    else this.#chainLinkUpdates();
   }
 
   #invokeCurrentLinkHandler() {
