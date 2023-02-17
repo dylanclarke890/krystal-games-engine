@@ -38,3 +38,8 @@ export function randomIntFromInterval(min, max) {
 export function boolToOnOff(bool) {
   return bool ? "On" : "Off";
 }
+
+export function safeParseInt(str) {
+  const parsed = parseInt(str);
+  return isNaN(parsed) ? 0 : parsed;
+}

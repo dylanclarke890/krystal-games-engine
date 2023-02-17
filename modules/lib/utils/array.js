@@ -1,3 +1,5 @@
+import { safeParseInt } from "./number.js";
+
 export function removeItem(array, item) {
   for (let i = array.length; i >= 0; i--) {
     if (array[i] === item) {
@@ -37,9 +39,6 @@ function setErrorAndType(res, error) {
   return res;
 }
 
-// (a,b)⇒{a<x<b}
-// [a,b]⇒{a..b}⇒{a≤x≤b}
-
 function getIntervalInfo(/** @type {string}*/ interval) {
   interval = interval.trim();
   const first = interval[0];
@@ -67,26 +66,41 @@ function getIntervalInfo(/** @type {string}*/ interval) {
     return setErrorAndType(res, "Invalid delimeter. Allowed characters are ',' and '..'.");
 
   const inner = interval.slice(1, interval.length - 1);
-  const split = inner.split(usesCommaDelimiter ? "," : "..");
+  const fromToArray = inner.split(usesCommaDelimiter ? "," : "..");
 
-  if (!split || split.length !== 2)
-    return setErrorAndType(res, "Either a start or an end character wasn't provided.");
+  if (fromToArray.length !== 2)
+    return setErrorAndType(
+      res,
+      "Wrong number of arguments provided. Interval requires a from and to value."
+    );
 
-  res.from = parseInt(split[0]);
-  res.to = parseInt(split[1]);
+  res.from = safeParseInt(fromToArray[0]);
+  res.to = safeParseInt(fromToArray[1]);
 
   if (res.from > res.to) res.reverse = true;
 
   return res;
 }
 
+/**
+ * Return a range of integers as specified in interval notation.
+ * @see https://en.wikipedia.org/wiki/Interval_(mathematics)
+ * @param {*} interval
+ * @returns
+ */
 export function arrayFromInterval(interval) {
-  const { success, from, to, includeEnd, includeStart, reverse } = getIntervalInfo(interval);
-  if (!success) return [];
+  const { success, error, from, to, includeEnd, includeStart, reverse } = getIntervalInfo(interval);
+  if (!success) {
+    console.warn(error);
+    return [];
+  }
 
   let start = includeStart ? from : from + 1;
   let end = includeEnd ? to + 1 : to;
-  let array = [];
-  for (let i = start; i < end; i++) array.push(i);
-  return reverse ? array.reverse() : array;
+  const array = [];
+
+  if (reverse) for (let i = start; i > end; i--) array.push(i);
+  else for (let i = start; i <= end; i++) array.push(i);
+
+  return array;
 }
