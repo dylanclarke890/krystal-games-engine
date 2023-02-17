@@ -100,7 +100,7 @@ export function arrayFromInterval(interval) {
   const array = [];
 
   if (reverse) for (let i = start; i > end; i--) array.push(i);
-  else for (let i = start; i <= end; i++) array.push(i);
+  else for (let i = start; i < end; i++) array.push(i);
 
   return array;
 }
