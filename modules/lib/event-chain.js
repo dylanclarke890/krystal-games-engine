@@ -3,13 +3,19 @@ import { Assert } from "./sanity/assert.js";
 import { Guard } from "./sanity/guard.js";
 
 export class EventChain {
+  /** @type {() => boolean[]} */
   #breakConditions;
   #chain;
+  /** @type {number} */
   #currentChain;
   #index;
+  /** @type {boolean} */
   #isNextLink;
+  /** @type {Map<number, any>} */
   #linkMap;
+  /** @type {number} */
   #maxChain;
+  /** @type {() => boolean[]} */
   #startConditions;
 
   static #mustFollowWaitLink(name) {
@@ -310,7 +316,7 @@ export class EventChain {
     if (this.stopped) this.stopped = this.#startConditions.some((predicate) => predicate());
     this.#invokeCurrentLinkHandler();
     if (this.#breakConditions.some((predicate) => predicate())) this.stop();
-    else this.#chainLinkUpdates();
+    else this.#continueChain();
   }
 
   #invokeCurrentLinkHandler() {
@@ -326,7 +332,7 @@ export class EventChain {
     link.handler();
   }
 
-  #chainLinkUpdates() {
+  #continueChain() {
     this.#currentChain++;
     // if chaining disabled or chain condition not met or already chaining or stopped
     if (!this.#maxChain || !this.#isNextLink || this.#currentChain > 0 || this.stopped) return;
