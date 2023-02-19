@@ -231,9 +231,7 @@ export class BackgroundMap extends GameMap {
   }
 
   drawTiled() {
-    let tile = 0,
-      anim = null,
-      tileOffsetX = toInt(this.scroll.x / this.tilesize),
+    let tileOffsetX = toInt(this.scroll.x / this.tilesize),
       tileOffsetY = toInt(this.scroll.y / this.tilesize),
       pxOffsetX = this.scroll.x % this.tilesize,
       pxOffsetY = this.scroll.y % this.tilesize,
@@ -262,10 +260,10 @@ export class BackgroundMap extends GameMap {
         }
 
         // Draw!
-        tile = this.data[tileY][tileX];
+        const tile = this.data[tileY][tileX];
         if (!tile) continue;
 
-        anim = this.anims[tile - 1];
+        const anim = this.anims[tile - 1];
         if (anim) anim.draw(pxX, pxY);
         else this.tiles.drawTile(pxX, pxY, tile - 1, this.tilesize);
       } // end for x
