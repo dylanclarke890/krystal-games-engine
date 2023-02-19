@@ -11,7 +11,7 @@ $type = $_GET["type"];
 $find;
 switch ($_GET['type']) {
   case 'images':
-    $find = '*.{png,gif,jpg,jpeg}';
+    $find = '*.{png,gif,jpg,jpeg,svg}';
     break;
   case 'scripts':
     $find = '*.js';
@@ -21,7 +21,16 @@ switch ($_GET['type']) {
     break;
 }
 
-$files = glob($dir . $find, GLOB_BRACE) ?? array();
-foreach ($files as $i => $f) $files[$i] = substr($f, $file_root_len);
+function getFiles($dir, $find, $depth = 0, $maxDepth = 5)
+{
+  if ($depth > $maxDepth) return array();
+  $files = glob($dir . $find, GLOB_BRACE) ?? array(); // Files in current directory
+  $directories = glob($dir . "*", GLOB_ONLYDIR) ?? array(); // Get directories to loop through
+  if (sizeof($directories) === 0) return $files;
+  foreach ($directories as $i => $d) $files = array_merge(getFiles($d . "/", $find, $depth + 1), $files);
+  return $files;
+}
 
+$files = getFiles($dir, $find);
+foreach ($files as $i => $f) $files[$i] = substr($f, $file_root_len);
 echo json_encode($files);
