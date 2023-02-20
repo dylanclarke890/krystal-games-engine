@@ -86,7 +86,7 @@ export class HttpClient {
 export class LevelEditorHttpClient extends HttpClient {
   constructor(returnFormat = "application/json") {
     super({
-      baseUrl: `${window.location.origin}/canvas-game-engine/server/level-editor/`,
+      baseUrl: `${window.location.origin}/krystal-games-engine/server/level-editor/`,
       headers: { Accept: returnFormat },
     });
   }

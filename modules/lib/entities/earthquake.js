@@ -1,6 +1,6 @@
-import { Entity } from "../canvas-game-engine/modules/core/entity.js";
-import { Register } from "../canvas-game-engine/modules/core/register.js";
-import { Timer } from "../canvas-game-engine/modules/lib/timer.js";
+import { Entity } from "../krystal-games-engine/modules/core/entity.js";
+import { Register } from "../krystal-games-engine/modules/core/register.js";
+import { Timer } from "../krystal-games-engine/modules/lib/timer.js";
 
 /**
  * This entity shakes the screen when its triggeredBy() method is called - usually

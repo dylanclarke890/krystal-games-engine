@@ -1,6 +1,6 @@
 import { Entity } from "../../core/entity.js";
 import { Register } from "../../core/register.js";
-import { map } from "../canvas-game-engine/modules/lib/number-utils.js";
+import { map } from "../krystal-games-engine/modules/lib/number-utils.js";
 import { Timer } from "../../core/timer.js";
 
 /**

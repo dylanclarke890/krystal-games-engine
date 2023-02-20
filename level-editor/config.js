@@ -69,7 +69,7 @@ export const levelEditorConfig = {
    *  The tilesize only specifies the size in the image - resizing to final
    *  size for each layer happens in level editor. */
   collisionTiles: {
-    path: "canvas-game-engine/level-editor/images/collisiontiles-64.png",
+    path: "krystal-games-engine/level-editor/images/collisiontiles-64.png",
     tilesize: 64,
   },
   /** Default path to use to load tilesets from. */
