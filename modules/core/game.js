@@ -7,13 +7,13 @@ import { CollisionMap, BackgroundMap } from "./map.js";
 import { Input } from "./input.js";
 import { Entity } from "./entity.js";
 
-export class Game {
+export class KrystalGame {
   #autoSort = false;
   #cellSize = 64;
   /** @type {Entity[]} */
   #deferredKills = [];
   #doSortEntities = false;
-  #sortBy = Game.SORT.Z_INDEX;
+  #sortBy = KrystalGame.SORT.Z_INDEX;
 
   levelToLoad;
   backgroundAnims = {};
@@ -57,7 +57,7 @@ export class Game {
     this.media = mediaFactory;
     this.fonts = fonts;
     this.input = new Input({ system: this.system });
-    this.#sortBy = this.#sortBy || Game.SORT.Z_INDEX;
+    this.#sortBy = this.#sortBy || KrystalGame.SORT.Z_INDEX;
   }
 
   update() {

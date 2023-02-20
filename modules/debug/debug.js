@@ -7,7 +7,7 @@ import { PerformanceStats } from "./performance-stats.js";
 import { debugConfig } from "./config.js";
 
 export class GameDebugger {
-  /** @type {Game} */
+  /** @type {KrystalGame} */
   game = null;
   /** @type {System} */
   system = null;

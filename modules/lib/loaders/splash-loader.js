@@ -83,7 +83,7 @@ export class SplashLoaderMixin extends GameLoader {
 
     ctx.font = "70px Arial";
     ctx.fillStyle = "purple";
-    const textWidth = ctx.measureText("Dylan's Game Engine").width;
+    const textWidth = ctx.measureText("Dylan's KrystalGame Engine").width;
     ctx.fillText("Dylan's Game Engine", realWidth / 2 - textWidth / 2, realHeight / 2);
   }
 }

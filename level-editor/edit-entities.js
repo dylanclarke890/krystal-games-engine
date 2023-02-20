@@ -2,7 +2,7 @@ import { Guard } from "../modules/lib/sanity/guard.js";
 import { $el, $new, loadScript } from "../modules/lib/utils/dom.js";
 
 import { Register } from "../modules/core/register.js";
-import { Game } from "../modules/core/game.js";
+import { KrystalGame } from "../modules/core/game.js";
 import { removeItem } from "../modules/lib/utils/array.js";
 
 export class EditEntities {
@@ -75,7 +75,7 @@ export class EditEntities {
   }
 
   sort() {
-    this.entities.sort(Game.SORT.Z_INDEX);
+    this.entities.sort(KrystalGame.SORT.Z_INDEX);
   }
 
   //#region Saving/Loading

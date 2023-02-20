@@ -1,4 +1,4 @@
-import { Game } from "../../../core/game.js";
+import { KrystalGame } from "../../../core/game.js";
 import { plugin } from "../../plugin.js";
 import { Box2D } from "./lib.js";
 
@@ -21,7 +21,7 @@ export class Box2DDebug {
         },
         needsBase: true,
       },
-    ]).to(Game);
+    ]).to(KrystalGame);
   }
 
   drawer = null;

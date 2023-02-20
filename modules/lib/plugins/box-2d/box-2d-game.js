@@ -1,7 +1,7 @@
-import { Game } from "../../../core/game.js";
+import { KrystalGame } from "../../../core/game.js";
 import { Box2D } from "./lib.js";
 
-export class Box2DGame extends Game {
+export class Box2DGame extends KrystalGame {
   collisionRects = [];
   debugCollisionRects = false;
 

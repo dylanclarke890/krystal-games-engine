@@ -1,4 +1,4 @@
-import { Game } from "../../core/game.js";
+import { KrystalGame } from "../../core/game.js";
 import { Input } from "../../core/input.js";
 import { plugin } from "../plugin.js";
 import { VendorAttributes } from "../utils/vendor-attributes.js";
@@ -105,6 +105,6 @@ export function initGamepads() {
   if (!navigator.getGamepads || !navigator.getGamepads()) return; // No Gamepad support; nothing to do here
   plugin(GamePadPlugin.input).to(Input);
   // Always poll gamepad before each frame
-  plugin(GamePadPlugin.game).to(Game);
+  plugin(GamePadPlugin.game).to(KrystalGame);
   gamepadsInitialised = true;
 }

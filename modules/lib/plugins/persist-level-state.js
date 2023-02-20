@@ -1,4 +1,4 @@
-import { Game } from "../core/game.js";
+import { KrystalGame } from "../core/game.js";
 import { plugin } from "../lib/inject.js";
 
 /**
@@ -26,7 +26,7 @@ export class Persistence {
       },
     ];
 
-    plugin(gameOverrides).to(Game);
+    plugin(gameOverrides).to(KrystalGame);
   }
 
   /**

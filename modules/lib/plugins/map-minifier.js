@@ -1,4 +1,4 @@
-import { Game } from "../core/game.js";
+import { KrystalGame } from "../core/game.js";
 import { EditMap } from "../level-editor/edit-map.js";
 import { LevelEditor } from "../level-editor/level-editor.js";
 import { plugin } from "../lib/inject.js";
@@ -50,7 +50,7 @@ export class MapMinifier {
         for (let i = 0; i < level.layer.length; i++) MapMinifier.decompressLayer(level.layer[i]);
         this.base(level);
       },
-    }).to(Game);
+    }).to(KrystalGame);
   }
 
   compressedMap;
