@@ -1,5 +1,5 @@
-import { Entity } from "../krystal-games-engine/modules/core/entity.js";
-import { Register } from "../krystal-games-engine/modules/core/register.js";
+import { Entity } from "../modules/core/entity.js";
+import { Register } from "../modules/core/register.js";
 
 /**
  * This entity calls ig.game.loadLevel() when its triggeredBy() method is called -

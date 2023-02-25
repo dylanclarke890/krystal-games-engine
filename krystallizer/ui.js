@@ -1,5 +1,5 @@
-import { BackgroundMap } from "../krystal-games-engine/modules/core/map.js";
-import { Assert } from "../krystal-games-engine/modules/lib/sanity/assert.js";
+import { BackgroundMap } from "../modules/core/map.js";
+import { Assert } from "../modules/lib/sanity/assert.js";
 import { config } from "./config.js";
 
 export class Modal {

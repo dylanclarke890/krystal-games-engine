@@ -1,9 +1,9 @@
-import { $new, $el } from "../krystal-games-engine/modules/lib/utils/dom.js";
-import { toInt } from "../krystal-games-engine/modules/lib/utils/number.js";
-import { Guard } from "../krystal-games-engine/modules/lib/sanity/guard.js";
+import { $new, $el } from "../modules/lib/utils/dom.js";
+import { toInt } from "../modules/lib/utils/number.js";
+import { Guard } from "../modules/lib/sanity/guard.js";
 
-import { GameImage } from "../krystal-games-engine/modules/core/image.js";
-import { BackgroundMap } from "../krystal-games-engine/modules/core/map.js";
+import { GameImage } from "../modules/core/image.js";
+import { BackgroundMap } from "../modules/core/map.js";
 
 import { TileSelect } from "./tile-select.js";
 

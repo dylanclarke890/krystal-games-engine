@@ -1,5 +1,5 @@
-import { Guard } from "../krystal-games-engine/modules/lib/sanity/guard.js";
-import { constrain } from "../krystal-games-engine/modules/lib/utils/number.js";
+import { Guard } from "../modules/lib/sanity/guard.js";
+import { constrain } from "../modules/lib/utils/number.js";
 
 export class TileSelect {
   layer = null;

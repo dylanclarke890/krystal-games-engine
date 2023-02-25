@@ -1,4 +1,4 @@
-import { Guard } from "../krystal-games-engine/modules/lib/sanity/guard.js";
+import { Guard } from "../modules/lib/sanity/guard.js";
 
 export class Undo {
   static TYPE = {
