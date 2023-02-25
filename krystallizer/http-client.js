@@ -106,7 +106,7 @@ export class KrystallizerHttpClient extends HttpClient {
         ),
       save: (path, data, opts = {}) =>
         this.post(`save.php?path=${encodeURIComponent(path)}`, data, { ...opts, stringify: false }),
-      file: (path, opts = {}) => this.get(`../../../${path}`, opts),
+      file: (path, opts = {}) => this.get(`../../${path}`, opts),
     };
   }
 }

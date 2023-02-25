@@ -12,9 +12,9 @@ export const config = {
     selection: "#ff9933", // Selection cursor box on tile maps
   },
   directories: {
-    images: "../assets",
+    images: "test-data/assets",
     /** Directory to use for loading and saving files. */
-    levels: "../levels",
+    levels: "test-data/scenes",
   },
   general: {
     confirmDeleteLayer: true,
