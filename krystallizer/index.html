@@ -88,9 +88,25 @@
           <button id="layer-delete" class="btn btn-sm">Delete</button>
         </div>
       </div>
-      <div id="entity-settings" class="panel">
+      <div id="entity-settings" class="panel" style="display: none">
         <h2 class="panel__header">Entity Settings</h2>
         <h3 id="entity-class-name" class="panel__header">EntityClassName</h3>
+        <h4 id="entity-size" class="panel__header">Size</h3>
+        <div id="dual-input-row">
+          <label for="size-x">w:</label>
+          <input type="number" name="size-x" id="size-x" autocomplete="off" />
+          <label for="size-y">h:</label>
+          <input type="number" name="size-y" id="size-y" autocomplete="off" />
+        </div>
+        <h4 id="entity-size" class="panel__header">Position</h3>
+        <div id="dual-input-row">
+          <label for="pos-x">x:</label>
+          <input type="number" name="pos-x" id="pos-x" autocomplete="off" />
+          <label for="pos-y">y:</label>
+          <input type="number" name="pos-y" id="pos-y" autocomplete="off" />
+        </div>
+          <label for="bounciness">Bounciness:</label>
+        <input type="number" name="bounciness" id="bounciness" autocomplete="off" />
       </div>
       <div id="entities" class="panel">
         <h2 class="panel__header">Entities</h2>

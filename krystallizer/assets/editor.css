@@ -20,6 +20,11 @@
   background-color: rgba(0, 0, 0, 0);
 }
 
+input {
+  border-radius: 3px;
+  padding: 2px;
+}
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -225,8 +230,6 @@ header {
 }
 
 .input-settings-layout input {
-  border-radius: 3px;
-  padding: 2px;
   place-self: flex-start;
 }
 
@@ -477,11 +480,22 @@ input:checked + .slider:before {
 
 /*#region ENTITY PANEL */
 
-#entity-class-name {
-  font-size: 95%;
+#entity-settings input[type="number"] {
+  max-width: 2.5em;
+}
+
+#entity-class-name,
+#entity-size,
+#entity-pos {
+  font-size: 90%;
   letter-spacing: normal;
   text-transform: none;
   border: none;
+}
+
+#entity-class-name {
+  font-size: 95%;
+  text-align: center;
 }
 
 /*#region ENTITY PANEL */

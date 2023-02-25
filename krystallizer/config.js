@@ -16,6 +16,10 @@ export const config = {
     /** Directory to use for loading and saving files. */
     levels: "test-data/scenes",
   },
+  entity: {
+    /** Include a list of properties to show by default. */
+    show: ["pos", "size", "bounciness"],
+  },
   general: {
     confirmDeleteLayer: true,
     confirmDiscardChanges: true,
