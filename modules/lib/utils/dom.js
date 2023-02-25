@@ -25,11 +25,19 @@ export function getInnerWidth(element) {
   return element.clientWidth - padding;
 }
 
-export function loadScript({ src, isES6Module, cb = () => {} } = {}) {
-  if (isES6Module !== false) isES6Module = true;
+/**
+ * @param {Object} opts 
+ * @param {string} opts.src The path to the script. Can be relative or absolute.
+ * @param {[string]} opts.type Defaults to 'module'
+ * @param {[() => void]} opts.cb Optional callback to invoke once loaded.
+ */
+export function loadScript({ src, type, cb } = {}) {
   const script = document.createElement("script");
-  script.type = isES6Module ? "module" : "text/javascript";
+  type ??= "module";
+  script.type = type;
+  cb ??= () => { };
   script.addEventListener("load", (e) => cb(e, src));
+  script.addEventListener("error", (e) => cb(e, src));
   script.src = src;
   document.body.appendChild(script);
 }

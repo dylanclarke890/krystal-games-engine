@@ -15,6 +15,7 @@ export const config = {
     images: "test-data/assets",
     /** Directory to use for loading and saving files. */
     levels: "test-data/scenes",
+    entities: ["test-data/entities/entities.js"],
   },
   entity: {
     /** Include a list of properties to show by default. */

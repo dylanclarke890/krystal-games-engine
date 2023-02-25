@@ -1,6 +1,6 @@
 import { GameLoop } from "../modules/core/loop.js";
 import { Register } from "../modules/core/register.js";
-import { $el } from "../modules/lib/utils/dom.js";
+import { $el, loadScript } from "../modules/lib/utils/dom.js";
 import { formatAsJSON, hyphenToCamelCase } from "../modules/lib/utils/string.js";
 import { Canvas } from "./canvas.js";
 import { config } from "./config.js";
@@ -22,6 +22,7 @@ export class Krystallizer {
     /** @type {"entities" | EditMap} */
     this.activeLayer;
     this.entities = [];
+    this.entityClasses = {};
     this.drawEntities = false;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
 
@@ -31,7 +32,7 @@ export class Krystallizer {
     this.discardChangesConfirmed = false;
 
     this.httpClient = new KrystallizerHttpClient();
-    this.preloadImages();
+    this.loadImagesAndGameObjects();
 
     this.DOMElements = {
       level: {
@@ -110,25 +111,75 @@ export class Krystallizer {
   }
 
   /**
-   * Loads all images from 'config.directories.images' before initialising any modals.
-   * This is to prevent blank screens from being drawn for the level previews.
+   * Load all images before initialising any modals. This is to prevent blank screens from
+   * being drawn for the level previews.
+   * @param {PromiseFulfilledResult<string>} paths
    */
-  preloadImages() {
-    this.httpClient.api.browse(config.directories.images, "images").then((paths) => {
-      const totalToLoad = paths.length;
-      let loaded = 0;
-      for (let i = 0; i < paths.length; i++) {
-        this.httpClient.api.file(paths[i], { parseResponse: false }).then((data) => {
-          const handle = () => {
-            if (++loaded === totalToLoad) this.initModals();
-          };
-          const img = new Image();
-          img.addEventListener("load", handle);
-          img.addEventListener("error", handle); // don't care if it fails; probably not important
-          img.src = data;
-        });
-      }
+  preloadImages(paths) {
+    const totalToLoad = paths.length;
+    let loaded = 0;
+
+    const requests = paths.map((path) => this.httpClient.api.file(path, { parseResponse: false }));
+    const handle = () => {
+      if (++loaded === totalToLoad) this.initModals();
+    };
+
+    Promise.allSettled(requests).then((results) => {
+      results.forEach((result) => {
+        if (result.status === "rejected") {
+          loaded++; // don't care if it fails; probably not important
+          return;
+        }
+        const img = new Image();
+        img.addEventListener("load", handle);
+        img.addEventListener("error", handle); // same here - failure not important
+        img.src = result.value;
+      });
     });
+  }
+
+  /**
+   * Load all game assets
+   */
+  loadImagesAndGameObjects() {
+    const { images, entities } = config.directories;
+    const getEntities = this.httpClient.api.glob(entities);
+    const getImages = this.httpClient.api.browse(images, "images");
+    Promise.all([getEntities, getImages]).then(([entitiesResult, imagesResult]) => {
+      this.loadEntityScripts(entitiesResult);
+      this.preloadImages(imagesResult);
+    });
+  }
+
+  loadEntityScripts(entitiesData) {
+    let totalScriptsToLoad = Object.keys(entitiesData).length;
+    const scriptLoadCb = () => {
+      if (--totalScriptsToLoad <= 0) this.importEntities(entitiesData);
+    };
+    for (let filepath in entitiesData) loadScript({ src: filepath, cb: scriptLoadCb });
+  }
+
+  importEntities(entitiesData) {
+    const invalidClasses = [];
+    for (let filepath in entitiesData) {
+      for (let i = 0; i < entitiesData[filepath].length; i++) {
+        const className = entitiesData[filepath][i];
+        const classDef = Register.getEntityByType(className);
+        if (!classDef) {
+          invalidClasses.push(className);
+          continue;
+        }
+        if (classDef.prototype._levelEditorIgnore) continue;
+        this.entityClasses[className] = filepath;
+        // new classDef({ x: 0, y: 0, game: this }); // images are already loaded but need caching.
+      }
+    }
+
+    if (invalidClasses.length > 0) {
+      console.debug(`Entity class definitions could not be fetched. Please ensure you've correctly
+      registered the entity type by calling Register.entityType(classDefinition) or
+      Register.entityTypes(...classDefinitions): ${invalidClasses.join("\n")}`);
+    }
   }
 
   initModals() {
@@ -201,6 +252,11 @@ export class Krystallizer {
 
   //#region Entity
 
+  constructEntitiesList() {
+    console.log(this.entities);
+    console.log(Register.classDefinitions);
+  }
+
   spawnEntity(className, x, y, settings) {
     const entityClass = Register.getEntityByType(className);
     if (!entityClass) return null;
@@ -252,6 +308,7 @@ export class Krystallizer {
       const { type, x, y, settings } = data.entities[i];
       this.spawnEntity(type, x, y, settings);
     }
+    this.constructEntitiesList();
 
     for (let i = 0; i < data.layer.length; i++) {
       const layer = data.layer[i];
