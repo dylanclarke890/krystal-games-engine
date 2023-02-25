@@ -127,7 +127,7 @@ export class Krystallizer {
     Promise.allSettled(requests).then((results) => {
       results.forEach((result) => {
         if (result.status === "rejected") {
-          loaded++; // don't care if it fails; probably not important
+          handle(); // don't care if it fails; probably not important
           return;
         }
         const img = new Image();
