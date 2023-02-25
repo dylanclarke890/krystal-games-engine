@@ -1,6 +1,6 @@
-import { Entity } from "../krystal-games-engine/modules/core/entity.js";
-import { Register } from "../krystal-games-engine/modules/core/register.js";
-import { Timer } from "../krystal-games-engine/modules/lib/timer.js";
+import { Entity } from "../modules/core/entity.js";
+import { Register } from "../modules/core/register.js";
+import { Timer } from "../modules/lib/timer.js";
 
 /**
  * This entity calls the triggeredBy( entity, trigger ) method of each of its

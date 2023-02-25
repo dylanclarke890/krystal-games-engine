@@ -1,10 +1,7 @@
-import { GameLoop } from "../krystal-games-engine/modules/core/loop.js";
-import { Register } from "../krystal-games-engine/modules/core/register.js";
-import { $el } from "../krystal-games-engine/modules/lib/utils/dom.js";
-import {
-  formatAsJSON,
-  hyphenToCamelCase,
-} from "../krystal-games-engine/modules/lib/utils/string.js";
+import { GameLoop } from "../modules/core/loop.js";
+import { Register } from "../modules/core/register.js";
+import { $el } from "../modules/lib/utils/dom.js";
+import { formatAsJSON, hyphenToCamelCase } from "../modules/lib/utils/string.js";
 import { Canvas } from "./canvas.js";
 import { config } from "./config.js";
 import { EditMap } from "./edit-map.js";
