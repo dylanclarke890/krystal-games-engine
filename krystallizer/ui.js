@@ -1,5 +1,6 @@
 import { BackgroundMap } from "../modules/core/map.js";
 import { Assert } from "../modules/lib/sanity/assert.js";
+import { Logger } from "../modules/lib/utils/logger.js";
 import { config } from "./config.js";
 
 export class Modal {
@@ -194,10 +195,12 @@ export class SelectLevelModal extends Modal {
    */
   constructor(settings = {}, httpClient) {
     super(settings);
+    /** @type {import("./http-client.js").KrystallizerHttpClient} */
     this.httpClient = httpClient;
     this.httpClient.api
       .browse(config.directories.levels, "scripts")
       .then((paths) => this.loadLevels(paths));
+    this.logger = Logger.getInstance();
     this.selected = null;
   }
 
@@ -222,19 +225,21 @@ export class SelectLevelModal extends Modal {
    * @param {string[]} paths
    */
   loadLevels(paths) {
-    const totalToLoad = paths.length;
-    let loaded = 0;
-    const levels = [];
-    for (let i = 0; i < paths.length; i++) {
-      const path = paths[i];
-      this.httpClient.api.file(path, { parseResponse: false }).then((data) => {
-        levels.push({ path, data: this.parseData(data) });
-        if (++loaded === totalToLoad) {
-          this.updateLevels(levels);
-          this.events.levelsLoaded(levels);
-        }
-      });
-    }
+    Promise.allSettled(
+      paths.map((path) =>
+        this.httpClient.api.file(path, { parseResponse: false }).then((data) => ({
+          path,
+          data: this.parseData(data),
+        }))
+      )
+    ).then((results) => {
+      const levels = results
+        .filter((result) => result.status === "fulfilled")
+        .map((result) => result.value);
+      this.logger.debug(levels);
+      this.updateLevels(levels);
+      this.events.levelsLoaded(levels);
+    });
   }
 
   parseData(data) {
@@ -269,6 +274,12 @@ export class SelectLevelModal extends Modal {
 
   updateLevels(levels) {
     this.levels = levels;
+    const body = this.modal.querySelector(".modal-body");
+    if (!levels?.length) {
+      body.innerHTML = "<p class='text-center'>Sorry, no levels found.</span>";
+      return;
+    }
+
     const options = [];
     for (let i = 0; i < levels.length; i++) {
       const { path, data } = levels[i];
@@ -282,7 +293,6 @@ export class SelectLevelModal extends Modal {
       options.push(levelOption);
       this.getLevelPreviewImage(levelOption, data);
     }
-    const body = this.modal.querySelector(".modal-body");
     body.innerHTML = "";
     body.append(...options);
     this.bindLevelOptionEvents(options);
@@ -397,4 +407,13 @@ export class SelectLevelModal extends Modal {
     for (let i = 0; i < options.length; i++) options[i].classList.remove("selected");
     super.close();
   }
+}
+
+export class EntityDisplay {
+  constructor(classDefinition) {
+    this.classDefinition = classDefinition;
+    this.DOMElements = {};
+  }
+
+  construct() {}
 }
