@@ -1,6 +1,6 @@
 :root {
   --border-style: 1px solid #555;
-  --transition-duration-default: 0.4s;
+  --transition-duration: 0.4s;
   --hover-color: rgb(202, 233, 243);
   --selection-color: rgb(100 171 182);
 }
@@ -280,8 +280,8 @@ header {
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  -webkit-transition: var(--transition-duration-default);
-  transition: var(--transition-duration-default);
+  -webkit-transition: var(--transition-duration);
+  transition: var(--transition-duration);
 }
 
 .slider:before {
@@ -292,8 +292,8 @@ header {
   left: 2px;
   bottom: 2px;
   background-color: white;
-  -webkit-transition: var(--transition-duration-default);
-  transition: var(--transition-duration-default);
+  -webkit-transition: var(--transition-duration);
+  transition: var(--transition-duration);
 }
 
 input:checked + .slider {
@@ -343,7 +343,7 @@ input:checked + .slider:before {
 /* Modal Content */
 .modal-content {
   animation-name: animatetop;
-  animation-duration: var(--transition-duration-default);
+  animation-duration: var(--transition-duration);
   background-color: black;
   border-radius: 4px;
   border: 2px solid white;
@@ -392,8 +392,8 @@ input:checked + .slider:before {
   float: right;
   font-size: 28px;
   font-weight: bold;
-  -webkit-transition: var(--transition-duration-default);
-  transition: var(--transition-duration-default);
+  -webkit-transition: var(--transition-duration);
+  transition: var(--transition-duration);
 }
 
 .modal-close:hover,
@@ -429,8 +429,8 @@ input:checked + .slider:before {
   padding: 0.2em;
   width: 160px;
   position: relative;
-  -webkit-transition: var(--transition-duration-default);
-  transition: var(--transition-duration-default);
+  -webkit-transition: var(--transition-duration);
+  transition: var(--transition-duration);
   user-select: none;
 }
 
@@ -518,8 +518,8 @@ input:checked + .slider:before {
   flex-direction: column;
   padding: 0.5em;
   cursor: pointer;
-  -webkit-transition: color var(--transition-duration-default);
-  transition: color var(--transition-duration-default);
+  -webkit-transition: background-color var(--transition-duration);
+  transition: background-color var(--transition-duration);
 }
 
 .entity-display:hover {
