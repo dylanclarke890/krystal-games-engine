@@ -1,3 +1,5 @@
+import { config } from "../../../krystallizer/config.js";
+
 export class Logger {
   static #levels = {
     critical: { lvl: 0, prefix: "[CRITICAL]", color: "red", background: "lightred" },
@@ -9,6 +11,7 @@ export class Logger {
 
   /** @type {Logger} */
   static #instance;
+  static #enabled = config.logging.enabled;
 
   static getInstance(level) {
     if (this.#instance) {
@@ -20,6 +23,10 @@ export class Logger {
     return this.#instance;
   }
 
+  static setEnabled(enabled) {
+    this.#enabled = !!enabled;
+  }
+
   /**
    * @param {[string]} initialLevel
    */
@@ -28,6 +35,7 @@ export class Logger {
   }
 
   log(level, ...args) {
+    if (!Logger.#enabled) return;
     if (!(level in Logger.#levels)) return;
     if (Logger.#levels[level].lvl > Logger.#levels[this.level].lvl) return;
 

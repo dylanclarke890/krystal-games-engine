@@ -17,7 +17,7 @@ export class Krystallizer {
     this.canvas = new Canvas(this.system);
     this.game = this.canvas; // for game loop
     this.loop = new GameLoop({ runner: this });
-    this.logger = Logger.getInstance(config.general.loggingLevel);
+    this.logger = Logger.getInstance(config.logging.level);
     /** @type {EditMap[]} */
     this.layers = [];
     /** @type {"entities" | EditMap} */

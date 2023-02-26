@@ -28,8 +28,6 @@ export const config = {
     newFileName: "untitled.js",
     prettyPrint: true,
     undoDepth: 50,
-    /** @type {"debug"|"info"|"warning"|"error"|"critical"} */
-    loggingLevel: "debug",
   },
   /** Font face and size for entity labels and the grid coordinates. */
   labels: {
@@ -41,6 +39,12 @@ export const config = {
     width: 10,
     height: 10,
     tilesize: 32,
+  },
+  logging: {
+    enabled: true,
+    /** @type {"debug"|"info"|"warning"|"error"|"critical"} */
+    level: "debug",
+    showTimestamp: true,
   },
   storageKeys: {
     lastLevel: "krystallizer_lastLevel",
