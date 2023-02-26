@@ -71,7 +71,7 @@ export class Krystallizer {
         linkWithCollision: $el("#link-with-collision"),
       },
     };
-    this.setModified(false);
+    this.setModifiedState(false);
     this.bindEvents();
     this.loop.start();
   }
@@ -236,19 +236,21 @@ export class Krystallizer {
 
   importEntities(entitiesData) {
     const invalidClasses = [];
-    for (let filepath in entitiesData) {
-      for (let i = 0; i < entitiesData[filepath].length; i++) {
-        const className = entitiesData[filepath][i];
+    const entityClasses = {};
+
+    for (const filepath in entitiesData) {
+      entitiesData[filepath].forEach((className) => {
         const classDef = Register.getEntityByType(className);
-        if (!classDef) {
+        if (classDef && !classDef.prototype._levelEditorIgnore) {
+          entityClasses[className] = { filepath };
+        } else {
           invalidClasses.push(className);
-          continue;
         }
-        if (classDef.prototype._levelEditorIgnore) continue;
-        this.entityClasses[className] = { filepath };
-      }
+      });
     }
+
     if (invalidClasses.length > 0) this.logInvalidClasses(invalidClasses);
+    this.entityClasses = entityClasses;
     this.constructEntitiesList();
   }
 
@@ -314,7 +316,7 @@ export class Krystallizer {
     this.clearLevel();
     this.fileName = config.general.newFileName;
     this.filePath = config.directories.levels + this.fileName;
-    this.setModified(false);
+    this.setModifiedState(false);
     this.discardChangesConfirmed = false;
   }
 
@@ -328,7 +330,7 @@ export class Krystallizer {
     const split = path.lastIndexOf("/");
     this.filePath = path.substring(0, split + 1);
     this.fileName = path.substring(split + 1);
-    this.setModified(false);
+    this.setModifiedState(false);
     localStorage.setItem(config.storageKeys.lastLevel, path);
 
     for (let i = 0; i < data.entities.length; i++) {
@@ -363,7 +365,7 @@ export class Krystallizer {
 
     this.setActiveLayer("entities");
     this.reorderLayers();
-    this.setModified(false);
+    this.setModifiedState(false);
 
     // eslint-disable-next-line no-undef
     $(this.DOMElements.layers).sortable("refresh");
@@ -397,7 +399,7 @@ export class Krystallizer {
           console.error(res.msg);
           return;
         }
-        this.setModified(false);
+        this.setModifiedState(false);
         localStorage.setItem(config.storageKeys.lastLevel, path);
       })
       .catch((err) => console.error(err));
@@ -405,7 +407,7 @@ export class Krystallizer {
 
   //#endregion Level
 
-  setModified(/** @type {boolean} */ isModified) {
+  setModifiedState(/** @type {boolean} */ isModified) {
     this.modified = isModified;
     document.title = `${this.fileName}${isModified ? "*" : ""} | Krystallizer`;
     const levelName = this.DOMElements.level.name;
@@ -451,7 +453,7 @@ export class Krystallizer {
     });
 
     this.layers = newLayers;
-    this.setModified(true);
+    this.setModifiedState(true);
     this.draw();
   }
 
@@ -568,7 +570,7 @@ export class Krystallizer {
     else if (this.activeLayer.name === "collision") this.collisionLayer = undefined;
 
     this.activeLayer.setName(newName);
-    this.setModified(true);
+    this.setModifiedState(true);
     this.draw();
   }
 
