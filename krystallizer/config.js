@@ -28,6 +28,8 @@ export const config = {
     newFileName: "untitled.js",
     prettyPrint: true,
     undoDepth: 50,
+    /** @type {"debug"|"info"|"warning"|"error"|"critical"} */
+    loggingLevel: "debug",
   },
   /** Font face and size for entity labels and the grid coordinates. */
   labels: {

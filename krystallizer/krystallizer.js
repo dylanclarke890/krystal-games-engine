@@ -1,6 +1,7 @@
 import { GameLoop } from "../modules/core/loop.js";
 import { Register } from "../modules/core/register.js";
 import { $el, loadScript } from "../modules/lib/utils/dom.js";
+import { Logger } from "../modules/lib/utils/logger.js";
 import { formatAsJSON, hyphenToCamelCase } from "../modules/lib/utils/string.js";
 import { Canvas } from "./canvas.js";
 import { config } from "./config.js";
@@ -16,7 +17,7 @@ export class Krystallizer {
     this.canvas = new Canvas(this.system);
     this.game = this.canvas; // for game loop
     this.loop = new GameLoop({ runner: this });
-
+    this.logger = Logger.getInstance(config.general.loggingLevel);
     /** @type {EditMap[]} */
     this.layers = [];
     /** @type {"entities" | EditMap} */
@@ -145,10 +146,12 @@ export class Krystallizer {
     const { images, entities } = config.directories;
     const getEntities = this.httpClient.api.glob(entities);
     const getImages = this.httpClient.api.browse(images, "images");
-    Promise.all([getEntities, getImages]).then(([entitiesResult, imagesResult]) => {
-      this.loadEntityScripts(entitiesResult);
-      this.preloadImages(imagesResult);
-    });
+    Promise.all([getEntities, getImages])
+      .then(([entitiesResult, imagesResult]) => {
+        this.loadEntityScripts(entitiesResult);
+        this.preloadImages(imagesResult);
+      })
+      .catch((err) => console.error(`Error occurred during loading: ${err}`));
   }
 
   loadEntityScripts(entitiesData) {
@@ -160,6 +163,7 @@ export class Krystallizer {
   }
 
   importEntities(entitiesData) {
+    this.logger.debug(entitiesData);
     const invalidClasses = [];
     for (let filepath in entitiesData) {
       for (let i = 0; i < entitiesData[filepath].length; i++) {
@@ -171,15 +175,20 @@ export class Krystallizer {
         }
         if (classDef.prototype._levelEditorIgnore) continue;
         this.entityClasses[className] = filepath;
-        // new classDef({ x: 0, y: 0, game: this }); // images are already loaded but need caching.
       }
     }
 
-    if (invalidClasses.length > 0) {
-      console.debug(`Entity class definitions could not be fetched. Please ensure you've correctly
-      registered the entity type by calling Register.entityType(classDefinition) or
-      Register.entityTypes(...classDefinitions): ${invalidClasses.join("\n")}`);
-    }
+    if (invalidClasses.length > 0) this.logInvalidClasses(invalidClasses);
+  }
+
+  logInvalidClasses(invalidClasses) {
+    this.logger.debug(`
+    Entity class definitions could not be fetched. Please ensure you've correctly registered the entity type by calling:
+    Register.entityType(classDefinition) or
+    Register.entityTypes(...classDefinitions).
+    The following class definitions could not be found:
+    ${invalidClasses.join("\n")}
+  `);
   }
 
   initModals() {
