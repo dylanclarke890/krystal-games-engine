@@ -423,23 +423,36 @@ export class EntityDisplay {
     div.append(name);
     div.addEventListener("mousedown", (e) => this.mousedown(e));
     target.append(div);
-    this.DOMElements = { div, name, preview, clone: null };
+    this.DOMElements = { div, name, preview };
   }
 
   mousedown(e) {
     const clone = this.DOMElements.div.cloneNode(true);
-    clone.style.position = "absolute";
-    clone.style.left = `${e.clientX}px`;
-    clone.style.top = `${e.clientY}px`;
     document.body.appendChild(clone);
+    clone.style.position = "absolute";
+    clone.style.left = `${e.pageX - clone.offsetWidth / 2}px`;
+    clone.style.top = `${e.pageY - clone.offsetHeight / 2}px`;
 
-    // start dragging the new element
-    const drag = (e) => {
-      clone.style.left = `${e.clientX}px`;
-      clone.style.top = `${e.clientY}px`;
+    const mouseMove = (e) => {
+      const posX = e.pageX - clone.offsetWidth / 2;
+      const posY = e.pageY - clone.offsetHeight / 2;
+      clone.style.left = `${posX}px`;
+      clone.style.top = `${posY}px`;
+
+      clone.style.pointerEvents = "none";
+      const target = document.elementFromPoint(e.clientX, e.clientY);
+      clone.style.removeProperty("pointer-events");
+
+      if (target.tagName !== "CANVAS") return;
+      console.log("We over the canvas baby!");
+    };
+    const mouseUp = () => {
+      document.removeEventListener("mousemove", mouseMove);
+      document.removeEventListener("mouseup", mouseUp);
+      document.body.removeChild(clone);
     };
 
-    document.addEventListener("mousemove", drag);
-    document.addEventListener("mouseup", () => document.removeEventListener("mousemove", drag));
+    document.addEventListener("mousemove", mouseMove);
+    document.addEventListener("mouseup", mouseUp);
   }
 }
