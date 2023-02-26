@@ -511,7 +511,7 @@ input:checked + .slider:before {
 #entities__list {
   display: grid;
   grid-auto-rows: var(--entity-display-size);
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(128px, 1fr));
 }
 
 .entity-display {
