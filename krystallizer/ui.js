@@ -400,10 +400,12 @@ export class SelectLevelModal extends Modal {
 }
 
 export class EntityDisplay {
-  constructor(className, { filepath, props }) {
+  constructor(className, { filepath, props }, onDrop) {
     this.className = className;
     this.filepath = filepath;
     this.props = props;
+    this.spawnAt = { x: -1, y: -1 };
+    this.onDrop = onDrop ?? (() => {});
     this.construct();
   }
 
@@ -439,17 +441,21 @@ export class EntityDisplay {
       clone.style.left = `${posX}px`;
       clone.style.top = `${posY}px`;
 
+      // Select the element beneath the dragged clone.
       clone.style.pointerEvents = "none";
       const target = document.elementFromPoint(e.clientX, e.clientY);
       clone.style.removeProperty("pointer-events");
 
       if (target.tagName !== "CANVAS") return;
-      console.log("We over the canvas baby!");
+      const bounds = target.getBoundingClientRect();
+      this.spawnAt.x = e.clientX - bounds.left;
+      this.spawnAt.y = e.clientY - bounds.top;
     };
     const mouseUp = () => {
       document.removeEventListener("mousemove", mouseMove);
       document.removeEventListener("mouseup", mouseUp);
       document.body.removeChild(clone);
+      this.onDrop(this.className, this.spawnAt);
     };
 
     document.addEventListener("mousemove", mouseMove);

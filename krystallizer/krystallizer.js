@@ -260,6 +260,10 @@ export class Krystallizer {
   `);
   }
 
+  onEntityDrop(className, { x, y }) {
+    this.logger.debug(this.spawnEntity(className, x, y));
+  }
+
   constructEntitiesList() {
     const ignoredProps = ["game", "id", "killed"];
     const classes = Object.keys(this.entityClasses);
@@ -270,11 +274,15 @@ export class Krystallizer {
       this.entityClasses[className].props = Object.keys(new def({ x: 0, y: 0, game: this })).filter(
         (v) => !ignoredProps.some((p) => v === p)
       );
-      entityDisplays.push(new EntityDisplay(className, this.entityClasses[className]));
+      entityDisplays.push(
+        new EntityDisplay(className, this.entityClasses[className], (cn, pos) =>
+          this.onEntityDrop(cn, pos)
+        )
+      );
     }
   }
 
-  spawnEntity(className, x, y, settings) {
+  spawnEntity(className, x, y, settings = {}) {
     const entityClass = Register.getEntityByType(className);
     if (!entityClass) return null;
     const newEntity = new entityClass({ x, y, game: this, settings });
