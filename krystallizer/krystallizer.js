@@ -77,6 +77,8 @@ export class Krystallizer {
   }
 
   bindEvents() {
+    window.addEventListener("resize", () => this.system.resize());
+
     const { layers, level, layerActions, entitiesLayer, layerSettings } = this.DOMElements;
 
     // eslint-disable-next-line no-undef

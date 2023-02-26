@@ -1,8 +1,9 @@
 :root {
   --border-style: 1px solid #555;
-  --transition-duration: 0.4s;
+  --entity-display-size: 128px;
   --hover-color: rgb(202, 233, 243);
   --selection-color: rgb(100 171 182);
+  --transition-duration: 0.4s;
 }
 
 /* #region GENERAL */
@@ -509,15 +510,17 @@ input:checked + .slider:before {
 
 #entities__list {
   display: grid;
+  grid-auto-rows: var(--entity-display-size);
   grid-template-columns: 1fr 1fr;
-  grid-auto-rows: 120px;
 }
 
 .entity-display {
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   padding: 0.5em;
-  cursor: pointer;
+  max-height: var(--entity-display-size);
+  max-width: var(--entity-display-size);
   -webkit-transition: background-color var(--transition-duration);
   transition: background-color var(--transition-duration);
 }
