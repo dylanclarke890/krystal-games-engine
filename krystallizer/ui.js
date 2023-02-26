@@ -1,5 +1,6 @@
 import { BackgroundMap } from "../modules/core/map.js";
 import { Assert } from "../modules/lib/sanity/assert.js";
+import { Guard } from "../modules/lib/sanity/guard.js";
 import { Logger } from "../modules/lib/utils/logger.js";
 import { config } from "./config.js";
 
@@ -402,9 +403,11 @@ export class SelectLevelModal extends Modal {
 export class EntityDisplay {
   constructor(className, { filepath, props }, onDrop) {
     this.className = className;
+    Guard.againstNull({ className }).isTypeOf("string");
+    Guard.againstNull({ filepath }).isTypeOf("string");
+    Guard.againstNull({ props }).isTypeOf("object");
     this.filepath = filepath;
     this.props = props;
-    this.spawnAt = { x: -1, y: -1 };
     this.onDrop = onDrop ?? (() => {});
     this.construct();
   }
@@ -435,30 +438,31 @@ export class EntityDisplay {
     clone.style.left = `${e.pageX - clone.offsetWidth / 2}px`;
     clone.style.top = `${e.pageY - clone.offsetHeight / 2}px`;
 
+    const canvas = document.querySelector("canvas");
+    let target;
     const mouseMove = (e) => {
       const posX = e.pageX - clone.offsetWidth / 2;
       const posY = e.pageY - clone.offsetHeight / 2;
       clone.style.left = `${posX}px`;
       clone.style.top = `${posY}px`;
-
       // Select the element beneath the dragged clone.
       clone.style.pointerEvents = "none";
-      const target = document.elementFromPoint(e.clientX, e.clientY);
+      target = document.elementFromPoint(e.clientX, e.clientY);
       clone.style.removeProperty("pointer-events");
-
-      if (target.tagName !== "CANVAS") return;
-      const bounds = target.getBoundingClientRect();
-      this.spawnAt.x = e.clientX - bounds.left;
-      this.spawnAt.y = e.clientY - bounds.top;
     };
     const mouseUp = () => {
       document.removeEventListener("mousemove", mouseMove);
-      document.removeEventListener("mouseup", mouseUp);
+      clone.removeEventListener("mouseup", mouseUp);
       document.body.removeChild(clone);
-      this.onDrop(this.className, this.spawnAt);
+
+      if (target !== canvas) return;
+      const bounds = target.getBoundingClientRect();
+      const x = e.clientX - bounds.left;
+      const y = e.clientY - bounds.top;
+      this.onDrop(this.className, { x, y });
     };
 
     document.addEventListener("mousemove", mouseMove);
-    document.addEventListener("mouseup", mouseUp);
+    clone.addEventListener("mouseup", mouseUp);
   }
 }

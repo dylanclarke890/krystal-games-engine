@@ -21,6 +21,7 @@ export class Guard {
     if (value == null) throw new Error(`"${key}" is required.`);
     return {
       isInstanceOf: (instance) => this.isInstanceOf(keyValue, instance),
+      isTypeOf: (type) => this.isTypeOf(keyValue, type),
     };
   }
 
