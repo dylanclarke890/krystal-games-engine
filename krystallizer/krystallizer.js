@@ -8,7 +8,7 @@ import { config } from "./config.js";
 import { EditMap } from "./edit-map.js";
 import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
-import { ConfirmModal, SelectLevelModal } from "./ui.js";
+import { ConfirmModal, EntityDisplay, SelectLevelModal } from "./ui.js";
 import { Undo } from "./undo.js";
 
 export class Krystallizer {
@@ -243,7 +243,7 @@ export class Krystallizer {
           continue;
         }
         if (classDef.prototype._levelEditorIgnore) continue;
-        this.entityClasses[className] = filepath;
+        this.entityClasses[className] = { filepath };
       }
     }
     if (invalidClasses.length > 0) this.logInvalidClasses(invalidClasses);
@@ -261,9 +261,16 @@ export class Krystallizer {
   }
 
   constructEntitiesList() {
+    const ignoredProps = ["game", "id", "killed"];
     const classes = Object.keys(this.entityClasses);
+    const entityDisplays = [];
     for (let i = 0; i < classes.length; i++) {
-      this.logger.debug(Register.getEntityByType(classes[i]));      
+      const className = classes[i];
+      const def = Register.getEntityByType(className);
+      this.entityClasses[className].props = Object.keys(new def({ x: 0, y: 0, game: this })).filter(
+        (v) => !ignoredProps.some((p) => v === p)
+      );
+      entityDisplays.push(new EntityDisplay(className, this.entityClasses[className]));
     }
   }
 

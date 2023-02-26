@@ -236,7 +236,6 @@ export class SelectLevelModal extends Modal {
       const levels = results
         .filter((result) => result.status === "fulfilled")
         .map((result) => result.value);
-      this.logger.debug(levels);
       this.updateLevels(levels);
       this.events.levelsLoaded(levels);
     });
@@ -391,15 +390,6 @@ export class SelectLevelModal extends Modal {
     confirmBtn.addEventListener("click", () => this.close());
   }
 
-  /**
-   * Register a callback for when levels have finished loading.
-   * @param {Function} cb
-   */
-  onLevelsLoaded(cb) {
-    this.levelsLoadedCallbacks ??= [];
-    this.levelsLoadedCallbacks.push(Modal.bind(cb));
-  }
-
   close() {
     this.events.select(this.selected);
     this.selected = null;
@@ -410,8 +400,9 @@ export class SelectLevelModal extends Modal {
 }
 
 export class EntityDisplay {
-  constructor(classDefinition) {
-    this.classDefinition = classDefinition;
+  constructor(className, data) {
+    this.className = className;
+    this.data = data;
     this.DOMElements = {};
   }
 
