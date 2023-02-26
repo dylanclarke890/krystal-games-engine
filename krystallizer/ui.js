@@ -400,11 +400,46 @@ export class SelectLevelModal extends Modal {
 }
 
 export class EntityDisplay {
-  constructor(className, data) {
+  constructor(className, { filepath, props }) {
     this.className = className;
-    this.data = data;
-    this.DOMElements = {};
+    this.filepath = filepath;
+    this.props = props;
+    this.construct();
   }
 
-  construct() {}
+  construct() {
+    const target = document.getElementById("entities__list");
+    const div = document.createElement("div");
+    div.classList.add("entity-display");
+
+    const name = document.createElement("span");
+    name.classList.add("entity-display__name");
+    name.textContent = this.className;
+
+    const preview = document.createElement("div");
+    preview.classList.add("entity-display__preview");
+
+    div.append(preview);
+    div.append(name);
+    div.addEventListener("mousedown", (e) => this.mousedown(e));
+    target.append(div);
+    this.DOMElements = { div, name, preview, clone: null };
+  }
+
+  mousedown(e) {
+    const clone = this.DOMElements.div.cloneNode(true);
+    clone.style.position = "absolute";
+    clone.style.left = `${e.clientX}px`;
+    clone.style.top = `${e.clientY}px`;
+    document.body.appendChild(clone);
+
+    // start dragging the new element
+    const drag = (e) => {
+      clone.style.left = `${e.clientX}px`;
+      clone.style.top = `${e.clientY}px`;
+    };
+
+    document.addEventListener("mousemove", drag);
+    document.addEventListener("mouseup", () => document.removeEventListener("mousemove", drag));
+  }
 }
