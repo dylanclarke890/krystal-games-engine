@@ -12,6 +12,7 @@ export class Logger {
   /** @type {Logger} */
   static #instance;
   static #enabled = config.logging.enabled;
+  static #showTimestamp = config.logging.showTimestamp;
 
   static getInstance(level) {
     if (this.#instance) {
@@ -21,10 +22,6 @@ export class Logger {
 
     this.#instance = new Logger(level);
     return this.#instance;
-  }
-
-  static setEnabled(enabled) {
-    this.#enabled = !!enabled;
   }
 
   /**
@@ -38,12 +35,12 @@ export class Logger {
     if (!Logger.#enabled) return;
     if (!(level in Logger.#levels)) return;
     if (Logger.#levels[level].lvl > Logger.#levels[this.level].lvl) return;
-
     const { prefix, color, background } = Logger.#levels[level];
+    const message = Logger.#showTimestamp ? `%c${prefix} - ${performance.now()} -` : `%c${prefix}`;
     const colorStyle = color ? `color: ${color}` : "";
     const bgStyle = background ? `background: ${background}` : "";
     const style = `${colorStyle};${bgStyle}`;
-    console.log(`%c${prefix}`, style, ...args);
+    console.log(message, style, ...args);
   }
 
   error(...args) {
