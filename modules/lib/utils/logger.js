@@ -2,9 +2,9 @@ import { config } from "../../../krystallizer/config.js";
 
 export class Logger {
   static #levels = {
-    critical: { lvl: 0, prefix: "[CRITICAL]", color: "red", background: "lightred" },
-    error: { lvl: 1, prefix: "[ERROR]", color: "lightred", background: "orange" },
-    warn: { lvl: 2, prefix: "[WARN]", color: "orange", background: "yellow" },
+    critical: { lvl: 0, prefix: "[CRITICAL]", color: "darkred", background: "red" },
+    error: { lvl: 1, prefix: "[ERROR]", color: "darkred", background: "lightcoral" },
+    warn: { lvl: 2, prefix: "[WARN]", color: "orangered", background: "orange" },
     info: { lvl: 3, prefix: "[INFO]", color: "blue", background: "lightblue" },
     debug: { lvl: 4, prefix: "[DEBUG]", color: "green", background: "lightgreen" },
   };
@@ -36,11 +36,15 @@ export class Logger {
     if (!(level in Logger.#levels)) return;
     if (Logger.#levels[level].lvl > Logger.#levels[this.level].lvl) return;
     const { prefix, color, background } = Logger.#levels[level];
-    const message = Logger.#showTimestamp ? `%c${prefix} - ${performance.now()} -` : `%c${prefix}`;
+    const message = Logger.#showTimestamp ? `%c${prefix} - T:${performance.now()}` : `%c${prefix}`;
     const colorStyle = color ? `color: ${color}` : "";
     const bgStyle = background ? `background: ${background}` : "";
-    const style = `${colorStyle};${bgStyle}`;
+    const style = `${colorStyle};${bgStyle};`;
     console.log(message, style, ...args);
+  }
+
+  critical(...args) {
+    this.log("critical", ...args);
   }
 
   error(...args) {

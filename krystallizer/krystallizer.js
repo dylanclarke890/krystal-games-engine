@@ -154,43 +154,6 @@ export class Krystallizer {
       .catch((err) => console.error(`Error occurred during loading: ${err}`));
   }
 
-  loadEntityScripts(entitiesData) {
-    let totalScriptsToLoad = Object.keys(entitiesData).length;
-    const scriptLoadCb = () => {
-      if (--totalScriptsToLoad <= 0) this.importEntities(entitiesData);
-    };
-    for (let filepath in entitiesData) loadScript({ src: filepath, cb: scriptLoadCb });
-  }
-
-  importEntities(entitiesData) {
-    this.logger.debug(entitiesData);
-    const invalidClasses = [];
-    for (let filepath in entitiesData) {
-      for (let i = 0; i < entitiesData[filepath].length; i++) {
-        const className = entitiesData[filepath][i];
-        const classDef = Register.getEntityByType(className);
-        if (!classDef) {
-          invalidClasses.push(className);
-          continue;
-        }
-        if (classDef.prototype._levelEditorIgnore) continue;
-        this.entityClasses[className] = filepath;
-      }
-    }
-
-    if (invalidClasses.length > 0) this.logInvalidClasses(invalidClasses);
-  }
-
-  logInvalidClasses(invalidClasses) {
-    this.logger.debug(`
-    Entity class definitions could not be fetched. Please ensure you've correctly registered the entity type by calling:
-    Register.entityType(classDefinition) or
-    Register.entityTypes(...classDefinitions).
-    The following class definitions could not be found:
-    ${invalidClasses.join("\n")}
-  `);
-  }
-
   initModals() {
     const saveAs = new ConfirmModal({
       id: "modal-save-as",
@@ -261,9 +224,47 @@ export class Krystallizer {
 
   //#region Entity
 
+  loadEntityScripts(entitiesData) {
+    let totalScriptsToLoad = Object.keys(entitiesData).length;
+    const scriptLoadCb = () => {
+      if (--totalScriptsToLoad <= 0) this.importEntities(entitiesData);
+    };
+    for (let filepath in entitiesData) loadScript({ src: filepath, cb: scriptLoadCb });
+  }
+
+  importEntities(entitiesData) {
+    const invalidClasses = [];
+    for (let filepath in entitiesData) {
+      for (let i = 0; i < entitiesData[filepath].length; i++) {
+        const className = entitiesData[filepath][i];
+        const classDef = Register.getEntityByType(className);
+        if (!classDef) {
+          invalidClasses.push(className);
+          continue;
+        }
+        if (classDef.prototype._levelEditorIgnore) continue;
+        this.entityClasses[className] = filepath;
+      }
+    }
+    if (invalidClasses.length > 0) this.logInvalidClasses(invalidClasses);
+    this.constructEntitiesList();
+  }
+
+  logInvalidClasses(invalidClasses) {
+    this.logger.debug(`
+    Entity class definitions could not be fetched. Please ensure you've correctly registered the entity type by calling:
+    Register.entityType(classDefinition) or
+    Register.entityTypes(...classDefinitions).
+    The following class definitions could not be found:
+    ${invalidClasses.join("\n")}
+  `);
+  }
+
   constructEntitiesList() {
-    console.log(this.entities);
-    console.log(Register.classDefinitions);
+    const classes = Object.keys(this.entityClasses);
+    for (let i = 0; i < classes.length; i++) {
+      this.logger.debug(Register.getEntityByType(classes[i]));      
+    }
   }
 
   spawnEntity(className, x, y, settings) {
@@ -317,7 +318,6 @@ export class Krystallizer {
       const { type, x, y, settings } = data.entities[i];
       this.spawnEntity(type, x, y, settings);
     }
-    this.constructEntitiesList();
 
     for (let i = 0; i < data.layer.length; i++) {
       const layer = data.layer[i];
