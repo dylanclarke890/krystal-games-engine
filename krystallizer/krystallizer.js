@@ -34,7 +34,7 @@ export class Krystallizer {
     this.discardChangesConfirmed = false;
 
     this.httpClient = new KrystallizerHttpClient();
-    this.loadImagesAndGameObjects();
+    this.loadImagesAndEntities();
 
     this.DOMElements = {
       level: {
@@ -152,9 +152,9 @@ export class Krystallizer {
   }
 
   /**
-   * Load all game assets
+   * Load all game assets and entities.
    */
-  loadImagesAndGameObjects() {
+  loadImagesAndEntities() {
     const { images, entities } = config.directories;
     const getEntities = this.httpClient.api.glob(entities);
     const getImages = this.httpClient.api.browse(images, "images");
