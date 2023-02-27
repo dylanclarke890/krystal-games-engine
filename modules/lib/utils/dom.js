@@ -42,6 +42,23 @@ export function loadScript({ src, type, cb } = {}) {
   document.body.appendChild(script);
 }
 
+export function loadImages(imageUrls) {
+  return new Promise((resolve, reject) => {
+    const images = [];
+    let loadedImages = 0;
+    // Load each image and count the number of loaded images
+    for (let i = 0; i < imageUrls.length; i++) {
+      const image = new Image();
+      image.src = imageUrls[i];
+      image.addEventListener("load", () => {
+        if (++loadedImages === imageUrls.length) resolve(images);
+      });
+      image.addEventListener("error", (event) => reject(event.error));
+      images.push(image);
+    }
+  });
+}
+
 export function screenshotCanvas(canvas) {
   const image = new Image();
   image.src = canvas.toDataURL();

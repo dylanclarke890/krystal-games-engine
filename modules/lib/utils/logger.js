@@ -63,6 +63,10 @@ export class Logger {
     this.log("debug", ...args);
   }
 
+  count(label) {
+    console.count(label);
+  }
+
   setLevel(level) {
     if (!(level in Logger.#levels)) throw new Error(`Invalid logging level '${level}'`);
     this.level = level;

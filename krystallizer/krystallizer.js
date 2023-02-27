@@ -1,6 +1,6 @@
 import { GameLoop } from "../modules/core/loop.js";
 import { Register } from "../modules/core/register.js";
-import { $el, loadScript } from "../modules/lib/utils/dom.js";
+import { $el, loadImages, loadScript } from "../modules/lib/utils/dom.js";
 import { Logger } from "../modules/lib/utils/logger.js";
 import { formatAsJSON, hyphenToCamelCase } from "../modules/lib/utils/string.js";
 import { Canvas } from "./canvas.js";
@@ -123,29 +123,19 @@ export class Krystallizer {
   /**
    * Load all images before initialising any modals. This is to prevent blank screens from
    * being drawn for the level previews.
-   * @param {PromiseFulfilledResult<string>} paths
+   * @param {string[]} paths
    */
   preloadImages(paths) {
-    const totalToLoad = paths.length;
-    let loaded = 0;
-
-    const requests = paths.map((path) => this.httpClient.api.file(path, { parseResponse: false }));
-    const handle = () => {
-      if (++loaded === totalToLoad) this.initModals();
-    };
-
-    Promise.allSettled(requests).then((results) => {
-      results.forEach((result) => {
-        if (result.status === "rejected") {
-          handle(); // don't care if it fails; probably not important
-          return;
-        }
-        const img = new Image();
-        img.addEventListener("load", handle);
-        img.addEventListener("error", handle); // same here - failure not important
-        img.src = result.value;
-      });
-    });
+    if (!paths.some((p) => p === config.collisionTiles.path)) {
+      this.logger.debug("Appending collision tiles path to paths to preload.");
+      paths.push(config.collisionTiles.path);
+    }
+    loadImages(paths)
+      .then(() => {
+        this.logger.debug("loaded");
+        this.initModals();
+      })
+      .catch((err) => this.logger.critical(err));
   }
 
   /**
@@ -175,6 +165,12 @@ export class Krystallizer {
         fileNameInput.value = this.fileName;
         fileNameInput.focus();
         fileNameInput.setSelectionRange(0, fileNameInput.value.lastIndexOf(".js"));
+        fileNameInput.addEventListener("keyup", (e) => {
+          if (e.key === "Enter") {
+            saveAs.events.ok();
+            saveAs.close();
+          }
+        });
       },
       onOk: () => {
         let dir = config.directories.levels;
