@@ -10,6 +10,7 @@ import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
 import { ConfirmModal, EntityDisplay, SelectLevelModal } from "./ui.js";
 import { Undo } from "./undo.js";
+import Sortable from "./third-party/sortable/src/Sortable.js";
 
 export class Krystallizer {
   constructor() {
@@ -81,10 +82,10 @@ export class Krystallizer {
 
     const { layers, level, layerActions, entitiesLayer, layerSettings } = this.DOMElements;
 
-    // eslint-disable-next-line no-undef
-    $(layers).sortable({
-      cancel: ".layer__visibility",
-      update: () => this.reorderLayers(),
+    this.sortable = new Sortable(layers, {
+      filter: ".layer__visibility", // Selectors that do not lead to dragging (String or Function)
+      onUpdate: () => this.reorderLayers(),
+      animation: 200,
     });
 
     level.new.addEventListener("click", () => this.newLevel());
@@ -367,8 +368,8 @@ export class Krystallizer {
     this.reorderLayers();
     this.setModifiedState(false);
 
-    // eslint-disable-next-line no-undef
-    $(this.DOMElements.layers).sortable("refresh");
+    // // eslint-disable-next-line no-undef
+    // $(this.DOMElements.layers).sortable("refresh");
     this.draw();
   }
 
@@ -478,8 +479,8 @@ export class Krystallizer {
     this.setActiveLayer(name);
     this.updateLayerSettings();
     this.reorderLayers();
-    // eslint-disable-next-line no-undef
-    $(this.DOMElements.layers).sortable("refresh");
+    // // eslint-disable-next-line no-undef
+    // $(this.DOMElements.layers).sortable("refresh");
   }
 
   removeLayer() {
@@ -490,8 +491,8 @@ export class Krystallizer {
       if (this.layers[i].name !== name) continue;
       this.layers.splice(i, 1);
       this.reorderLayers();
-      // eslint-disable-next-line no-undef
-      $(this.DOMElements.layers).sortable("refresh");
+      // // eslint-disable-next-line no-undef
+      // $(this.DOMElements.layers).sortable("refresh");
       this.setActiveLayer("entities");
       return true;
     }

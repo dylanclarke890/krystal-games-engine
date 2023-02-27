@@ -5,6 +5,8 @@
  * @license MIT
  */
 
+import { version } from "../package.json";
+
 import {
 	IE11OrLess,
 	Edge,
@@ -2154,5 +2156,7 @@ Sortable.create = function (el, options) {
 	return new Sortable(el, options);
 };
 
+// Export
+Sortable.version = version;
 
 export default Sortable;
