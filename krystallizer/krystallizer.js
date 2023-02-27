@@ -229,12 +229,14 @@ export class Krystallizer {
     };
   }
 
-  draw() {}
+  draw() {
+    for (let i = 0; i < this.entities.length; i++) this.entities[i].draw();
+  }
 
   nextFrame(tick) {
     this.system.tick = tick;
     this.canvas.draw();
-    this.canvas.update();
+    this.draw();
   }
 
   //#region Entity
@@ -278,7 +280,8 @@ export class Krystallizer {
   }
 
   onEntityDrop(className, { x, y }) {
-    this.logger.debug(this.spawnEntity(className, x, y));
+    const spawned = this.spawnEntity(className, x, y);
+    spawned.pos.y -= spawned.size.y;
   }
 
   constructEntitiesList() {
@@ -299,6 +302,7 @@ export class Krystallizer {
     }
   }
 
+  /** @returns {import("../modules/core/entity.js").Entity} */
   spawnEntity(className, x, y, settings = {}) {
     const entityClass = Register.getEntityByType(className);
     if (!entityClass) return null;
@@ -307,6 +311,7 @@ export class Krystallizer {
     for (let s in settings) newEntity._additionalSettings[s] = settings[s];
     this.entities.push(newEntity);
     if (settings.name) this.namedEntities[settings.name] = newEntity;
+    this.logger.debug(newEntity);
     return newEntity;
   }
 
@@ -379,7 +384,6 @@ export class Krystallizer {
     this.setActiveLayer("entities");
     this.reorderLayers();
     this.setModifiedState(false);
-    this.draw();
   }
 
   saveLevel(path) {
@@ -464,7 +468,6 @@ export class Krystallizer {
 
     this.layers = newLayers;
     this.setModifiedState(true);
-    this.draw();
   }
 
   getLayerByName(/** @type {string} */ name) {
@@ -577,7 +580,6 @@ export class Krystallizer {
 
     this.activeLayer.setName(newName);
     this.setModifiedState(true);
-    this.draw();
   }
 
   //#endregion Layers

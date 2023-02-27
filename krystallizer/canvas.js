@@ -64,6 +64,4 @@ export class Canvas {
       ctx.fillText(ylabel, 0, ty * scale + 10);
     }
   }
-
-  update() {}
 }

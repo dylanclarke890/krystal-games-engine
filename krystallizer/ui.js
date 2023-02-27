@@ -440,9 +440,12 @@ export class EntityDisplay {
 
     const canvas = document.querySelector("canvas");
     let target;
+    let posX;
+    let posY;
+
     const mouseMove = (e) => {
-      const posX = e.pageX - clone.offsetWidth / 2;
-      const posY = e.pageY - clone.offsetHeight / 2;
+      posX = e.pageX - clone.offsetWidth / 2;
+      posY = e.pageY - clone.offsetHeight / 2;
       clone.style.left = `${posX}px`;
       clone.style.top = `${posY}px`;
       // Select the element beneath the dragged clone.
@@ -454,12 +457,8 @@ export class EntityDisplay {
       document.removeEventListener("mousemove", mouseMove);
       clone.removeEventListener("mouseup", mouseUp);
       document.body.removeChild(clone);
-
       if (target !== canvas) return;
-      const bounds = target.getBoundingClientRect();
-      const x = e.clientX - bounds.left;
-      const y = e.clientY - bounds.top;
-      this.onDrop(this.className, { x, y });
+      this.onDrop(this.className, { x: posX, y: posY });
     };
 
     document.addEventListener("mousemove", mouseMove);
