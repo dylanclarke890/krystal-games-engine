@@ -24,10 +24,10 @@ class EventSystemClass {
   }
 }
 
-export class Events extends Enum {
-  static NextFrame = new Events();
-  static StopLoop = new Events();
+export class LoopEvents extends Enum {
+  static NextFrame = new LoopEvents();
+  static StopLoop = new LoopEvents();
 }
-Events.freeze();
+LoopEvents.freeze();
 
 export const EventSystem = new EventSystemClass();

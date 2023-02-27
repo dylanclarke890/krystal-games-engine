@@ -1,4 +1,4 @@
-import { EventSystem, Events } from "./events.js";
+import { EventSystem, LoopEvents } from "./events.js";
 import { Timer } from "./timer.js";
 
 export class GameLoop {
@@ -13,7 +13,7 @@ export class GameLoop {
   }
 
   #bindEvents() {
-    EventSystem.on(Events.StopLoop, () => this.stop());
+    EventSystem.on(LoopEvents.StopLoop, () => this.stop());
   }
 
   start() {
@@ -30,7 +30,7 @@ export class GameLoop {
     if (elapsed < this.fpsInterval) return;
     this.#lastFrame = timestamp - (elapsed % this.fpsInterval);
 
-    EventSystem.dispatch(Events.NextFrame, this.clock.tick());
+    EventSystem.dispatch(LoopEvents.NextFrame, this.clock.tick());
   }
 
   stop() {

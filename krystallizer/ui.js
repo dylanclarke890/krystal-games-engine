@@ -244,7 +244,7 @@ export class SelectLevelModal extends Modal {
 
   parseData(data) {
     if (!data) {
-      console.debug("Krystallizer: parseData - no data provided.");
+      Logger.getInstance().error("parseData - no data provided.");
       return;
     }
 

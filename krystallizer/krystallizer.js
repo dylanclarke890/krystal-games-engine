@@ -11,7 +11,7 @@ import { System } from "./system.js";
 import { ConfirmModal, EntityDisplay, SelectLevelModal } from "./ui.js";
 import { Undo } from "./undo.js";
 import Sortable from "./third-party/sortable/src/Sortable.js";
-import { EventSystem, Events } from "../modules/core/events.js";
+import { EventSystem, LoopEvents } from "../modules/core/events.js";
 
 export class Krystallizer {
   constructor() {
@@ -78,7 +78,7 @@ export class Krystallizer {
   }
 
   bindEvents() {
-    EventSystem.on(Events.NextFrame, (tick) => this.nextFrame(tick));
+    EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
     window.addEventListener("resize", () => this.system.resize());
 
     const { layers, level, layerActions, entitiesLayer, layerSettings } = this.DOMElements;
@@ -155,12 +155,12 @@ export class Krystallizer {
     const { images, entities } = config.directories;
     const getEntities = this.httpClient.api.glob(entities);
     const getImages = this.httpClient.api.browse(images, "images");
-    Promise.all([getEntities, getImages])
-      .then(([entitiesResult, imagesResult]) => {
-        this.loadEntityScripts(entitiesResult);
+    Promise.all([getImages, getEntities])
+      .then(([imagesResult, entitiesResult]) => {
         this.preloadImages(imagesResult);
+        this.loadEntityScripts(entitiesResult);
       })
-      .catch((err) => console.error(`Error occurred during loading: ${err}`));
+      .catch((err) => this.logger.error(`Error occurred during loading: ${err}`));
   }
 
   initModals() {
@@ -406,13 +406,13 @@ export class Krystallizer {
       .save(path, dataString)
       .then((res) => {
         if (res.error) {
-          console.error(res.msg);
+          this.logger.error(res.msg);
           return;
         }
         this.setModifiedState(false);
         localStorage.setItem(config.storageKeys.lastLevel, path);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => this.logger.error(err));
   }
 
   //#endregion Level
