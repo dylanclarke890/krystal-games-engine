@@ -49,4 +49,7 @@ export const config = {
   storageKeys: {
     lastLevel: "krystallizer_lastLevel",
   },
+  view: {
+    zoom: 1,
+  },
 };

@@ -48,7 +48,7 @@ export class EditMap extends BackgroundMap {
   construct(div) {
     div.innerHTML = `
       <span class="layer__visibility" title="Toggle Visibility (Shift+${this.hotkey})"
-        data-checked="false">
+        data-checked="${this.visible}">
       </span>
       <span class="layer__name">${this.name}</span>
       <span class="layer__size">${this.width}&times;${this.height}</span>
@@ -161,7 +161,6 @@ export class EditMap extends BackgroundMap {
   toggleVisibility() {
     this.visible = !this.visible;
     this.updateDiv();
-    this.editor.draw();
   }
 
   click() {

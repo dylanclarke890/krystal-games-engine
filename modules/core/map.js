@@ -250,7 +250,6 @@ export class BackgroundMap extends GameMap {
         if (!this.repeat) continue;
         tileY = ((tileY % this.height) + this.height) % this.height;
       }
-
       for (let mapX = -1, pxX = pxMinX; pxX < pxMaxX; mapX++, pxX += this.tilesize) {
         let tileX = mapX + tileOffsetX;
         // Repeat X?
@@ -266,8 +265,8 @@ export class BackgroundMap extends GameMap {
         const anim = this.anims[tile - 1];
         if (anim) anim.draw(pxX, pxY);
         else this.tiles.drawTile(pxX, pxY, tile - 1, this.tilesize);
-      } // end for x
-    } // end for y
+      }
+    }
   }
 }
 

@@ -230,7 +230,17 @@ export class Krystallizer {
   }
 
   draw() {
-    for (let i = 0; i < this.entities.length; i++) this.entities[i].draw();
+    let entitiesDrawn = false;
+    for (let i = 0; i < this.layers.length; i++) {
+      const layer = this.layers[i];
+      // If layer is a foreground layer, draw entities first.
+      if (!entitiesDrawn && layer.foreground) {
+        entitiesDrawn = true;
+        for (let i = 0; i < this.entities.length; i++) this.entities[i].draw();
+      }
+      layer.draw();
+    }
+    if (!entitiesDrawn) for (let i = 0; i < this.entities.length; i++) this.entities[i].draw();
   }
 
   nextFrame(tick) {
