@@ -87,7 +87,7 @@ export class Krystallizer {
       const doc = document.documentElement;
       doc.classList.toggle("dragging", is);
     };
-    this.sortable = new Sortable(layers, {
+    new Sortable(layers, {
       filter: ".layer__visibility", // Selectors that do not lead to dragging (String or Function)
       onUpdate: () => this.reorderLayers(),
       onStart: () => dragging(true),
