@@ -92,7 +92,7 @@ export class Krystallizer {
       onUpdate: () => this.reorderLayers(),
       onStart: () => dragging(true),
       onEnd: () => dragging(true),
-      animation: 200,
+      animation: 150,
       forceFallback: true,
     });
 
