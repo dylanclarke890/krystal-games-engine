@@ -11,12 +11,13 @@ import { System } from "./system.js";
 import { ConfirmModal, EntityDisplay, SelectLevelModal } from "./ui.js";
 import { Undo } from "./undo.js";
 import Sortable from "./third-party/sortable/src/Sortable.js";
+import { EventSystem, Events } from "../modules/core/events.js";
 
 export class Krystallizer {
   constructor() {
     this.system = new System();
     this.canvas = new Canvas(this.system);
-    this.loop = new GameLoop({ delegate: this });
+    this.loop = new GameLoop();
     this.logger = Logger.getInstance(config.logging.level);
     /** @type {EditMap[]} */
     this.layers = [];
@@ -77,15 +78,12 @@ export class Krystallizer {
   }
 
   bindEvents() {
+    EventSystem.on(Events.NextFrame, (tick) => this.nextFrame(tick));
     window.addEventListener("resize", () => this.system.resize());
 
     const { layers, level, layerActions, entitiesLayer, layerSettings } = this.DOMElements;
-    document.addEventListener("dragstart", (e) => console.log("started", e));
 
-    const toggleDraggingClass = (is) => {
-      const doc = document.documentElement;
-      doc.classList.toggle("dragging", is);
-    };
+    const toggleDraggingClass = (is) => document.documentElement.classList.toggle("dragging", is);
     new Sortable(layers, {
       filter: ".layer__visibility", // Selectors that do not lead to dragging (String or Function)
       onUpdate: () => this.reorderLayers(),
@@ -231,8 +229,8 @@ export class Krystallizer {
     };
   }
 
-  draw() { }
-  
+  draw() {}
+
   nextFrame(tick) {
     this.system.tick = tick;
     this.canvas.draw();
