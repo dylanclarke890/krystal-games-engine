@@ -320,10 +320,10 @@ export class SelectLevelModal extends Modal {
     canvas.height = h;
 
     let currentLayer = 0;
-    // FIXME: Collision maps currently don't get drawn for the screenshot but we have the image preloaded now.
-    const bgLayers = data.layer.filter((l) => l.visible && !l.repeat && l.name !== "collision");
+    const bgLayers = data.layer.filter((l) => l.visible && !l.repeat);
     for (let i = 0; i < bgLayers.length; i++) {
       const layer = bgLayers[i];
+      if (layer.name === "collision") layer.tileset = config.collisionTiles.path;
       const bgMap = new BackgroundMap({
         ...layer,
         system: {
