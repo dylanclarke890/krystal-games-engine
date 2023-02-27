@@ -81,11 +81,19 @@ export class Krystallizer {
     window.addEventListener("resize", () => this.system.resize());
 
     const { layers, level, layerActions, entitiesLayer, layerSettings } = this.DOMElements;
+    document.addEventListener("dragstart", (e) => console.log("started", e));
 
+    const dragging = (is) => {
+      const doc = document.documentElement;
+      doc.classList.toggle("dragging", is);
+    };
     this.sortable = new Sortable(layers, {
       filter: ".layer__visibility", // Selectors that do not lead to dragging (String or Function)
       onUpdate: () => this.reorderLayers(),
+      onStart: () => dragging(true),
+      onEnd: () => dragging(true),
       animation: 200,
+      forceFallback: true,
     });
 
     level.new.addEventListener("click", () => this.newLevel());
@@ -367,9 +375,6 @@ export class Krystallizer {
     this.setActiveLayer("entities");
     this.reorderLayers();
     this.setModifiedState(false);
-
-    // // eslint-disable-next-line no-undef
-    // $(this.DOMElements.layers).sortable("refresh");
     this.draw();
   }
 
@@ -479,8 +484,6 @@ export class Krystallizer {
     this.setActiveLayer(name);
     this.updateLayerSettings();
     this.reorderLayers();
-    // // eslint-disable-next-line no-undef
-    // $(this.DOMElements.layers).sortable("refresh");
   }
 
   removeLayer() {
@@ -491,8 +494,6 @@ export class Krystallizer {
       if (this.layers[i].name !== name) continue;
       this.layers.splice(i, 1);
       this.reorderLayers();
-      // // eslint-disable-next-line no-undef
-      // $(this.DOMElements.layers).sortable("refresh");
       this.setActiveLayer("entities");
       return true;
     }

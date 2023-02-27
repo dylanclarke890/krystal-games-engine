@@ -8,6 +8,10 @@
 
 /* #region GENERAL */
 
+.dragging {
+  cursor: pointer !important;
+}
+
 *,
 *::after,
 *::before {
