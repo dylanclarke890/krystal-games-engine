@@ -25,7 +25,7 @@ export class Krystallizer {
     this.activeLayer;
     this.entities = [];
     this.entityClasses = {};
-    this.drawEntities = false;
+    this.drawEntities = true;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
 
     const { undoDepth, newFileName } = config.general;
@@ -113,7 +113,7 @@ export class Krystallizer {
     div.addEventListener("click", () => this.setActiveLayer("entities"));
     visibility.addEventListener("click", () => {
       this.drawEntities = !this.drawEntities;
-      visibility.dataset.checked = this.drawEntities.toString();
+      visibility.dataset.checked = (!this.drawEntities).toString();
     });
 
     const { isCollisionLayer } = layerSettings;
@@ -229,6 +229,11 @@ export class Krystallizer {
     };
   }
 
+  drawEntityLayer() {
+    if (!this.drawEntities) return;
+    for (let i = 0; i < this.entities.length; i++) this.entities[i].draw();
+  }
+
   draw() {
     let entitiesDrawn = false;
     for (let i = 0; i < this.layers.length; i++) {
@@ -236,11 +241,11 @@ export class Krystallizer {
       // If layer is a foreground layer, draw entities first.
       if (!entitiesDrawn && layer.foreground) {
         entitiesDrawn = true;
-        for (let i = 0; i < this.entities.length; i++) this.entities[i].draw();
+        this.drawEntityLayer();
       }
       layer.draw();
     }
-    if (!entitiesDrawn) for (let i = 0; i < this.entities.length; i++) this.entities[i].draw();
+    if (!entitiesDrawn) this.drawEntityLayer();
   }
 
   nextFrame(tick) {
