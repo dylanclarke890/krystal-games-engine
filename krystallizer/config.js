@@ -1,6 +1,6 @@
 export const config = {
   collisionTiles: {
-    path: "./assets/collision_tiles.png",
+    path: "./krystallizer/assets/collision_tiles.png",
     tilesize: 64,
   },
   /** Colors to use for the background, selection boxes, text and the grid. */

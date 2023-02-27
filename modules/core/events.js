@@ -25,9 +25,11 @@ class EventSystemClass {
 }
 
 export class LoopEvents extends Enum {
-  static NextFrame = new LoopEvents();
-  static StopLoop = new LoopEvents();
+  static {
+    this.NextFrame = new LoopEvents();
+    this.StopLoop = new LoopEvents();
+    this.freeze();
+  }
 }
-LoopEvents.freeze();
 
 export const EventSystem = new EventSystemClass();
