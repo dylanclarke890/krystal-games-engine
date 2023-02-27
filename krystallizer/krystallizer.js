@@ -304,11 +304,14 @@ export class Krystallizer {
       const className = classes[i];
       const classDef = Register.getEntityByType(className);
       const entityInfo = this.entityClassesInfo[className];
-      entityInfo.props = Object.keys(new classDef({ x: 0, y: 0, game: this })).filter(
-        (v) => !ignoredProps.some((p) => v === p)
-      );
+      const spawned = new classDef({ x: 0, y: 0, game: this });
+      entityInfo.imagePath = spawned;
+      this.logger.debug(spawned);
+      entityInfo.props = Object.keys(spawned).filter((v) => !ignoredProps.some((p) => v === p));
       entityDisplays.push(
-        new EntityDisplay(className, entityInfo, (cn, pos) => this.onEntityDrop(cn, pos))
+        new EntityDisplay(spawned, { ...entityInfo, className }, (cn, pos) =>
+          this.onEntityDrop(cn, pos)
+        )
       );
     }
   }

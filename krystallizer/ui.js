@@ -402,11 +402,13 @@ export class SelectLevelModal extends Modal {
 }
 
 export class EntityDisplay {
-  constructor(className, { filepath, props }, onDrop) {
-    this.className = className;
+  constructor(entity, { className, filepath, props }, onDrop) {
+    Guard.againstNull({ entity });
     Guard.againstNull({ className }).isTypeOf("string");
     Guard.againstNull({ filepath }).isTypeOf("string");
     Guard.againstNull({ props }).isTypeOf("object");
+    this.entity = entity;
+    this.className = className;
     this.filepath = filepath;
     this.props = props;
     this.onDrop = onDrop ?? (() => {});
@@ -422,11 +424,15 @@ export class EntityDisplay {
     name.classList.add("entity-display__name");
     name.textContent = this.className;
 
-    const preview = document.createElement("div");
+    const preview = document.createElement("img");
+    preview.draggable = false;
     preview.classList.add("entity-display__preview");
+    preview.classList.add("loading");
+    preview.src = "./krystallizer/assets/loading.svg";
 
     div.append(preview);
     div.append(name);
+
     div.addEventListener("mousedown", (e) => this.mousedown(e));
     target.append(div);
     this.DOMElements = { div, name, preview };

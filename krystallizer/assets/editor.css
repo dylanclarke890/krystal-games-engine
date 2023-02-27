@@ -533,10 +533,15 @@ input:checked + .slider:before {
   background-color: var(--hover-color);
 }
 
-.entity-display__preview {
+.entity-display__preview.loading {
+  align-self: center;
+}
+
+.entity-display__preview:not(.loading) {
+  border: var(--border-style);
   width: 100%;
   height: 100%;
-  border: var(--border-style);
+  pointer-events: none;
 }
 
 .entity-display__name {
