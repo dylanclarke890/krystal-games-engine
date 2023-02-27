@@ -525,6 +525,7 @@ input:checked + .slider:before {
   cursor: pointer;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   padding: 0.5em;
   max-height: var(--entity-display-size);
   max-width: var(--entity-display-size);
