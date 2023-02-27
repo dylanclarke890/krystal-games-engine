@@ -83,15 +83,15 @@ export class Krystallizer {
     const { layers, level, layerActions, entitiesLayer, layerSettings } = this.DOMElements;
     document.addEventListener("dragstart", (e) => console.log("started", e));
 
-    const dragging = (is) => {
+    const toggleDraggingClass = (is) => {
       const doc = document.documentElement;
       doc.classList.toggle("dragging", is);
     };
     new Sortable(layers, {
       filter: ".layer__visibility", // Selectors that do not lead to dragging (String or Function)
       onUpdate: () => this.reorderLayers(),
-      onStart: () => dragging(true),
-      onEnd: () => dragging(true),
+      onStart: () => toggleDraggingClass(true),
+      onEnd: () => toggleDraggingClass(true),
       animation: 150,
       forceFallback: true,
     });
