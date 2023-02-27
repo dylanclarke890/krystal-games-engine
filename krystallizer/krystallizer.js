@@ -24,7 +24,7 @@ export class Krystallizer {
     /** @type {"entities" | EditMap} */
     this.activeLayer;
     this.entities = [];
-    this.entityClasses = {};
+    this.entityClassesInfo = {};
     this.drawEntities = true;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
 
@@ -127,12 +127,13 @@ export class Krystallizer {
    */
   preloadImages(paths) {
     if (!paths.some((p) => p === config.collisionTiles.path)) {
-      this.logger.debug("Appending collision tiles path to paths to preload.");
+      this.logger.debug("preloadImages: Appending collision tiles path...");
       paths.push(config.collisionTiles.path);
     }
+
     loadImages(paths)
       .then(() => {
-        this.logger.debug("loaded");
+        this.logger.debug(`preloadImages: ${paths.length} images loaded.`);
         this.initModals();
       })
       .catch((err) => this.logger.critical(err));
@@ -276,7 +277,7 @@ export class Krystallizer {
     }
 
     if (invalidClasses.length > 0) this.logInvalidClasses(invalidClasses);
-    this.entityClasses = entityClasses;
+    this.entityClassesInfo = entityClasses;
     this.constructEntitiesList();
   }
 
@@ -297,18 +298,17 @@ export class Krystallizer {
 
   constructEntitiesList() {
     const ignoredProps = ["game", "id", "killed"];
-    const classes = Object.keys(this.entityClasses);
+    const classes = Object.keys(this.entityClassesInfo);
     const entityDisplays = [];
     for (let i = 0; i < classes.length; i++) {
       const className = classes[i];
-      const def = Register.getEntityByType(className);
-      this.entityClasses[className].props = Object.keys(new def({ x: 0, y: 0, game: this })).filter(
+      const classDef = Register.getEntityByType(className);
+      const entityInfo = this.entityClassesInfo[className];
+      entityInfo.props = Object.keys(new classDef({ x: 0, y: 0, game: this })).filter(
         (v) => !ignoredProps.some((p) => v === p)
       );
       entityDisplays.push(
-        new EntityDisplay(className, this.entityClasses[className], (cn, pos) =>
-          this.onEntityDrop(cn, pos)
-        )
+        new EntityDisplay(className, entityInfo, (cn, pos) => this.onEntityDrop(cn, pos))
       );
     }
   }
