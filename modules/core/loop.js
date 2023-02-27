@@ -3,25 +3,28 @@ import { Guard } from "../lib/sanity/guard.js";
 import { Timer } from "./timer.js";
 
 export class GameLoop {
-  clock;
-  runner;
-  rafId;
-  stopped;
-
   #lastFrame;
-  targetFps;
-  #fpsInterval;
 
-  constructor({ runner, targetFps }) {
-    Guard.againstNull({ runner });
+  checkDelegate(delegate) {
+    Guard.againstNull({ delegate });
+    if (!("nextFrame" in delegate))
+      throw new Error("Delegate is not suitable. Delegate should define a 'nextFrame' method.");
+  }
+
+  constructor({ delegate, targetFps = 60, stopWith = [] }) {
+    this.checkDelegate(delegate);
+    this.delegate = delegate;
     this.clock = new Timer();
-    this.runner = runner;
+    this.targetFps = targetFps;
+    this.fpsInterval = 1000 / targetFps;
+    this.stopWith = stopWith;
     this.#lastFrame = -1;
-    this.targetFps = targetFps ?? 60;
-    this.#fpsInterval = 1000 / this.targetFps;
+    this.#bindEvents();
+  }
 
-    const stopBtn = $el("#game-stop");
-    if (stopBtn) stopBtn.addEventListener("click", () => this.stop());
+  #bindEvents() {
+    for (let i = 0; i < this.stopWith.length; i++)
+      $el(this.stopWith[i]).addEventListener("click", () => this.stop());
   }
 
   start() {
@@ -33,14 +36,11 @@ export class GameLoop {
     this.rafId = requestAnimationFrame((t) => this.main(t));
 
     Timer.step();
-    this.runner.system.tick = this.clock.tick();
-
     const elapsed = timestamp - this.#lastFrame;
-    if (elapsed < this.#fpsInterval) return;
-    this.#lastFrame = timestamp - (elapsed % this.#fpsInterval);
+    if (elapsed < this.fpsInterval) return;
+    this.#lastFrame = timestamp - (elapsed % this.fpsInterval);
 
-    this.runner.game.update();
-    this.runner.game.draw();
+    this.delegate.nextFrame(this.clock.tick());
   }
 
   stop() {

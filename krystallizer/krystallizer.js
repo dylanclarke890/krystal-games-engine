@@ -16,8 +16,7 @@ export class Krystallizer {
   constructor() {
     this.system = new System();
     this.canvas = new Canvas(this.system);
-    this.game = this.canvas; // for game loop
-    this.loop = new GameLoop({ runner: this });
+    this.loop = new GameLoop({ delegate: this });
     this.logger = Logger.getInstance(config.logging.level);
     /** @type {EditMap[]} */
     this.layers = [];
@@ -232,7 +231,13 @@ export class Krystallizer {
     };
   }
 
-  draw() {}
+  draw() { }
+  
+  nextFrame(tick) {
+    this.system.tick = tick;
+    this.canvas.draw();
+    this.canvas.update();
+  }
 
   //#region Entity
 
