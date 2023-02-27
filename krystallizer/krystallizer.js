@@ -93,6 +93,7 @@ export class Krystallizer {
       onStart: () => toggleDraggingClass(true),
       onEnd: () => toggleDraggingClass(true),
       animation: 150,
+      delay: 50,
       forceFallback: true,
     });
 
