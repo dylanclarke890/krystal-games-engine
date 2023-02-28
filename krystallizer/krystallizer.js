@@ -305,7 +305,6 @@ export class Krystallizer {
       const classDef = Register.getEntityByType(className);
       const entityInfo = this.entityClassesInfo[className];
       const spawned = new classDef({ x: 0, y: 0, game: this });
-      entityInfo.imagePath = spawned;
       this.logger.debug(spawned);
       entityInfo.props = Object.keys(spawned).filter((v) => !ignoredProps.some((p) => v === p));
       entityDisplays.push(
@@ -321,8 +320,7 @@ export class Krystallizer {
     const entityClass = Register.getEntityByType(className);
     if (!entityClass) return null;
     const newEntity = new entityClass({ x, y, game: this, settings });
-    newEntity._additionalSettings = {};
-    for (let s in settings) newEntity._additionalSettings[s] = settings[s];
+    newEntity._additionalSettings = structuredClone(settings);
     this.entities.push(newEntity);
     if (settings.name) this.namedEntities[settings.name] = newEntity;
     this.logger.debug(newEntity);

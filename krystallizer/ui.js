@@ -415,8 +415,32 @@ export class EntityDisplay {
     this.construct();
   }
 
+  /** Get the preview image. For invisible entities, a fallback image will be used. */
+  getPreviewImage() {
+    const preview = document.createElement("img");
+    preview.draggable = false;
+    preview.classList.add("entity-display__preview");
+    preview.classList.add("loading");
+    preview.src = "./krystallizer/assets/loading.svg";
+
+    const size = 110;
+    const img = new Image(size, size);
+    const src = this.entity.animSheet?.image?.path ?? config.entity.previewNotAvailableImagePath;
+    img.addEventListener("load", () => {
+      preview.src = src;
+      preview.classList.remove("loading");
+    });
+    img.addEventListener("error", (e) =>
+      Logger.getInstance().critical("EntityDisplay - construct - error loading image:", e)
+    );
+    img.src = src;
+
+    return preview;
+  }
+
+  /** Build the display. */
   construct() {
-    const target = document.getElementById("entities__list");
+    const parent = document.getElementById("entities__list");
     const div = document.createElement("div");
     div.classList.add("entity-display");
 
@@ -424,20 +448,17 @@ export class EntityDisplay {
     name.classList.add("entity-display__name");
     name.textContent = this.className;
 
-    const preview = document.createElement("img");
-    preview.draggable = false;
-    preview.classList.add("entity-display__preview");
-    preview.classList.add("loading");
-    preview.src = "./krystallizer/assets/loading.svg";
-
+    const preview = this.getPreviewImage();
     div.append(preview);
     div.append(name);
 
-    div.addEventListener("mousedown", (e) => this.mousedown(e));
-    target.append(div);
+    this.mouseDown = (e) => this.mousedown(e);
+    div.addEventListener("mousedown", this.mouseDown);
+    parent.append(div);
     this.DOMElements = { div, name, preview };
   }
 
+  /** Used for the drag and drop actions. */
   mousedown(e) {
     const clone = this.DOMElements.div.cloneNode(true);
     document.body.appendChild(clone);
@@ -446,6 +467,7 @@ export class EntityDisplay {
     clone.style.top = `${e.pageY - clone.offsetHeight / 2}px`;
 
     const canvas = document.querySelector("canvas");
+    if (!canvas) Logger.getInstance().critical("EntityDisplay: canvas not found.");
     let target;
     let posX;
     let posY;
@@ -470,5 +492,12 @@ export class EntityDisplay {
 
     document.addEventListener("mousemove", mouseMove);
     clone.addEventListener("mouseup", mouseUp);
+  }
+
+  /** Remove from DOM and remove any event listeners. */
+  destroy() {
+    const { div } = this.DOMElements;
+    div.removeEventListener("mousedown", this.mouseDown);
+    div.parentElement.removeChild(div);
   }
 }

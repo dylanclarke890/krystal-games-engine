@@ -12,20 +12,24 @@ export const config = {
     selection: "#ff9933", // Selection cursor box on tile maps
   },
   directories: {
+    /** Directory to recursively load assets from. */
     images: "test-data/assets",
     /** Directory to use for loading and saving files. */
     levels: "test-data/scenes",
+    /** Directories to import entities from. */
     entities: ["test-data/entities/entities.js"],
   },
   entity: {
     /** Include a list of properties to show by default. */
     show: ["pos", "size", "bounciness"],
+    previewNotAvailableImagePath: "./krystallizer/assets/image-slash.svg",
   },
   general: {
     confirmDeleteLayer: true,
     confirmDiscardChanges: true,
     loadLastLevel: true,
     newFileName: "untitled.js",
+    /** Controls whether to 'prettify' the saved level. */
     prettyPrint: true,
     undoDepth: 50,
   },
