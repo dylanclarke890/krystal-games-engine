@@ -2,37 +2,25 @@ import { Entity } from "../../modules/core/entity.js";
 import { Register } from "../../modules/core/register.js";
 import { Logger } from "../../modules/lib/utils/logger.js";
 
-class Test extends Entity {
-  constructor(opts) {
-    super(opts);
-    this.size = { x: 50, y: 50 };
-    this.logger = Logger.getInstance();
-    this.color = "white";
-  }
-
-  draw() {
-    this.game.system.ctx.fillStyle = this.color;
-    this.game.system.ctx.fillRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
-  }
-}
+class Test extends Entity {}
 
 export class A extends Test {
   constructor(opts) {
     super(opts);
-    this.color = "orange";
+    this.size = {
+      x: 66,
+      y: 58,
+    };
+    this.createAnimationSheet("./test-data/assets/spritesheets/pitchfork_guy.png", {
+      x: 66,
+      y: 58,
+    });
+    const threeFrames = (1 / 60) * 3;
+    this.addAnim("attack", threeFrames, "[0..19]", false);
+    this.logger = Logger.getInstance();
   }
 }
-export class B extends Test {
-  constructor(opts) {
-    super(opts);
-    this.color = "blue";
-  }
-}
-export class C extends Test {
-  constructor(opts) {
-    super(opts);
-    this.color = "purple";
-  }
-}
+export class B extends Test {}
+export class C extends Test {}
 
 Register.entityTypes(A, B, C);

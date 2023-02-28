@@ -12,11 +12,13 @@ import { ConfirmModal, EntityDisplay, SelectLevelModal } from "./ui.js";
 import { Undo } from "./undo.js";
 import Sortable from "./third-party/sortable/src/Sortable.js";
 import { EventSystem, LoopEvents } from "../modules/core/events.js";
+import { MediaFactory } from "../modules/core/media-factory.js";
 
 export class Krystallizer {
   constructor() {
     this.system = new System();
     this.canvas = new Canvas(this.system);
+    this.media = new MediaFactory({ system: this.system, noSound: true });
     this.loop = new GameLoop();
     this.logger = Logger.getInstance(config.logging.level);
     /** @type {EditMap[]} */
@@ -85,10 +87,10 @@ export class Krystallizer {
 
     const toggleDraggingClass = (is) => document.documentElement.classList.toggle("dragging", is);
     new Sortable(layers, {
-      filter: ".layer__visibility", // Selectors that do not lead to dragging (String or Function)
+      filter: ".layer__visibility", // Selectors that do not lead to dragging
       onUpdate: () => this.reorderLayers(),
       onStart: () => toggleDraggingClass(true),
-      onEnd: () => toggleDraggingClass(true),
+      onEnd: () => toggleDraggingClass(false),
       animation: 150,
       delay: 50,
       forceFallback: true,
@@ -282,7 +284,7 @@ export class Krystallizer {
   }
 
   logInvalidClasses(invalidClasses) {
-    this.logger.debug(`
+    this.logger.warn(`
     Entity class definitions could not be fetched. Please ensure you've correctly registered the entity type by calling:
     Register.entityType(classDefinition) or
     Register.entityTypes(...classDefinitions).
@@ -305,7 +307,6 @@ export class Krystallizer {
       const classDef = Register.getEntityByType(className);
       const entityInfo = this.entityClassesInfo[className];
       const spawned = new classDef({ x: 0, y: 0, game: this });
-      this.logger.debug(spawned);
       entityInfo.props = Object.keys(spawned).filter((v) => !ignoredProps.some((p) => v === p));
       entityDisplays.push(
         new EntityDisplay(spawned, { ...entityInfo, className }, (cn, pos) =>
@@ -323,7 +324,6 @@ export class Krystallizer {
     newEntity._additionalSettings = structuredClone(settings);
     this.entities.push(newEntity);
     if (settings.name) this.namedEntities[settings.name] = newEntity;
-    this.logger.debug(newEntity);
     return newEntity;
   }
 

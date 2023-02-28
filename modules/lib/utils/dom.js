@@ -60,7 +60,7 @@ export function loadImages(imageUrls) {
 }
 
 export function screenshotCanvas(canvas) {
-  const image = new Image();
+  const image = new Image("image/jpeg", 1.0);
   image.src = canvas.toDataURL();
-  document.body.appendChild(image);
+  return image;
 }

@@ -1,6 +1,7 @@
 import { BackgroundMap } from "../modules/core/map.js";
 import { Assert } from "../modules/lib/sanity/assert.js";
 import { Guard } from "../modules/lib/sanity/guard.js";
+import { screenshotCanvas } from "../modules/lib/utils/dom.js";
 import { Logger } from "../modules/lib/utils/logger.js";
 import { config } from "./config.js";
 
@@ -407,6 +408,7 @@ export class EntityDisplay {
     Guard.againstNull({ className }).isTypeOf("string");
     Guard.againstNull({ filepath }).isTypeOf("string");
     Guard.againstNull({ props }).isTypeOf("object");
+    /** @type {import("../modules/core/entity.js").Entity} */
     this.entity = entity;
     this.className = className;
     this.filepath = filepath;
@@ -423,13 +425,31 @@ export class EntityDisplay {
     preview.classList.add("loading");
     preview.src = "./krystallizer/assets/loading.svg";
 
-    const size = 110;
-    const img = new Image(size, size);
-    const src = this.entity.animSheet?.image?.path ?? config.entity.previewNotAvailableImagePath;
-    img.addEventListener("load", () => {
-      preview.src = src;
+    const notAvailableImgSrc = config.entity.previewNotAvailableImagePath;
+    const img = new Image();
+    const src = this.entity.animSheet?.image?.path ?? notAvailableImgSrc;
+    const onLoad = () => {
+      img.removeEventListener("load", onLoad);
+      if (src === notAvailableImgSrc) {
+        preview.classList.remove("loading");
+        preview.src = src;
+        return;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = this.entity.size.x;
+      canvas.height = this.entity.size.y;
+      const ctx = canvas.getContext("2d");
+      const origCtx = this.entity.game.system.ctx;
+      this.entity.game.system.ctx = ctx;
+      this.entity.draw();
+      this.entity.game.system.ctx = origCtx;
+      preview.width = this.entity.size.x;
+      preview.height = this.entity.size.y;
       preview.classList.remove("loading");
-    });
+      preview.src = screenshotCanvas(canvas).src;
+    };
+    img.addEventListener("load", onLoad);
     img.addEventListener("error", (e) =>
       Logger.getInstance().critical("EntityDisplay - construct - error loading image:", e)
     );

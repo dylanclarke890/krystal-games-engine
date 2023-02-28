@@ -19,9 +19,9 @@ export class MediaFactory {
     "animation",
   ];
 
-  constructor({ system, soundManager } = {}) {
+  constructor({ system, soundManager, noSound = false } = {}) {
     Guard.againstNull({ system });
-    Guard.againstNull({ soundManager });
+    if (!noSound) Guard.againstNull({ soundManager });
     this.#system = system;
     this.#soundManager = soundManager;
   }
