@@ -432,6 +432,7 @@ export class EntityDisplay {
       img.removeEventListener("load", onLoad);
       if (src === notAvailableImgSrc) {
         preview.classList.remove("loading");
+        preview.dataset.no_img = "true";
         preview.src = src;
         return;
       }

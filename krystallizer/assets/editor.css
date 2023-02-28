@@ -541,9 +541,9 @@ input:checked + .slider:before {
   align-self: center;
 }
 
-.entity-display__preview[data-no-img=true] {
-  height: 50px;
-  width: 50px;
+.entity-display__preview[data-no_img=true] {
+  height: 64px;
+  width: 64px;
 }
 
 .entity-display__preview:not(.loading) {
