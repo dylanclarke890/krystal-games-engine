@@ -479,8 +479,12 @@ export class EntityDisplay {
     this.DOMElements = { div, name, preview };
   }
 
-  /** Used for the drag and drop actions. */
+  /**
+   *  Used for the drag and drop actions.
+   *  @param {MouseEvent} e
+   */
   mousedown(e) {
+    if (e.button !== 0) return; // don't action other types of clicks
     const clone = this.DOMElements.div.cloneNode(true);
     document.body.appendChild(clone);
     clone.style.position = "absolute";
