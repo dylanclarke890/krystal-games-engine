@@ -22,6 +22,7 @@ export const config = {
   entity: {
     /** Include a list of properties to show by default. */
     show: ["pos", "size", "bounciness"],
+    /** Fallback image, mainly for invisible entities. */
     previewNotAvailableImagePath: "./krystallizer/assets/image-slash.svg",
   },
   general: {
