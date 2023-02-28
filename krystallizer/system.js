@@ -30,6 +30,8 @@ export class System {
     const panels = document.querySelector("#panels");
     this.height = window.innerHeight - header.offsetHeight - 1;
     this.width = window.innerWidth - panels.offsetWidth;
+    this.realHeight = this.height;
+    this.realWidth = this.width;
     this.canvas = document.querySelector("canvas");
     this.canvas.height = this.height;
     this.canvas.width = this.width;

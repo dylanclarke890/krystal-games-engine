@@ -494,25 +494,21 @@ export class EntityDisplay {
     const canvas = document.querySelector("canvas");
     if (!canvas) Logger.getInstance().critical("EntityDisplay: canvas not found.");
     let target;
-    let posX;
-    let posY;
 
     const mouseMove = (e) => {
-      posX = e.pageX - clone.offsetWidth / 2;
-      posY = e.pageY - clone.offsetHeight / 2;
-      clone.style.left = `${posX}px`;
-      clone.style.top = `${posY}px`;
-      // Select the element beneath the dragged clone.
+      clone.style.left = `${e.pageX - clone.offsetWidth / 2}px`;
+      clone.style.top = `${e.pageY - clone.offsetHeight / 2}px`;
       clone.style.pointerEvents = "none";
-      target = document.elementFromPoint(e.clientX, e.clientY);
+      target = document.elementFromPoint(e.clientX, e.clientY); // Select the element beneath the dragged clone.
       clone.style.removeProperty("pointer-events");
     };
+
     const mouseUp = () => {
       document.removeEventListener("mousemove", mouseMove);
       clone.removeEventListener("mouseup", mouseUp);
       document.body.removeChild(clone);
       if (target !== canvas) return;
-      this.onDrop(this.className, { x: posX, y: posY });
+      this.onDrop(this.className, clone.offsetWidth, clone.offsetHeight);
     };
 
     document.addEventListener("mousemove", mouseMove);

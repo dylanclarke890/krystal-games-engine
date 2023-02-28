@@ -29,6 +29,7 @@ export class Krystallizer {
     this.entityClassesInfo = {};
     this.drawEntities = true;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
+    this.mouse = { x: 0, y: 0 };
 
     const { undoDepth, newFileName } = config.general;
     this.undo = new Undo({ editor: this, levels: undoDepth });
@@ -82,6 +83,7 @@ export class Krystallizer {
   bindEvents() {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
     window.addEventListener("resize", () => this.system.resize());
+    document.addEventListener("mousemove", (e) => this.updateMousePosition(e));
 
     const { layers, level, layerActions, entitiesLayer, layerSettings } = this.DOMElements;
 
@@ -120,6 +122,18 @@ export class Krystallizer {
 
     const { isCollisionLayer } = layerSettings;
     isCollisionLayer.addEventListener("change", () => this.updateCollisionLayerSettings());
+  }
+
+  /** @param {TouchEvent | MouseEvent} e */
+  updateMousePosition(e) {
+    const system = this.system;
+    const internalWidth = system.canvas.offsetWidth || system.realWidth;
+    const scale = system.scale * (internalWidth / system.realWidth);
+
+    const pos = system.canvas.getBoundingClientRect();
+    const { clientX, clientY } = e.touches ? e.touches[0] : e;
+    this.mouse.x = (clientX - pos.left) / scale;
+    this.mouse.y = (clientY - pos.top) / scale;
   }
 
   /**
@@ -293,9 +307,12 @@ export class Krystallizer {
   `);
   }
 
-  onEntityDrop(className, { x, y }) {
-    const spawned = this.spawnEntity(className, x, y);
-    spawned.pos.y -= spawned.size.y;
+  onEntityDrop(className, width, height) {
+    this.logger.debug(width, height);
+    this.logger.debug(this.mouse.x, this.mouse.y);
+    const x = this.mouse.x - width / 2;
+    const y = this.mouse.y - height / 2;
+    this.spawnEntity(className, x, y);
   }
 
   constructEntitiesList() {
@@ -309,8 +326,8 @@ export class Krystallizer {
       const spawned = new classDef({ x: 0, y: 0, game: this });
       entityInfo.props = Object.keys(spawned).filter((v) => !ignoredProps.some((p) => v === p));
       entityDisplays.push(
-        new EntityDisplay(spawned, { ...entityInfo, className }, (cn, pos) =>
-          this.onEntityDrop(cn, pos)
+        new EntityDisplay(spawned, { ...entityInfo, className }, (cn, w, h) =>
+          this.onEntityDrop(cn, w, h)
         )
       );
     }
