@@ -15,7 +15,6 @@
   color: white;
 }
 
-
 .dragging {
   cursor: pointer !important;
 }
@@ -502,6 +501,10 @@ input:checked + .slider:before {
 }
 
 /*#region ENTITY SETTINGS PANEL */
+
+#entity-settings {
+  border-top: none;
+}
 
 #entity-settings input[type="number"] {
   max-width: 2.5em;
