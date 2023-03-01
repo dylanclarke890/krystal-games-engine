@@ -1,9 +1,11 @@
+import { EventSystem } from "../modules/core/events.js";
 import { BackgroundMap } from "../modules/core/map.js";
 import { Assert } from "../modules/lib/sanity/assert.js";
 import { Guard } from "../modules/lib/sanity/guard.js";
-import { screenshotCanvas } from "../modules/lib/utils/dom.js";
+import { $el, screenshotCanvas } from "../modules/lib/utils/dom.js";
 import { Logger } from "../modules/lib/utils/logger.js";
 import { config } from "./config.js";
+import { InputEvents } from "./enums.js";
 
 export class Modal {
   /**
@@ -414,6 +416,7 @@ export class EntityDisplay {
     this.filepath = filepath;
     this.props = props;
     this.onDrop = onDrop ?? (() => {});
+    this.mouse = { x: 0, y: 0 };
     this.construct();
   }
 
@@ -475,9 +478,20 @@ export class EntityDisplay {
 
     this.mouseDown = (e) => this.mousedown(e);
     div.addEventListener("mousedown", this.mouseDown);
+    EventSystem.on(InputEvents.MouseMove, this.updateMousePosition);
     parent.append(div);
-    this.DOMElements = { div, name, preview };
+    this.DOMElements = {
+      div,
+      name,
+      preview,
+      cloneX: $el(".mouse-coords > .clone-x"),
+      cloneY: $el(".mouse-coords > .clone-y"),
+    };
   }
+
+  updateMousePosition = (mouse) => {
+    this.mouse = { ...mouse };
+  };
 
   /**
    *  Used for the drag and drop actions.
@@ -485,22 +499,31 @@ export class EntityDisplay {
    */
   mousedown(e) {
     if (e.button !== 0) return; // don't action other types of clicks
-    const clone = this.DOMElements.div.cloneNode(true);
+    const { div, cloneX, cloneY } = this.DOMElements;
+    const clone = div.cloneNode(true);
     document.body.appendChild(clone);
+
+    const cloneW = clone.offsetWidth;
+    const cloneH = clone.offsetHeight;
+
     clone.style.position = "absolute";
-    clone.style.left = `${e.pageX - clone.offsetWidth / 2}px`;
-    clone.style.top = `${e.pageY - clone.offsetHeight / 2}px`;
+    clone.style.left = `${this.mouse.x - cloneW / 4}px`;
+    clone.style.top = `${this.mouse.y}px`;
+    cloneX.innerText = parseInt(clone.style.left);
+    cloneY.innerText = parseInt(clone.style.top);
 
     const canvas = document.querySelector("canvas");
     if (!canvas) Logger.getInstance().critical("EntityDisplay: canvas not found.");
     let target;
 
     const mouseMove = (e) => {
-      clone.style.left = `${e.pageX - clone.offsetWidth / 2}px`;
-      clone.style.top = `${e.pageY - clone.offsetHeight / 2}px`;
+      clone.style.left = `${this.mouse.x - cloneW / 2}px`;
+      clone.style.top = `${this.mouse.y}px`;
       clone.style.pointerEvents = "none";
       target = document.elementFromPoint(e.clientX, e.clientY); // Select the element beneath the dragged clone.
       clone.style.removeProperty("pointer-events");
+      cloneX.innerText = parseInt(clone.style.left);
+      cloneY.innerText = parseInt(clone.style.top);
     };
 
     const mouseUp = () => {
@@ -508,7 +531,7 @@ export class EntityDisplay {
       clone.removeEventListener("mouseup", mouseUp);
       document.body.removeChild(clone);
       if (target !== canvas) return;
-      this.onDrop(this.className, clone.offsetWidth, clone.offsetHeight);
+      this.onDrop(this.className, cloneW, cloneH);
     };
 
     document.addEventListener("mousemove", mouseMove);
@@ -520,5 +543,6 @@ export class EntityDisplay {
     const { div } = this.DOMElements;
     div.removeEventListener("mousedown", this.mouseDown);
     div.parentElement.removeChild(div);
+    EventSystem.off(InputEvents.MouseMove, this.updateMousePosition);
   }
 }

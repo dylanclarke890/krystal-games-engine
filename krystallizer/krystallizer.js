@@ -13,6 +13,7 @@ import { Undo } from "./undo.js";
 import Sortable from "./third-party/sortable/src/Sortable.js";
 import { EventSystem, LoopEvents } from "../modules/core/events.js";
 import { MediaFactory } from "../modules/core/media-factory.js";
+import { InputEvents } from "./enums.js";
 
 export class Krystallizer {
   constructor() {
@@ -82,8 +83,9 @@ export class Krystallizer {
 
   bindEvents() {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
-    window.addEventListener("resize", () => this.system.resize());
-    document.addEventListener("mousemove", (e) => this.updateMousePosition(e));
+    EventSystem.on(InputEvents.MouseMove, (mouse) => {
+      this.mouse = { ...mouse };
+    });
 
     const { layers, level, layerActions, entitiesLayer, layerSettings } = this.DOMElements;
 
@@ -122,18 +124,6 @@ export class Krystallizer {
 
     const { isCollisionLayer } = layerSettings;
     isCollisionLayer.addEventListener("change", () => this.updateCollisionLayerSettings());
-  }
-
-  /** @param {TouchEvent | MouseEvent} e */
-  updateMousePosition(e) {
-    const system = this.system;
-    const internalWidth = system.canvas.offsetWidth || system.realWidth;
-    const scale = system.scale * (internalWidth / system.realWidth);
-
-    const pos = system.canvas.getBoundingClientRect();
-    const { clientX, clientY } = e.touches ? e.touches[0] : e;
-    this.mouse.x = (clientX - pos.left) / scale;
-    this.mouse.y = (clientY - pos.top) / scale;
   }
 
   /**
@@ -307,11 +297,10 @@ export class Krystallizer {
   `);
   }
 
-  onEntityDrop(className, width, height) {
-    this.logger.debug(width, height);
+  onEntityDrop(className) {
     this.logger.debug(this.mouse.x, this.mouse.y);
-    const x = this.mouse.x - width / 2;
-    const y = this.mouse.y - height / 2;
+    const x = this.mouse.x;
+    const y = this.mouse.y;
     this.spawnEntity(className, x, y);
   }
 

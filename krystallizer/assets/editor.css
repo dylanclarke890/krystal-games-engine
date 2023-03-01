@@ -8,6 +8,14 @@
 
 /* #region GENERAL */
 
+.mouse-coords {
+  position: absolute;
+  top: 0.5em;
+  left: 25%;
+  color: white;
+}
+
+
 .dragging {
   cursor: pointer !important;
 }

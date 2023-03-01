@@ -1,4 +1,7 @@
+import { EventSystem } from "../modules/core/events.js";
+import { $el } from "../modules/lib/utils/dom.js";
 import { config } from "./config.js";
+import { InputEvents } from "./enums.js";
 
 export class System {
   constructor() {
@@ -22,7 +25,34 @@ export class System {
 
     this.scale = 1;
     this.drawPosition = this.DRAW.SMOOTH;
+    this.mouse = { x: 0, y: 0 };
+    this.DOMElements = {
+      mouseX: $el(".mouse-coords > .x"),
+      mouseY: $el(".mouse-coords > .y"),
+    };
+    this.bindEvents();
     this.ready = true;
+  }
+
+  bindEvents() {
+    document.addEventListener("mousemove", (e) => this.updateMousePosition(e));
+    window.addEventListener("resize", () => this.resize());
+  }
+
+  /** @param {TouchEvent | MouseEvent} e */
+  updateMousePosition(e) {
+    const internalWidth = this.canvas.offsetWidth || this.realWidth;
+    const scale = this.scale * (internalWidth / this.realWidth);
+
+    const pos = this.canvas.getBoundingClientRect();
+    const { clientX, clientY } = e.touches ? e.touches[0] : e;
+    this.mouse.x = (clientX - pos.left) / scale;
+    this.mouse.y = (clientY - pos.top) / scale;
+    const { mouseX, mouseY } = this.DOMElements;
+    mouseX.innerText = this.mouse.x;
+    mouseY.innerText = this.mouse.y;
+
+    EventSystem.dispatch(InputEvents.MouseMove, this.mouse);
   }
 
   resize() {
@@ -35,6 +65,13 @@ export class System {
     this.canvas = document.querySelector("canvas");
     this.canvas.height = this.height;
     this.canvas.width = this.width;
+
+    EventSystem.dispatch(InputEvents.WindowResized, {
+      w: this.width,
+      h: this.height,
+      rw: this.realWidth,
+      rh: this.realHeight,
+    });
   }
 
   get DRAW() {
