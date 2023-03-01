@@ -83,9 +83,7 @@ export class Krystallizer {
 
   bindEvents() {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
-    EventSystem.on(InputEvents.MouseMove, (mouse) => {
-      this.mouse = { ...mouse };
-    });
+    EventSystem.on(InputEvents.MouseMove, (mouse) => (this.mouse = { ...mouse }));
 
     const { layers, level, layerActions, entitiesLayer, layerSettings } = this.DOMElements;
 
