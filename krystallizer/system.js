@@ -1,5 +1,4 @@
 import { EventSystem } from "../modules/core/events.js";
-import { $el } from "../modules/lib/utils/dom.js";
 import { config } from "./config.js";
 import { InputEvents } from "./enums.js";
 
@@ -26,10 +25,6 @@ export class System {
     this.scale = 1;
     this.drawPosition = this.DRAW.SMOOTH;
     this.mouse = { x: 0, y: 0 };
-    this.DOMElements = {
-      mouseX: $el(".mouse-coords > .x"),
-      mouseY: $el(".mouse-coords > .y"),
-    };
     this.bindEvents();
     this.ready = true;
   }
@@ -48,9 +43,6 @@ export class System {
     const { clientX, clientY } = e.touches ? e.touches[0] : e;
     this.mouse.x = (clientX - pos.left) / scale;
     this.mouse.y = (clientY - pos.top) / scale;
-    const { mouseX, mouseY } = this.DOMElements;
-    mouseX.innerText = this.mouse.x;
-    mouseY.innerText = this.mouse.y;
 
     EventSystem.dispatch(InputEvents.MouseMove, this.mouse);
   }

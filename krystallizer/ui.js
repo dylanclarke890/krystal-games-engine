@@ -2,7 +2,7 @@ import { EventSystem } from "../modules/core/events.js";
 import { BackgroundMap } from "../modules/core/map.js";
 import { Assert } from "../modules/lib/sanity/assert.js";
 import { Guard } from "../modules/lib/sanity/guard.js";
-import { $el, screenshotCanvas } from "../modules/lib/utils/dom.js";
+import { screenshotCanvas } from "../modules/lib/utils/dom.js";
 import { Logger } from "../modules/lib/utils/logger.js";
 import { config } from "./config.js";
 import { InputEvents } from "./enums.js";
@@ -479,13 +479,7 @@ export class EntityDisplay {
     div.addEventListener("mousedown", this.mouseDown);
     EventSystem.on(InputEvents.MouseMove, this.updateMousePosition);
     parent.append(div);
-    this.DOMElements = {
-      div,
-      name,
-      preview,
-      cloneX: $el(".mouse-coords > .clone-x"),
-      cloneY: $el(".mouse-coords > .clone-y"),
-    };
+    this.DOMElements = { div, name, preview };
   }
 
   updateMousePosition = (mouse) => {
@@ -498,22 +492,17 @@ export class EntityDisplay {
    */
   mousedown(e) {
     if (e.button !== 0) return; // don't action other types of clicks
-    const { preview, cloneX, cloneY } = this.DOMElements;
+    const { preview } = this.DOMElements;
     const clone = preview.cloneNode(true);
     document.body.appendChild(clone);
 
     const cloneW = clone.offsetWidth;
     const cloneH = clone.offsetHeight;
 
-    const posX = () => this.mouse.x - cloneW / 2;
-    const posY = () => this.mouse.y + cloneH / 2;
-
     clone.style.position = "absolute";
-    clone.style.left = `${posX()}px`;
-    clone.style.top = `${posY()}px`;
+    clone.style.left = `${this.mouse.x - cloneW / 2}px`;
+    clone.style.top = `${this.mouse.y + cloneH / 2}px`;
     clone.style.cursor = "none";
-    cloneX.innerText = parseInt(clone.style.left);
-    cloneY.innerText = parseInt(clone.style.top);
 
     const canvas = document.querySelector("canvas");
     if (!canvas) Logger.getInstance().critical("EntityDisplay: canvas not found.");
@@ -521,13 +510,11 @@ export class EntityDisplay {
 
     let target;
     const mouseMove = (e) => {
-      clone.style.left = `${posX()}px`;
-      clone.style.top = `${posY()}px`;
+      clone.style.left = `${this.mouse.x - cloneW / 2}px`;
+      clone.style.top = `${this.mouse.y + cloneH / 2}px`;
       clone.style.pointerEvents = "none";
       target = document.elementFromPoint(e.clientX, e.clientY); // Select the element beneath the dragged clone.
       clone.style.removeProperty("pointer-events");
-      cloneX.innerText = parseInt(clone.style.left);
-      cloneY.innerText = parseInt(clone.style.top);
     };
 
     const mouseUp = () => {
@@ -538,7 +525,7 @@ export class EntityDisplay {
       if (target !== canvas) return;
       const pos = {
         x: parseInt(clone.style.left),
-        y: parseInt(clone.style.top) - cloneH,
+        y: parseInt(clone.style.top),
       };
       this.onDrop(this.className, pos);
     };
