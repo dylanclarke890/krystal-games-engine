@@ -424,8 +424,7 @@ export class EntityDisplay {
   getPreviewImage() {
     const preview = document.createElement("img");
     preview.draggable = false;
-    preview.classList.add("entity-display__preview");
-    preview.classList.add("loading");
+    preview.classList.add("entity-display__preview", "loading");
     preview.src = "./krystallizer/assets/loading.svg";
 
     const notAvailableImgSrc = config.entity.previewNotAvailableImagePath;
@@ -499,26 +498,31 @@ export class EntityDisplay {
    */
   mousedown(e) {
     if (e.button !== 0) return; // don't action other types of clicks
-    const { div, cloneX, cloneY } = this.DOMElements;
-    const clone = div.cloneNode(true);
+    const { preview, cloneX, cloneY } = this.DOMElements;
+    const clone = preview.cloneNode(true);
     document.body.appendChild(clone);
 
     const cloneW = clone.offsetWidth;
     const cloneH = clone.offsetHeight;
 
+    const posX = () => this.mouse.x - cloneW / 2;
+    const posY = () => this.mouse.y + cloneH / 2;
+
     clone.style.position = "absolute";
-    clone.style.left = `${this.mouse.x - cloneW / 4}px`;
-    clone.style.top = `${this.mouse.y}px`;
+    clone.style.left = `${posX()}px`;
+    clone.style.top = `${posY()}px`;
+    clone.style.cursor = "none";
     cloneX.innerText = parseInt(clone.style.left);
     cloneY.innerText = parseInt(clone.style.top);
 
     const canvas = document.querySelector("canvas");
     if (!canvas) Logger.getInstance().critical("EntityDisplay: canvas not found.");
-    let target;
+    canvas.style.cursor = "none";
 
+    let target;
     const mouseMove = (e) => {
-      clone.style.left = `${this.mouse.x - cloneW / 2}px`;
-      clone.style.top = `${this.mouse.y}px`;
+      clone.style.left = `${posX()}px`;
+      clone.style.top = `${posY()}px`;
       clone.style.pointerEvents = "none";
       target = document.elementFromPoint(e.clientX, e.clientY); // Select the element beneath the dragged clone.
       clone.style.removeProperty("pointer-events");
@@ -530,8 +534,13 @@ export class EntityDisplay {
       document.removeEventListener("mousemove", mouseMove);
       clone.removeEventListener("mouseup", mouseUp);
       document.body.removeChild(clone);
+      canvas.style.removeProperty("cursor");
       if (target !== canvas) return;
-      this.onDrop(this.className, cloneW, cloneH);
+      const pos = {
+        x: parseInt(clone.style.left),
+        y: parseInt(clone.style.top) - cloneH,
+      };
+      this.onDrop(this.className, pos);
     };
 
     document.addEventListener("mousemove", mouseMove);

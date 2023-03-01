@@ -560,8 +560,7 @@ input:checked + .slider:before {
 }
 
 .entity-display__preview:not(.loading) {
-  /* border: var(--border-style); */
-  pointer-events: none;
+  /* pointer-events: none; */
   align-self: center;
 }
 

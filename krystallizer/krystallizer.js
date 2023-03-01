@@ -295,11 +295,13 @@ export class Krystallizer {
   `);
   }
 
-  onEntityDrop(className) {
-    this.logger.debug(this.mouse.x, this.mouse.y);
-    const x = this.mouse.x;
-    const y = this.mouse.y;
-    this.spawnEntity(className, x, y);
+  /**
+   * @param {string} className
+   * @param {{x: number, y: number}} pos
+   */
+  onEntityDrop(className, pos) {
+    this.logger.debug(pos);
+    this.spawnEntity(className, pos.x, pos.y);
   }
 
   constructEntitiesList() {
@@ -313,8 +315,8 @@ export class Krystallizer {
       const spawned = new classDef({ x: 0, y: 0, game: this });
       entityInfo.props = Object.keys(spawned).filter((v) => !ignoredProps.some((p) => v === p));
       entityDisplays.push(
-        new EntityDisplay(spawned, { ...entityInfo, className }, (cn, w, h) =>
-          this.onEntityDrop(cn, w, h)
+        new EntityDisplay(spawned, { ...entityInfo, className }, (cn, pos) =>
+          this.onEntityDrop(cn, pos)
         )
       );
     }
