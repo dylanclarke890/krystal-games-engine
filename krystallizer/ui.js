@@ -111,12 +111,14 @@ export class Modal {
   close() {
     this.modal.style.display = "none";
     window.removeEventListener("click", this.outsideClickEvent);
-    window.removeEventListener("click", this.keyupEvent);
+    document.removeEventListener("keyup", this.keyupEvent);
     this.events.close(this.modal);
   }
 
   destroy() {
     document.body.removeChild(this.modal);
+    window.removeEventListener("click", this.outsideClickEvent);
+    document.removeEventListener("keyup", this.keyupEvent);
     this.events.destroy(this.modal);
     this.destroyed = true;
   }
