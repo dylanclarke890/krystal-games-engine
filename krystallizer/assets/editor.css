@@ -1,6 +1,7 @@
 :root {
   --border-style: 1px solid #555;
   --entity-display-size: 128px;
+  --gap: 0.5em;
   --hover-color: rgb(202, 233, 243);
   --selection-color: rgb(100 171 182);
   --transition-duration: 0.4s;
@@ -125,7 +126,7 @@ header {
   color: rgba(0, 0, 0, 0.1);
   font-size: 2em;
   font-family: cursive;
-  padding-left: 0.5em;
+  padding-left: var(--gap);
   padding-top: 0.2em;
   text-shadow: 0px -1px 0px rgb(255 255 255 / 40%);
 }
@@ -137,9 +138,9 @@ header {
 }
 
 #menu-bar {
-  margin-right: 1em;
-  padding-bottom: 0.25em;
-  padding-top: 0.25em;
+  margin-right: calc(var(--gap) * 2);
+  padding-bottom: calc(var(--gap) / 2);
+  padding-top: calc(var(--gap) / 2);
 }
 
 /* #endregion HEADER */
@@ -158,11 +159,17 @@ header {
   border-bottom: var(--border-style);
 }
 
+.panel__toggle-icon {
+  height: 1em;
+  width: 1em;
+  margin-left: var(--gap);
+}
+
 .panel__header h2 {
   color: grey;
   font-size: 100%;
   letter-spacing: 1.5px;
-  padding: 0.5em;
+  padding: var(--gap);
   text-transform: uppercase;
 }
 
@@ -179,9 +186,9 @@ header {
 
 .panel__actions {
   display: flex;
-  gap: 0.5em;
+  gap: var(--gap);
   justify-content: center;
-  margin-block: 0.5em;
+  margin-block: var(--gap);
 }
 
 /* #endregion PANEL */
@@ -222,7 +229,7 @@ header {
   cursor: pointer;
   display: grid;
   grid-template-columns: 1.25em auto 1fr;
-  gap: 0.5em;
+  gap: var(--gap);
   min-height: 32px;
   padding: 0.4em 0.25em 0.4em 0.5em;
   transition: background-color 0.1s linear;
@@ -256,7 +263,7 @@ header {
   align-self: center;
   color: rgb(65 63 63 / 70%);
   font-size: 75%;
-  margin-left: 0.5em;
+  margin-left: var(--gap);
 }
 
 /* #endregion LAYER PANEL */
@@ -266,8 +273,8 @@ header {
 .input-settings-layout {
   display: grid;
   grid-template-columns: 1fr 4fr;
-  padding: 0.5em;
-  gap: 0.5em;
+  padding: var(--gap);
+  gap: var(--gap);
 }
 
 .input-settings-layout > label {
@@ -292,11 +299,11 @@ header {
 /* #region TOGGLE OPTION */
 
 .toggle-option {
-  margin-top: 0.5em;
+  margin-top: var(--gap);
 }
 
 .toggle-option > :first-child {
-  margin-inline: 0.5em;
+  margin-inline: var(--gap);
 }
 
 /* The switch - the box around the slider */
@@ -414,19 +421,19 @@ input:checked + .slider:before {
 
 /* Modal Header */
 .modal-header {
-  padding: 0.5em;
+  padding: var(--gap);
   border-bottom: 1px solid grey;
 }
 
 /* Modal Body */
 .modal-body {
-  padding: 0.5em;
+  padding: var(--gap);
 }
 
 /* Modal Footer */
 .modal-footer {
   border-top: 1px solid grey;
-  padding: 0.5em;
+  padding: var(--gap);
 }
 
 /* The Close Button */
@@ -523,7 +530,7 @@ input:checked + .slider:before {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  padding: 0.5em;
+  padding: var(--gap);
   max-height: var(--entity-display-size);
   max-width: var(--entity-display-size);
   -webkit-transition: background-color var(--transition-duration);
