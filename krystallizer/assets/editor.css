@@ -25,7 +25,6 @@
   width: 0;
 }
 
-
 input {
   border-radius: 3px;
   padding: 2px;
@@ -149,7 +148,6 @@ header {
 
 #panels {
   background-color: lightblue;
-  overflow-y: scroll;
 }
 
 .panel {
