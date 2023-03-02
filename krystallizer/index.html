@@ -11,12 +11,6 @@
 </head>
 
 <body>
-  <div class="mouse-coords">
-    <div class="x"></div>
-    <div class="y"></div>
-    <div class="clone-x"></div>
-    <div class="clone-y"></div>
-  </div>
   <header>
     <span id="level-name" data-unsaved="false">untitled.js</span>
     <div id="menu-bar">
@@ -41,82 +35,117 @@
           </div>
         </div>
       </div>
-      <div id="layer-settings" class="panel" style="display: none">
-        <h2 class="panel__header">Layer Settings</h2>
-        <div class="input-settings-layout">
-          <label for="name">Name:</label>
-          <input type="text" name="name" id="name" autocomplete="off" />
-          <label for="tileset">Tileset:</label>
-          <input type="text" name="tileset" id="tileset" autocomplete="off" />
-          <label for="tilesize">Tilesize:</label>
-          <input type="number" name="tilesize" id="tilesize" autocomplete="off" />
-          <label for="dimensions-x">Dimensions:</label>
-          <div id="dimensions-wrapper">
-            <input type="number" name="dimensions-x" id="dimensions-x" autocomplete="off" />
-            <label for="dimensions-y">&times;</label>
-            <input type="number" name="dimensions-y" id="dimensions-y" autocomplete="off" />
+      <div>
+        <div id="layer-settings" class="panel" style="display: none">
+          <h2 class="panel__header">Layer Settings</h2>
+          <div class="input-settings-layout">
+            <label for="name">Name:</label>
+            <input type="text" name="name" id="name" autocomplete="off" />
+            <label for="tileset">Tileset:</label>
+            <input type="text" name="tileset" id="tileset" autocomplete="off" />
+            <label for="tilesize">Tilesize:</label>
+            <input type="number" name="tilesize" id="tilesize" autocomplete="off" />
+            <label for="dimensions-x">Dimensions:</label>
+            <div id="dimensions-wrapper">
+              <input type="number" name="dimensions-x" id="dimensions-x" autocomplete="off" />
+              <label for="dimensions-y">&times;</label>
+              <input type="number" name="dimensions-y" id="dimensions-y" autocomplete="off" />
+            </div>
+            <label for="distance">Distance:</label>
+            <input type="number" name="distance" id="distance" autocomplete="off" />
           </div>
-          <label for="distance">Distance:</label>
-          <input type="number" name="distance" id="distance" autocomplete="off" />
-        </div>
-        <div class="toggle-option-list">
-          <div class="toggle-option">
-            <label class="switch">
-              <input type="checkbox" id="is-collision-layer" />
-              <span class="slider round"></span>
-            </label>
-            <span>is collision layer</span>
+          <div class="toggle-option-list">
+            <div class="toggle-option">
+              <label class="switch">
+                <input type="checkbox" id="is-collision-layer" />
+                <span class="slider round"></span>
+              </label>
+              <span>is collision layer</span>
+            </div>
+            <div class="toggle-option">
+              <label class="switch">
+                <input type="checkbox" id="pre-render" />
+                <span class="slider round"></span>
+              </label>
+              <span>pre-render in game</span>
+            </div>
+            <div class="toggle-option">
+              <label class="switch">
+                <input type="checkbox" id="repeat-map" />
+                <span class="slider round"></span>
+              </label>
+              <span>repeat</span>
+            </div>
+            <div class="toggle-option">
+              <label class="switch">
+                <input type="checkbox" id="link-with-collision" />
+                <span class="slider round"></span>
+              </label>
+              <span>link with collision</span>
+            </div>
           </div>
-          <div class="toggle-option">
-            <label class="switch">
-              <input type="checkbox" id="pre-render" />
-              <span class="slider round"></span>
-            </label>
-            <span>pre-render in game</span>
-          </div>
-          <div class="toggle-option">
-            <label class="switch">
-              <input type="checkbox" id="repeat-map" />
-              <span class="slider round"></span>
-            </label>
-            <span>repeat</span>
-          </div>
-          <div class="toggle-option">
-            <label class="switch">
-              <input type="checkbox" id="link-with-collision" />
-              <span class="slider round"></span>
-            </label>
-            <span>link with collision</span>
+          <div class="panel__actions">
+            <button id="layer-apply" class="btn btn-sm">Apply</button>
+            <button id="layer-delete" class="btn btn-sm">Delete</button>
           </div>
         </div>
-        <div class="panel__actions">
-          <button id="layer-apply" class="btn btn-sm">Apply</button>
-          <button id="layer-delete" class="btn btn-sm">Delete</button>
+        <div id="entities" class="panel">
+          <h2 class="panel__header">Entities</h2>
+          <div id="entities__list"></div>
         </div>
-      </div>
-      <div id="entities" class="panel">
-        <h2 class="panel__header">Entities</h2>
-        <div id="entities__list"></div>
-      </div>
-      <div id="entity-settings" class="panel">
-        <h2 class="panel__header">Entity Settings</h2>
-        <h3 id="entity-class-name" class="panel__header">EntityClassName</h3>
-        <h4 id="entity-size" class="panel__header">Size</h3>
-        <div id="dual-input-row">
-          <label for="size-x">w:</label>
-          <input type="number" name="size-x" id="size-x" autocomplete="off" />
-          <label for="size-y">h:</label>
-          <input type="number" name="size-y" id="size-y" autocomplete="off" />
+        <div id="entity-settings" class="panel">
+          <h2 class="panel__header">Layer Settings</h2>
+          <div class="input-settings-layout">
+            <label for="name">Name:</label>
+            <input type="text" name="name" id="name" autocomplete="off" />
+            <label for="tileset">Tileset:</label>
+            <input type="text" name="tileset" id="tileset" autocomplete="off" />
+            <label for="tilesize">Tilesize:</label>
+            <input type="number" name="tilesize" id="tilesize" autocomplete="off" />
+            <label for="dimensions-x">Dimensions:</label>
+            <div id="dimensions-wrapper">
+              <input type="number" name="dimensions-x" id="dimensions-x" autocomplete="off" />
+              <label for="dimensions-y">&times;</label>
+              <input type="number" name="dimensions-y" id="dimensions-y" autocomplete="off" />
+            </div>
+            <label for="distance">Distance:</label>
+            <input type="number" name="distance" id="distance" autocomplete="off" />
+          </div>
+          <div class="toggle-option-list">
+            <div class="toggle-option">
+              <label class="switch">
+                <input type="checkbox" id="is-collision-layer" />
+                <span class="slider round"></span>
+              </label>
+              <span>is collision layer</span>
+            </div>
+            <div class="toggle-option">
+              <label class="switch">
+                <input type="checkbox" id="pre-render" />
+                <span class="slider round"></span>
+              </label>
+              <span>pre-render in game</span>
+            </div>
+            <div class="toggle-option">
+              <label class="switch">
+                <input type="checkbox" id="repeat-map" />
+                <span class="slider round"></span>
+              </label>
+              <span>repeat</span>
+            </div>
+            <div class="toggle-option">
+              <label class="switch">
+                <input type="checkbox" id="link-with-collision" />
+                <span class="slider round"></span>
+              </label>
+              <span>link with collision</span>
+            </div>
+          </div>
+          <div class="panel__actions">
+            <button id="layer-apply" class="btn btn-sm">Apply</button>
+            <button id="layer-delete" class="btn btn-sm">Delete</button>
+          </div>
         </div>
-        <h4 id="entity-size" class="panel__header">Position</h3>
-        <div id="dual-input-row">
-          <label for="pos-x">x:</label>
-          <input type="number" name="pos-x" id="pos-x" autocomplete="off" />
-          <label for="pos-y">y:</label>
-          <input type="number" name="pos-y" id="pos-y" autocomplete="off" />
-        </div>
-          <label for="bounciness">Bounciness:</label>
-        <input type="number" name="bounciness" id="bounciness" autocomplete="off" />
       </div>
     </div>
     </div>
