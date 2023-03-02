@@ -202,6 +202,7 @@ header {
 
 .panel__content.open {
   max-height: 250px;
+  overflow: scroll;
   border-bottom: var(--border-style);
 }
 
@@ -265,8 +266,9 @@ header {
 
 .layer__visibility[data-checked="true"] {
   background-image: url("eye-slash.svg");
+  background-size: 110%;
   position: relative;
-  right: 2px;
+  right: 1px;
 }
 
 .layer__name {
@@ -531,12 +533,14 @@ input:checked + .slider:before {
 
 /*#region ENTITY PANEL */
 
+#entities .panel__content.open {
+  max-height: calc(2.5 * var(--entity-display-size));
+}
+
 #entities__list {
   display: grid;
   grid-auto-rows: var(--entity-display-size);
   grid-template-columns: repeat(2, minmax(var(--entity-display-size), 1fr));
-  max-height: calc(2.5 * var(--entity-display-size));
-  overflow-y: scroll;
 }
 
 .entity-display {
