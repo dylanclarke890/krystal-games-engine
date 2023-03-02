@@ -157,12 +157,33 @@ header {
 
 .panel__header {
   border-bottom: var(--border-style);
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1em auto 1em;
+  align-items: center;
 }
 
 .panel__toggle-icon {
   height: 1em;
   width: 1em;
-  margin-left: var(--gap);
+  margin-left: calc(var(--gap) / 2);
+  margin-bottom: 2px;
+}
+
+.panel__toggle-icon[data-direction='left'] {
+  transform: rotate(0deg);
+}
+
+.panel__toggle-icon[data-direction='up'] {
+  transform: rotate(90deg);
+}
+
+.panel__toggle-icon[data-direction='right'] {
+  transform: rotate(180deg);
+}
+
+.panel__toggle-icon[data-direction='down'] {
+  transform: rotate(270deg);
 }
 
 .panel__header h2 {
@@ -196,14 +217,7 @@ header {
 /* #region LAYER PANEL */
 
 #layers .panel__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-#layers-header .panel__header {
-  padding: 0;
-  border-bottom: none;
+  cursor: default;
 }
 
 #layer-new {

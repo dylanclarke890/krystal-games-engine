@@ -23,9 +23,9 @@
   <main id="editor">
     <canvas></canvas>
     <div id="panels">
-      <div id="layers" class="panel">
+      <div id="layers" class="panel" data-alwaysopen="true">
         <div class="panel__header">
-          <img class="panel__toggle-icon" src="../krystallizer/assets/chevron-left.svg">
+          <div></div>
           <h2>Layers</h2>
           <div id="layer-new">+</div>
         </div>
@@ -40,6 +40,7 @@
       </div>
       <div id="layer-settings" class="panel" style="display: none">
         <div class="panel__header">
+          <img class="panel__toggle-icon" src="../krystallizer/assets/chevron-left.svg" data-direction="right">
           <h2>Layer Settings</h2>
         </div>
         <div class="panel__content">
@@ -97,6 +98,7 @@
       </div>
       <div id="entities" class="panel">
         <div class="panel__header">
+          <img class="panel__toggle-icon" src="../krystallizer/assets/chevron-left.svg" data-direction="right">
           <h2>Entities</h2>
         </div>
         <div class="panel__content">
@@ -105,6 +107,7 @@
       </div>
       <div id="entity-settings" class="panel">
         <div class="panel__header">
+          <img class="panel__toggle-icon" src="../krystallizer/assets/chevron-left.svg" data-direction="right">
           <h2>Entity Settings</h2>
         </div>
         <div class="panel__content">

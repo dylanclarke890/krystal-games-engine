@@ -85,6 +85,27 @@ export class Krystallizer {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
     EventSystem.on(InputEvents.MouseMove, (mouse) => (this.mouse = { ...mouse }));
 
+    const panels = document.querySelectorAll("#panels > .panel");
+    for (let i = 0; i < panels.length; i++) {
+      const panel = panels[i];
+      const content = panel.querySelector(".panel__content");
+      if (panel.dataset.alwaysopen === "true") {
+        content.classList.add("open");
+        continue;
+      }
+      const header = panel.querySelector(".panel__header");
+      const toggle = panel.querySelector(".panel__toggle-icon");
+      header.addEventListener("click", () => {
+        if (content.classList.contains("open")) {
+          content.classList.remove("open");
+          toggle.dataset.direction = "right";
+        } else {
+          content.classList.add("open");
+          toggle.dataset.direction = "down";
+        }
+      });
+    }
+
     const { layers, level, layerActions, entitiesLayer, layerSettings } = this.DOMElements;
 
     const toggleDraggingClass = (is) => document.documentElement.classList.toggle("dragging", is);
