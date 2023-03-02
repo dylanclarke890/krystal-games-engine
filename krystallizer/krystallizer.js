@@ -85,14 +85,10 @@ export class Krystallizer {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
     EventSystem.on(InputEvents.MouseMove, (mouse) => (this.mouse = { ...mouse }));
 
-    const panels = document.querySelectorAll("#panels > .panel");
+    const panels = document.querySelectorAll("#panels > .panel:not(.always-open)");
     for (let i = 0; i < panels.length; i++) {
       const panel = panels[i];
       const content = panel.querySelector(".panel__content");
-      if (panel.dataset.alwaysopen === "true") {
-        content.classList.add("open");
-        continue;
-      }
       const header = panel.querySelector(".panel__header");
       const toggle = panel.querySelector(".panel__toggle-icon");
       header.addEventListener("click", () => {
