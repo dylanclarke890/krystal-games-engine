@@ -42,17 +42,17 @@ export class Krystallizer {
 
     this.DOMElements = {
       level: {
+        load: $el("#level-load"),
         name: $el("#level-name"),
         new: $el("#level-new"),
-        load: $el("#level-load"),
         save: $el("#level-save"),
         saveAs: $el("#level-save-as"),
       },
       layers: $el("#layers-list"),
       layerActions: {
-        new: $el("#layer-new"),
-        delete: $el("#layer-delete"),
         apply: $el("#layer-apply"),
+        delete: $el("#layer-delete"),
+        new: $el("#layer-new"),
       },
       entities: $el("#entities"),
       entitiesLayer: {
@@ -60,24 +60,28 @@ export class Krystallizer {
         visibility: $el("#layer-entities > .layer__visibility"),
       },
       entitySettings: {
+        className: $el("#class-name"),
         div: $el("#entity-settings"),
         panelContent: $el("#entity-settings .panel__content"),
-        className: $el("#class-name"),
         posX: $el("#pos-x"),
         posY: $el("#pos-y"),
       },
+      entityActions: {
+        apply: $el("#entity-apply"),
+        delete: $el("#entity-delete"),
+      },
       layerSettings: {
         div: $el("#layer-settings"),
-        name: $el("#name"),
-        tileset: $el("#tileset"),
-        tilesize: $el("#tilesize"),
         distance: $el("#distance"),
-        width: $el("#dimensions-x"),
         height: $el("#dimensions-y"),
         isCollisionLayer: $el("#is-collision-layer"),
+        linkWithCollision: $el("#link-with-collision"),
+        name: $el("#name"),
         preRender: $el("#pre-render"),
         repeat: $el("#repeat-map"),
-        linkWithCollision: $el("#link-with-collision"),
+        tileset: $el("#tileset"),
+        tilesize: $el("#tilesize"),
+        width: $el("#dimensions-x"),
       },
     };
     this.setModifiedState(false);
@@ -110,7 +114,8 @@ export class Krystallizer {
     this.system.canvas.addEventListener("mousedown", () => this.setActiveEntity());
     this.bindPanelEvents();
 
-    const { layers, level, layerActions, entitiesLayer, layerSettings } = this.DOMElements;
+    const { layers, level, layerActions, entityActions, entitiesLayer, layerSettings } =
+      this.DOMElements;
 
     const toggleDraggingClass = (is) => document.documentElement.classList.toggle("dragging", is);
     new Sortable(layers, {
@@ -135,7 +140,12 @@ export class Krystallizer {
     layerActions.new.addEventListener("click", () => this.addLayer());
     layerActions.apply.addEventListener("click", () => this.saveLayerSettings());
     layerActions.delete.addEventListener("click", () => {
-      if (!config.general.confirmDeleteLayer) this.removeLayer();
+      if (!config.general.confirmDelete) this.removeLayer();
+    });
+
+    entityActions.apply.addEventListener("click", () => this.saveEntitySettings());
+    entityActions.delete.addEventListener("click", () => {
+      if (!config.general.confirmDelete) this.removeEntity();
     });
 
     const { div, visibility } = entitiesLayer;
@@ -161,11 +171,17 @@ export class Krystallizer {
 
   setActiveEntity() {
     const entity = this.hoveredEntity;
+    if (!entity) {
+      panelContent.classList.remove("open");
+      return;
+    }
+
     const { panelContent, className, posX, posY } = this.DOMElements.entitySettings;
     panelContent.classList.add("open");
     className.value = entity.constructor.name;
     posX.value = entity.pos.x;
     posY.value = entity.pos.y;
+    this.selectedEntity = entity;
   }
 
   /**
@@ -270,7 +286,7 @@ export class Krystallizer {
       saveAs,
       levelSelect,
       confirmDiscard: config.general.confirmDiscardChanges && confirmDiscard,
-      confirmDelete: config.general.confirmDeleteLayer && confirmDelete,
+      confirmDelete: config.general.confirmDelete && confirmDelete,
     };
   }
 
@@ -374,6 +390,16 @@ export class Krystallizer {
     this.entities.push(newEntity);
     if (settings.name) this.namedEntities[settings.name] = newEntity;
     return newEntity;
+  }
+
+  removeEntity() {
+    if (!this.selectedEntity) return;
+    this.entities = this.entities.filter((e) => e !== this.selectedEntity);
+    this.selectedEntity = null;
+    this.setModifiedState(true);
+  }
+  saveEntitySettings() {
+    if (!this.selectedEntity) return;
   }
 
   //#endregion Entity
