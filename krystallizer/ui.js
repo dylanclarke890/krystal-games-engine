@@ -415,7 +415,7 @@ export class EntityDisplay {
     this.entity = entity;
     this.className = className;
     this.filepath = filepath;
-    this.onDrop = onDrop ?? (() => {});
+    this.onDrop = Modal.bind(onDrop);
     this.mouse = { x: 0, y: 0 };
     this.construct();
   }
