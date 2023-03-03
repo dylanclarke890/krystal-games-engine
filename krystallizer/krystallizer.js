@@ -165,8 +165,8 @@ export class Krystallizer {
    */
   loadImagesAndEntities() {
     const { images, entities } = config.directories;
-    const getEntities = this.httpClient.api.glob(entities);
     const getImages = this.httpClient.api.browse(images, "images");
+    const getEntities = this.httpClient.api.glob(entities);
     Promise.all([getImages, getEntities])
       .then(([imagesResult, entitiesResult]) => {
         this.preloadImages(imagesResult);
