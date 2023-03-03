@@ -83,7 +83,7 @@ export class Krystallizer {
 
   bindEvents() {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
-    EventSystem.on(InputEvents.MouseMove, (mouse) => (this.mouse = { ...mouse }));
+    EventSystem.on(InputEvents.MouseMove, (mouse) => this.handleMouseMovement(mouse));
 
     const panels = document.querySelectorAll("#collapsible-panels > .panel");
     for (let i = 0; i < panels.length; i++) {
@@ -139,6 +139,17 @@ export class Krystallizer {
 
     const { isCollisionLayer } = layerSettings;
     isCollisionLayer.addEventListener("change", () => this.updateCollisionLayerSettings());
+  }
+
+  handleMouseMovement(mouse) {
+    this.mouse = { ...mouse };
+    const p = mouse;
+    this.hoveredEntity = this.entities.find(
+      (e) =>
+        !(p.x < e.pos.x || p.y < e.pos.y || p.x >= e.pos.x + e.size.x || p.y >= e.pos.y + e.size.y)
+    );
+
+    this.system.canvas.style.cursor = this.hoveredEntity ? "pointer" : "default";
   }
 
   /**
