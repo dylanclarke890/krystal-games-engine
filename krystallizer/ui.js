@@ -407,16 +407,14 @@ export class SelectLevelModal extends Modal {
 }
 
 export class EntityDisplay {
-  constructor(entity, { className, filepath, props }, onDrop) {
+  constructor(entity, { className, filepath }, onDrop) {
     Guard.againstNull({ entity });
     Guard.againstNull({ className }).isTypeOf("string");
     Guard.againstNull({ filepath }).isTypeOf("string");
-    Guard.againstNull({ props }).isTypeOf("object");
     /** @type {import("../modules/core/entity.js").Entity} */
     this.entity = entity;
     this.className = className;
     this.filepath = filepath;
-    this.props = props;
     this.onDrop = onDrop ?? (() => {});
     this.mouse = { x: 0, y: 0 };
     this.construct();

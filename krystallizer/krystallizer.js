@@ -323,7 +323,6 @@ export class Krystallizer {
   }
 
   constructEntitiesList() {
-    const ignoredProps = ["game", "id", "killed"];
     const classes = Object.keys(this.entityClassesInfo);
     const entityDisplays = [];
     for (let i = 0; i < classes.length; i++) {
@@ -331,7 +330,6 @@ export class Krystallizer {
       const classDef = Register.getEntityByType(className);
       const entityInfo = this.entityClassesInfo[className];
       const spawned = new classDef({ x: 0, y: 0, game: this });
-      entityInfo.props = Object.keys(spawned).filter((v) => !ignoredProps.some((p) => v === p));
       entityDisplays.push(
         new EntityDisplay(spawned, { ...entityInfo, className }, (cn, pos) =>
           this.onEntityDrop(cn, pos)
