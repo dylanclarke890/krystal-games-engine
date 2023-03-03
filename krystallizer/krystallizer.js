@@ -85,11 +85,7 @@ export class Krystallizer {
     this.loop.start();
   }
 
-  bindEvents() {
-    EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
-    EventSystem.on(InputEvents.MouseMove, (mouse) => this.handleMouseMovement(mouse));
-    this.system.canvas.addEventListener("click", () => this.setActiveEntity());
-
+  bindPanelEvents() {
     const panels = document.querySelectorAll("#collapsible-panels > .panel");
     for (let i = 0; i < panels.length; i++) {
       const panel = panels[i];
@@ -106,6 +102,13 @@ export class Krystallizer {
         }
       });
     }
+  }
+
+  bindEvents() {
+    EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
+    EventSystem.on(InputEvents.MouseMove, (mouse) => this.handleMouseMovement(mouse));
+    this.system.canvas.addEventListener("mousedown", () => this.setActiveEntity());
+    this.bindPanelEvents();
 
     const { layers, level, layerActions, entitiesLayer, layerSettings } = this.DOMElements;
 
