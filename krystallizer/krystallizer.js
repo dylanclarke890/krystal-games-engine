@@ -153,17 +153,13 @@ export class Krystallizer {
       (e) =>
         !(p.x < e.pos.x || p.y < e.pos.y || p.x >= e.pos.x + e.size.x || p.y >= e.pos.y + e.size.y)
     );
-
     this.system.canvas.style.cursor = this.hoveredEntity ? "pointer" : "default";
   }
 
   setActiveEntity() {
     const entity = this.hoveredEntity;
     const { panelContent, className, posX, posY } = this.DOMElements.entitySettings;
-
-    panelContent.classList.toggle("open", entity);
-    if (!entity) return;
-
+    panelContent.classList.add("open");
     className.value = entity.constructor.name;
     posX.value = entity.pos.x;
     posY.value = entity.pos.y;
