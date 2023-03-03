@@ -85,7 +85,7 @@ export class Krystallizer {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
     EventSystem.on(InputEvents.MouseMove, (mouse) => (this.mouse = { ...mouse }));
 
-    const panels = document.querySelectorAll("#panels > .panel:not(.always-open)");
+    const panels = document.querySelectorAll("#collapsible-panels > .panel");
     for (let i = 0; i < panels.length; i++) {
       const panel = panels[i];
       const content = panel.querySelector(".panel__content");

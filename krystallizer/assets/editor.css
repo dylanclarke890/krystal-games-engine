@@ -151,6 +151,11 @@ header {
   background-color: lightblue;
 }
 
+#collapsible-panels {
+  max-height: calc(100vh - 251px);
+  overflow-y: scroll;
+}
+
 .panel {
   user-select: none;
 }
