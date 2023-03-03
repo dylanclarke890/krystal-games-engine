@@ -61,6 +61,10 @@ export class Krystallizer {
       },
       entitySettings: {
         div: $el("#entity-settings"),
+        panelContent: $el("#entity-settings .panel__content"),
+        className: $el("#class-name"),
+        posX: $el("#pos-x"),
+        posY: $el("#pos-y"),
       },
       layerSettings: {
         div: $el("#layer-settings"),
@@ -84,6 +88,7 @@ export class Krystallizer {
   bindEvents() {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
     EventSystem.on(InputEvents.MouseMove, (mouse) => this.handleMouseMovement(mouse));
+    this.system.canvas.addEventListener("click", () => this.setActiveEntity());
 
     const panels = document.querySelectorAll("#collapsible-panels > .panel");
     for (let i = 0; i < panels.length; i++) {
@@ -150,6 +155,18 @@ export class Krystallizer {
     );
 
     this.system.canvas.style.cursor = this.hoveredEntity ? "pointer" : "default";
+  }
+
+  setActiveEntity() {
+    const entity = this.hoveredEntity;
+    const { panelContent, className, posX, posY } = this.DOMElements.entitySettings;
+
+    panelContent.classList.toggle("open", entity);
+    if (!entity) return;
+
+    className.value = entity.constructor.name;
+    posX.value = entity.pos.x;
+    posY.value = entity.pos.y;
   }
 
   /**
