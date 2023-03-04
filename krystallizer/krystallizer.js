@@ -3,7 +3,6 @@ import { Register } from "../modules/core/register.js";
 import { $el, loadImages, loadScript } from "../modules/lib/utils/dom.js";
 import { Logger } from "../modules/lib/utils/logger.js";
 import { formatAsJSON, hyphenToCamelCase } from "../modules/lib/utils/string.js";
-import { Canvas } from "./canvas.js";
 import { config } from "./config.js";
 import { EditMap } from "./edit-map.js";
 import { KrystallizerHttpClient } from "./http-client.js";
@@ -18,7 +17,6 @@ import { InputEvents } from "./enums.js";
 export class Krystallizer {
   constructor() {
     this.system = new System();
-    this.canvas = new Canvas(this.system);
     this.media = new MediaFactory({ system: this.system, noSound: true });
     this.loop = new GameLoop();
     this.logger = Logger.getInstance(config.logging.level);
@@ -292,7 +290,50 @@ export class Krystallizer {
     for (let i = 0; i < this.entities.length; i++) this.entities[i].draw();
   }
 
+  drawLabels() {
+    const { ctx, height, width, scale } = this.system;
+    const { colors, labels } = config;
+    const { actual } = this.screen;
+
+    ctx.fillStyle = colors.primary;
+    const { step, markerLength } = labels;
+
+    let xlabel = actual.x - (actual.x % step) - step;
+    for (let tx = Math.floor(-actual.x % step); tx < width; tx += step) {
+      xlabel += step;
+      ctx.fillText(xlabel, tx * scale, 10);
+    }
+
+    let ylabel = actual.y - (actual.y % step) - step;
+    for (let ty = Math.floor(-actual.y % step); ty < height; ty += step) {
+      ylabel += step;
+      ctx.fillText(ylabel, 0, ty * scale + 10);
+    }
+
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(this.mouse.x, 0);
+    ctx.lineTo(this.mouse.x, markerLength);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(0, this.mouse.y);
+    ctx.lineTo(markerLength, this.mouse.y);
+    ctx.stroke();
+  }
+
+  clear() {
+    const { ctx, height, width } = this.system;
+    const clearColor = config.colors.clear;
+    if (clearColor) {
+      ctx.fillStyle = clearColor;
+      ctx.fillRect(0, 0, width, height);
+    } else ctx.clearRect(0, 0, width, height);
+  }
+
   draw() {
+    this.clear();
+
     let entitiesDrawn = false;
     for (let i = 0; i < this.layers.length; i++) {
       const layer = this.layers[i];
@@ -304,6 +345,13 @@ export class Krystallizer {
       layer.draw();
     }
     if (!entitiesDrawn) this.drawEntityLayer();
+
+    if (config.labels.draw) this.drawLabels();
+  }
+
+  nextFrame(tick) {
+    this.system.tick = tick;
+    this.draw();
   }
 
   toolbarActions = {
@@ -338,12 +386,6 @@ export class Krystallizer {
     rounded.x = Math.round(actual.x * scale) / scale;
     rounded.y = Math.round(actual.y * scale) / scale;
     for (let i = 0; i < this.layers.length; i++) this.layers[i].setScreenPos(actual.x, actual.y);
-  }
-
-  nextFrame(tick) {
-    this.system.tick = tick;
-    this.canvas.draw();
-    this.draw();
   }
 
   setToolbarAction(action) {

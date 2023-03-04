@@ -40,6 +40,7 @@ export const config = {
     draw: true,
     font: "10px Bitstream Vera Sans Mono, Monaco, sans-serif",
     step: 32,
+    markerLength: 10,
   },
   layerDefaults: {
     width: 10,
