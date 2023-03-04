@@ -412,7 +412,7 @@ export class Krystallizer {
   removeEntity() {
     if (!this.selectedEntity) return;
     this.entities = this.entities.filter((e) => e !== this.selectedEntity);
-    this.selectedEntity = null;
+    this.setActiveEntity(null);
     this.setModifiedState(true);
   }
   saveEntitySettings() {
