@@ -8,16 +8,23 @@ export class A extends Test {
   constructor(opts) {
     super(opts);
     this.size = {
-      x: 66,
+      x: 50,
       y: 58,
     };
-    this.createAnimationSheet("./test-data/assets/spritesheets/pitchfork_guy.png", {
-      x: 66,
-      y: 58,
-    });
+    this.offset = {
+      x: 8,
+      y: 3,
+    };
+    this.createAnimationSheet("./test-data/assets/spritesheets/pitchfork_guy.png", this.size);
     const threeFrames = (1 / 60) * 3;
     this.addAnim("attack", threeFrames, "[0..19]", false);
     this.logger = Logger.getInstance();
+  }
+
+  draw() {
+    super.draw();
+    const { ctx } = this.game.system;
+    ctx.strokeRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
   }
 }
 export class B extends Test {}

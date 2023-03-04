@@ -176,11 +176,21 @@ export class Krystallizer {
   handleMouseMovement(mouse) {
     this.mouse = { ...mouse };
     const p = mouse;
+
     this.hoveredEntity = this.entities.find(
       (e) =>
-        !(p.x < e.pos.x || p.y < e.pos.y || p.x >= e.pos.x + e.size.x || p.y >= e.pos.y + e.size.y)
+        p.x >= e.pos.x && p.x <= e.pos.x + e.size.x && p.y >= e.pos.y && p.y <= e.pos.y + e.size.y
     );
-    this.system.canvas.style.cursor = this.hoveredEntity ? "pointer" : "default";
+
+    if (this.hoveredEntity) {
+      console.log(this.hoveredEntity.pos.x);
+    }
+
+    let cursor;
+    if (this.hoveredEntity) cursor = "pointer";
+    else if (this.currentToolbarAction === "move") cursor = "move";
+    else cursor = "default";
+    this.system.canvas.style.cursor = cursor;
   }
 
   /**
@@ -324,6 +334,16 @@ export class Krystallizer {
 
   toolbarAction(action) {
     this.logger.info(action);
+    this.currentToolbarAction = action;
+    switch (action) {
+      case "default":
+        break;
+      case "move":
+        break;
+
+      default:
+        break;
+    }
   }
 
   //#region Entity

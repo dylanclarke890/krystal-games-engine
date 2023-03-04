@@ -41,7 +41,7 @@ export class System {
 
     const pos = this.canvas.getBoundingClientRect();
     const { clientX, clientY } = e.touches ? e.touches[0] : e;
-    this.mouse.x = (clientX - pos.left + this.toolbar.offsetWidth) / scale;
+    this.mouse.x = (clientX - pos.left) / scale;
     this.mouse.y = (clientY - pos.top) / scale;
 
     EventSystem.dispatch(InputEvents.MouseMove, this.mouse);

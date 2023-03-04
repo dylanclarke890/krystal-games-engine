@@ -2,7 +2,7 @@ import { EventSystem } from "../modules/core/events.js";
 import { BackgroundMap } from "../modules/core/map.js";
 import { Assert } from "../modules/lib/sanity/assert.js";
 import { Guard } from "../modules/lib/sanity/guard.js";
-import { screenshotCanvas } from "../modules/lib/utils/dom.js";
+import { $el, screenshotCanvas } from "../modules/lib/utils/dom.js";
 import { Logger } from "../modules/lib/utils/logger.js";
 import { config } from "./config.js";
 import { InputEvents } from "./enums.js";
@@ -480,10 +480,11 @@ export class EntityDisplay {
     EventSystem.on(InputEvents.MouseMove, this.updateMousePosition);
     parent.append(div);
     this.DOMElements = { div, name, preview };
+    this.toolbarOffset = $el("#toolbar").offsetWidth;
   }
 
   updateMousePosition = (mouse) => {
-    this.mouse = { ...mouse };
+    this.mouse = { x: mouse.x + this.toolbarOffset, y: mouse.y };
   };
 
   /**
