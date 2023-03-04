@@ -178,6 +178,7 @@ header {
 
 #panels {
   background-color: var(--ui-bg);
+  width: 256px;
 }
 
 #collapsible-panels {

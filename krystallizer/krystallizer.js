@@ -360,6 +360,7 @@ export class Krystallizer {
 
   toolbarActions = {
     select: () => {
+      if (this.activeLayer !== "entities") return;
       const p = this.mouse;
       const sx = this.screen.actual.x;
       const sy = this.screen.actual.y;
@@ -410,16 +411,20 @@ export class Krystallizer {
 
   setActiveEntity(entity) {
     const { panelHeader, div } = this.DOMElements.entitySettings;
+    const clickEvent = new Event("click");
     div.style.display = entity ? "block" : "none";
-    this.selectedEntity = entity;
+    div.offsetHeight; // trigger DOM refresh
 
     if (!entity) {
-      panelHeader.dispatchEvent(new Event("click"));
+      this.selectedEntity = null;
+      panelHeader.dispatchEvent(clickEvent);
       return;
     }
 
     const { className, posX, posY } = this.DOMElements.entitySettings;
-    panelHeader.dispatchEvent(new Event("click"));
+    if (!this.selectedEntity) panelHeader.dispatchEvent(clickEvent);
+    this.selectedEntity = entity;
+
     className.value = entity.constructor.name;
     posX.value = entity.pos.x;
     posY.value = entity.pos.y;
@@ -634,12 +639,14 @@ export class Krystallizer {
   setActiveLayer(/** @type {string} */ name) {
     this.activeLayer = name === "entities" ? name : this.getLayerByName(name);
     const activeClass = "layer-active";
-    this.DOMElements.entitiesLayer.div.classList.toggle(activeClass, name === "entities");
+    const { entities, entitiesLayer, layerSettings, entitySettings} = this.DOMElements;
+    entitiesLayer.div.classList.toggle(activeClass, name === "entities");
 
     const layerDisplay = name === "entities" ? "none" : "block";
     const entityDisplay = name === "entities" ? "block" : "none";
-    this.DOMElements.layerSettings.div.style.display = layerDisplay;
-    this.DOMElements.entities.style.display = entityDisplay;
+    layerSettings.div.style.display = layerDisplay;
+    entities.style.display = entityDisplay;
+    entitySettings.div.style.display = entityDisplay;
 
     for (let i = 0; i < this.layers.length; i++) {
       const layer = this.layers[i];
