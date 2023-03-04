@@ -357,9 +357,14 @@ export class Krystallizer {
   toolbarActions = {
     select: () => {
       const p = this.mouse;
+      const sx = this.screen.actual.x;
+      const sy = this.screen.actual.y;
       this.hoveredEntity = this.entities.find(
         (e) =>
-          p.x >= e.pos.x && p.x <= e.pos.x + e.size.x && p.y >= e.pos.y && p.y <= e.pos.y + e.size.y
+          p.x + sx >= e.pos.x &&
+          p.x + sx <= e.pos.x + e.size.x &&
+          p.y + sy >= e.pos.y &&
+          p.y + sy <= e.pos.y + e.size.y
       );
       this.setCanvasCursor(this.hoveredEntity ? "pointer" : "default");
     },
