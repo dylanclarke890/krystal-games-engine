@@ -91,6 +91,8 @@ export class Krystallizer {
     this.loop.start();
   }
 
+  //#region Initialising
+
   bindPanelEvents() {
     const panels = document.querySelectorAll("#collapsible-panels > .panel");
     for (let i = 0; i < panels.length; i++) {
@@ -285,6 +287,8 @@ export class Krystallizer {
     };
   }
 
+  //#endregion Initialising
+
   //#region Drawing
 
   drawEntityLayer() {
@@ -353,9 +357,19 @@ export class Krystallizer {
 
   //#endregion Drawing
 
+  //#region Events
+
   nextFrame(tick) {
     this.system.tick = tick;
     this.draw();
+  }
+
+  setModifiedState(/** @type {boolean} */ isModified) {
+    this.modified = isModified;
+    document.title = `${this.fileName}${isModified ? "*" : ""} | Krystallizer`;
+    const levelName = this.DOMElements.level.name;
+    levelName.textContent = this.fileName;
+    levelName.dataset.unsaved = isModified;
   }
 
   toolbarActions = {
@@ -406,6 +420,8 @@ export class Krystallizer {
   setCanvasCursor(cursor) {
     this.system.canvas.style.cursor = cursor;
   }
+
+  //#endregion Events
 
   //#region Entity
 
@@ -515,6 +531,7 @@ export class Krystallizer {
     this.setActiveEntity(null);
     this.setModifiedState(true);
   }
+
   saveEntitySettings() {
     if (!this.selectedEntity) return;
     this.setModifiedState(true);
@@ -626,20 +643,12 @@ export class Krystallizer {
 
   //#endregion Level
 
-  setModifiedState(/** @type {boolean} */ isModified) {
-    this.modified = isModified;
-    document.title = `${this.fileName}${isModified ? "*" : ""} | Krystallizer`;
-    const levelName = this.DOMElements.level.name;
-    levelName.textContent = this.fileName;
-    levelName.dataset.unsaved = isModified;
-  }
-
   //#region Layers
 
   setActiveLayer(/** @type {string} */ name) {
     this.activeLayer = name === "entities" ? name : this.getLayerByName(name);
     const activeClass = "layer-active";
-    const { entities, entitiesLayer, layerSettings, entitySettings} = this.DOMElements;
+    const { entities, entitiesLayer, layerSettings, entitySettings } = this.DOMElements;
     entitiesLayer.div.classList.toggle(activeClass, name === "entities");
 
     const layerDisplay = name === "entities" ? "none" : "block";
