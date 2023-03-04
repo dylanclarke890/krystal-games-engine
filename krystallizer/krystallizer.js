@@ -105,6 +105,8 @@ export class Krystallizer {
           toggle.dataset.direction = "down";
         }
       });
+      // Start with the entities list panel open
+      if (panel.id === "entities") header.dispatchEvent(new Event("click"));
     }
   }
 
@@ -172,12 +174,14 @@ export class Krystallizer {
   }
 
   setActiveEntity(entity) {
-    const { panelContent } = this.DOMElements.entitySettings;
+    const { panelContent, div } = this.DOMElements.entitySettings;
+    div.style.display = entity ? "block" : "none";
+    this.selectedEntity = entity;
+
     if (!entity) {
       panelContent.classList.remove("open");
       return;
     }
-    this.selectedEntity = entity;
 
     const { className, posX, posY } = this.DOMElements.entitySettings;
     panelContent.classList.add("open");
@@ -540,7 +544,6 @@ export class Krystallizer {
     const layerDisplay = name === "entities" ? "none" : "block";
     const entityDisplay = name === "entities" ? "block" : "none";
     this.DOMElements.layerSettings.div.style.display = layerDisplay;
-    this.DOMElements.entitySettings.div.style.display = entityDisplay;
     this.DOMElements.entities.style.display = entityDisplay;
 
     for (let i = 0; i < this.layers.length; i++) {
