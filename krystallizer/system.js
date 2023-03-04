@@ -24,6 +24,7 @@ export class System {
 
     this.scale = 1;
     this.drawPosition = this.DRAW.SMOOTH;
+    this.mouseLast = { x: 0, y: 0 };
     this.mouse = { x: 0, y: 0 };
     this.bindEvents();
     this.ready = true;
@@ -36,11 +37,16 @@ export class System {
 
   /** @param {TouchEvent | MouseEvent} e */
   updateMousePosition(e) {
+
+
     const internalWidth = this.canvas.offsetWidth || this.realWidth;
     const scale = this.scale * (internalWidth / this.realWidth);
 
     const pos = this.canvas.getBoundingClientRect();
     const { clientX, clientY } = e.touches ? e.touches[0] : e;
+
+    this.mouseLast.x = this.mouse.x;
+    this.mouseLast.y = this.mouse.y;
     this.mouse.x = (clientX - pos.left) / scale;
     this.mouse.y = (clientY - pos.top) / scale;
 

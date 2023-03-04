@@ -116,9 +116,8 @@ export class Krystallizer {
   bindEvents() {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
     EventSystem.on(InputEvents.MouseMove, (mouse) => this.handleMouseMovement(mouse));
-    this.system.canvas.addEventListener("mousedown", () =>
-      this.setActiveEntity(this.hoveredEntity)
-    );
+    this.system.canvas.addEventListener("mousedown", () => (this.mouseIsDown = true));
+    document.addEventListener("mousedown", () => (this.mouseIsDown = false));
     this.bindPanelEvents();
 
     const { layers, level, layerActions, entityActions, entitiesLayer, layerSettings, toolbar } =
@@ -334,8 +333,12 @@ export class Krystallizer {
     switch (action) {
       case "default":
         break;
-      case "move":
+      case "move": {
+        if (!this.mouseIsDown) break;
+        const dx = this.system.mouse.x - this.system.mouseLast.x,
+          dy = this.system.input.mouse.y - this.system.mouseLast.y;
         break;
+      }
 
       default:
         break;
