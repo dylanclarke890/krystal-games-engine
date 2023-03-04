@@ -163,6 +163,10 @@ header {
   padding: var(--gap);
 }
 
+.toolbar-icon:hover {
+  background-color: var(--hover-color);
+}
+
 .toolbar-icon.active {
   background-color: var(--selection-color);
 }
