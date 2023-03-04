@@ -536,8 +536,13 @@ export class Krystallizer {
     this.activeLayer = name === "entities" ? name : this.getLayerByName(name);
     const activeClass = "layer-active";
     this.DOMElements.entitiesLayer.div.classList.toggle(activeClass, name === "entities");
-    this.DOMElements.layerSettings.div.style.display = name === "entities" ? "none" : "block";
-    this.DOMElements.entities.style.display = name === "entities" ? "block" : "none";
+
+    const layerDisplay = name === "entities" ? "none" : "block";
+    const entityDisplay = name === "entities" ? "block" : "none";
+    this.DOMElements.layerSettings.div.style.display = layerDisplay;
+    this.DOMElements.entitySettings.div.style.display = entityDisplay;
+    this.DOMElements.entities.style.display = entityDisplay;
+
     for (let i = 0; i < this.layers.length; i++) {
       const layer = this.layers[i];
       layer.DOMElements.div.classList.toggle(activeClass, layer.name === name);
