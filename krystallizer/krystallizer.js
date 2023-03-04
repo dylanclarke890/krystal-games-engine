@@ -411,19 +411,16 @@ export class Krystallizer {
   //#region Entity
 
   setActiveEntity(entity) {
-    const { panelHeader, div } = this.DOMElements.entitySettings;
-    const clickEvent = new Event("click");
-    div.style.display = entity ? "block" : "none";
-    div.offsetHeight; // trigger DOM refresh
+    const { entitySettings } = this.panels;
 
     if (!entity) {
       this.selectedEntity = null;
-      panelHeader.dispatchEvent(clickEvent);
+      entitySettings.hide();
       return;
     }
 
     const { className, posX, posY } = this.DOMElements.entitySettings;
-    if (!this.selectedEntity) panelHeader.dispatchEvent(clickEvent);
+    entitySettings.show();
     this.selectedEntity = entity;
 
     className.value = entity.constructor.name;
