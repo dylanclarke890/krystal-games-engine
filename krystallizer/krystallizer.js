@@ -362,7 +362,7 @@ export class Krystallizer {
   onEntityDrop(className, pos) {
     // Sync the current position of the entity to spawn with it's position on the canvas.
     const bounds = this.system.canvas.getBoundingClientRect();
-    this.spawnEntity(className, pos.x - bounds.x, pos.y - bounds.y);
+    this.spawnEntity(className, Math.round(pos.x - bounds.x), Math.round(pos.y - bounds.y));
   }
 
   constructEntitiesList() {
