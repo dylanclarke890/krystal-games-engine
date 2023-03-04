@@ -543,3 +543,24 @@ export class EntityDisplay {
     EventSystem.off(InputEvents.MouseMove, this.updateMousePosition);
   }
 }
+
+export class Panel {
+  /**
+   * @param {Object} settings
+   * @param {string} settings.selector
+   */
+  constructor({ selector }) {
+    const div = $el(selector);
+    this.DOMElements = {
+      div,
+      header: div.querySelector(".panel__header"),
+      content: div.querySelector(".panel__content"),
+    };
+  }
+
+  bindEvents() {}
+
+  open() {}
+
+  close() {}
+}
