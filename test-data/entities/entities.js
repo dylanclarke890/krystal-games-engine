@@ -20,12 +20,6 @@ export class A extends Test {
     this.addAnim("attack", threeFrames, "[0..19]", false);
     this.logger = Logger.getInstance();
   }
-
-  draw() {
-    super.draw();
-    const { ctx } = this.game.system;
-    ctx.strokeRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
-  }
 }
 export class B extends Test {}
 export class C extends Test {}
