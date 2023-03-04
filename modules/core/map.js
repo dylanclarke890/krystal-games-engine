@@ -87,8 +87,8 @@ export class BackgroundMap extends GameMap {
   }
 
   setScreenPos(x, y) {
-    this.scroll.x = x / this.distance;
-    this.scroll.y = y / this.distance;
+    this.scroll.x = x / (this.distance ?? 1);
+    this.scroll.y = y / (this.distance ?? 1);
   }
 
   preRenderMapToChunks() {

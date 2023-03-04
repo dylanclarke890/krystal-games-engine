@@ -31,6 +31,7 @@ export class Krystallizer {
     this.drawEntities = true;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
     this.mouse = { x: 0, y: 0 };
+    this.setToolbarAction("select");
 
     const { undoDepth, newFileName } = config.general;
     this.undo = new Undo({ editor: this, levels: undoDepth });
@@ -117,7 +118,7 @@ export class Krystallizer {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
     EventSystem.on(InputEvents.MouseMove, (mouse) => this.handleMouseMovement(mouse));
     this.system.canvas.addEventListener("mousedown", () => (this.mouseIsDown = true));
-    document.addEventListener("mousedown", () => (this.mouseIsDown = false));
+    document.addEventListener("mouseup", () => (this.mouseIsDown = false));
     this.bindPanelEvents();
 
     const { layers, level, layerActions, entityActions, entitiesLayer, layerSettings, toolbar } =
@@ -126,7 +127,7 @@ export class Krystallizer {
     toolbar.actions.forEach((action) => {
       action.addEventListener("click", () => {
         toolbar.actions.forEach((a) => a.classList.toggle("active", a === action));
-        this.toolbarAction(action.getAttribute("data-action"));
+        this.setToolbarAction(action.getAttribute("data-action"));
       });
     });
 
@@ -170,22 +171,6 @@ export class Krystallizer {
 
     const { isCollisionLayer } = layerSettings;
     isCollisionLayer.addEventListener("change", () => this.updateCollisionLayerSettings());
-  }
-
-  handleMouseMovement(mouse) {
-    this.mouse = { ...mouse };
-    const p = mouse;
-
-    this.hoveredEntity = this.entities.find(
-      (e) =>
-        p.x >= e.pos.x && p.x <= e.pos.x + e.size.x && p.y >= e.pos.y && p.y <= e.pos.y + e.size.y
-    );
-
-    let cursor;
-    if (this.hoveredEntity) cursor = "pointer";
-    else if (this.currentToolbarAction === "move") cursor = "move";
-    else cursor = "default";
-    this.system.canvas.style.cursor = cursor;
   }
 
   /**
@@ -321,28 +306,53 @@ export class Krystallizer {
     if (!entitiesDrawn) this.drawEntityLayer();
   }
 
+  toolbarActions = {
+    select: () => {
+      const p = this.mouse;
+      this.hoveredEntity = this.entities.find(
+        (e) =>
+          p.x >= e.pos.x && p.x <= e.pos.x + e.size.x && p.y >= e.pos.y && p.y <= e.pos.y + e.size.y
+      );
+      this.setCanvasCursor(this.hoveredEntity ? "pointer" : "default");
+    },
+    move: () => {
+      this.setCanvasCursor("move");
+      this.hoveredEntity = null;
+      if (!this.mouseIsDown) return;
+      const dx = this.system.mouse.x - this.system.mouseLast.x,
+        dy = this.system.mouse.y - this.system.mouseLast.y;
+      this.scroll(dx, dy);
+    },
+  };
+
+  handleMouseMovement(mouse) {
+    this.mouse = { ...mouse };
+    if (this.currentToolbarAction) this.currentToolbarAction();
+  }
+
+  scroll(x, y) {
+    const scale = this.system.scale;
+    const { actual, rounded } = this.screen;
+    actual.x -= x;
+    actual.y -= y;
+    rounded.x = Math.round(actual.x * scale) / scale;
+    rounded.y = Math.round(actual.y * scale) / scale;
+    for (let i = 0; i < this.layers.length; i++) this.layers[i].setScreenPos(actual.x, actual.y);
+  }
+
   nextFrame(tick) {
     this.system.tick = tick;
     this.canvas.draw();
     this.draw();
   }
 
-  toolbarAction(action) {
-    this.logger.info(action);
-    this.currentToolbarAction = action;
-    switch (action) {
-      case "default":
-        break;
-      case "move": {
-        if (!this.mouseIsDown) break;
-        const dx = this.system.mouse.x - this.system.mouseLast.x,
-          dy = this.system.input.mouse.y - this.system.mouseLast.y;
-        break;
-      }
+  setToolbarAction(action) {
+    if (action == null) this.currentToolbarAction = null;
+    this.currentToolbarAction = this.toolbarActions[action];
+  }
 
-      default:
-        break;
-    }
+  setCanvasCursor(cursor) {
+    this.system.canvas.style.cursor = cursor;
   }
 
   //#region Entity
