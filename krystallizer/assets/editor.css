@@ -154,6 +154,7 @@ header {
   justify-content: center;
   display: grid;
   grid-auto-rows: var(--toolbar-icon-size);
+  user-select: none;
 }
 
 .toolbar-icon {

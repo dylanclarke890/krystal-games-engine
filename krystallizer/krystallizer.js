@@ -285,6 +285,8 @@ export class Krystallizer {
     };
   }
 
+  //#region Drawing
+
   drawEntityLayer() {
     if (!this.drawEntities) return;
     for (let i = 0; i < this.entities.length; i++) this.entities[i].draw();
@@ -296,7 +298,7 @@ export class Krystallizer {
     const { actual } = this.screen;
 
     ctx.fillStyle = colors.primary;
-    const { step, markerLength } = labels;
+    const { step, markerLength, markerWidth } = labels;
 
     let xlabel = actual.x - (actual.x % step) - step;
     for (let tx = Math.floor(-actual.x % step); tx < width; tx += step) {
@@ -310,7 +312,7 @@ export class Krystallizer {
       ctx.fillText(ylabel, 0, ty * scale + 10);
     }
 
-    ctx.lineWidth = 2;
+    ctx.lineWidth = markerWidth;
     ctx.beginPath();
     ctx.moveTo(this.mouse.x, 0);
     ctx.lineTo(this.mouse.x, markerLength);
@@ -348,6 +350,8 @@ export class Krystallizer {
 
     if (config.labels.draw) this.drawLabels();
   }
+
+  //#endregion Drawing
 
   nextFrame(tick) {
     this.system.tick = tick;

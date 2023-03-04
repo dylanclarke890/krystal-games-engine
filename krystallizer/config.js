@@ -41,6 +41,7 @@ export const config = {
     font: "10px Bitstream Vera Sans Mono, Monaco, sans-serif",
     step: 32,
     markerLength: 10,
+    markerWidth: 2,
   },
   layerDefaults: {
     width: 10,
