@@ -182,10 +182,6 @@ export class Krystallizer {
         p.x >= e.pos.x && p.x <= e.pos.x + e.size.x && p.y >= e.pos.y && p.y <= e.pos.y + e.size.y
     );
 
-    if (this.hoveredEntity) {
-      console.log(this.hoveredEntity.pos.x);
-    }
-
     let cursor;
     if (this.hoveredEntity) cursor = "pointer";
     else if (this.currentToolbarAction === "move") cursor = "move";
