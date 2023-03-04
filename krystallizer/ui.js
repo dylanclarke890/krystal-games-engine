@@ -559,7 +559,7 @@ export class Panel {
     };
     this.isOpen = false;
     this.bindEvents();
-    this.close();
+    this.hide();
   }
 
   bindEvents() {
