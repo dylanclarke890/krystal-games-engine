@@ -4,7 +4,9 @@
   --gap: 0.5em;
   --hover-color: rgb(202, 233, 243);
   --selection-color: rgb(100 171 182);
+  --toolbar-icon-size: 40px;
   --transition-duration: 0.4s;
+  --ui-bg: lightblue;
 }
 
 /* #region GENERAL */
@@ -93,7 +95,7 @@ body {
 
 #editor {
   display: grid;
-  grid-template-columns: 5fr 1fr;
+  grid-template-columns: 40px 5fr 1fr;
 }
 
 #modal-load-level .modal-body {
@@ -145,10 +147,32 @@ header {
 
 /* #endregion HEADER */
 
+/* #region TOOLBAR */
+
+#toolbar {
+  background-color: var(--ui-bg);
+  justify-content: center;
+  display: grid;
+  grid-auto-rows: var(--toolbar-icon-size);
+}
+
+.toolbar-icon {
+  cursor: pointer;
+  height: var(--toolbar-icon-size);
+  width: var(--toolbar-icon-size);
+  padding: var(--gap);
+}
+
+.toolbar-icon.active {
+  background-color: var(--selection-color);
+}
+
+/* #endregion TOOLBAR */
+
 /* #region PANEL */
 
 #panels {
-  background-color: lightblue;
+  background-color: var(--ui-bg);
 }
 
 #collapsible-panels {
@@ -175,19 +199,19 @@ header {
   margin-bottom: 2px;
 }
 
-.panel__toggle-icon[data-direction='left'] {
+.panel__toggle-icon[data-direction="left"] {
   transform: rotate(0deg);
 }
 
-.panel__toggle-icon[data-direction='up'] {
+.panel__toggle-icon[data-direction="up"] {
   transform: rotate(90deg);
 }
 
-.panel__toggle-icon[data-direction='right'] {
+.panel__toggle-icon[data-direction="right"] {
   transform: rotate(180deg);
 }
 
-.panel__toggle-icon[data-direction='down'] {
+.panel__toggle-icon[data-direction="down"] {
   transform: rotate(270deg);
 }
 

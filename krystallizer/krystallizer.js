@@ -83,6 +83,9 @@ export class Krystallizer {
         tilesize: $el("#tilesize"),
         width: $el("#dimensions-x"),
       },
+      toolbar: {
+        actions: document.querySelectorAll(".toolbar-icon"),
+      },
     };
     this.setModifiedState(false);
     this.bindEvents();
@@ -118,8 +121,15 @@ export class Krystallizer {
     );
     this.bindPanelEvents();
 
-    const { layers, level, layerActions, entityActions, entitiesLayer, layerSettings } =
+    const { layers, level, layerActions, entityActions, entitiesLayer, layerSettings, toolbar } =
       this.DOMElements;
+
+    toolbar.actions.forEach((action) => {
+      action.addEventListener("click", () => {
+        toolbar.actions.forEach((a) => a.classList.toggle("active", a === action));
+        this.toolbarAction(action.getAttribute("data-action"));
+      });
+    });
 
     const toggleDraggingClass = (is) => document.documentElement.classList.toggle("dragging", is);
     new Sortable(layers, {
@@ -171,23 +181,6 @@ export class Krystallizer {
         !(p.x < e.pos.x || p.y < e.pos.y || p.x >= e.pos.x + e.size.x || p.y >= e.pos.y + e.size.y)
     );
     this.system.canvas.style.cursor = this.hoveredEntity ? "pointer" : "default";
-  }
-
-  setActiveEntity(entity) {
-    const { panelHeader, div } = this.DOMElements.entitySettings;
-    div.style.display = entity ? "block" : "none";
-    this.selectedEntity = entity;
-
-    if (!entity) {
-      panelHeader.dispatchEvent(new Event("click"));
-      return;
-    }
-
-    const { className, posX, posY } = this.DOMElements.entitySettings;
-    panelHeader.dispatchEvent(new Event("click"));
-    className.value = entity.constructor.name;
-    posX.value = entity.pos.x;
-    posY.value = entity.pos.y;
   }
 
   /**
@@ -329,7 +322,28 @@ export class Krystallizer {
     this.draw();
   }
 
+  toolbarAction(action) {
+    this.logger.info(action);
+  }
+
   //#region Entity
+
+  setActiveEntity(entity) {
+    const { panelHeader, div } = this.DOMElements.entitySettings;
+    div.style.display = entity ? "block" : "none";
+    this.selectedEntity = entity;
+
+    if (!entity) {
+      panelHeader.dispatchEvent(new Event("click"));
+      return;
+    }
+
+    const { className, posX, posY } = this.DOMElements.entitySettings;
+    panelHeader.dispatchEvent(new Event("click"));
+    className.value = entity.constructor.name;
+    posX.value = entity.pos.x;
+    posY.value = entity.pos.y;
+  }
 
   loadEntityScripts(entitiesData) {
     let totalScriptsToLoad = Object.keys(entitiesData).length;

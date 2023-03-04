@@ -7,3 +7,11 @@ export class InputEvents extends Enum {
     this.freeze();
   }
 }
+
+export class ToolbarActions extends Enum {
+  static {
+    this.Default = new ToolbarActions();
+    this.Move = new ToolbarActions();
+    this.freeze();
+  }
+}

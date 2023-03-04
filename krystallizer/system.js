@@ -6,11 +6,11 @@ export class System {
   constructor() {
     this.tick = 0;
 
-    const header = document.querySelector("header");
-    const panels = document.querySelector("#panels");
-
-    this.height = window.innerHeight - header.offsetHeight - 1;
-    this.width = window.innerWidth - panels.offsetWidth;
+    this.header = document.querySelector("header");
+    this.panels = document.querySelector("#panels");
+    this.toolbar = document.querySelector("#toolbar");
+    this.height = window.innerHeight - this.header.offsetHeight - 1;
+    this.width = window.innerWidth - this.panels.offsetWidth - this.toolbar.offsetWidth;
     this.realHeight = this.height;
     this.realWidth = this.width;
 
@@ -41,7 +41,7 @@ export class System {
 
     const pos = this.canvas.getBoundingClientRect();
     const { clientX, clientY } = e.touches ? e.touches[0] : e;
-    this.mouse.x = (clientX - pos.left) / scale;
+    this.mouse.x = (clientX - pos.left + this.toolbar.offsetWidth) / scale;
     this.mouse.y = (clientY - pos.top) / scale;
 
     EventSystem.dispatch(InputEvents.MouseMove, this.mouse);
