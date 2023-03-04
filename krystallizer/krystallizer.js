@@ -142,12 +142,12 @@ export class Krystallizer {
     layerActions.new.addEventListener("click", () => this.addLayer());
     layerActions.apply.addEventListener("click", () => this.saveLayerSettings());
     layerActions.delete.addEventListener("click", () => {
-      if (!config.general.confirmDelete) this.removeLayer();
+      if (!config.general.confirmDeleteLayer) this.removeLayer();
     });
 
     entityActions.apply.addEventListener("click", () => this.saveEntitySettings());
     entityActions.delete.addEventListener("click", () => {
-      if (!config.general.confirmDelete) this.removeEntity();
+      if (!config.general.confirmDeleteEntity) this.removeEntity();
     });
 
     const { div, visibility } = entitiesLayer;
@@ -245,12 +245,19 @@ export class Krystallizer {
         this.saveLevel(`${dir}${$el("#new-file-name").value}`);
       },
     });
-    const confirmDelete = new ConfirmModal({
+    const confirmDeleteLayer = new ConfirmModal({
       id: "modal-delete-layer",
       title: "Delete Layer?",
       body: "<p class='text-center'>Are you sure you wish to delete this layer?</p>",
       triggeredBy: [this.DOMElements.layerActions.delete],
       onOk: () => this.removeLayer(),
+    });
+    const confirmDeleteEntity = new ConfirmModal({
+      id: "modal-delete-entity",
+      title: "Delete Entity?",
+      body: "<p class='text-center'>Are you sure you wish to delete this entity?</p>",
+      triggeredBy: [this.DOMElements.entityActions.delete],
+      onOk: () => this.removeEntity(),
     });
     const confirmDiscard = new ConfirmModal({
       id: "modal-discard-changes",
@@ -288,7 +295,8 @@ export class Krystallizer {
       saveAs,
       levelSelect,
       confirmDiscard: config.general.confirmDiscardChanges && confirmDiscard,
-      confirmDelete: config.general.confirmDelete && confirmDelete,
+      confirmDeleteLayer: config.general.confirmDeleteLayer && confirmDeleteLayer,
+      confirmDeleteEntity: config.general.confirmDeleteEntity && confirmDeleteEntity,
     };
   }
 

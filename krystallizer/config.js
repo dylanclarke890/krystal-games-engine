@@ -26,7 +26,8 @@ export const config = {
     previewNotAvailableImagePath: "./krystallizer/assets/image-slash.svg",
   },
   general: {
-    confirmDelete: false,
+    confirmDeleteLayer: true,
+    confirmDeleteEntity: true,
     confirmDiscardChanges: true,
     loadLastLevel: true,
     newFileName: "untitled.js",
