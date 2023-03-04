@@ -30,7 +30,7 @@ export class Krystallizer {
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
     this.mouse = { x: 0, y: 0 };
     this.mouseIsDown = false;
-    this.setToolbarAction("select");
+    this.setToolbarAction("cursor");
 
     const { undoDepth, newFileName } = config.general;
     this.undo = new Undo({ editor: this, levels: undoDepth });
@@ -359,7 +359,7 @@ export class Krystallizer {
   }
 
   toolbarActions = {
-    select: () => {
+    cursor: () => {
       if (this.activeLayer !== "entities") return;
       const p = this.mouse;
       const sx = this.screen.actual.x;
@@ -381,6 +381,8 @@ export class Krystallizer {
         dy = this.system.mouse.y - this.system.mouseLast.y;
       this.scroll(dx, dy);
     },
+    select: () => {},
+    eraser: () => {},
   };
 
   handleMouseMovement(mouse) {
