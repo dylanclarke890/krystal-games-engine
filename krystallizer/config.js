@@ -23,7 +23,7 @@ export const config = {
     /** Include a list of properties to show by default. */
     show: ["pos", "size", "bounciness"],
     /** Fallback image, mainly for invisible entities. */
-    previewNotAvailableImagePath: "./krystallizer/assets/image-slash.svg",
+    previewNotAvailableImagePath: "./krystallizer/assets/face-dotted.svg",
   },
   general: {
     confirmDeleteLayer: true,
