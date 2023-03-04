@@ -62,7 +62,7 @@ export class Krystallizer {
       entitySettings: {
         className: $el("#class-name"),
         div: $el("#entity-settings"),
-        panelContent: $el("#entity-settings .panel__content"),
+        panelHeader: $el("#entity-settings .panel__header"),
         posX: $el("#pos-x"),
         posY: $el("#pos-y"),
       },
@@ -174,17 +174,17 @@ export class Krystallizer {
   }
 
   setActiveEntity(entity) {
-    const { panelContent, div } = this.DOMElements.entitySettings;
+    const { panelHeader, div } = this.DOMElements.entitySettings;
     div.style.display = entity ? "block" : "none";
     this.selectedEntity = entity;
 
     if (!entity) {
-      panelContent.classList.remove("open");
+      panelHeader.dispatchEvent(new Event("click"));
       return;
     }
 
     const { className, posX, posY } = this.DOMElements.entitySettings;
-    panelContent.classList.add("open");
+    panelHeader.dispatchEvent(new Event("click"));
     className.value = entity.constructor.name;
     posX.value = entity.pos.x;
     posY.value = entity.pos.y;
