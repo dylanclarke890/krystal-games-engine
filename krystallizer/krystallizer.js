@@ -111,7 +111,9 @@ export class Krystallizer {
   bindEvents() {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
     EventSystem.on(InputEvents.MouseMove, (mouse) => this.handleMouseMovement(mouse));
-    this.system.canvas.addEventListener("mousedown", () => this.setActiveEntity());
+    this.system.canvas.addEventListener("mousedown", () =>
+      this.setActiveEntity(this.hoveredEntity)
+    );
     this.bindPanelEvents();
 
     const { layers, level, layerActions, entityActions, entitiesLayer, layerSettings } =
@@ -169,19 +171,19 @@ export class Krystallizer {
     this.system.canvas.style.cursor = this.hoveredEntity ? "pointer" : "default";
   }
 
-  setActiveEntity() {
-    const entity = this.hoveredEntity;
+  setActiveEntity(entity) {
+    const { panelContent } = this.DOMElements.entitySettings;
     if (!entity) {
       panelContent.classList.remove("open");
       return;
     }
+    this.selectedEntity = entity;
 
-    const { panelContent, className, posX, posY } = this.DOMElements.entitySettings;
+    const { className, posX, posY } = this.DOMElements.entitySettings;
     panelContent.classList.add("open");
     className.value = entity.constructor.name;
     posX.value = entity.pos.x;
     posY.value = entity.pos.y;
-    this.selectedEntity = entity;
   }
 
   /**
@@ -362,7 +364,9 @@ export class Krystallizer {
   onEntityDrop(className, pos) {
     // Sync the current position of the entity to spawn with it's position on the canvas.
     const bounds = this.system.canvas.getBoundingClientRect();
-    this.spawnEntity(className, Math.round(pos.x - bounds.x), Math.round(pos.y - bounds.y));
+    this.setActiveEntity(
+      this.spawnEntity(className, Math.round(pos.x - bounds.x), Math.round(pos.y - bounds.y))
+    );
   }
 
   constructEntitiesList() {
