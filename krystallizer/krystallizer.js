@@ -104,6 +104,7 @@ export class Krystallizer {
   bindEvents() {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
     EventSystem.on(InputEvents.MouseMove, (mouse) => this.handleMouseMovement(mouse));
+    // FIXME: Handle click event for selecting entity.
     this.system.canvas.addEventListener("mousedown", () => (this.mouseIsDown = true));
     document.addEventListener("mouseup", () => (this.mouseIsDown = false));
 
