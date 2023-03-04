@@ -375,6 +375,7 @@ export class Krystallizer {
     this.setActiveEntity(
       this.spawnEntity(className, Math.round(pos.x - bounds.x), Math.round(pos.y - bounds.y))
     );
+    this.setModifiedState(true);
   }
 
   constructEntitiesList() {
@@ -412,6 +413,7 @@ export class Krystallizer {
   }
   saveEntitySettings() {
     if (!this.selectedEntity) return;
+    this.setModifiedState(true);
   }
 
   //#endregion Entity
