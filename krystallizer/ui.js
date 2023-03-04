@@ -555,12 +555,54 @@ export class Panel {
       div,
       header: div.querySelector(".panel__header"),
       content: div.querySelector(".panel__content"),
+      toggle: div.querySelector(".panel__toggle-icon"),
     };
+    this.isOpen = false;
+    this.bindEvents();
+    this.close();
   }
 
-  bindEvents() {}
+  bindEvents() {
+    const { header } = this.DOMElements;
+    header.addEventListener("click", () => this.toggle());
+  }
 
-  open() {}
+  toggle(force) {
+    if (force != null) {
+      if (force) this.open();
+      else this.close();
+      return;
+    }
 
-  close() {}
+    if (this.isOpen) this.close();
+    else this.open();
+  }
+
+  close() {
+    const { content, toggle } = this.DOMElements;
+    content.classList.remove("open");
+    toggle.dataset.direction = "right";
+    this.isOpen = false;
+  }
+
+  open() {
+    const { content, toggle } = this.DOMElements;
+    content.classList.add("open");
+    toggle.dataset.direction = "down";
+    this.isOpen = true;
+  }
+
+  show(autoOpen = true) {
+    const { div } = this.DOMElements;
+    div.style.display = "block";
+    div.offsetHeight;
+    if (autoOpen) this.open();
+  }
+
+  hide(autoClose = true) {
+    const { div } = this.DOMElements;
+    if (autoClose) this.close();
+    div.offsetHeight;
+    div.style.display = "none";
+  }
 }

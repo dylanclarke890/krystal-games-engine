@@ -7,7 +7,7 @@ import { config } from "./config.js";
 import { EditMap } from "./edit-map.js";
 import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
-import { ConfirmModal, EntityDisplay, SelectLevelModal } from "./ui.js";
+import { ConfirmModal, EntityDisplay, Panel, SelectLevelModal } from "./ui.js";
 import { Undo } from "./undo.js";
 import Sortable from "./third-party/sortable/src/Sortable.js";
 import { EventSystem, LoopEvents } from "../modules/core/events.js";
@@ -29,6 +29,7 @@ export class Krystallizer {
     this.drawEntities = true;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
     this.mouse = { x: 0, y: 0 };
+    this.mouseIsDown = false;
     this.setToolbarAction("select");
 
     const { undoDepth, newFileName } = config.general;
@@ -86,40 +87,25 @@ export class Krystallizer {
         actions: document.querySelectorAll(".toolbar-icon"),
       },
     };
-    this.setModifiedState(false);
+    this.panels = {
+      entities: new Panel({ selector: this.DOMElements.entities }),
+      entitySettings: new Panel({ selector: this.DOMElements.entitySettings.div }),
+      layerSettings: new Panel({ selector: this.DOMElements.layerSettings.div }),
+    };
+
     this.bindEvents();
+    this.panels.entities.show();
+    this.setModifiedState(false);
     this.loop.start();
   }
 
   //#region Initialising
-
-  bindPanelEvents() {
-    const panels = document.querySelectorAll("#collapsible-panels > .panel");
-    for (let i = 0; i < panels.length; i++) {
-      const panel = panels[i];
-      const content = panel.querySelector(".panel__content");
-      const header = panel.querySelector(".panel__header");
-      const toggle = panel.querySelector(".panel__toggle-icon");
-      header.addEventListener("click", () => {
-        if (content.classList.contains("open")) {
-          content.classList.remove("open");
-          toggle.dataset.direction = "right";
-        } else {
-          content.classList.add("open");
-          toggle.dataset.direction = "down";
-        }
-      });
-      // Start with the entities list panel open
-      if (panel.id === "entities") header.dispatchEvent(new Event("click"));
-    }
-  }
 
   bindEvents() {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
     EventSystem.on(InputEvents.MouseMove, (mouse) => this.handleMouseMovement(mouse));
     this.system.canvas.addEventListener("mousedown", () => (this.mouseIsDown = true));
     document.addEventListener("mouseup", () => (this.mouseIsDown = false));
-    this.bindPanelEvents();
 
     const { layers, level, layerActions, entityActions, entitiesLayer, layerSettings, toolbar } =
       this.DOMElements;
@@ -351,7 +337,6 @@ export class Krystallizer {
       layer.draw();
     }
     if (!entitiesDrawn) this.drawEntityLayer();
-
     if (config.labels.draw) this.drawLabels();
   }
 
@@ -646,16 +631,15 @@ export class Krystallizer {
   //#region Layers
 
   setActiveLayer(/** @type {string} */ name) {
-    this.activeLayer = name === "entities" ? name : this.getLayerByName(name);
+    const isEntityLayer = name === "entities";
     const activeClass = "layer-active";
-    const { entities, entitiesLayer, layerSettings, entitySettings } = this.DOMElements;
-    entitiesLayer.div.classList.toggle(activeClass, name === "entities");
+    const { entitiesLayer } = this.DOMElements;
+    entitiesLayer.div.classList.toggle(activeClass, isEntityLayer);
 
-    const layerDisplay = name === "entities" ? "none" : "block";
-    const entityDisplay = name === "entities" ? "block" : "none";
-    layerSettings.div.style.display = layerDisplay;
-    entities.style.display = entityDisplay;
-    entitySettings.div.style.display = entityDisplay;
+    this.activeLayer = isEntityLayer ? name : this.getLayerByName(name);
+    this.panels.entities.toggle(isEntityLayer);
+    this.panels.entitySettings.toggle(isEntityLayer);
+    this.panels.layerSettings.toggle(isEntityLayer);
 
     for (let i = 0; i < this.layers.length; i++) {
       const layer = this.layers[i];
