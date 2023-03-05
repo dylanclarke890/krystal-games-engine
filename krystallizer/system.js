@@ -15,7 +15,7 @@ export class System {
     this.scale = 1;
     this.drawPosition = this.DRAW.SMOOTH;
     this.mouseLast = { x: 0, y: 0 };
-    this.mouse = { x: 0, y: 0 };
+    this.mouse = { x: 0, y: 0, dx: 0, dy: 0 };
     this.bindEvents();
     this.resize();
     this.ready = true;
@@ -38,6 +38,8 @@ export class System {
     this.mouseLast.y = this.mouse.y;
     this.mouse.x = (clientX - pos.left) / scale;
     this.mouse.y = (clientY - pos.top) / scale;
+    this.mouse.dx = this.mouse.x - this.mouseLast.x;
+    this.mouse.dy = this.mouse.y - this.mouseLast.y;
 
     EventSystem.dispatch(InputEvents.MouseMove, this.mouse);
   }

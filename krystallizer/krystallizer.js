@@ -31,7 +31,7 @@ export class Krystallizer {
     this.entityClassesInfo = {};
     this.drawEntities = true;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
-    this.mouse = { x: 0, y: 0 };
+    this.mouse = { x: 0, y: 0, dx: 0, dy: 0 };
     this.inputState = {
       mouseIsDown: false,
       clicked: false,
@@ -123,7 +123,7 @@ export class Krystallizer {
         this.setActiveEntity(this.inputState.objectBelowMouse);
       },
       mouseMove: () => {
-        this.detectObjectBelowMouse(true);
+        if (!this.inputState.draggingCloneEntity) this.detectObjectBelowMouse(true);
       },
       mouseUp: noop,
       click: noop,
@@ -136,8 +136,7 @@ export class Krystallizer {
       },
       mouseMove: () => {
         if (!this.inputState.mouseIsDown || !this.inputState.dragTarget) return;
-        const dx = this.system.mouse.x - this.system.mouseLast.x,
-          dy = this.system.mouse.y - this.system.mouseLast.y;
+        const { dx, dy } = this.mouse;
         if (this.inputState.dragTarget === this.system.canvas) {
           this.scroll(dx, dy);
         } else if (this.inputState.dragTarget === this.inputState.selectionRect) {
@@ -149,8 +148,8 @@ export class Krystallizer {
           });
         } else {
           const entity = this.inputState.dragTarget;
-          entity.pos.x = this.mouse.x - entity.size.x / 2 + this.screen.actual.x;
-          entity.pos.y = this.mouse.y - entity.size.y / 2 + this.screen.actual.y;
+          entity.pos.x += dx;
+          entity.pos.y += dy;
         }
       },
       mouseUp: () => {
