@@ -195,7 +195,10 @@ export class Krystallizer {
         this.inputState.selected = this.entities.filter((e) => absoluteSelection.overlapsRect(e));
       },
       mouseUp: noop,
-      click: noop,
+      click: () => {
+        this.inputState.selectionRect = null;
+        this.inputState.selected = null;
+      },
     },
     eraser: {
       onTransition: noop,
