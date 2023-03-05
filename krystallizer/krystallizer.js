@@ -564,8 +564,7 @@ export class Krystallizer {
     }
 
     if (setCursor) this.setCanvasCursor(found ? "pointer" : "default");
-
-    if (!found) found = this.system.canvas;
+    found ??= this.system.canvas;
     this.inputState.objectBelowMouse = found;
   }
 
