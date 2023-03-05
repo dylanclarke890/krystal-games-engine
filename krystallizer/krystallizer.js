@@ -117,22 +117,23 @@ export class Krystallizer {
 
   actions = {
     cursor: {
+      onTransition: () => this.setCanvasCursor("default"),
       mouseDown: () => {
         this.setActiveEntity(this.inputState.entityBelowMouse);
       },
       mouseMove: () => {
-        this.detectEntityBelowMouse(!this.inputState.draggingCloneEntity);
+        this.detectEntityBelowMouse(true);
       },
       mouseUp: noop,
       click: noop,
     },
     move: {
+      onTransition: () => this.setCanvasCursor("move"),
       mouseDown: () => {
         this.detectEntityBelowMouse(false);
         this.inputState.dragTarget = this.inputState.entityBelowMouse ?? this.system.canvas;
       },
       mouseMove: () => {
-        this.setCanvasCursor("move");
         if (!this.inputState.mouseIsDown || !this.inputState.dragTarget) return;
 
         if (this.inputState.dragTarget === this.system.canvas) {
@@ -151,6 +152,7 @@ export class Krystallizer {
       click: noop,
     },
     select: {
+      onTransition: () => this.setCanvasCursor("default"),
       mouseDown: () => {
         this.inputState.selectionRect = new Rect(
           { x: this.mouse.x, y: this.mouse.y },
@@ -178,18 +180,25 @@ export class Krystallizer {
       click: noop,
     },
     eraser: {
+      onTransition: noop,
       mouseDown: noop,
       mouseMove: noop,
       mouseUp: noop,
       click: noop,
     },
     shape: {
+      onTransition: noop,
       mouseDown: noop,
       mouseMove: noop,
       mouseUp: noop,
       click: noop,
     },
   };
+
+  setCurrentAction(action) {
+    this.currentAction = this.actions[action ?? "cursor"];
+    this.currentAction.onTransition();
+  }
 
   bindEventSystemListeners() {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
@@ -503,6 +512,7 @@ export class Krystallizer {
   }
 
   detectEntityBelowMouse(setCursor) {
+    if (this.inputState.draggingCloneEntity) return;
     const p = this.mouse;
     const sx = this.screen.actual.x;
     const sy = this.screen.actual.y;
@@ -537,10 +547,6 @@ export class Krystallizer {
     rounded.x = Math.round(actual.x * scale) / scale;
     rounded.y = Math.round(actual.y * scale) / scale;
     for (let i = 0; i < this.layers.length; i++) this.layers[i].setScreenPos(actual.x, actual.y);
-  }
-
-  setCurrentAction(action) {
-    this.currentAction = this.actions[action ?? "cursor"];
   }
 
   setCanvasCursor(cursor) {
