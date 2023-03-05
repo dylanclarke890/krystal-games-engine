@@ -12,7 +12,7 @@ import { Undo } from "./undo.js";
 import Sortable from "./third-party/sortable/src/Sortable.js";
 import { EventSystem, LoopEvents } from "../modules/core/events.js";
 import { MediaFactory } from "../modules/core/media-factory.js";
-import { InputEvents } from "./enums.js";
+import { EditorActions, InputEvents } from "./enums.js";
 
 export class Krystallizer {
   constructor() {
@@ -34,6 +34,7 @@ export class Krystallizer {
       clicked: false,
       mouseDownTimer: null,
       hoveredEntity: null,
+      draggingNewEntity: null,
     };
     /** @type {keyof Krystallizer.actions} */
     this.currentAction;
@@ -108,6 +109,12 @@ export class Krystallizer {
 
   //#region Initialising
 
+  bindEventSystemListeners() {
+    EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
+    EventSystem.on(EditorActions.EntityDragStart, (e) => (this.inputState.draggingNewEntity = e));
+    EventSystem.on(EditorActions.EntityDragEnd, () => (this.inputState.draggingNewEntity = null));
+  }
+
   bindMouseEvents() {
     EventSystem.on(InputEvents.MouseMove, (mouse) => this.handleMouseMove(mouse));
     this.system.canvas.addEventListener("pointerdown", () => {
@@ -130,7 +137,7 @@ export class Krystallizer {
   }
 
   bindEvents() {
-    EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
+    this.bindEventSystemListeners();
     this.bindMouseEvents();
 
     const { layers, level, layerActions, entityActions, entitiesLayer, layerSettings, toolbar } =
@@ -386,7 +393,9 @@ export class Krystallizer {
   actions = {
     cursor: {
       mouseDown: () => {},
-      mouseMove: () => {},
+      mouseMove: () => {
+        if (!this.inputState.draggingNewEntity) this.detectHoveredEntity();
+      },
       mouseUp: () => {},
       click: () => {
         this.setActiveEntity(this.inputState.hoveredEntity);
@@ -429,9 +438,7 @@ export class Krystallizer {
     this.currentAction?.mouseDown();
   }
 
-  handleMouseMove(mouse) {
-    this.mouse = { ...mouse };
-
+  detectHoveredEntity() {
     const p = this.mouse;
     const sx = this.screen.actual.x;
     const sy = this.screen.actual.y;
@@ -443,7 +450,10 @@ export class Krystallizer {
         p.y + sy <= e.pos.y + e.size.y
     );
     this.setCanvasCursor(this.inputState.hoveredEntity ? "pointer" : "default");
+  }
 
+  handleMouseMove(mouse) {
+    this.mouse = { ...mouse };
     this.currentAction?.mouseMove();
   }
 

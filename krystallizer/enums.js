@@ -15,6 +15,8 @@ export class EditorActions extends Enum {
     this.Select = new EditorActions();
     this.Eraser = new EditorActions();
     this.Shape = new EditorActions();
+    this.EntityDragStart = new EditorActions();
+    this.EntityDragEnd = new EditorActions();
     this.freeze();
   }
 }

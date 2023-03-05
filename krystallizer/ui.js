@@ -5,7 +5,7 @@ import { Guard } from "../modules/lib/sanity/guard.js";
 import { $el, screenshotCanvas } from "../modules/lib/utils/dom.js";
 import { Logger } from "../modules/lib/utils/logger.js";
 import { config } from "./config.js";
-import { InputEvents } from "./enums.js";
+import { EditorActions, InputEvents } from "./enums.js";
 
 export class Modal {
   /**
@@ -506,11 +506,16 @@ export class EntityDisplay {
     clone.style.cursor = "none";
 
     const canvas = document.querySelector("canvas");
-    if (!canvas) Logger.getInstance().critical("EntityDisplay: canvas not found.");
+    if (!canvas) {
+      Logger.getInstance().critical("EntityDisplay: canvas not found.");
+      return;
+    }
     canvas.style.cursor = "none";
+    EventSystem.dispatch(EditorActions.EntityDragStart, this.entity);
 
     let target;
     const mouseMove = (e) => {
+      clone.style.cursor = "none";
       clone.style.left = `${this.mouse.x - cloneW / 2}px`;
       clone.style.top = `${this.mouse.y + cloneH / 2}px`;
       clone.style.pointerEvents = "none";
@@ -529,6 +534,7 @@ export class EntityDisplay {
         y: parseInt(clone.style.top),
       };
       this.onDrop(this.className, pos);
+      EventSystem.dispatch(EditorActions.EntityDragEnd, this.entity);
     };
 
     document.addEventListener("pointermove", mouseMove);
