@@ -515,7 +515,6 @@ export class EntityDisplay {
 
     let target;
     const mouseMove = (e) => {
-      clone.style.cursor = "none";
       clone.style.left = `${this.mouse.x - cloneW / 2}px`;
       clone.style.top = `${this.mouse.y + cloneH / 2}px`;
       clone.style.pointerEvents = "none";

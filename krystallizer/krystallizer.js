@@ -122,7 +122,7 @@ export class Krystallizer {
       this.inputState.clicked = true;
       this.inputState.mouseDownTimer = setTimeout(() => (this.inputState.clicked = false), 150);
     });
-    document.addEventListener("pointerdown", () => {
+    document.addEventListener("pointerup", () => {
       const { mouseIsDown, mouseDownTimer, clicked } = this.inputState;
       if (!mouseIsDown) return; // Canvas wasn't source of click
       clearTimeout(mouseDownTimer);
