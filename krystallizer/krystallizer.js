@@ -176,7 +176,23 @@ export class Krystallizer {
         ctx.lineWidth = 2;
         ctx.lineDashOffset = 2;
 
-        this.inputState.selected = this.entities.filter((e) => selection.overlapsRect(e));
+        const absoluteSelection = new Rect({ ...selection.pos }, { ...selection.size });
+
+        if (selection.size.x < 0) {
+          const size = Math.abs(selection.size.x);
+          const pos = selection.pos.x;
+          absoluteSelection.pos.x = pos - size;
+          absoluteSelection.size.x = size;
+        }
+
+        if (selection.size.y < 0) {
+          const size = Math.abs(selection.size.y);
+          const pos = selection.pos.y;
+          absoluteSelection.pos.y = pos - size;
+          absoluteSelection.size.y = size;
+        }
+
+        this.inputState.selected = this.entities.filter((e) => absoluteSelection.overlapsRect(e));
       },
       mouseUp: noop,
       click: noop,
