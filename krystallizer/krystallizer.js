@@ -40,6 +40,7 @@ export class Krystallizer {
       dragTarget: null,
       /** @type {Rect} */
       selectionRect: null,
+      selected: null,
     };
     /** @type {keyof Krystallizer.actions} */
     this.currentAction;
@@ -163,6 +164,15 @@ export class Krystallizer {
           x: this.mouse.x - selection.pos.x,
           y: this.mouse.y - selection.pos.y,
         };
+
+        const selectedColor = "#2196f3";
+        const { ctx } = this.system;
+        ctx.strokeStyle = selectedColor;
+        ctx.lineWidth = 2;
+        ctx.lineDashOffset = 2;
+
+        this.selected = this.entities.filter((e) => selection.overlapsRect(e));
+        console.log(this.selected);
       },
       mouseUp: noop,
       click: noop,
@@ -456,6 +466,18 @@ export class Krystallizer {
       ctx.strokeStyle = "darkblue";
       ctx.strokeRect(x, y, size.x, size.y);
       ctx.globalAlpha = 1;
+    }
+
+    if (this.inputState.selected) {
+      const selectedColor = "#2196f3";
+      const { ctx } = this.system;
+      ctx.strokeStyle = selectedColor;
+      ctx.lineWidth = 2;
+      ctx.lineDashOffset = 2;
+      for (let i = 0; i < this.inputState.selected.length; i++) {
+        const entity = this.inputState.selected[i];
+        ctx.strokeRect(entity.pos.x, entity.pos.y, entity.size.x, entity.size.y);
+      }
     }
   }
 
