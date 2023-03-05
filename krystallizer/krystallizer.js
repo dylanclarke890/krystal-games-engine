@@ -131,15 +131,22 @@ export class Krystallizer {
       onTransition: () => this.setCanvasCursor("move"),
       mouseDown: () => {
         this.detectEntityBelowMouse(false);
-        this.inputState.dragTarget = this.inputState.entityBelowMouse ?? this.system.canvas;
+        this.inputState.dragTarget =
+          this.inputState.entityBelowMouse ?? this.inputState.selectionRect ?? this.system.canvas;
       },
       mouseMove: () => {
         if (!this.inputState.mouseIsDown || !this.inputState.dragTarget) return;
-
+        const dx = this.system.mouse.x - this.system.mouseLast.x,
+          dy = this.system.mouse.y - this.system.mouseLast.y;
         if (this.inputState.dragTarget === this.system.canvas) {
-          const dx = this.system.mouse.x - this.system.mouseLast.x,
-            dy = this.system.mouse.y - this.system.mouseLast.y;
           this.scroll(dx, dy);
+        } else if (this.inputState.dragTarget === this.inputState.selectionRect) {
+          this.inputState.selectionRect.pos.x += dx;
+          this.inputState.selectionRect.pos.y += dy;
+          this.inputState.selected.forEach((s) => {
+            s.pos.x += dx;
+            s.pos.y += dy;
+          });
         } else {
           const entity = this.inputState.dragTarget;
           entity.pos.x = this.mouse.x - entity.size.x / 2 + this.screen.actual.x;
