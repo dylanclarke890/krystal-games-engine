@@ -583,15 +583,14 @@ export class Krystallizer {
 
   setActiveEntity(entity) {
     const { entitySettings } = this.panels;
+    entitySettings.toggleVisible(entity);
 
     if (!entity) {
       this.selectedEntity = null;
-      entitySettings.hide();
       return;
     }
 
     const { className, posX, posY } = this.DOMElements.entitySettings;
-    entitySettings.show();
     this.selectedEntity = entity;
 
     className.value = entity.constructor.name;
@@ -805,9 +804,9 @@ export class Krystallizer {
     entitiesLayer.div.classList.toggle(activeClass, isEntityLayer);
 
     this.activeLayer = isEntityLayer ? name : this.getLayerByName(name);
-    this.panels.entities.toggle(isEntityLayer);
-    this.panels.entitySettings.toggle(isEntityLayer);
-    this.panels.layerSettings.toggle(isEntityLayer);
+    if (!isEntityLayer) this.panels.entitySettings.hide();
+    this.panels.entities.toggleVisible(isEntityLayer);
+    this.panels.layerSettings.toggleVisible(!isEntityLayer);
 
     for (let i = 0; i < this.layers.length; i++) {
       const layer = this.layers[i];

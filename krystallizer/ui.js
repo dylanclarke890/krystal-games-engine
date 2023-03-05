@@ -556,17 +556,18 @@ export class Panel {
       content: div.querySelector(".panel__content"),
       toggle: div.querySelector(".panel__toggle-icon"),
     };
-    this.isOpen = false;
+    this.isOpen = this.DOMElements.header.classList.contains("open");
+    this.isShowing = div.style.display === "block";
     this.bindEvents();
     this.hide();
   }
 
   bindEvents() {
     const { header } = this.DOMElements;
-    header.addEventListener("click", () => this.toggle());
+    header.addEventListener("click", () => this.toggleCollapse());
   }
 
-  toggle(force) {
+  toggleCollapse(force) {
     if (force != null) {
       if (force) this.open();
       else this.close();
@@ -575,6 +576,17 @@ export class Panel {
 
     if (this.isOpen) this.close();
     else this.open();
+  }
+
+  toggleVisible(force) {
+    if (force != null) {
+      if (force) this.show();
+      else this.hide();
+      return;
+    }
+
+    if (this.isShowing) this.hide();
+    else this.show();
   }
 
   close() {
@@ -595,6 +607,7 @@ export class Panel {
     const { div } = this.DOMElements;
     div.style.display = "block";
     div.offsetHeight;
+    this.isShowing = true;
     if (autoOpen) this.open();
   }
 
@@ -603,5 +616,6 @@ export class Panel {
     if (autoClose) this.close();
     div.offsetHeight;
     div.style.display = "none";
+    this.isShowing = false;
   }
 }
