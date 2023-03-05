@@ -15,6 +15,7 @@ import { EventSystem, LoopEvents } from "../modules/core/events.js";
 import { MediaFactory } from "../modules/core/media-factory.js";
 import { EditorActions, InputEvents } from "./enums.js";
 import { noop } from "../modules/lib/utils/func.js";
+import { Entity } from "../modules/core/entity.js";
 
 export class Krystallizer {
   constructor() {
@@ -603,8 +604,7 @@ export class Krystallizer {
   setActiveEntity(entity) {
     const { entitySettings } = this.panels;
 
-    this.system.canvas;
-    const validEntity = entity && !(entity instanceof HTMLElement || entity instanceof Rect);
+    const validEntity = entity && !(entity instanceof Entity);
     entitySettings.toggleVisible(validEntity);
 
     if (!validEntity) {
