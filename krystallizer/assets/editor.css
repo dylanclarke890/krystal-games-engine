@@ -227,6 +227,7 @@ header {
   letter-spacing: 1.5px;
   padding: var(--gap);
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .panel__content {
@@ -237,7 +238,7 @@ header {
 
 .panel__content.open {
   max-height: 250px;
-  overflow: scroll;
+  overflow-y: scroll;
   border-bottom: var(--border-style);
 }
 
@@ -613,3 +614,13 @@ input:checked + .slider:before {
 }
 
 /*#endregion ENTITY PANEL */
+
+/*#region CURRENT SELECTION PANEL */
+
+#current-selection h3 {
+  color: grey;
+  font-size: 90%;
+  padding: var(--gap);
+}
+
+/*#region CURRENT SELECTION PANEL */

@@ -686,8 +686,11 @@ export class Krystallizer {
     const screen = this.screen.actual;
     const x = Math.round(pos.x - bounds.x + screen.x);
     const y = Math.round(pos.y - bounds.y + screen.y);
-    this.setActiveEntity(this.spawnEntity(className, x, y));
+    const entity = this.spawnEntity(className, x, y);
+    this.setActiveEntity(entity);
     this.setModifiedState(true);
+    if (!this.inputState.selectionRect) return;
+    if (this.inputState.selectionRect.overlapsRect(entity)) this.inputState.selected.push(entity);
   }
 
   constructEntitiesList() {
