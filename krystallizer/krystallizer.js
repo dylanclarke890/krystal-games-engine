@@ -112,7 +112,7 @@ export class Krystallizer {
     this.system.canvas.addEventListener("mousedown", () => {
       this.inputState.mouseIsDown = true;
       this.inputState.clicked = true;
-      this.inputState.mouseDownTimer = setTimeout(() => (this.inputState.clicked = false), 50);
+      this.inputState.mouseDownTimer = setTimeout(() => (this.inputState.clicked = false), 150);
     });
     document.addEventListener("mouseup", () => {
       const { mouseIsDown, mouseDownTimer, clicked } = this.inputState;
@@ -400,14 +400,16 @@ export class Krystallizer {
         this.setCanvasCursor(this.hoveredEntity ? "pointer" : "default");
       },
       mouseUp: () => {},
-      click: () => {},
+      click: () => {
+        this.setActiveEntity(this.hoveredEntity);
+      },
     },
     move: {
       mouseDown: () => {},
       mouseMove: () => {
         this.setCanvasCursor("move");
         this.hoveredEntity = null;
-        if (!this.mouseIsDown) return;
+        if (!this.inputState.mouseIsDown) return;
         const dx = this.system.mouse.x - this.system.mouseLast.x,
           dy = this.system.mouse.y - this.system.mouseLast.y;
         this.scroll(dx, dy);
@@ -435,15 +437,22 @@ export class Krystallizer {
     },
   };
 
-  handleMouseDown() {}
-
-  handleMouseUp() {}
-
-  handleClick() {}
+  handleMouseDown() {
+    this.currentAction?.mouseDown();
+  }
 
   handleMouseMove(mouse) {
     this.mouse = { ...mouse };
     this.currentAction?.mouseMove();
+  }
+
+  handleMouseUp() {
+    this.currentAction?.mouseUp();
+  }
+
+  handleClick() {
+    console.log("handling");
+    this.currentAction?.click();
   }
 
   scroll(x, y) {
