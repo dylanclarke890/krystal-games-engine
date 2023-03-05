@@ -603,7 +603,7 @@ export class Krystallizer {
   setActiveEntity(entity) {
     const { entitySettings } = this.panels;
 
-    const validEntity = entity && !(entity instanceof Entity);
+    const validEntity = entity && entity instanceof Entity;
     entitySettings.toggleVisible(validEntity);
 
     if (!validEntity) {
