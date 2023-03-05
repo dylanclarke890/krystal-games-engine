@@ -130,7 +130,7 @@ export class Krystallizer {
         }
       },
       mouseMove: () => {
-        if (!this.inputState.draggingCloneEntity) this.detectObjectBelowMouse(true);
+        if (!this.inputState.draggingCloneEntity) this.getObjectBelowMouse(true);
       },
       mouseUp: noop,
       click: noop,
@@ -139,7 +139,7 @@ export class Krystallizer {
     move: {
       onTransitionEnter: () => this.setCanvasCursor("move"),
       mouseDown: () => {
-        this.detectObjectBelowMouse(false);
+        this.getObjectBelowMouse(false);
         this.inputState.dragTarget = this.inputState.objectBelowMouse;
       },
       mouseMove: () => {
@@ -161,6 +161,8 @@ export class Krystallizer {
         }
       },
       mouseUp: () => {
+        const selection = this.inputState.selectionRect;
+        if (selection) this.getObjectsInSelectionBox(selection);
         this.inputState.dragTarget = null;
       },
       click: noop,
@@ -182,37 +184,7 @@ export class Krystallizer {
       mouseMove: () => {
         const selection = this.inputState.selectionRect;
         if (!this.inputState.mouseIsDown || !selection) return;
-
-        const dx = this.system.mouse.x - this.system.mouseLast.x,
-          dy = this.system.mouse.y - this.system.mouseLast.y;
-        selection.size = {
-          x: selection.size.x + dx,
-          y: selection.size.y + dy,
-        };
-
-        const selectedColor = "#2196f3";
-        const { ctx } = this.system;
-        ctx.strokeStyle = selectedColor;
-        ctx.lineWidth = 2;
-        ctx.lineDashOffset = 2;
-
-        const absoluteSelection = new Rect({ ...selection.pos }, { ...selection.size });
-
-        if (selection.size.x < 0) {
-          const size = Math.abs(selection.size.x);
-          const pos = selection.pos.x;
-          absoluteSelection.pos.x = pos - size;
-          absoluteSelection.size.x = size;
-        }
-
-        if (selection.size.y < 0) {
-          const size = Math.abs(selection.size.y);
-          const pos = selection.pos.y;
-          absoluteSelection.pos.y = pos - size;
-          absoluteSelection.size.y = size;
-        }
-
-        this.inputState.selected = this.entities.filter((e) => absoluteSelection.overlapsRect(e));
+        this.getObjectsInSelectionBox(selection);
       },
       mouseUp: noop,
       click: () => {
@@ -245,6 +217,65 @@ export class Krystallizer {
     this.currentAction.onTransitionLeave();
     this.currentAction = this.actions[action ?? "cursor"];
     this.currentAction.onTransitionEnter();
+  }
+
+  getObjectBelowMouse(setCursor) {
+    if (this.inputState.draggingCloneEntity) return;
+    const sx = this.screen.actual.x;
+    const sy = this.screen.actual.y;
+    const p = { x: this.mouse.x + sx, y: this.mouse.y + sy };
+    let found = null;
+    found = this.entities.find(
+      (e) =>
+        p.x >= e.pos.x && p.x <= e.pos.x + e.size.x && p.y >= e.pos.y && p.y <= e.pos.y + e.size.y
+    );
+
+    if (!found && this.inputState.selectionRect) {
+      const r = this.inputState.selectionRect;
+      if (
+        p.x >= r.pos.x &&
+        p.x <= r.pos.x + r.size.x &&
+        p.y >= r.pos.y &&
+        p.y <= r.pos.y + r.size.y
+      )
+        found = r;
+    }
+
+    if (setCursor) this.setCanvasCursor(found ? "pointer" : "default");
+    found ??= this.system.canvas;
+    this.inputState.objectBelowMouse = found;
+  }
+
+  getObjectsInSelectionBox(selection) {
+    const { dx, dy } = this.mouse;
+    selection.size = {
+      x: selection.size.x + dx,
+      y: selection.size.y + dy,
+    };
+
+    const selectedColor = "#2196f3";
+    const { ctx } = this.system;
+    ctx.strokeStyle = selectedColor;
+    ctx.lineWidth = 2;
+    ctx.lineDashOffset = 2;
+
+    const absoluteSelection = new Rect({ ...selection.pos }, { ...selection.size });
+
+    if (selection.size.x < 0) {
+      const size = Math.abs(selection.size.x);
+      const pos = selection.pos.x;
+      absoluteSelection.pos.x = pos - size;
+      absoluteSelection.size.x = size;
+    }
+
+    if (selection.size.y < 0) {
+      const size = Math.abs(selection.size.y);
+      const pos = selection.pos.y;
+      absoluteSelection.pos.y = pos - size;
+      absoluteSelection.size.y = size;
+    }
+
+    this.inputState.selected = this.entities.filter((e) => absoluteSelection.overlapsRect(e));
   }
 
   bindEventSystemListeners() {
@@ -559,33 +590,6 @@ export class Krystallizer {
 
   handleMouseDown() {
     this.currentAction?.mouseDown();
-  }
-
-  detectObjectBelowMouse(setCursor) {
-    if (this.inputState.draggingCloneEntity) return;
-    const sx = this.screen.actual.x;
-    const sy = this.screen.actual.y;
-    const p = { x: this.mouse.x + sx, y: this.mouse.y + sy };
-    let found = null;
-    found = this.entities.find(
-      (e) =>
-        p.x >= e.pos.x && p.x <= e.pos.x + e.size.x && p.y >= e.pos.y && p.y <= e.pos.y + e.size.y
-    );
-
-    if (!found && this.inputState.selectionRect) {
-      const r = this.inputState.selectionRect;
-      if (
-        p.x >= r.pos.x &&
-        p.x <= r.pos.x + r.size.x &&
-        p.y >= r.pos.y &&
-        p.y <= r.pos.y + r.size.y
-      )
-        found = r;
-    }
-
-    if (setCursor) this.setCanvasCursor(found ? "pointer" : "default");
-    found ??= this.system.canvas;
-    this.inputState.objectBelowMouse = found;
   }
 
   handleMouseMove(mouse) {
