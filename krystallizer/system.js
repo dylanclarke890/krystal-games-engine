@@ -22,7 +22,7 @@ export class System {
   }
 
   bindEvents() {
-    document.addEventListener("mousemove", (e) => this.updateMousePosition(e));
+    document.addEventListener("pointermove", (e) => this.updateMousePosition(e));
     window.addEventListener("resize", () => this.resize());
   }
 

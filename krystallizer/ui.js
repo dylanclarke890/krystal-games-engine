@@ -476,7 +476,7 @@ export class EntityDisplay {
     div.append(name);
 
     this.mouseDown = (e) => this.mousedown(e);
-    div.addEventListener("mousedown", this.mouseDown);
+    div.addEventListener("pointerdown", this.mouseDown);
     EventSystem.on(InputEvents.MouseMove, this.updateMousePosition);
     parent.append(div);
     this.DOMElements = { div, name, preview };
@@ -519,8 +519,8 @@ export class EntityDisplay {
     };
 
     const mouseUp = () => {
-      document.removeEventListener("mousemove", mouseMove);
-      clone.removeEventListener("mouseup", mouseUp);
+      document.removeEventListener("pointermove", mouseMove);
+      clone.removeEventListener("pointerup", mouseUp);
       document.body.removeChild(clone);
       canvas.style.removeProperty("cursor");
       if (target !== canvas) return;
@@ -531,14 +531,14 @@ export class EntityDisplay {
       this.onDrop(this.className, pos);
     };
 
-    document.addEventListener("mousemove", mouseMove);
-    clone.addEventListener("mouseup", mouseUp);
+    document.addEventListener("pointermove", mouseMove);
+    clone.addEventListener("pointerup", mouseUp);
   }
 
   /** Remove from DOM and remove any event listeners. */
   destroy() {
     const { div } = this.DOMElements;
-    div.removeEventListener("mousedown", this.mouseDown);
+    div.removeEventListener("pointerdown", this.mouseDown);
     div.parentElement.removeChild(div);
     EventSystem.off(InputEvents.MouseMove, this.updateMousePosition);
   }
