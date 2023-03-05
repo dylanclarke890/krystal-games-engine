@@ -29,8 +29,14 @@ export class Krystallizer {
     this.drawEntities = true;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
     this.mouse = { x: 0, y: 0 };
-    this.mouseIsDown = false;
-    this.setToolbarAction("cursor");
+    this.inputState = {
+      mouseIsDown: false,
+      clicked: false,
+      mouseDownTimer: null,
+    };
+    /** @type {keyof Krystallizer.actions} */
+    this.currentAction;
+    this.setCurrentAction(); // Defaults to Cursor
 
     const { undoDepth, newFileName } = config.general;
     this.undo = new Undo({ editor: this, levels: undoDepth });
@@ -101,12 +107,30 @@ export class Krystallizer {
 
   //#region Initialising
 
+  bindMouseEvents() {
+    EventSystem.on(InputEvents.MouseMove, (mouse) => this.handleMouseMove(mouse));
+    this.system.canvas.addEventListener("mousedown", () => {
+      this.inputState.mouseIsDown = true;
+      this.inputState.clicked = true;
+      this.inputState.mouseDownTimer = setTimeout(() => (this.inputState.clicked = false), 50);
+    });
+    document.addEventListener("mouseup", () => {
+      const { mouseIsDown, mouseDownTimer, clicked } = this.inputState;
+      if (!mouseIsDown) return; // Canvas wasn't source of click
+      clearTimeout(mouseDownTimer);
+
+      this.handleMouseUp();
+      if (clicked) this.handleClick();
+
+      this.inputState.mouseDownTimer = null;
+      this.inputState.mouseIsDown = false;
+      this.inputState.clicked = false;
+    });
+  }
+
   bindEvents() {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
-    EventSystem.on(InputEvents.MouseMove, (mouse) => this.handleMouseMovement(mouse));
-    // FIXME: Handle click event for selecting entity.
-    this.system.canvas.addEventListener("mousedown", () => (this.mouseIsDown = true));
-    document.addEventListener("mouseup", () => (this.mouseIsDown = false));
+    this.bindMouseEvents();
 
     const { layers, level, layerActions, entityActions, entitiesLayer, layerSettings, toolbar } =
       this.DOMElements;
@@ -114,7 +138,7 @@ export class Krystallizer {
     toolbar.actions.forEach((action) => {
       action.addEventListener("click", () => {
         toolbar.actions.forEach((a) => a.classList.toggle("active", a === action));
-        this.setToolbarAction(action.getAttribute("data-action"));
+        this.setCurrentAction(action.getAttribute("data-action"));
       });
     });
 
@@ -300,7 +324,7 @@ export class Krystallizer {
     let ylabel = actual.y - (actual.y % step) - step;
     for (let ty = Math.floor(-actual.y % step); ty < height; ty += step) {
       ylabel += step;
-      ctx.fillText(ylabel, 0, ty * scale + 10);
+      ctx.fillText(ylabel, 2, ty * scale + 10);
     }
 
     ctx.lineWidth = markerWidth;
@@ -358,37 +382,68 @@ export class Krystallizer {
     levelName.dataset.unsaved = isModified;
   }
 
-  toolbarActions = {
-    cursor: () => {
-      if (this.activeLayer !== "entities") return;
-      const p = this.mouse;
-      const sx = this.screen.actual.x;
-      const sy = this.screen.actual.y;
-      this.hoveredEntity = this.entities.find(
-        (e) =>
-          p.x + sx >= e.pos.x &&
-          p.x + sx <= e.pos.x + e.size.x &&
-          p.y + sy >= e.pos.y &&
-          p.y + sy <= e.pos.y + e.size.y
-      );
-      this.setCanvasCursor(this.hoveredEntity ? "pointer" : "default");
+  actions = {
+    cursor: {
+      mouseDown: () => {},
+      mouseMove: () => {
+        if (this.activeLayer !== "entities") return;
+        const p = this.mouse;
+        const sx = this.screen.actual.x;
+        const sy = this.screen.actual.y;
+        this.hoveredEntity = this.entities.find(
+          (e) =>
+            p.x + sx >= e.pos.x &&
+            p.x + sx <= e.pos.x + e.size.x &&
+            p.y + sy >= e.pos.y &&
+            p.y + sy <= e.pos.y + e.size.y
+        );
+        this.setCanvasCursor(this.hoveredEntity ? "pointer" : "default");
+      },
+      mouseUp: () => {},
+      click: () => {},
     },
-    move: () => {
-      this.setCanvasCursor("move");
-      this.hoveredEntity = null;
-      if (!this.mouseIsDown) return;
-      const dx = this.system.mouse.x - this.system.mouseLast.x,
-        dy = this.system.mouse.y - this.system.mouseLast.y;
-      this.scroll(dx, dy);
+    move: {
+      mouseDown: () => {},
+      mouseMove: () => {
+        this.setCanvasCursor("move");
+        this.hoveredEntity = null;
+        if (!this.mouseIsDown) return;
+        const dx = this.system.mouse.x - this.system.mouseLast.x,
+          dy = this.system.mouse.y - this.system.mouseLast.y;
+        this.scroll(dx, dy);
+      },
+      mouseUp: () => {},
+      click: () => {},
     },
-    select: () => {},
-    eraser: () => {},
-    shapes: () => {},
+    select: {
+      mouseDown: () => {},
+      mouseMove: () => {},
+      mouseUp: () => {},
+      click: () => {},
+    },
+    eraser: {
+      mouseDown: () => {},
+      mouseMove: () => {},
+      mouseUp: () => {},
+      click: () => {},
+    },
+    shape: {
+      mouseDown: () => {},
+      mouseMove: () => {},
+      mouseUp: () => {},
+      click: () => {},
+    },
   };
 
-  handleMouseMovement(mouse) {
+  handleMouseDown() {}
+
+  handleMouseUp() {}
+
+  handleClick() {}
+
+  handleMouseMove(mouse) {
     this.mouse = { ...mouse };
-    if (this.currentToolbarAction) this.currentToolbarAction();
+    this.currentAction?.mouseMove();
   }
 
   scroll(x, y) {
@@ -401,9 +456,8 @@ export class Krystallizer {
     for (let i = 0; i < this.layers.length; i++) this.layers[i].setScreenPos(actual.x, actual.y);
   }
 
-  setToolbarAction(action) {
-    if (action == null) this.currentToolbarAction = null;
-    this.currentToolbarAction = this.toolbarActions[action];
+  setCurrentAction(action) {
+    this.currentAction = this.actions[action ?? "cursor"];
   }
 
   setCanvasCursor(cursor) {

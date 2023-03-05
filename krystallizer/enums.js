@@ -8,10 +8,13 @@ export class InputEvents extends Enum {
   }
 }
 
-export class ToolbarActions extends Enum {
+export class EditorActions extends Enum {
   static {
-    this.Default = new ToolbarActions();
-    this.Move = new ToolbarActions();
+    this.Cursor = new EditorActions();
+    this.Move = new EditorActions();
+    this.Select = new EditorActions();
+    this.Eraser = new EditorActions();
+    this.Shape = new EditorActions();
     this.freeze();
   }
 }
