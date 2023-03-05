@@ -43,8 +43,7 @@ export class Krystallizer {
       selectionRect: null,
       selected: null,
     };
-    /** @type {keyof Krystallizer.actions} */
-    this.currentAction;
+    this.currentAction = { onTransitionEnter: noop, onTransitionLeave: noop };
     this.setCurrentAction(); // Defaults to Cursor
 
     const { undoDepth, newFileName } = config.general;
@@ -125,6 +124,10 @@ export class Krystallizer {
       onTransitionEnter: () => this.setCanvasCursor("default"),
       mouseDown: () => {
         this.setActiveEntity(this.inputState.objectBelowMouse);
+        if (this.inputState.objectBelowMouse === this.system.canvas) {
+          this.inputState.selected = null;
+          this.inputState.selectionRect = null;
+        }
       },
       mouseMove: () => {
         if (!this.inputState.draggingCloneEntity) this.detectObjectBelowMouse(true);
@@ -164,7 +167,12 @@ export class Krystallizer {
       onTransitionLeave: noop,
     },
     select: {
-      onTransitionEnter: () => this.setCanvasCursor("default"),
+      onTransitionEnter: () => {
+        this.setCanvasCursor("default");
+        this.panels.currentSelection.show();
+        this.panels.entitySettings.close();
+        this.panels.entities.close();
+      },
       mouseDown: () => {
         this.inputState.selectionRect = new Rect(
           { x: this.screen.actual.x + this.mouse.x, y: this.screen.actual.y + this.mouse.y },
@@ -211,7 +219,9 @@ export class Krystallizer {
         this.inputState.selectionRect = null;
         this.inputState.selected = null;
       },
-      onTransitionLeave: noop,
+      onTransitionLeave: () => {
+        this.panels.currentSelection.hide();
+      },
     },
     eraser: {
       onTransitionEnter: noop,
@@ -232,6 +242,7 @@ export class Krystallizer {
   };
 
   setCurrentAction(action) {
+    this.currentAction.onTransitionLeave();
     this.currentAction = this.actions[action ?? "cursor"];
     this.currentAction.onTransitionEnter();
   }
