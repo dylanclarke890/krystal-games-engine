@@ -462,10 +462,11 @@ export class Krystallizer {
     }
     if (!entitiesDrawn) this.drawEntityLayer();
     if (config.labels.draw) this.drawLabels();
+
+    const { actual } = this.screen;
     if (this.inputState.selectionRect) {
       const { ctx } = this.system;
       const { pos, size } = this.inputState.selectionRect;
-      const { actual } = this.screen;
       const x = pos.x - actual.x;
       const y = pos.y - actual.y;
       ctx.globalAlpha = 0.5;
@@ -484,7 +485,9 @@ export class Krystallizer {
       ctx.lineDashOffset = 2;
       for (let i = 0; i < this.inputState.selected.length; i++) {
         const entity = this.inputState.selected[i];
-        ctx.strokeRect(entity.pos.x, entity.pos.y, entity.size.x, entity.size.y);
+        const x = entity.pos.x - actual.x;
+        const y = entity.pos.y - actual.y;
+        ctx.strokeRect(x, y, entity.size.x, entity.size.y);
       }
     }
   }
