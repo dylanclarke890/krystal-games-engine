@@ -143,11 +143,11 @@ export class Krystallizer {
         this.inputState.dragTarget = this.inputState.objectBelowMouse;
       },
       mouseMove: () => {
-        if (!this.inputState.mouseIsDown || !this.inputState.dragTarget) return;
+        const { dragTarget, mouseIsDown } = this.inputState;
+        if (!mouseIsDown || !dragTarget) return;
         const { dx, dy } = this.mouse;
-        if (this.inputState.dragTarget === this.system.canvas) {
-          this.scroll(dx, dy);
-        } else if (this.inputState.dragTarget === this.inputState.selectionRect) {
+        if (dragTarget === this.system.canvas) this.scroll(dx, dy);
+        else if (dragTarget === this.inputState.selectionRect) {
           this.inputState.selectionRect.pos.x += dx;
           this.inputState.selectionRect.pos.y += dy;
           this.inputState.selected.forEach((s) => {
@@ -155,14 +155,14 @@ export class Krystallizer {
             s.pos.y += dy;
           });
         } else {
-          const entity = this.inputState.dragTarget;
+          const entity = dragTarget;
           entity.pos.x += dx;
           entity.pos.y += dy;
         }
       },
       mouseUp: () => {
-        const selection = this.inputState.selectionRect;
-        if (selection) this.getObjectsInSelectionBox(selection);
+        if (this.inputState.selectionRect)
+          this.getObjectsInSelectionBox(this.inputState.selectionRect);
         this.inputState.dragTarget = null;
       },
       click: noop,
@@ -182,9 +182,8 @@ export class Krystallizer {
         );
       },
       mouseMove: () => {
-        const selection = this.inputState.selectionRect;
-        if (!this.inputState.mouseIsDown || !selection) return;
-        this.getObjectsInSelectionBox(selection);
+        if (!this.inputState.mouseIsDown || !this.inputState.selectionRect) return;
+        this.getObjectsInSelectionBox(this.inputState.selectionRect);
       },
       mouseUp: noop,
       click: () => {
