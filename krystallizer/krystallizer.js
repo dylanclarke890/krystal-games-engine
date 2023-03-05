@@ -173,8 +173,7 @@ export class Krystallizer {
         ctx.lineWidth = 2;
         ctx.lineDashOffset = 2;
 
-        this.selected = this.entities.filter((e) => selection.overlapsRect(e));
-        console.log(this.selected);
+        this.inputState.selected = this.entities.filter((e) => selection.overlapsRect(e));
       },
       mouseUp: noop,
       click: noop,
