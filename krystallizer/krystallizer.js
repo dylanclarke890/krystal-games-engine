@@ -155,16 +155,19 @@ export class Krystallizer {
       onTransition: () => this.setCanvasCursor("default"),
       mouseDown: () => {
         this.inputState.selectionRect = new Rect(
-          { x: this.mouse.x, y: this.mouse.y },
+          { x: this.screen.actual.x + this.mouse.x, y: this.screen.actual.y + this.mouse.y },
           { x: 1, y: 1 }
         );
       },
       mouseMove: () => {
         const selection = this.inputState.selectionRect;
         if (!this.inputState.mouseIsDown || !selection) return;
+
+        const dx = this.system.mouse.x - this.system.mouseLast.x,
+          dy = this.system.mouse.y - this.system.mouseLast.y;
         selection.size = {
-          x: this.mouse.x - selection.pos.x,
-          y: this.mouse.y - selection.pos.y,
+          x: selection.size.x + dx,
+          y: selection.size.y + dy,
         };
 
         const selectedColor = "#2196f3";
