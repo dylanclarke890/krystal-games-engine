@@ -13,6 +13,7 @@ import Sortable from "./third-party/sortable/src/Sortable.js";
 import { EventSystem, LoopEvents } from "../modules/core/events.js";
 import { MediaFactory } from "../modules/core/media-factory.js";
 import { EditorActions, InputEvents } from "./enums.js";
+import { noop } from "../modules/lib/utils/func.js";
 
 export class Krystallizer {
   constructor() {
@@ -33,8 +34,8 @@ export class Krystallizer {
       mouseIsDown: false,
       clicked: false,
       mouseDownTimer: null,
-      hoveredEntity: null,
-      draggingNewEntity: null,
+      entityBelowMouse: null,
+      draggingCloneEntity: null,
       dragTarget: null,
     };
     /** @type {keyof Krystallizer.actions} */
@@ -112,19 +113,19 @@ export class Krystallizer {
 
   actions = {
     cursor: {
-      mouseDown: () => {},
+      mouseDown: () => {
+        this.setActiveEntity(this.inputState.entityBelowMouse);
+      },
       mouseMove: () => {
-        this.detectHoveredEntity(!this.inputState.draggingNewEntity);
+        this.detectEntityBelowMouse(!this.inputState.draggingCloneEntity);
       },
-      mouseUp: () => {},
-      click: () => {
-        this.setActiveEntity(this.inputState.hoveredEntity);
-      },
+      mouseUp: noop,
+      click: noop,
     },
     move: {
       mouseDown: () => {
-        this.detectHoveredEntity(false);
-        this.inputState.dragTarget = this.inputState.hoveredEntity ?? this.system.canvas;
+        this.detectEntityBelowMouse(false);
+        this.inputState.dragTarget = this.inputState.entityBelowMouse ?? this.system.canvas;
       },
       mouseMove: () => {
         this.setCanvasCursor("move");
@@ -143,32 +144,32 @@ export class Krystallizer {
       mouseUp: () => {
         this.inputState.dragTarget = null;
       },
-      click: () => {},
+      click: noop,
     },
     select: {
-      mouseDown: () => {},
-      mouseMove: () => {},
-      mouseUp: () => {},
-      click: () => {},
+      mouseDown: noop,
+      mouseMove: noop,
+      mouseUp: noop,
+      click: noop,
     },
     eraser: {
-      mouseDown: () => {},
-      mouseMove: () => {},
-      mouseUp: () => {},
-      click: () => {},
+      mouseDown: noop,
+      mouseMove: noop,
+      mouseUp: noop,
+      click: noop,
     },
     shape: {
-      mouseDown: () => {},
-      mouseMove: () => {},
-      mouseUp: () => {},
-      click: () => {},
+      mouseDown: noop,
+      mouseMove: noop,
+      mouseUp: noop,
+      click: noop,
     },
   };
 
   bindEventSystemListeners() {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
-    EventSystem.on(EditorActions.EntityDragStart, (e) => (this.inputState.draggingNewEntity = e));
-    EventSystem.on(EditorActions.EntityDragEnd, () => (this.inputState.draggingNewEntity = null));
+    EventSystem.on(EditorActions.EntityDragStart, (e) => (this.inputState.draggingCloneEntity = e));
+    EventSystem.on(EditorActions.EntityDragEnd, () => (this.inputState.draggingCloneEntity = null));
   }
 
   bindMouseEvents() {
@@ -451,18 +452,18 @@ export class Krystallizer {
     this.currentAction?.mouseDown();
   }
 
-  detectHoveredEntity(setCursor) {
+  detectEntityBelowMouse(setCursor) {
     const p = this.mouse;
     const sx = this.screen.actual.x;
     const sy = this.screen.actual.y;
-    this.inputState.hoveredEntity = this.entities.find(
+    this.inputState.entityBelowMouse = this.entities.find(
       (e) =>
         p.x + sx >= e.pos.x &&
         p.x + sx <= e.pos.x + e.size.x &&
         p.y + sy >= e.pos.y &&
         p.y + sy <= e.pos.y + e.size.y
     );
-    if (setCursor) this.setCanvasCursor(this.inputState.hoveredEntity ? "pointer" : "default");
+    if (setCursor) this.setCanvasCursor(this.inputState.entityBelowMouse ? "pointer" : "default");
   }
 
   handleMouseMove(mouse) {

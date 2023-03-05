@@ -1,8 +1,8 @@
 import { EventSystem } from "../modules/core/events.js";
 import { BackgroundMap } from "../modules/core/map.js";
-import { Assert } from "../modules/lib/sanity/assert.js";
 import { Guard } from "../modules/lib/sanity/guard.js";
 import { $el, screenshotCanvas } from "../modules/lib/utils/dom.js";
+import { bind } from "../modules/lib/utils/func.js";
 import { Logger } from "../modules/lib/utils/logger.js";
 import { config } from "./config.js";
 import { EditorActions, InputEvents } from "./enums.js";
@@ -28,19 +28,13 @@ export class Modal {
     this.bindEvents(settings);
   }
 
-  // '#noop' and 'bind' are probably better suited in a utility class but not needed elsewhere currently.
-  static #noop = () => null;
-
-  /** Returns 'fn' if it is a function, else a 'noop' function. */
-  static bind = (fn) => (Assert.isType(fn, "function") ? fn : this.#noop);
-
   bindListeners({ onBeforeConstruct, onAfterConstruct, onOpen, onClose, onDestroy }) {
     this.events = {
-      beforeConstruct: Modal.bind(onBeforeConstruct),
-      afterConstruct: Modal.bind(onAfterConstruct),
-      open: Modal.bind(onOpen),
-      close: Modal.bind(onClose),
-      destroy: Modal.bind(onDestroy),
+      beforeConstruct: bind(onBeforeConstruct),
+      afterConstruct: bind(onAfterConstruct),
+      open: bind(onOpen),
+      close: bind(onClose),
+      destroy: bind(onDestroy),
     };
   }
 
@@ -149,8 +143,8 @@ export class ConfirmModal extends Modal {
 
   bindListeners({ onOk, onCancel, ...rest }) {
     super.bindListeners(rest);
-    this.events.ok = Modal.bind(onOk);
-    this.events.cancel = Modal.bind(onCancel);
+    this.events.ok = bind(onOk);
+    this.events.cancel = bind(onCancel);
   }
 
   construct({ id, size, title, body, okText = "Confirm", cancelText = "Cancel" }) {
@@ -212,8 +206,8 @@ export class SelectLevelModal extends Modal {
 
   bindListeners({ onSelect, onLevelsLoaded, ...rest }) {
     super.bindListeners(rest);
-    this.events.select = Modal.bind(onSelect);
-    this.events.levelsLoaded = Modal.bind(onLevelsLoaded);
+    this.events.select = bind(onSelect);
+    this.events.levelsLoaded = bind(onLevelsLoaded);
   }
 
   construct({ id }) {
@@ -415,7 +409,7 @@ export class EntityDisplay {
     this.entity = entity;
     this.className = className;
     this.filepath = filepath;
-    this.onDrop = Modal.bind(onDrop);
+    this.onDrop = bind(onDrop);
     this.mouse = { x: 0, y: 0 };
     this.construct();
   }
