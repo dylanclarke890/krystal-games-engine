@@ -383,6 +383,7 @@ export class Krystallizer {
     },
     select: () => {},
     eraser: () => {},
+    shapes: () => {},
   };
 
   handleMouseMovement(mouse) {
