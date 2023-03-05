@@ -112,9 +112,7 @@ export class Krystallizer {
 
   actions = {
     cursor: {
-      mouseDown: () => {
-        console.log("Mousedown");
-      },
+      mouseDown: () => {},
       mouseMove: () => {
         this.detectHoveredEntity(!this.inputState.draggingNewEntity);
       },
@@ -125,7 +123,6 @@ export class Krystallizer {
     },
     move: {
       mouseDown: () => {
-        console.log(this.inputState.dragTarget);
         this.detectHoveredEntity(false);
         this.inputState.dragTarget = this.inputState.hoveredEntity ?? this.system.canvas;
       },
@@ -139,8 +136,8 @@ export class Krystallizer {
           this.scroll(dx, dy);
         } else {
           const entity = this.inputState.dragTarget;
-          entity.pos.x = this.mouse.x;
-          entity.pos.y = this.mouse.y;
+          entity.pos.x = this.mouse.x - entity.size.x / 2 + this.screen.actual.x;
+          entity.pos.y = this.mouse.y - entity.size.y / 2 + this.screen.actual.y;
         }
       },
       mouseUp: () => {
