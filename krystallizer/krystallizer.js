@@ -229,6 +229,8 @@ export class Krystallizer {
         p.x >= e.pos.x && p.x <= e.pos.x + e.size.x && p.y >= e.pos.y && p.y <= e.pos.y + e.size.y
     );
 
+    // FIME: weird bug with selection box when tapping in move due to dx
+    // Due to selection rect not being absolute selection rect.
     if (!found && this.inputState.selectionRect) {
       const r = this.inputState.selectionRect;
       if (
