@@ -2,6 +2,7 @@ import { GameLoop } from "../modules/core/loop.js";
 import { Register } from "../modules/core/register.js";
 import { $el, loadImages, loadScript } from "../modules/lib/utils/dom.js";
 import { Logger } from "../modules/lib/utils/logger.js";
+import { Rect } from "../modules/lib/utils/shapes.js";
 import { formatAsJSON, hyphenToCamelCase } from "../modules/lib/utils/string.js";
 import { config } from "./config.js";
 import { EditMap } from "./edit-map.js";
@@ -37,6 +38,8 @@ export class Krystallizer {
       entityBelowMouse: null,
       draggingCloneEntity: null,
       dragTarget: null,
+      /** @type {Rect} */
+      selectionRect: null,
     };
     /** @type {keyof Krystallizer.actions} */
     this.currentAction;
@@ -147,8 +150,20 @@ export class Krystallizer {
       click: noop,
     },
     select: {
-      mouseDown: noop,
-      mouseMove: noop,
+      mouseDown: () => {
+        this.inputState.selectionRect = new Rect(
+          { x: this.mouse.x, y: this.mouse.y },
+          { x: 1, y: 1 }
+        );
+      },
+      mouseMove: () => {
+        const selection = this.inputState.selectionRect;
+        if (!this.inputState.mouseIsDown || !selection) return;
+        selection.size = {
+          x: this.mouse.x - selection.pos.x,
+          y: this.mouse.y - selection.pos.y,
+        };
+      },
       mouseUp: noop,
       click: noop,
     },
@@ -429,6 +444,19 @@ export class Krystallizer {
     }
     if (!entitiesDrawn) this.drawEntityLayer();
     if (config.labels.draw) this.drawLabels();
+    if (this.inputState.selectionRect) {
+      const { ctx } = this.system;
+      const { pos, size } = this.inputState.selectionRect;
+      const { actual } = this.screen;
+      const x = pos.x - actual.x;
+      const y = pos.y - actual.y;
+      ctx.globalAlpha = 0.5;
+      ctx.fillStyle = "lightblue";
+      ctx.fillRect(x, y, size.x, size.y);
+      ctx.strokeStyle = "darkblue";
+      ctx.strokeRect(x, y, size.x, size.y);
+      ctx.globalAlpha = 1;
+    }
   }
 
   //#endregion Drawing
