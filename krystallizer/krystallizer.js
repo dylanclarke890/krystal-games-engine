@@ -35,7 +35,7 @@ export class Krystallizer {
       mouseIsDown: false,
       clicked: false,
       mouseDownTimer: null,
-      entityBelowMouse: null,
+      objectBelowMouse: null,
       draggingCloneEntity: null,
       dragTarget: null,
       /** @type {Rect} */
@@ -119,10 +119,10 @@ export class Krystallizer {
     cursor: {
       onTransition: () => this.setCanvasCursor("default"),
       mouseDown: () => {
-        this.setActiveEntity(this.inputState.entityBelowMouse);
+        this.setActiveEntity(this.inputState.objectBelowMouse);
       },
       mouseMove: () => {
-        this.detectEntityBelowMouse(true);
+        this.detectObjectBelowMouse(true);
       },
       mouseUp: noop,
       click: noop,
@@ -130,9 +130,8 @@ export class Krystallizer {
     move: {
       onTransition: () => this.setCanvasCursor("move"),
       mouseDown: () => {
-        this.detectEntityBelowMouse(false);
-        this.inputState.dragTarget =
-          this.inputState.entityBelowMouse ?? this.inputState.selectionRect ?? this.system.canvas;
+        this.detectObjectBelowMouse(false);
+        this.inputState.dragTarget = this.inputState.objectBelowMouse;
       },
       mouseMove: () => {
         if (!this.inputState.mouseIsDown || !this.inputState.dragTarget) return;
@@ -542,19 +541,32 @@ export class Krystallizer {
     this.currentAction?.mouseDown();
   }
 
-  detectEntityBelowMouse(setCursor) {
+  detectObjectBelowMouse(setCursor) {
     if (this.inputState.draggingCloneEntity) return;
-    const p = this.mouse;
     const sx = this.screen.actual.x;
     const sy = this.screen.actual.y;
-    this.inputState.entityBelowMouse = this.entities.find(
+    const p = { x: this.mouse.x + sx, y: this.mouse.y + sy };
+    let found = null;
+    found = this.entities.find(
       (e) =>
-        p.x + sx >= e.pos.x &&
-        p.x + sx <= e.pos.x + e.size.x &&
-        p.y + sy >= e.pos.y &&
-        p.y + sy <= e.pos.y + e.size.y
+        p.x >= e.pos.x && p.x <= e.pos.x + e.size.x && p.y >= e.pos.y && p.y <= e.pos.y + e.size.y
     );
-    if (setCursor) this.setCanvasCursor(this.inputState.entityBelowMouse ? "pointer" : "default");
+
+    if (!found && this.inputState.selectionRect) {
+      const r = this.inputState.selectionRect;
+      if (
+        p.x >= r.pos.x &&
+        p.x <= r.pos.x + r.size.x &&
+        p.y >= r.pos.y &&
+        p.y <= r.pos.y + r.size.y
+      )
+        found = r;
+    }
+
+    if (setCursor) this.setCanvasCursor(found ? "pointer" : "default");
+
+    if (!found) found = this.system.canvas;
+    this.inputState.objectBelowMouse = found;
   }
 
   handleMouseMove(mouse) {
@@ -590,9 +602,12 @@ export class Krystallizer {
 
   setActiveEntity(entity) {
     const { entitySettings } = this.panels;
-    entitySettings.toggleVisible(entity);
 
-    if (!entity) {
+    this.system.canvas;
+    const validEntity = entity && !(entity instanceof HTMLElement || entity instanceof Rect);
+    entitySettings.toggleVisible(validEntity);
+
+    if (!validEntity) {
       this.selectedEntity = null;
       return;
     }

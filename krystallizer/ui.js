@@ -504,6 +504,7 @@ export class EntityDisplay {
       Logger.getInstance().critical("EntityDisplay: canvas not found.");
       return;
     }
+    const origCursor = canvas.style.cursor;
     canvas.style.cursor = "none";
     EventSystem.dispatch(EditorActions.EntityDragStart, this.entity);
 
@@ -520,7 +521,7 @@ export class EntityDisplay {
       document.removeEventListener("pointermove", mouseMove);
       clone.removeEventListener("pointerup", mouseUp);
       document.body.removeChild(clone);
-      canvas.style.removeProperty("cursor");
+      canvas.style.cursor = origCursor;
       if (target !== canvas) return;
       const pos = {
         x: parseInt(clone.style.left),
