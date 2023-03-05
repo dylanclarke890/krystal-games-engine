@@ -423,7 +423,10 @@ export class EntityDisplay {
 
     const notAvailableImgSrc = config.entity.previewNotAvailableImagePath;
     const img = new Image();
-    const src = this.entity.animSheet?.image?.path ?? notAvailableImgSrc;
+    let src;
+    if (this.entity.animSheet?.image?.path)
+      src = `${this.entity.animSheet.image.path}?${new Date().getTime()}`;
+    else src = notAvailableImgSrc;
     const onLoad = () => {
       img.removeEventListener("load", onLoad);
       if (src === notAvailableImgSrc) {
