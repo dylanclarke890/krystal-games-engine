@@ -35,6 +35,7 @@ export class Krystallizer {
       mouseDownTimer: null,
       hoveredEntity: null,
       draggingNewEntity: null,
+      dragTarget: null,
     };
     /** @type {keyof Krystallizer.actions} */
     this.currentAction;
@@ -109,6 +110,64 @@ export class Krystallizer {
 
   //#region Initialising
 
+  actions = {
+    cursor: {
+      mouseDown: () => {
+        console.log("Mousedown");
+      },
+      mouseMove: () => {
+        this.detectHoveredEntity(!this.inputState.draggingNewEntity);
+      },
+      mouseUp: () => {},
+      click: () => {
+        this.setActiveEntity(this.inputState.hoveredEntity);
+      },
+    },
+    move: {
+      mouseDown: () => {
+        console.log(this.inputState.dragTarget);
+        this.detectHoveredEntity(false);
+        this.inputState.dragTarget = this.inputState.hoveredEntity ?? this.system.canvas;
+      },
+      mouseMove: () => {
+        this.setCanvasCursor("move");
+        if (!this.inputState.mouseIsDown || !this.inputState.dragTarget) return;
+
+        if (this.inputState.dragTarget === this.system.canvas) {
+          const dx = this.system.mouse.x - this.system.mouseLast.x,
+            dy = this.system.mouse.y - this.system.mouseLast.y;
+          this.scroll(dx, dy);
+        } else {
+          const entity = this.inputState.dragTarget;
+          entity.pos.x = this.mouse.x;
+          entity.pos.y = this.mouse.y;
+        }
+      },
+      mouseUp: () => {
+        this.inputState.dragTarget = null;
+      },
+      click: () => {},
+    },
+    select: {
+      mouseDown: () => {},
+      mouseMove: () => {},
+      mouseUp: () => {},
+      click: () => {},
+    },
+    eraser: {
+      mouseDown: () => {},
+      mouseMove: () => {},
+      mouseUp: () => {},
+      click: () => {},
+    },
+    shape: {
+      mouseDown: () => {},
+      mouseMove: () => {},
+      mouseUp: () => {},
+      click: () => {},
+    },
+  };
+
   bindEventSystemListeners() {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
     EventSystem.on(EditorActions.EntityDragStart, (e) => (this.inputState.draggingNewEntity = e));
@@ -121,6 +180,7 @@ export class Krystallizer {
       this.inputState.mouseIsDown = true;
       this.inputState.clicked = true;
       this.inputState.mouseDownTimer = setTimeout(() => (this.inputState.clicked = false), 150);
+      this.handleMouseDown();
     });
     document.addEventListener("pointerup", () => {
       const { mouseIsDown, mouseDownTimer, clicked } = this.inputState;
@@ -390,55 +450,11 @@ export class Krystallizer {
     levelName.dataset.unsaved = isModified;
   }
 
-  actions = {
-    cursor: {
-      mouseDown: () => {},
-      mouseMove: () => {
-        if (!this.inputState.draggingNewEntity) this.detectHoveredEntity();
-      },
-      mouseUp: () => {},
-      click: () => {
-        this.setActiveEntity(this.inputState.hoveredEntity);
-      },
-    },
-    move: {
-      mouseDown: () => {},
-      mouseMove: () => {
-        this.setCanvasCursor("move");
-        if (!this.inputState.mouseIsDown) return;
-
-        const dx = this.system.mouse.x - this.system.mouseLast.x,
-          dy = this.system.mouse.y - this.system.mouseLast.y;
-        this.scroll(dx, dy);
-      },
-      mouseUp: () => {},
-      click: () => {},
-    },
-    select: {
-      mouseDown: () => {},
-      mouseMove: () => {},
-      mouseUp: () => {},
-      click: () => {},
-    },
-    eraser: {
-      mouseDown: () => {},
-      mouseMove: () => {},
-      mouseUp: () => {},
-      click: () => {},
-    },
-    shape: {
-      mouseDown: () => {},
-      mouseMove: () => {},
-      mouseUp: () => {},
-      click: () => {},
-    },
-  };
-
   handleMouseDown() {
     this.currentAction?.mouseDown();
   }
 
-  detectHoveredEntity() {
+  detectHoveredEntity(setCursor) {
     const p = this.mouse;
     const sx = this.screen.actual.x;
     const sy = this.screen.actual.y;
@@ -449,7 +465,7 @@ export class Krystallizer {
         p.y + sy >= e.pos.y &&
         p.y + sy <= e.pos.y + e.size.y
     );
-    this.setCanvasCursor(this.inputState.hoveredEntity ? "pointer" : "default");
+    if (setCursor) this.setCanvasCursor(this.inputState.hoveredEntity ? "pointer" : "default");
   }
 
   handleMouseMove(mouse) {
