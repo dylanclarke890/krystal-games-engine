@@ -98,6 +98,9 @@ export class Krystallizer {
         tilesize: $el("#tilesize"),
         width: $el("#dimensions-x"),
       },
+      currentSelection: {
+        div: document.querySelector("#current-selection"),
+      },
       toolbar: {
         actions: document.querySelectorAll(".toolbar-icon"),
       },
@@ -106,6 +109,7 @@ export class Krystallizer {
       entities: new Panel({ selector: this.DOMElements.entities }),
       entitySettings: new Panel({ selector: this.DOMElements.entitySettings.div }),
       layerSettings: new Panel({ selector: this.DOMElements.layerSettings.div }),
+      currentSelection: new Panel({ selector: this.DOMElements.currentSelection.div }),
     };
 
     this.bindEvents();
@@ -118,7 +122,7 @@ export class Krystallizer {
 
   actions = {
     cursor: {
-      onTransition: () => this.setCanvasCursor("default"),
+      onTransitionEnter: () => this.setCanvasCursor("default"),
       mouseDown: () => {
         this.setActiveEntity(this.inputState.objectBelowMouse);
       },
@@ -127,9 +131,10 @@ export class Krystallizer {
       },
       mouseUp: noop,
       click: noop,
+      onTransitionLeave: noop,
     },
     move: {
-      onTransition: () => this.setCanvasCursor("move"),
+      onTransitionEnter: () => this.setCanvasCursor("move"),
       mouseDown: () => {
         this.detectObjectBelowMouse(false);
         this.inputState.dragTarget = this.inputState.objectBelowMouse;
@@ -156,9 +161,10 @@ export class Krystallizer {
         this.inputState.dragTarget = null;
       },
       click: noop,
+      onTransitionLeave: noop,
     },
     select: {
-      onTransition: () => this.setCanvasCursor("default"),
+      onTransitionEnter: () => this.setCanvasCursor("default"),
       mouseDown: () => {
         this.inputState.selectionRect = new Rect(
           { x: this.screen.actual.x + this.mouse.x, y: this.screen.actual.y + this.mouse.y },
@@ -205,26 +211,29 @@ export class Krystallizer {
         this.inputState.selectionRect = null;
         this.inputState.selected = null;
       },
+      onTransitionLeave: noop,
     },
     eraser: {
-      onTransition: noop,
+      onTransitionEnter: noop,
       mouseDown: noop,
       mouseMove: noop,
       mouseUp: noop,
       click: noop,
+      onTransitionLeave: noop,
     },
     shape: {
-      onTransition: noop,
+      onTransitionEnter: noop,
       mouseDown: noop,
       mouseMove: noop,
       mouseUp: noop,
       click: noop,
+      onTransitionLeave: noop,
     },
   };
 
   setCurrentAction(action) {
     this.currentAction = this.actions[action ?? "cursor"];
-    this.currentAction.onTransition();
+    this.currentAction.onTransitionEnter();
   }
 
   bindEventSystemListeners() {
