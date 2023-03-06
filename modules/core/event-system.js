@@ -1,25 +1,47 @@
-class EventSystemClass {
+import { PriorityQueue } from "../lib/data-structures/priority-queue.js";
+
+// FIXME: PriorityQueue is not suitable as-is.
+class GameEventSystem {
   constructor() {
-    this.listeners = new Map();
+    this.subscribers = new Map();
   }
 
-  on(event, listener) {
-    if (!this.listeners.has(event)) this.listeners.set(event, []);
-    this.listeners.get(event).push(listener);
+  static #QueueSortingFn = (listenerA, listenerB) => listenerA.priority - listenerB.priority;
+
+  /**
+   *
+   * @param {string} event
+   * @param {(data:any) => void} listener
+   * @param {number} priority
+   */
+  on(event, listener, priority = 0) {
+    if (!this.subscribers.has(event))
+      this.subscribers.set(event, new PriorityQueue(GameEventSystem.#QueueSortingFn));
+    this.subscribers.get(event).enqueue({ listener, priority });
   }
 
+  /**
+   *
+   * @param {string} event
+   * @param {(data:any) => void} listener
+   */
   off(event, listener) {
-    const listeners = this.listeners.get(event);
-    if (!listeners) return;
-    const index = listeners.indexOf(listener);
-    if (index !== -1) listeners.splice(index, 1);
+    const subscribersForEvent = this.subscribers.get(event);
+    if (!subscribersForEvent) return;
+    const pos = subscribersForEvent.indexOf(listener);
+    if (pos !== -1) subscribersForEvent.splice(pos, 1);
   }
 
+  /**
+   *
+   * @param {string} event
+   * @param {any} data
+   */
   dispatch(event, data) {
-    const listeners = this.listeners.get(event);
-    if (!listeners) return;
-    for (let i = 0; i < listeners.length; i++) listeners[i](data);
+    const subscribersForEvent = this.subscribers.get(event);
+    if (!subscribersForEvent) return;
+    for (const subscriber of subscribersForEvent) subscriber.listener(data);
   }
 }
 
-export const EventSystem = new EventSystemClass();
+export const EventSystem = new GameEventSystem();
