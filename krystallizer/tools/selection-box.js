@@ -79,11 +79,6 @@ export class SelectionBox {
     return this.absoluteRect.containsPoint({ x, y });
   }
 
-  // TODO!
-  isObjWithinSelection(obj) {
-    return obj && false;
-  }
-
   /**
    * Move the selection box. Number passed should be the distance to move, not the new position.
    * @param {number} x
