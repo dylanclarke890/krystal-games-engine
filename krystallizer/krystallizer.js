@@ -32,7 +32,6 @@ export class Krystallizer {
     this.drawEntities = true;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
     this.mouse = { x: 0, y: 0, dx: 0, dy: 0 };
-    this.selectionBox = new SelectionBox(this.system.ctx);
     this.inputState = {
       mouseIsDown: false,
       clicked: false,
@@ -109,6 +108,7 @@ export class Krystallizer {
       currentSelection: new Panel({ selector: this.DOMElements.currentSelection.div }),
     };
 
+    this.initTools();
     this.bindEvents();
     this.panels.entities.show();
     this.setModifiedState(false);
@@ -116,6 +116,10 @@ export class Krystallizer {
   }
 
   //#region Initialising
+
+  initTools() {
+    this.selectionBox = new SelectionBox(this.system.ctx, this.panels.currentSelection);
+  }
 
   actions = {
     cursor: {

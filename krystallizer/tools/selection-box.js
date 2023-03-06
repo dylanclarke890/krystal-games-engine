@@ -2,10 +2,11 @@ import { Guard } from "../../modules/lib/sanity/guard.js";
 import { Rect } from "../../modules/lib/utils/shapes.js";
 
 export class SelectionBox {
-  constructor(ctx) {
+  constructor(ctx, panel) {
     Guard.againstNull({ ctx });
     this.screen = screen;
     this.ctx = ctx;
+    this.panel = panel;
 
     this.rect = new Rect({ x: 0, y: 0 }, { x: 0, y: 0 });
     this.absoluteRect = new Rect({ x: 0, y: 0 }, { x: 0, y: 0 });
