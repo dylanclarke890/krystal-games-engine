@@ -32,7 +32,7 @@ export class Krystallizer {
     this.drawEntities = true;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
     this.mouse = { x: 0, y: 0, dx: 0, dy: 0 };
-    this.selectionBox = new SelectionBox(this.screen, this.system.ctx);
+    this.selectionBox = new SelectionBox(this.system.ctx);
     this.inputState = {
       mouseIsDown: false,
       clicked: false,
@@ -479,7 +479,7 @@ export class Krystallizer {
     }
     if (!entitiesDrawn) this.drawEntityLayer();
     if (config.labels.draw) this.drawLabels();
-    this.selectionBox.draw();
+    this.selectionBox.draw(this.screen);
   }
 
   //#endregion Drawing

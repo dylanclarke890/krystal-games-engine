@@ -2,8 +2,7 @@ import { Guard } from "../../modules/lib/sanity/guard.js";
 import { Rect } from "../../modules/lib/utils/shapes.js";
 
 export class SelectionBox {
-  constructor(screen, ctx) {
-    Guard.againstNull({ screen });
+  constructor(ctx) {
     Guard.againstNull({ ctx });
     this.screen = screen;
     this.ctx = ctx;
@@ -97,9 +96,14 @@ export class SelectionBox {
     }
   }
 
-  draw() {
+  /**
+   * Draw the selection box and highlight currently selected objects.
+   * @param {{actual:{x: number, y:number}, rounded: {x:number, y:number}}} screen required in order
+   * to be able to draw itself relative to other objects.
+   */
+  draw(screen) {
     if (!this.active) return;
-    const { actual } = this.screen;
+    const { actual } = screen;
     const ctx = this.ctx;
     const { pos, size } = this.rect;
 
