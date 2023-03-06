@@ -543,7 +543,7 @@ export class Krystallizer {
     const y = Math.round(pos.y - bounds.y + screen.y);
     this.setActiveEntity(this.spawnEntity(className, x, y));
     this.setModifiedState(true);
-    if (this.selectionBox.active) this.selectionBox.getSelection(this.entities);
+    this.selectionBox.getSelection(this.entities);
   }
 
   //#endregion Events
