@@ -133,8 +133,7 @@ export class Krystallizer {
     move: {
       onTransitionEnter: () => this.setCanvasCursor("move"),
       mouseDown: () => {
-        this.getObjectBelowMouse(false);
-        this.inputState.dragTarget = this.inputState.objectBelowMouse;
+        this.inputState.dragTarget = this.getObjectBelowMouse(false);
       },
       mouseMove: () => {
         const { dragTarget, mouseIsDown } = this.inputState;
@@ -149,7 +148,8 @@ export class Krystallizer {
         }
       },
       mouseUp: () => {
-        if (this.selectionBox.active) this.selectionBox.getSelection(this.entities);
+        if (this.inputState.dragTarget !== this.system.canvas)
+          this.selectionBox.getSelection(this.entities);
         this.inputState.dragTarget = null;
       },
       click: noop,
@@ -214,6 +214,7 @@ export class Krystallizer {
     if (setCursor) this.setCanvasCursor(found ? "pointer" : "default");
     found ??= this.system.canvas;
     this.inputState.objectBelowMouse = found;
+    return found;
   }
 
   bindEventSystemListeners() {

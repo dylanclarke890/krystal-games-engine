@@ -42,6 +42,8 @@ export class SelectionBox {
   }
 
   getSelection(entities) {
+    if (!this.active) return;
+
     const r = this.rect;
     this.absoluteRect.pos.x = r.pos.x;
     this.absoluteRect.pos.y = r.pos.y;
@@ -73,8 +75,7 @@ export class SelectionBox {
    */
   isPointWithinSelection(x, y) {
     if (!this.active) return false;
-    const r = this.rect;
-    return x >= r.pos.x && x <= r.pos.x + r.size.x && y >= r.pos.y && y <= r.pos.y + r.size.y;
+    return this.absoluteRect.containsPoint({ x, y });
   }
 
   // TODO!
