@@ -16,6 +16,7 @@ import { MediaFactory } from "../modules/core/media-factory.js";
 import { EditorActions, InputEvents } from "./enums.js";
 import { noop } from "../modules/lib/utils/func.js";
 import { Entity } from "../modules/core/entity.js";
+import { SelectionBox } from "./tools/selection-box.js";
 
 export class Krystallizer {
   constructor() {
@@ -32,6 +33,7 @@ export class Krystallizer {
     this.drawEntities = true;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
     this.mouse = { x: 0, y: 0, dx: 0, dy: 0 };
+    this.selectionBox = new SelectionBox();
     this.inputState = {
       mouseIsDown: false,
       clicked: false,
@@ -124,9 +126,9 @@ export class Krystallizer {
       onTransitionEnter: () => this.setCanvasCursor("default"),
       mouseDown: () => {
         this.setActiveEntity(this.inputState.objectBelowMouse);
+        // Deselect deselectable things from other tools - probs could phrase this better :)
         if (this.inputState.objectBelowMouse === this.system.canvas) {
-          this.inputState.selected = null;
-          this.inputState.selectionRect = null;
+          this.selectionBox.clear();
         }
       },
       mouseMove: () => {
@@ -148,14 +150,8 @@ export class Krystallizer {
         const { dx, dy } = this.mouse;
 
         if (dragTarget === this.system.canvas) this.scroll(dx, dy);
-        else if (dragTarget === this.inputState.selectionRect) {
-          this.inputState.selectionRect.pos.x += dx;
-          this.inputState.selectionRect.pos.y += dy;
-          this.inputState.selected.forEach((s) => {
-            s.pos.x += dx;
-            s.pos.y += dy;
-          });
-        } else {
+        else if (dragTarget === this.selectionBox) this.selectionBox.move(dx, dy);
+        else {
           const entity = dragTarget;
           entity.pos.x += dx;
           entity.pos.y += dy;
