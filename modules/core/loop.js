@@ -1,5 +1,14 @@
-import { EventSystem, LoopEvents } from "./event-system.js";
+import { EventSystem } from "./event-system.js";
+import { Enum } from "../lib/utils/enum.js";
 import { Timer } from "./timer.js";
+
+export class LoopEvents extends Enum {
+  static {
+    this.NextFrame = new LoopEvents();
+    this.StopLoop = new LoopEvents();
+    this.freeze();
+  }
+}
 
 export class GameLoop {
   #lastFrame;

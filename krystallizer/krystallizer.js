@@ -1,21 +1,23 @@
-import { GameLoop } from "../modules/core/loop.js";
+import { Entity } from "../modules/core/entity.js";
+import { EventSystem } from "../modules/core/event-system.js";
+import { GameLoop, LoopEvents } from "../modules/core/loop.js";
+import { MediaFactory } from "../modules/core/media-factory.js";
 import { Register } from "../modules/core/register.js";
+
 import { $el, loadImages, loadScript } from "../modules/lib/utils/dom.js";
+import { noop } from "../modules/lib/utils/func.js";
 import { Logger } from "../modules/lib/utils/logger.js";
 import { formatAsJSON, hyphenToCamelCase } from "../modules/lib/utils/string.js";
+import Sortable from "./third-party/sortable/src/Sortable.js";
+
+import { SelectionBox } from "./tools/selection-box.js";
 import { config } from "./config.js";
 import { EditMap } from "./edit-map.js";
+import { EditorActions, InputEvents } from "./enums.js";
 import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
 import { ConfirmModal, EntityDisplay, Panel, SelectLevelModal } from "./ui.js";
 import { Undo } from "./undo.js";
-import Sortable from "./third-party/sortable/src/Sortable.js";
-import { EventSystem, LoopEvents } from "../modules/core/event-system.js";
-import { MediaFactory } from "../modules/core/media-factory.js";
-import { EditorActions, InputEvents } from "./enums.js";
-import { noop } from "../modules/lib/utils/func.js";
-import { Entity } from "../modules/core/entity.js";
-import { SelectionBox } from "./tools/selection-box.js";
 
 export class Krystallizer {
   constructor() {

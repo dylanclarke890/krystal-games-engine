@@ -1,5 +1,3 @@
-import { Enum } from "../lib/utils/enum.js";
-
 class EventSystemClass {
   constructor() {
     this.listeners = new Map();
@@ -21,14 +19,6 @@ class EventSystemClass {
     const listeners = this.listeners.get(event);
     if (!listeners) return;
     for (let i = 0; i < listeners.length; i++) listeners[i](data);
-  }
-}
-
-export class LoopEvents extends Enum {
-  static {
-    this.NextFrame = new LoopEvents();
-    this.StopLoop = new LoopEvents();
-    this.freeze();
   }
 }
 
