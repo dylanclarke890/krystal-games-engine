@@ -10,7 +10,7 @@ import { System } from "./system.js";
 import { ConfirmModal, EntityDisplay, Panel, SelectLevelModal } from "./ui.js";
 import { Undo } from "./undo.js";
 import Sortable from "./third-party/sortable/src/Sortable.js";
-import { EventSystem, LoopEvents } from "../modules/core/events.js";
+import { EventSystem, LoopEvents } from "../modules/core/event-system.js";
 import { MediaFactory } from "../modules/core/media-factory.js";
 import { EditorActions, InputEvents } from "./enums.js";
 import { noop } from "../modules/lib/utils/func.js";

@@ -1,4 +1,4 @@
-import { EventSystem } from "../modules/core/events.js";
+import { EventSystem } from "../modules/core/event-system.js";
 import { config } from "./config.js";
 import { InputEvents } from "./enums.js";
 
