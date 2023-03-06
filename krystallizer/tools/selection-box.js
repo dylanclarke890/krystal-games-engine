@@ -5,7 +5,9 @@ export class SelectionBox {
   constructor(ctx, panel) {
     Guard.againstNull({ ctx });
     this.screen = screen;
+    /** @type {CanvasRenderingContext2D} */
     this.ctx = ctx;
+    /** @type {import("../ui.js").Panel} */
     this.panel = panel;
 
     this.rect = new Rect({ x: 0, y: 0 }, { x: 0, y: 0 });
@@ -14,6 +16,42 @@ export class SelectionBox {
     this.selected = [];
     this.active = false;
     this.isSelecting = false;
+  }
+
+  static #nothingSelectedElement;
+  static #selectedContainer;
+  static {
+    const nothingSelected = document.createElement("h3");
+    nothingSelected.classList.add("text-center");
+    nothingSelected.textContent = "Nothing currently selected.";
+    this.#nothingSelectedElement = nothingSelected;
+
+    const selectedContainer = document.createElement("div");
+    selectedContainer.id = "selected-list";
+    this.#selectedContainer = selectedContainer;
+  }
+
+  updatePanel() {
+    const { content } = this.panel.DOMElements;
+
+    if (!this.selected.length) {
+      content.replaceChildren(SelectionBox.#nothingSelectedElement);
+      return;
+    }
+
+    const selections = [];
+    for (let i = 0; i < this.selected.length; i++) {
+      const selected = this.selected[i];
+      const el = document.createElement("div");
+      el.textContent = `Entity: Pos - x: ${selected.pos.x}, y: ${selected.pos.y}`;
+      el.classList.add("selected-list__item");
+      selections.push(el);
+    }
+
+    const container = SelectionBox.#selectedContainer;
+    container.innerHTML = "";
+    container.replaceChildren(...selections);
+    content.replaceChildren(container);
   }
 
   setActive(value) {
@@ -66,6 +104,7 @@ export class SelectionBox {
     }
 
     this.selected = entities.filter((e) => this.absoluteRect.overlapsRect(e));
+    this.updatePanel();
   }
 
   /**
