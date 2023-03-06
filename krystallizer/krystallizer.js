@@ -146,6 +146,7 @@ export class Krystallizer {
         const { dragTarget, mouseIsDown } = this.inputState;
         if (!mouseIsDown || !dragTarget) return;
         const { dx, dy } = this.mouse;
+
         if (dragTarget === this.system.canvas) this.scroll(dx, dy);
         else if (dragTarget === this.inputState.selectionRect) {
           this.inputState.selectionRect.pos.x += dx;
@@ -182,8 +183,14 @@ export class Krystallizer {
         );
       },
       mouseMove: () => {
-        if (!this.inputState.mouseIsDown || !this.inputState.selectionRect) return;
-        this.getObjectsInSelectionBox(this.inputState.selectionRect);
+        const selection = this.inputState.selectionRect;
+        if (!this.inputState.mouseIsDown || !selection) return;
+        const { dx, dy } = this.mouse;
+        selection.size = {
+          x: selection.size.x + dx,
+          y: selection.size.y + dy,
+        };
+        this.getObjectsInSelectionBox(selection);
       },
       mouseUp: noop,
       click: () => {
@@ -229,8 +236,6 @@ export class Krystallizer {
         p.x >= e.pos.x && p.x <= e.pos.x + e.size.x && p.y >= e.pos.y && p.y <= e.pos.y + e.size.y
     );
 
-    // FIME: weird bug with selection box when tapping in move due to dx
-    // Due to selection rect not being absolute selection rect.
     if (!found && this.inputState.selectionRect) {
       const r = this.inputState.selectionRect;
       if (
@@ -248,12 +253,6 @@ export class Krystallizer {
   }
 
   getObjectsInSelectionBox(selection) {
-    const { dx, dy } = this.mouse;
-    selection.size = {
-      x: selection.size.x + dx,
-      y: selection.size.y + dy,
-    };
-
     const selectedColor = "#2196f3";
     const { ctx } = this.system;
     ctx.strokeStyle = selectedColor;
