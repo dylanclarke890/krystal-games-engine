@@ -2,7 +2,6 @@ import { GameLoop } from "../modules/core/loop.js";
 import { Register } from "../modules/core/register.js";
 import { $el, loadImages, loadScript } from "../modules/lib/utils/dom.js";
 import { Logger } from "../modules/lib/utils/logger.js";
-import { Rect } from "../modules/lib/utils/shapes.js";
 import { formatAsJSON, hyphenToCamelCase } from "../modules/lib/utils/string.js";
 import { config } from "./config.js";
 import { EditMap } from "./edit-map.js";
@@ -33,7 +32,7 @@ export class Krystallizer {
     this.drawEntities = true;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
     this.mouse = { x: 0, y: 0, dx: 0, dy: 0 };
-    this.selectionBox = new SelectionBox();
+    this.selectionBox = new SelectionBox(this.screen, this.system.ctx);
     this.inputState = {
       mouseIsDown: false,
       clicked: false,
@@ -41,9 +40,6 @@ export class Krystallizer {
       objectBelowMouse: null,
       draggingCloneEntity: null,
       dragTarget: null,
-      /** @type {Rect} */
-      selectionRect: null,
-      selected: null,
     };
     this.currentAction = { onTransitionEnter: noop, onTransitionLeave: noop };
     this.setCurrentAction(); // Defaults to Cursor
@@ -126,14 +122,10 @@ export class Krystallizer {
       onTransitionEnter: () => this.setCanvasCursor("default"),
       mouseDown: () => {
         this.setActiveEntity(this.inputState.objectBelowMouse);
-        // Deselect deselectable things from other tools - probs could phrase this better :)
-        if (this.inputState.objectBelowMouse === this.system.canvas) {
-          this.selectionBox.clear();
-        }
+        // Deselect deselectable things selected by other tools - probs could phrase this better :)
+        if (this.inputState.objectBelowMouse === this.system.canvas) this.selectionBox.clear(false);
       },
-      mouseMove: () => {
-        if (!this.inputState.draggingCloneEntity) this.getObjectBelowMouse(true);
-      },
+      mouseMove: () => this.getObjectBelowMouse(true),
       mouseUp: noop,
       click: noop,
       onTransitionLeave: noop,
@@ -152,14 +144,12 @@ export class Krystallizer {
         if (dragTarget === this.system.canvas) this.scroll(dx, dy);
         else if (dragTarget === this.selectionBox) this.selectionBox.move(dx, dy);
         else {
-          const entity = dragTarget;
-          entity.pos.x += dx;
-          entity.pos.y += dy;
+          dragTarget.pos.x += dx;
+          dragTarget.pos.y += dy;
         }
       },
       mouseUp: () => {
-        if (this.inputState.selectionRect)
-          this.getObjectsInSelectionBox(this.inputState.selectionRect);
+        if (this.selectionBox.active) this.selectionBox.getSelection(this.entities);
         this.inputState.dragTarget = null;
       },
       click: noop,
@@ -173,29 +163,18 @@ export class Krystallizer {
         this.panels.entities.close();
       },
       mouseDown: () => {
-        this.inputState.selectionRect = new Rect(
-          { x: this.screen.actual.x + this.mouse.x, y: this.screen.actual.y + this.mouse.y },
-          { x: 1, y: 1 }
-        );
+        const x = this.screen.actual.x + this.mouse.x;
+        const y = this.screen.actual.y + this.mouse.y;
+        this.selectionBox.startSelection(x, y);
       },
       mouseMove: () => {
-        const selection = this.inputState.selectionRect;
-        if (!this.inputState.mouseIsDown || !selection) return;
-        const { dx, dy } = this.mouse;
-        selection.size = {
-          x: selection.size.x + dx,
-          y: selection.size.y + dy,
-        };
-        this.getObjectsInSelectionBox(selection);
+        if (!this.selectionBox.active || !this.selectionBox.isSelecting) return;
+        this.selectionBox.resize(this.mouse.dx, this.mouse.dy);
+        this.selectionBox.getSelection(this.entities);
       },
-      mouseUp: noop,
-      click: () => {
-        this.inputState.selectionRect = null;
-        this.inputState.selected = null;
-      },
-      onTransitionLeave: () => {
-        this.panels.currentSelection.hide();
-      },
+      mouseUp: () => this.selectionBox.endSelection(),
+      click: () => this.selectionBox.clear(false),
+      onTransitionLeave: () => this.panels.currentSelection.hide(),
     },
     eraser: {
       onTransitionEnter: noop,
@@ -231,47 +210,10 @@ export class Krystallizer {
       (e) =>
         p.x >= e.pos.x && p.x <= e.pos.x + e.size.x && p.y >= e.pos.y && p.y <= e.pos.y + e.size.y
     );
-
-    if (!found && this.inputState.selectionRect) {
-      const r = this.inputState.selectionRect;
-      if (
-        p.x >= r.pos.x &&
-        p.x <= r.pos.x + r.size.x &&
-        p.y >= r.pos.y &&
-        p.y <= r.pos.y + r.size.y
-      )
-        found = r;
-    }
-
+    if (!found && this.selectionBox.isPointWithinSelection(p.x, p.y)) found = this.selectionBox;
     if (setCursor) this.setCanvasCursor(found ? "pointer" : "default");
     found ??= this.system.canvas;
     this.inputState.objectBelowMouse = found;
-  }
-
-  getObjectsInSelectionBox(selection) {
-    const selectedColor = "#2196f3";
-    const { ctx } = this.system;
-    ctx.strokeStyle = selectedColor;
-    ctx.lineWidth = 2;
-    ctx.lineDashOffset = 2;
-
-    const absoluteSelection = new Rect({ ...selection.pos }, { ...selection.size });
-
-    if (selection.size.x < 0) {
-      const size = Math.abs(selection.size.x);
-      const pos = selection.pos.x;
-      absoluteSelection.pos.x = pos - size;
-      absoluteSelection.size.x = size;
-    }
-
-    if (selection.size.y < 0) {
-      const size = Math.abs(selection.size.y);
-      const pos = selection.pos.y;
-      absoluteSelection.pos.y = pos - size;
-      absoluteSelection.size.y = size;
-    }
-
-    this.inputState.selected = this.entities.filter((e) => absoluteSelection.overlapsRect(e));
   }
 
   bindEventSystemListeners() {
@@ -537,34 +479,7 @@ export class Krystallizer {
     }
     if (!entitiesDrawn) this.drawEntityLayer();
     if (config.labels.draw) this.drawLabels();
-
-    const { actual } = this.screen;
-    if (this.inputState.selectionRect) {
-      const { ctx } = this.system;
-      const { pos, size } = this.inputState.selectionRect;
-      const x = pos.x - actual.x;
-      const y = pos.y - actual.y;
-      ctx.globalAlpha = 0.5;
-      ctx.fillStyle = "lightblue";
-      ctx.fillRect(x, y, size.x, size.y);
-      ctx.strokeStyle = "darkblue";
-      ctx.strokeRect(x, y, size.x, size.y);
-      ctx.globalAlpha = 1;
-    }
-
-    if (this.inputState.selected) {
-      const selectedColor = "#2196f3";
-      const { ctx } = this.system;
-      ctx.strokeStyle = selectedColor;
-      ctx.lineWidth = 2;
-      ctx.lineDashOffset = 2;
-      for (let i = 0; i < this.inputState.selected.length; i++) {
-        const entity = this.inputState.selected[i];
-        const x = entity.pos.x - actual.x;
-        const y = entity.pos.y - actual.y;
-        ctx.strokeRect(x, y, entity.size.x, entity.size.y);
-      }
-    }
+    this.selectionBox.draw();
   }
 
   //#endregion Drawing
@@ -613,6 +528,21 @@ export class Krystallizer {
 
   setCanvasCursor(cursor) {
     this.system.canvas.style.cursor = cursor;
+  }
+
+  /**
+   * @param {string} className
+   * @param {{x: number, y: number}} pos
+   */
+  onEntityDrop(className, pos) {
+    // Sync the current position of the entity to spawn with it's position on the canvas.
+    const bounds = this.system.canvas.getBoundingClientRect();
+    const screen = this.screen.actual;
+    const x = Math.round(pos.x - bounds.x + screen.x);
+    const y = Math.round(pos.y - bounds.y + screen.y);
+    this.setActiveEntity(this.spawnEntity(className, x, y));
+    this.setModifiedState(true);
+    if (this.selectionBox.active) this.selectionBox.getSelection(this.entities);
   }
 
   //#endregion Events
@@ -674,23 +604,6 @@ export class Krystallizer {
     The following class definitions could not be found:
     ${invalidClasses.join("\n")}
   `);
-  }
-
-  /**
-   * @param {string} className
-   * @param {{x: number, y: number}} pos
-   */
-  onEntityDrop(className, pos) {
-    // Sync the current position of the entity to spawn with it's position on the canvas.
-    const bounds = this.system.canvas.getBoundingClientRect();
-    const screen = this.screen.actual;
-    const x = Math.round(pos.x - bounds.x + screen.x);
-    const y = Math.round(pos.y - bounds.y + screen.y);
-    const entity = this.spawnEntity(className, x, y);
-    this.setActiveEntity(entity);
-    this.setModifiedState(true);
-    if (!this.inputState.selectionRect) return;
-    if (this.inputState.selectionRect.overlapsRect(entity)) this.inputState.selected.push(entity);
   }
 
   constructEntitiesList() {
