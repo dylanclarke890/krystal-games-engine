@@ -11,8 +11,8 @@ export class Enum {
     const enumValues = [];
     // Traverse the enum entries
     for (const [key, value] of Object.entries(this)) {
+      if (!(value instanceof this)) continue;
       enumKeys.push(key);
-
       value.enumKey = key;
       value.enumOrdinal = enumValues.length;
       enumValues.push(value);
@@ -41,13 +41,22 @@ export class Enum {
   enumKey;
   /** @type {number} */
   enumOrdinal;
+  /** @type {any} */
+  #value;
+
+  /**
+   * @param {any} [value]
+   */
+  constructor(value) {
+    this.#value = value;
+  }
 
   toString() {
     return `${this.constructor.name}.${this.enumKey}`;
   }
 
   valueOf() {
-    return this.enumOrdinal;
+    return this.#value !== undefined ? this.#value : this.enumOrdinal;
   }
 
   static toString() {
