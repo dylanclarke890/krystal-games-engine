@@ -6,10 +6,10 @@ export class CommandManager {
   /** @type {number} */
   #depth;
 
-  /** @type {import("./undo-commands.js").Command[]} */
+  /** @type {import("./base-commands.js").Command[]} */
   #undoStack;
 
-  /** @type {import("./undo-commands.js").Command[]} */
+  /** @type {import("./base-commands.js").Command[]} */
   #redoStack;
 
   constructor(depth) {
