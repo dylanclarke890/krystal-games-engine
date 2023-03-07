@@ -8,6 +8,15 @@ export class InputEvents extends Enum {
   }
 }
 
+export class EditorEvents extends Enum {
+  static {
+    this.UndoStateCreated = new EditorEvents();
+    this.UndoAction = new EditorEvents();
+    this.RedoAction = new EditorEvents();
+    this.freeze();
+  }
+}
+
 export class EditorActions extends Enum {
   static {
     this.Cursor = new EditorActions();

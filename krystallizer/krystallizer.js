@@ -46,9 +46,7 @@ export class Krystallizer {
     this.currentAction = { onTransitionEnter: noop, onTransitionLeave: noop };
     this.setCurrentAction(); // Defaults to Cursor
 
-    const { undoDepth, newFileName } = config.general;
-    this.undo = new Undo({ editor: this, levels: undoDepth });
-    this.fileName = newFileName;
+    this.fileName = config.general.newFileName;
     this.discardChangesConfirmed = false;
 
     this.httpClient = new KrystallizerHttpClient();
@@ -121,6 +119,7 @@ export class Krystallizer {
   //#region Initialising
 
   initTools() {
+    this.undo = new Undo({ editor: this, levels: config.general.undoDepth });
     this.selectionBox = new SelectionBox(this.system.ctx, this.panels.currentSelection);
   }
 
