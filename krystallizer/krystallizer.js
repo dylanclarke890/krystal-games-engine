@@ -11,13 +11,13 @@ import { formatAsJSON, hyphenToCamelCase } from "../modules/lib/utils/string.js"
 import Sortable from "./third-party/sortable/src/Sortable.js";
 
 import { SelectionBox } from "./tools/selection-box.js";
+import { Undo } from "./tools/undo.js";
 import { config } from "./config.js";
 import { EditMap } from "./edit-map.js";
 import { EditorActions, InputEvents } from "./enums.js";
 import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
 import { ConfirmModal, EntityDisplay, Panel, SelectLevelModal } from "./ui.js";
-import { Undo } from "./undo.js";
 import { PriorityLevel } from "../modules/lib/data-structures/p-queue.js";
 
 export class Krystallizer {
@@ -119,8 +119,8 @@ export class Krystallizer {
   //#region Initialising
 
   initTools() {
-    this.undo = new Undo({ editor: this, levels: config.general.undoDepth });
     this.selectionBox = new SelectionBox(this.system.ctx, this.panels.currentSelection);
+    this.undo = new Undo();
   }
 
   actions = {
