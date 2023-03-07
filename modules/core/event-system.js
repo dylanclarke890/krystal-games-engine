@@ -1,9 +1,11 @@
 import { PQueue, PriorityLevel } from "../lib/data-structures/p-queue.js";
 
 class GameEventSystem {
+  /** @type {Map<import("../lib/utils/enum.js").Enum, PQueue>} */
+  #subscribers;
+
   constructor() {
-    /** @type {Map<import("../lib/utils/enum.js").Enum, PQueue>} */
-    this.subscribers = new Map();
+    this.#subscribers = new Map();
   }
 
   /**
@@ -13,8 +15,8 @@ class GameEventSystem {
    * @param {number|PriorityLevel} priority
    */
   on(event, listener, priority = PriorityLevel.None) {
-    if (!this.subscribers.has(event)) this.subscribers.set(event, new PQueue());
-    this.subscribers
+    if (!this.#subscribers.has(event)) this.#subscribers.set(event, new PQueue());
+    this.#subscribers
       .get(event)
       .add(listener, priority instanceof PriorityLevel ? priority.valueOf() : priority);
   }
@@ -25,7 +27,7 @@ class GameEventSystem {
    * @param {(data:any) => void} listener
    */
   off(event, listener) {
-    const queue = this.subscribers.get(event);
+    const queue = this.#subscribers.get(event);
     if (!queue) return;
     return queue.remove(listener);
   }
@@ -36,7 +38,7 @@ class GameEventSystem {
    * @param {any} data
    */
   dispatch(event, data) {
-    const queue = this.subscribers.get(event);
+    const queue = this.#subscribers.get(event);
     if (!queue) return;
     queue.forEach((listener) => listener(data));
   }
