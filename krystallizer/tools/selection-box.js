@@ -32,6 +32,7 @@ export class SelectionBox {
   }
 
   enterMode() {
+    this.updatePanel();
     this.panel.show();
   }
 
@@ -189,5 +190,6 @@ export class SelectionBox {
     this.selected = [];
     this.active = !!active;
     this.isSelecting = false;
+    this.updatePanel();
   }
 }
