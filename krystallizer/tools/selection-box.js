@@ -17,8 +17,9 @@ export class SelectionBox {
     this.#selectedContainer = selectedContainer;
   }
 
-  /** @type {import("../../modules/core/entity.js").Entity} */
+  /** @type {import("../../modules/core/entity.js").Entity[]} */
   #entities;
+
   constructor(ctx, panel, entities) {
     Guard.againstNull({ ctx });
     Guard.againstNull({ panel });
@@ -208,5 +209,12 @@ export class SelectionBox {
     this.active = !!active;
     this.isSelecting = false;
     this.updatePanel();
+  }
+
+  /**
+   * @param {import("../../modules/core/entity.js").Entity[]} entities
+   */
+  set updateEntitiesReference(entities) {
+    this.#entities = entities;
   }
 }
