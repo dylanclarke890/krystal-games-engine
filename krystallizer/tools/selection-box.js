@@ -1,8 +1,5 @@
-import { EventSystem } from "../../modules/core/event-system.js";
 import { Guard } from "../../modules/lib/sanity/guard.js";
 import { Rect } from "../../modules/lib/utils/shapes.js";
-import { EditorEvents } from "../enums.js";
-import { SelectionBoxMoveCommand, SelectionBoxResizeCommand } from "./undo-commands.js";
 
 export class SelectionBox {
   static #nothingSelectedElement;
@@ -18,8 +15,13 @@ export class SelectionBox {
     this.#selectedContainer = selectedContainer;
   }
 
-  constructor(ctx, panel) {
+  /** @type {import("../../modules/core/entity.js").Entity} */
+  #entities;
+  constructor(ctx, panel, entities) {
     Guard.againstNull({ ctx });
+    Guard.againstNull({ panel });
+    Guard.againstNull({ entities });
+
     this.screen = screen;
     /** @type {CanvasRenderingContext2D} */
     this.ctx = ctx;
@@ -29,6 +31,7 @@ export class SelectionBox {
     this.rect = new Rect({ x: 0, y: 0 }, { x: 0, y: 0 });
     this.absoluteRect = new Rect({ x: 0, y: 0 }, { x: 0, y: 0 });
 
+    this.#entities = entities;
     this.selected = [];
     this.active = false;
     this.isSelecting = false;
@@ -86,14 +89,13 @@ export class SelectionBox {
   resize(x, y) {
     this.rect.size.x += x;
     this.rect.size.y += y;
-    EventSystem.dispatch(EditorEvents.NewUndoState, new SelectionBoxResizeCommand(this, x, y));
   }
 
   endSelection() {
     this.isSelecting = false;
   }
 
-  getSelection(entities) {
+  getSelection() {
     if (!this.active) return;
 
     const r = this.rect;
@@ -116,7 +118,7 @@ export class SelectionBox {
       this.absoluteRect.size.y = size;
     }
 
-    this.selected = entities.filter((e) => this.absoluteRect.overlapsRect(e));
+    this.selected = this.#entities.filter((e) => this.absoluteRect.overlapsRect(e));
     this.updatePanel();
   }
 
@@ -143,7 +145,6 @@ export class SelectionBox {
       this.selected[i].pos.x += x;
       this.selected[i].pos.y += y;
     }
-    EventSystem.dispatch(EditorEvents.NewUndoState, new SelectionBoxMoveCommand(this, x, y));
   }
 
   /**

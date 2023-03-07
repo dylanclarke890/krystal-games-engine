@@ -657,7 +657,10 @@ export class Krystallizer {
 
   removeEntity() {
     if (!this.selectedEntity) return;
-    this.entities = this.entities.filter((e) => e !== this.selectedEntity);
+    const eIndex = this.entities.indexOf(this.selectedEntity);
+    if (eIndex === -1)
+      throw new Error("Unable to find selected entity: " + JSON.stringify(this.selectedEntity));
+    this.entities.splice(eIndex, 1);
     this.setActiveEntity(null);
     this.setModifiedState(true);
   }
@@ -675,7 +678,7 @@ export class Krystallizer {
     this.layers.forEach((l) => l.destroy());
     this.layers = [];
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
-    this.entities = [];
+    this.entities.length = 0;
     this.commandManager.clear();
     localStorage.removeItem(config.storageKeys.lastLevel);
     this.setActiveLayer("entities");
