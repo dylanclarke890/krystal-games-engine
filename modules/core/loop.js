@@ -22,7 +22,7 @@ export class GameLoop {
   }
 
   #bindEvents() {
-    EventSystem.on(LoopEvents.StopLoop, () => this.stop());
+    EventSystem.on(LoopEvents.StopLoop, () => this.stop(), 999);
   }
 
   start() {

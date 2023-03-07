@@ -18,6 +18,7 @@ import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
 import { ConfirmModal, EntityDisplay, Panel, SelectLevelModal } from "./ui.js";
 import { Undo } from "./undo.js";
+import { PriorityLevel } from "../modules/lib/data-structures/p-queue.js";
 
 export class Krystallizer {
   constructor() {
@@ -224,13 +225,25 @@ export class Krystallizer {
   }
 
   bindEventSystemListeners() {
-    EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick));
-    EventSystem.on(EditorActions.EntityDragStart, (e) => (this.inputState.draggingCloneEntity = e));
-    EventSystem.on(EditorActions.EntityDragEnd, () => (this.inputState.draggingCloneEntity = null));
+    EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick), PriorityLevel.High);
+    EventSystem.on(
+      EditorActions.EntityDragStart,
+      (e) => (this.inputState.draggingCloneEntity = e),
+      PriorityLevel.High
+    );
+    EventSystem.on(
+      EditorActions.EntityDragEnd,
+      () => (this.inputState.draggingCloneEntity = null),
+      PriorityLevel.High
+    );
   }
 
   bindMouseEvents() {
-    EventSystem.on(InputEvents.MouseMove, (mouse) => this.handleMouseMove(mouse));
+    EventSystem.on(
+      InputEvents.MouseMove,
+      (mouse) => this.handleMouseMove(mouse),
+      PriorityLevel.High
+    );
     this.system.canvas.addEventListener("pointerdown", () => {
       this.inputState.mouseIsDown = true;
       this.inputState.clicked = true;

@@ -1,6 +1,5 @@
-import { PQueue } from "../lib/data-structures/p-queue-2.js";
+import { PQueue } from "../lib/data-structures/p-queue.js";
 
-// FIXME: PriorityQueue is not suitable as-is.
 class GameEventSystem {
   constructor() {
     /** @type {Map<import("../lib/utils/enum.js").Enum, PQueue>} */

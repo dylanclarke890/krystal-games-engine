@@ -1,3 +1,15 @@
+import { Enum } from "../utils/enum.js";
+
+export class PriorityLevel extends Enum {
+  static {
+    this.High = new PriorityLevel();
+    this.Med = new PriorityLevel();
+    this.Low = new PriorityLevel();
+    this.None = new PriorityLevel();
+    this.freeze();
+  }
+}
+
 export class PQueue {
   /** @type {PQueueItem[]} */
   #list;
@@ -5,7 +17,7 @@ export class PQueue {
   #comparator;
 
   /** @type {(a:PQueueItem, b:PQueueItem) => number} */
-  static #defaultCompareFn = (a, b) => a.priority - b.priority;
+  static #defaultCompareFn = (a, b) => b.priority - a.priority;
 
   constructor(compareFn) {
     this.#comparator = compareFn || PQueue.#defaultCompareFn;
