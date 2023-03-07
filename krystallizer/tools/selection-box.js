@@ -2,6 +2,19 @@ import { Guard } from "../../modules/lib/sanity/guard.js";
 import { Rect } from "../../modules/lib/utils/shapes.js";
 
 export class SelectionBox {
+  static #nothingSelectedElement;
+  static #selectedContainer;
+  static {
+    const nothingSelected = document.createElement("h3");
+    nothingSelected.classList.add("text-center");
+    nothingSelected.textContent = "Nothing currently selected.";
+    this.#nothingSelectedElement = nothingSelected;
+
+    const selectedContainer = document.createElement("div");
+    selectedContainer.id = "selected-list";
+    this.#selectedContainer = selectedContainer;
+  }
+
   constructor(ctx, panel) {
     Guard.againstNull({ ctx });
     this.screen = screen;
@@ -18,17 +31,12 @@ export class SelectionBox {
     this.isSelecting = false;
   }
 
-  static #nothingSelectedElement;
-  static #selectedContainer;
-  static {
-    const nothingSelected = document.createElement("h3");
-    nothingSelected.classList.add("text-center");
-    nothingSelected.textContent = "Nothing currently selected.";
-    this.#nothingSelectedElement = nothingSelected;
+  enterMode() {
+    this.panel.show();
+  }
 
-    const selectedContainer = document.createElement("div");
-    selectedContainer.id = "selected-list";
-    this.#selectedContainer = selectedContainer;
+  leaveMode() {
+    this.panel.hide();
   }
 
   updatePanel() {

@@ -165,7 +165,7 @@ export class Krystallizer {
     select: {
       onTransitionEnter: () => {
         this.setCanvasCursor("default");
-        this.panels.currentSelection.show();
+        this.selectionBox.enterMode();
         this.panels.entitySettings.close();
         this.panels.entities.close();
       },
@@ -181,7 +181,7 @@ export class Krystallizer {
       },
       mouseUp: () => this.selectionBox.endSelection(),
       click: () => this.selectionBox.clear(false),
-      onTransitionLeave: () => this.panels.currentSelection.hide(),
+      onTransitionLeave: () => this.selectionBox.leaveMode(),
     },
     eraser: {
       onTransitionEnter: noop,
