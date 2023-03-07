@@ -2,6 +2,10 @@ import { Enum } from "../utils/enum.js";
 
 export class PriorityLevel extends Enum {
   static {
+    /**
+     * Used by core functionality, it is not recommended to have events with higher priority
+     * levels than Critical unless you know what you're doing.
+     */
     this.Critical = new PriorityLevel(1024);
     this.High = new PriorityLevel(768);
     this.Med = new PriorityLevel(512);
