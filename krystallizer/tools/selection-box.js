@@ -41,8 +41,7 @@ export class SelectionBox {
     this.selected = [];
     this.active = false;
     this.isSelecting = false;
-    /** @type {Command} */
-    this.currentCommand;
+    this.currentCommand = new CompositeCommand();
     this.#bindEvents();
   }
 
@@ -96,7 +95,6 @@ export class SelectionBox {
     this.rect.size.x = 1;
     this.rect.size.y = 1;
     this.isSelecting = true;
-    this.currentCommand = new NewSelectionCmd(this, x, y);
   }
 
   /**
@@ -229,42 +227,33 @@ export class SelectionBox {
 }
 
 // TODO - Carry on with these.
-export class SelectionMove extends Command {
-  constructor(box, x, y) {
-    super();
-    this.box = box;
-    this.x = x;
-    this.y = y;
-  }
-}
-
-class NewSelectionCmd extends CompositeCommand {
+export class SelectionMoveCmd extends Command {
   constructor(box, x, y) {
     super();
     /** @type {SelectionBox} */
     this.box = box;
-
     this.x = x;
     this.y = y;
-    this.w = 0;
-    this.h = 0;
-
-    this.startedSelection = false;
   }
 
-  updateSelection() {}
+  execute() {}
+  undo() {}
+}
+
+export class SelectionSizeCmd extends Command {
+  constructor(box, w, h) {
+    super();
+    /** @type {SelectionBox} */
+    this.box = box;
+    this.w = w;
+    this.h = h;
+  }
 
   updateSize(w, h) {
     this.w += w;
     this.h += h;
   }
 
-  execute() {
-    this.box.move(this.x, this.y);
-    this.box.resize(this.w, this.h);
-  }
-
-  undo() {
-    this.box.clear();
-  }
+  execute() {}
+  undo() {}
 }

@@ -14,7 +14,7 @@ export class CompositeCommand extends Command {
 
   constructor(commands) {
     super();
-    this.#cmds = commands;
+    this.#cmds = commands || [];
   }
 
   addCmd(cmd) {
