@@ -2,6 +2,7 @@ import { EventSystem } from "../../modules/core/event-system.js";
 import { Guard } from "../../modules/lib/sanity/guard.js";
 import { Rect } from "../../modules/lib/utils/shapes.js";
 import { EditorEvents } from "../enums.js";
+import { Command } from "./base-commands.js";
 
 export class SelectionBox {
   static #nothingSelectedElement;
@@ -40,6 +41,8 @@ export class SelectionBox {
     this.selected = [];
     this.active = false;
     this.isSelecting = false;
+    /** @type {Command} */
+    this.currentCommand;
     this.#bindEvents();
   }
 
@@ -93,6 +96,7 @@ export class SelectionBox {
     this.rect.size.x = 1;
     this.rect.size.y = 1;
     this.isSelecting = true;
+    this.currentCommand = new SelectionBoxNewSelectionCommand(this, x, y);
   }
 
   /**
@@ -103,10 +107,13 @@ export class SelectionBox {
   resize(x, y) {
     this.rect.size.x += x;
     this.rect.size.y += y;
+    this.currentCommand.updateSize(x, y);
   }
 
   endSelection() {
     this.isSelecting = false;
+    EventSystem.dispatch(EditorEvents.NewUndoState, this.currentCommand);
+    this.currentCommand = null;
   }
 
   getSelection() {
@@ -218,5 +225,31 @@ export class SelectionBox {
    */
   set updateEntitiesReference(entities) {
     this.#entities = entities;
+  }
+}
+
+class SelectionBoxNewSelectionCommand extends Command {
+  constructor(box, x, y) {
+    super();
+    /** @type {SelectionBox} */
+    this.box = box;
+    this.x = x;
+    this.y = y;
+    this.w = 0;
+    this.h = 0;
+  }
+
+  updateSize(w, h) {
+    this.w += w;
+    this.h += h;
+  }
+
+  execute() {
+    this.box.move(this.x, this.y);
+    this.box.resize(this.w, this.h);
+  }
+
+  undo() {
+    this.box.clear();
   }
 }
