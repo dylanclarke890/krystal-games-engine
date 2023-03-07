@@ -10,18 +10,27 @@ export class Command {
 
 export class CompositeCommand extends Command {
   /** @type {Command[]} */
-  #commands;
+  #cmds;
 
   constructor(commands) {
     super();
-    this.#commands = commands;
+    this.#cmds = commands;
+  }
+
+  addCmd(cmd) {
+    this.#cmds.push(cmd);
+  }
+
+  removeCmd(cmd) {
+    const cmdIndex = this.#cmds.findIndex((c) => c === cmd);
+    this.#cmds.splice(cmdIndex, 1);
   }
 
   execute() {
-    for (let i = 0; i < this.#commands.length; i++) this.#commands[i].execute();
+    for (let i = 0; i < this.#cmds.length; i++) this.#cmds[i].execute();
   }
 
   undo() {
-    for (let i = this.#commands.length - 1; i >= 0; i--) this.#commands[i].undo();
+    for (let i = this.#cmds.length - 1; i >= 0; i--) this.#cmds[i].undo();
   }
 }

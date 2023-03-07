@@ -2,7 +2,7 @@ import { EventSystem } from "../../modules/core/event-system.js";
 import { Guard } from "../../modules/lib/sanity/guard.js";
 import { Rect } from "../../modules/lib/utils/shapes.js";
 import { EditorEvents } from "../enums.js";
-import { Command } from "./base-commands.js";
+import { Command, CompositeCommand } from "./base-commands.js";
 
 export class SelectionBox {
   static #nothingSelectedElement;
@@ -228,16 +228,31 @@ export class SelectionBox {
   }
 }
 
-class NewSelectionCmd extends Command {
+// TODO - Carry on with these.
+export class SelectionMove extends Command {
+  constructor(box, x, y) {
+    super();
+    this.box = box;
+    this.x = x;
+    this.y = y;
+  }
+}
+
+class NewSelectionCmd extends CompositeCommand {
   constructor(box, x, y) {
     super();
     /** @type {SelectionBox} */
     this.box = box;
+
     this.x = x;
     this.y = y;
     this.w = 0;
     this.h = 0;
+
+    this.startedSelection = false;
   }
+
+  updateSelection() {}
 
   updateSize(w, h) {
     this.w += w;
