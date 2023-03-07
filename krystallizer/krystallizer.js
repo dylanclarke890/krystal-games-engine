@@ -225,7 +225,7 @@ export class Krystallizer {
   }
 
   bindEventSystemListeners() {
-    EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick), PriorityLevel.High);
+    EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick), PriorityLevel.Critical);
     EventSystem.on(
       EditorActions.EntityDragStart,
       (e) => (this.inputState.draggingCloneEntity = e),

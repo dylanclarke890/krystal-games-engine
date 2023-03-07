@@ -1,4 +1,4 @@
-import { PQueue } from "../lib/data-structures/p-queue.js";
+import { PQueue, PriorityLevel } from "../lib/data-structures/p-queue.js";
 
 class GameEventSystem {
   constructor() {
@@ -10,11 +10,13 @@ class GameEventSystem {
    * Subscribe to an event.
    * @param {import("../lib/utils/enum.js").Enum} event
    * @param {(data:any) => void} listener
-   * @param {number} priority
+   * @param {number|PriorityLevel} priority
    */
-  on(event, listener, priority = 0) {
+  on(event, listener, priority = PriorityLevel.None) {
     if (!this.subscribers.has(event)) this.subscribers.set(event, new PQueue());
-    this.subscribers.get(event).add(listener, priority);
+    this.subscribers
+      .get(event)
+      .add(listener, priority instanceof PriorityLevel ? priority.valueOf() : priority);
   }
 
   /**

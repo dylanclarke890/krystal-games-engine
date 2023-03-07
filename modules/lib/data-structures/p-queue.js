@@ -2,10 +2,11 @@ import { Enum } from "../utils/enum.js";
 
 export class PriorityLevel extends Enum {
   static {
-    this.High = new PriorityLevel();
-    this.Med = new PriorityLevel();
-    this.Low = new PriorityLevel();
-    this.None = new PriorityLevel();
+    this.Critical = new PriorityLevel(1024);
+    this.High = new PriorityLevel(768);
+    this.Med = new PriorityLevel(512);
+    this.Low = new PriorityLevel(256);
+    this.None = new PriorityLevel(0);
     this.freeze();
   }
 }
