@@ -6,10 +6,10 @@ export class Undo {
   /** @type {number} */
   #depth;
 
-  /** @type {ActionState[]} */
+  /** @type {import("./undo-commands.js").Command[]} */
   #undoStack;
 
-  /** @type {ActionState[]} */
+  /** @type {import("./undo-commands.js").Command[]} */
   #redoStack;
 
   constructor(depth) {
@@ -20,33 +20,34 @@ export class Undo {
   }
 
   #bindEvents() {
-    EventSystem.on(EditorEvents.NewUndoState, (state, type) => this.#addUndoState(state, type));
+    EventSystem.on(EditorEvents.NewUndoState, (command) => this.#addUndoCommand(command));
   }
 
-  #addUndoState(state, type) {
-    if (this.#undoStack.push(new ActionState(state, type)) > this.#depth) this.#undoStack.shift();
-    this.#redoStack.length = 0; // clear the redo array whenever a new undo action is created.
+  #addUndoCommand(command, clearRedoStack = true) {
+    if (this.#undoStack.push(command) > this.#depth) this.#undoStack.shift();
+    if (clearRedoStack) this.#redoStack.length = 0;
+  }
+
+  #addRedoCommand(command) {
+    if (this.#redoStack.push(command) > this.#depth) this.#redoStack.shift();
   }
 
   undo() {
     if (this.#undoStack.length === 0) return;
-    EventSystem.dispatch(EditorEvents.UndoAction, this.#undoStack.pop());
+    const command = this.#undoStack.pop();
+    command.undo();
+    this.#addRedoCommand(command);
   }
 
   redo() {
     if (this.#redoStack.length === 0) return;
-    EventSystem.dispatch(EditorEvents.RedoAction, this.#redoStack.pop());
+    const command = this.#redoStack.pop();
+    command.execute();
+    this.#addUndoCommand(command, false);
   }
 
   clear() {
     this.#undoStack.length = 0;
     this.#redoStack.length = 0;
-  }
-}
-
-class ActionState {
-  constructor(state, type) {
-    this.state = state;
-    this.type = type;
   }
 }

@@ -46,7 +46,7 @@ export class SelectionBoxMoveCommand extends Command {
   }
 }
 
-export class ResizeCommand extends Command {
+export class SelectionBoxResizeCommand extends Command {
   constructor(box, dw, dh) {
     super();
     /** @type {import("./selection-box.js").SelectionBox} */

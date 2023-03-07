@@ -1,5 +1,8 @@
+import { EventSystem } from "../../modules/core/event-system.js";
 import { Guard } from "../../modules/lib/sanity/guard.js";
 import { Rect } from "../../modules/lib/utils/shapes.js";
+import { EditorEvents } from "../enums.js";
+import { SelectionBoxMoveCommand } from "./undo-commands.js";
 
 export class SelectionBox {
   static #nothingSelectedElement;
@@ -139,6 +142,7 @@ export class SelectionBox {
       this.selected[i].pos.x += x;
       this.selected[i].pos.y += y;
     }
+    EventSystem.dispatch(EditorEvents.NewUndoState, new SelectionBoxMoveCommand(this, x, y));
   }
 
   /**
