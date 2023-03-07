@@ -96,7 +96,7 @@ export class SelectionBox {
     this.rect.size.x = 1;
     this.rect.size.y = 1;
     this.isSelecting = true;
-    this.currentCommand = new SelectionBoxNewSelectionCommand(this, x, y);
+    this.currentCommand = new NewSelectionCmd(this, x, y);
   }
 
   /**
@@ -228,7 +228,7 @@ export class SelectionBox {
   }
 }
 
-class SelectionBoxNewSelectionCommand extends Command {
+class NewSelectionCmd extends Command {
   constructor(box, x, y) {
     super();
     /** @type {SelectionBox} */
