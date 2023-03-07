@@ -2,7 +2,7 @@ import { EventSystem } from "../../modules/core/event-system.js";
 import { Guard } from "../../modules/lib/sanity/guard.js";
 import { Rect } from "../../modules/lib/utils/shapes.js";
 import { EditorEvents } from "../enums.js";
-import { SelectionBoxMoveCommand } from "./undo-commands.js";
+import { SelectionBoxMoveCommand, SelectionBoxResizeCommand } from "./undo-commands.js";
 
 export class SelectionBox {
   static #nothingSelectedElement;
@@ -86,6 +86,7 @@ export class SelectionBox {
   resize(x, y) {
     this.rect.size.x += x;
     this.rect.size.y += y;
+    EventSystem.dispatch(EditorEvents.NewUndoState, new SelectionBoxResizeCommand(this, x, y));
   }
 
   endSelection() {

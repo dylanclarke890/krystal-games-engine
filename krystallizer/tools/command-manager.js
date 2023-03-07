@@ -2,7 +2,7 @@ import { EventSystem } from "../../modules/core/event-system.js";
 import { config } from "../config.js";
 import { EditorEvents } from "../enums.js";
 
-export class Undo {
+export class CommandManager {
   /** @type {number} */
   #depth;
 
@@ -26,6 +26,7 @@ export class Undo {
   #addUndoCommand(command, clearRedoStack = true) {
     if (this.#undoStack.push(command) > this.#depth) this.#undoStack.shift();
     if (clearRedoStack) this.#redoStack.length = 0;
+    console.log(this.#undoStack);
   }
 
   #addRedoCommand(command) {

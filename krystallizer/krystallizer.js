@@ -11,7 +11,7 @@ import { formatAsJSON, hyphenToCamelCase } from "../modules/lib/utils/string.js"
 import Sortable from "./third-party/sortable/src/Sortable.js";
 
 import { SelectionBox } from "./tools/selection-box.js";
-import { Undo } from "./tools/undo.js";
+import { CommandManager } from "./tools/command-manager.js";
 import { config } from "./config.js";
 import { EditMap } from "./edit-map.js";
 import { EditorActions, InputEvents } from "./enums.js";
@@ -120,7 +120,7 @@ export class Krystallizer {
 
   initTools() {
     this.selectionBox = new SelectionBox(this.system.ctx, this.panels.currentSelection);
-    this.undo = new Undo();
+    this.commandManager = new CommandManager();
   }
 
   actions = {
@@ -676,7 +676,7 @@ export class Krystallizer {
     this.layers = [];
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
     this.entities = [];
-    this.undo.clear();
+    this.commandManager.clear();
     localStorage.removeItem(config.storageKeys.lastLevel);
     this.setActiveLayer("entities");
   }
