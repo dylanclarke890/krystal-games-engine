@@ -164,7 +164,7 @@ export class Krystallizer {
     },
     select: {
       onTransitionEnter: () => {
-        this.setCanvasCursor("default");
+        this.setCanvasCursor("crosshair");
         this.selectionBox.enterMode();
         this.panels.entitySettings.close();
         this.panels.entities.close();
@@ -181,7 +181,10 @@ export class Krystallizer {
       },
       mouseUp: () => this.selectionBox.endSelection(),
       click: () => this.selectionBox.clear(false),
-      onTransitionLeave: () => this.selectionBox.leaveMode(),
+      onTransitionLeave: () => {
+        this.selectionBox.leaveMode();
+        this.setCanvasCursor("default");
+      },
     },
     eraser: {
       onTransitionEnter: noop,
