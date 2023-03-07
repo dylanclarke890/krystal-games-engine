@@ -25,6 +25,7 @@ export class SelectionBox {
     Guard.againstNull({ panel });
     Guard.againstNull({ entities });
 
+    /** @type {{actual: {x:number, y:number}, rounded: {x:number, y:number}}} */
     this.screen = screen;
     /** @type {CanvasRenderingContext2D} */
     this.ctx = ctx;
@@ -35,6 +36,7 @@ export class SelectionBox {
     this.absoluteRect = new Rect({ x: 0, y: 0 }, { x: 0, y: 0 });
 
     this.#entities = entities;
+    /** @type {import("../../modules/core/entity.js").Entity[]} */
     this.selected = [];
     this.active = false;
     this.isSelecting = false;
