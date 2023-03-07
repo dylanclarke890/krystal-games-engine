@@ -14,7 +14,7 @@ import { SelectionBox } from "./tools/selection-box.js";
 import { CommandManager } from "./tools/command-manager.js";
 import { config } from "./config.js";
 import { EditMap } from "./edit-map.js";
-import { EditorActions, InputEvents } from "./enums.js";
+import { EditorActions, EditorEvents, InputEvents } from "./enums.js";
 import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
 import { ConfirmModal, EntityDisplay, Panel, SelectLevelModal } from "./ui.js";
@@ -119,7 +119,11 @@ export class Krystallizer {
   //#region Initialising
 
   initTools() {
-    this.selectionBox = new SelectionBox(this.system.ctx, this.panels.currentSelection);
+    this.selectionBox = new SelectionBox(
+      this.system.ctx,
+      this.panels.currentSelection,
+      this.entities
+    );
     this.commandManager = new CommandManager();
   }
 
@@ -657,10 +661,13 @@ export class Krystallizer {
 
   removeEntity() {
     if (!this.selectedEntity) return;
+
     const eIndex = this.entities.indexOf(this.selectedEntity);
     if (eIndex === -1)
       throw new Error("Unable to find selected entity: " + JSON.stringify(this.selectedEntity));
     this.entities.splice(eIndex, 1);
+    EventSystem.dispatch(EditorEvents.EntityDeleted, this.selectedEntity);
+
     this.setActiveEntity(null);
     this.setModifiedState(true);
   }

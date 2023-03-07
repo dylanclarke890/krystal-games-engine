@@ -1,5 +1,7 @@
+import { EventSystem } from "../../modules/core/event-system.js";
 import { Guard } from "../../modules/lib/sanity/guard.js";
 import { Rect } from "../../modules/lib/utils/shapes.js";
+import { EditorEvents } from "../enums.js";
 
 export class SelectionBox {
   static #nothingSelectedElement;
@@ -35,6 +37,15 @@ export class SelectionBox {
     this.selected = [];
     this.active = false;
     this.isSelecting = false;
+    this.#bindEvents();
+  }
+
+  #bindEvents() {
+    EventSystem.on(EditorEvents.EntityDeleted, (e) => {
+      const deletedEntityIndex = this.selected.findIndex((s) => s === e);
+      if (deletedEntityIndex !== -1) this.selected.splice(deletedEntityIndex, 1);
+      this.updatePanel();
+    });
   }
 
   enterMode() {
