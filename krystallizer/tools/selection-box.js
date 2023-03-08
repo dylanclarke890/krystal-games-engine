@@ -108,6 +108,7 @@ export class SelectionBox {
   updateSelectionRange(x, y) {
     this.size.x += x;
     this.size.y += y;
+    this.getSelection();
   }
 
   endSelection() {
@@ -267,6 +268,7 @@ class SelectionClearCmd extends SelectionCmd {
     this.setBackToOriginalPosition();
     this.setBackToOriginalSize();
     this.box.active = this.prevActive;
+    this.box.getSelection();
   }
 
   execute() {
@@ -283,6 +285,7 @@ class SelectionSizeCmd extends SelectionCmd {
   undo() {
     this.setBackToOriginalPosition();
     this.setBackToOriginalSize();
+    this.box.getSelection();
   }
 
   execute() {

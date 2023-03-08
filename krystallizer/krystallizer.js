@@ -159,8 +159,7 @@ export class Krystallizer {
         }
       },
       mouseUp: () => {
-        if (this.inputState.dragTarget !== this.system.canvas)
-          this.selectionBox.getSelection(this.entities);
+        this.selectionBox.getSelection();
         this.inputState.dragTarget = null;
       },
       click: noop,
@@ -181,7 +180,6 @@ export class Krystallizer {
       mouseMove: () => {
         if (!this.selectionBox.active || !this.selectionBox.isSelecting) return;
         this.selectionBox.updateSelectionRange(this.mouse.dx, this.mouse.dy);
-        this.selectionBox.getSelection(this.entities);
       },
       mouseUp: () => this.selectionBox.endSelection(),
       click: () => this.selectionBox.clear(false),
@@ -224,9 +222,14 @@ export class Krystallizer {
       (e) =>
         p.x >= e.pos.x && p.x <= e.pos.x + e.size.x && p.y >= e.pos.y && p.y <= e.pos.y + e.size.y
     );
-    if (!found && this.selectionBox.isPointWithinSelection(p.x, p.y)) found = this.selectionBox;
-    console.log(found);
+
+    if (!found && this.selectionBox.isPointWithinSelection(p.x, p.y)) {
+      found = this.selectionBox;
+    }
+
+    // keep this here; don't want a pointer cursor just for being over the canvas.
     if (setCursor) this.setCanvasCursor(found ? "pointer" : "default");
+
     found ??= this.system.canvas;
     this.inputState.objectBelowMouse = found;
     return found;
@@ -588,7 +591,7 @@ export class Krystallizer {
     const y = Math.round(pos.y - bounds.y + screen.y);
     this.setActiveEntity(this.spawnEntity(className, x, y));
     this.setModifiedState(true);
-    this.selectionBox.getSelection(this.entities);
+    this.selectionBox.getSelection();
   }
 
   //#endregion Events
