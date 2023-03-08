@@ -19,6 +19,7 @@ import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
 import { ConfirmModal, EntityDisplay, Panel, SelectLevelModal } from "./ui.js";
 import { PriorityLevel } from "../modules/lib/data-structures/p-queue.js";
+import { Guard } from "../modules/lib/sanity/guard.js";
 
 class Mode {
   /**
@@ -33,6 +34,8 @@ class Mode {
    * }} events
    */
   constructor(name, events) {
+    Guard.againstNull({ name });
+    Guard.againstNull({ events });
     this.name = name;
     this.onModeEnter = events.onModeEnter ?? noop;
     this.onMouseDown = events.onMouseDown ?? noop;
@@ -66,8 +69,7 @@ export class Krystallizer {
       draggingCloneEntity: null,
       dragTarget: null,
     };
-    this.currentAction = { onTransitionEnter: noop, onTransitionLeave: noop };
-    this.setCurrentAction(); // Defaults to Cursor
+    this.setCurrentMode("cursor");
 
     this.fileName = config.general.newFileName;
     this.discardChangesConfirmed = false;
@@ -152,7 +154,7 @@ export class Krystallizer {
   }
 
   modes = {
-    template: new Mode({
+    template: new Mode("Name", {
       onModeEnter: () => {},
       onMouseDown: () => {},
       onMouseMove: () => {},
@@ -169,14 +171,14 @@ export class Krystallizer {
       },
       onMouseMove: () => this.getObjectBelowMouse(true),
     }),
-    tileSelect: new Mode("Tile Select"),
-    move: {
-      onTransitionEnter: () => this.setCanvasCursor("move"),
-      mouseDown: () => {
+    tileSelect: new Mode("Tile Select", {}),
+    move: new Mode("Move", {
+      onModeEnter: () => this.setCanvasCursor("move"),
+      onMouseDown: () => {
         this.inputState.dragTarget = this.getObjectBelowMouse(false);
         if (this.inputState.dragTarget === this.selectionBox) this.selectionBox.startMoving();
       },
-      mouseMove: () => {
+      onMouseMove: () => {
         const { dragTarget, mouseIsDown } = this.inputState;
         if (!mouseIsDown || !dragTarget) return;
         const { dx, dy } = this.mouse;
@@ -188,45 +190,43 @@ export class Krystallizer {
           dragTarget.pos.y += dy;
         }
       },
-      mouseUp: () => {
+      onMouseUp: () => {
         if (this.inputState.dragTarget === this.selectionBox) this.selectionBox.endMoving();
         else this.selectionBox.getSelection();
         this.inputState.dragTarget = null;
       },
-      click: noop,
-      onTransitionLeave: noop,
-    },
-    select: {
-      onTransitionEnter: () => {
+    }),
+    select: new Mode("Select Objects", {
+      onModeEnter: () => {
         this.setCanvasCursor("crosshair");
         this.selectionBox.enterMode();
         this.panels.entitySettings.close();
         this.panels.entities.close();
       },
-      mouseDown: () => {
+      onMouseDown: () => {
         const x = this.screen.actual.x + this.mouse.x;
         const y = this.screen.actual.y + this.mouse.y;
         this.selectionBox.startSelection(x, y);
       },
-      mouseMove: () => {
+      onMouseMove: () => {
         if (!this.selectionBox.active || !this.selectionBox.isSelecting) return;
         this.selectionBox.updateSelectionRange(this.mouse.dx, this.mouse.dy);
       },
-      mouseUp: () => this.selectionBox.endSelection(),
-      click: () => this.selectionBox.clear(false),
-      onTransitionLeave: () => {
+      onMouseUp: () => this.selectionBox.endSelection(),
+      onClick: () => this.selectionBox.clear(false),
+      onModeLeave: () => {
         this.selectionBox.leaveMode();
         this.setCanvasCursor("default");
       },
-    },
-    eraser: new Mode("Erase Objects"),
-    shape: new Mode("Create Shapes"),
+    }),
+    eraser: new Mode("Erase Objects", {}),
+    shape: new Mode("Create Shapes", {}),
   };
 
-  setCurrentAction(action) {
-    this.currentAction.onTransitionLeave();
-    this.currentAction = this.modes[action ?? "cursor"];
-    this.currentAction.onTransitionEnter();
+  setCurrentMode(mode) {
+    if (this.currentMode) this.currentMode.onModeLeave();
+    this.currentMode = this.modes[mode];
+    this.currentMode.onModeEnter();
   }
 
   getObjectBelowMouse(setCursor) {
@@ -310,7 +310,7 @@ export class Krystallizer {
     toolbar.actions.forEach((action) => {
       action.addEventListener("click", () => {
         toolbar.actions.forEach((a) => a.classList.toggle("active", a === action));
-        this.setCurrentAction(action.getAttribute("data-action"));
+        this.setCurrentMode(action.getAttribute("data-action"));
       });
     });
 
@@ -566,20 +566,20 @@ export class Krystallizer {
   }
 
   handleMouseDown() {
-    this.currentAction?.mouseDown();
+    this.currentMode?.mouseDown();
   }
 
   handleMouseMove(mouse) {
     this.mouse = { ...mouse };
-    this.currentAction?.mouseMove();
+    this.currentMode?.mouseMove();
   }
 
   handleMouseUp() {
-    this.currentAction?.mouseUp();
+    this.currentMode?.mouseUp();
   }
 
   handleClick() {
-    this.currentAction?.click();
+    this.currentMode?.click();
   }
 
   scroll(x, y) {
