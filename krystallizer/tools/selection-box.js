@@ -123,7 +123,12 @@ export class SelectionBox {
 
   getSelection() {
     if (!this.active) return;
+    this.#updateAbsoluteRect();
+    this.selected = this.#entities.filter((e) => this.absoluteRect.overlapsRect(e));
+    this.updatePanel();
+  }
 
+  #updateAbsoluteRect() {
     const a = this.absoluteRect;
     a.pos.x = this.pos.x;
     a.pos.y = this.pos.y;
@@ -143,9 +148,6 @@ export class SelectionBox {
       a.pos.y = pos - size;
       a.size.y = size;
     }
-
-    this.selected = this.#entities.filter((e) => a.overlapsRect(e));
-    this.updatePanel();
   }
 
   /**
@@ -155,8 +157,8 @@ export class SelectionBox {
    * @returns False if not currently active, else true if the point is within the selection box.
    */
   isPointWithinSelection(x, y) {
-    console.log(this.active);
     if (!this.active) return false;
+    this.#updateAbsoluteRect();
     return this.absoluteRect.containsPoint({ x, y });
   }
 

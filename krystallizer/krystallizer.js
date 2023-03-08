@@ -225,6 +225,7 @@ export class Krystallizer {
         p.x >= e.pos.x && p.x <= e.pos.x + e.size.x && p.y >= e.pos.y && p.y <= e.pos.y + e.size.y
     );
     if (!found && this.selectionBox.isPointWithinSelection(p.x, p.y)) found = this.selectionBox;
+    console.log(found);
     if (setCursor) this.setCanvasCursor(found ? "pointer" : "default");
     found ??= this.system.canvas;
     this.inputState.objectBelowMouse = found;
