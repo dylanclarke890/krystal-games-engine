@@ -37,6 +37,7 @@ export class CommandManager {
 
   #addRedoCommand(command) {
     if (this.#redoStack.push(command) > this.#depth) this.#redoStack.shift();
+    console.log(this.#redoStack);
   }
 
   undo() {

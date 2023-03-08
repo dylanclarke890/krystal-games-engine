@@ -90,14 +90,12 @@ export class SelectionBox {
   }
 
   startSelection(x, y) {
-    this.currentMultiCmd.addCmd(new SelectionClearedCmd(this, true)); // describes the next line.
+    this.currentMultiCmd.addCmd(new SelectionClearCmd(this)); // describes the next line.
     this.clear(true);
     this.move(x, y);
     this.rect.size.x = 1;
     this.rect.size.y = 1;
     this.isSelecting = true;
-    this.selectCmd = new SelectionCmd(this, x, y);
-    this.currentMultiCmd.addCmd(this.selectCmd);
   }
 
   /**
@@ -105,16 +103,16 @@ export class SelectionBox {
    * @param {number} x
    * @param {number} y
    */
-  resize(x, y) {
+  updateSelectionRange(x, y) {
     this.rect.size.x += x;
     this.rect.size.y += y;
-    this.selectCmd.updateSize(x, y);
   }
 
   endSelection() {
     this.isSelecting = false;
     EventSystem.dispatch(EditorEvents.NewUndoState, this.currentMultiCmd);
     this.currentMultiCmd = new CompositeCommand();
+    this.selectCmd = null;
   }
 
   getSelection() {
@@ -231,59 +229,23 @@ export class SelectionBox {
 
 // #region Undo/Redo Commands
 
-export class SelectionMoveCmd extends Command {
-  constructor(box, x, y) {
-    super();
-    /** @type {SelectionBox} */
-    this.box = box;
-    this.x = x;
-    this.y = y;
-  }
-
-  execute() {}
-  undo() {}
-}
-
-export class SelectionClearedCmd extends Command {
-  constructor(box, setActive) {
+class SelectionClearCmd extends Command {
+  constructor(box) {
     super();
     this.box = box;
-    this.x = box.rect.pos.x;
-    this.y = box.rect.pos.y;
-    this.w = box.rect.size.x;
-    this.h = box.rect.size.y;
-    this.origActive = box.active;
-    this.setActive = setActive;
+    this.prevSelected = box.selected.slice(); // make a copy of the previously selected entities
+    this.prevActive = box.active;
   }
 
   execute() {
-    this.box.clear(this.setActive);
+    this.box.clear(false); // clear the selection box without changing the active state
   }
 
   undo() {
-    this.box.clear(this.origActive);
-    this.box.move(this.x, this.y);
-    this.box.resize(this.w, this.h);
-    this.box.getSelection();
+    this.box.selected = this.prevSelected; // restore the previous selection
+    this.box.updatePanel();
+    this.box.active = this.prevActive; // restore the previous active state
   }
-}
-
-export class SelectionCmd extends Command {
-  constructor(box, w, h) {
-    super();
-    /** @type {SelectionBox} */
-    this.box = box;
-    this.w = w;
-    this.h = h;
-  }
-
-  updateSize(w, h) {
-    this.w += w;
-    this.h += h;
-  }
-
-  execute() {}
-  undo() {}
 }
 
 // #endregion Undo/Redo Commands

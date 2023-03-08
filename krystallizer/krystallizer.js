@@ -180,7 +180,7 @@ export class Krystallizer {
       },
       mouseMove: () => {
         if (!this.selectionBox.active || !this.selectionBox.isSelecting) return;
-        this.selectionBox.resize(this.mouse.dx, this.mouse.dy);
+        this.selectionBox.updateSelectionRange(this.mouse.dx, this.mouse.dy);
         this.selectionBox.getSelection(this.entities);
       },
       mouseUp: () => this.selectionBox.endSelection(),
