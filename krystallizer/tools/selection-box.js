@@ -92,6 +92,7 @@ export class SelectionBox {
 
   startSelection(x, y) {
     this.currentMultiCmd.addCmd(new SelectionClearCmd(this));
+    this.selectCmd = new SelectionSizeCmd(this);
     this.clear(true);
     this.move(x, y);
     this.size.x = 1;
@@ -111,7 +112,11 @@ export class SelectionBox {
 
   endSelection() {
     this.isSelecting = false;
+
+    this.selectCmd.setSizeTo(this.size.x, this.size.y);
+    this.currentMultiCmd.addCmd(this.selectCmd);
     EventSystem.dispatch(EditorEvents.NewUndoState, this.currentMultiCmd);
+
     this.currentMultiCmd = new CompositeCommand();
     this.selectCmd = null;
   }
@@ -229,18 +234,20 @@ export class SelectionBox {
 
 // #region Undo/Redo Commands
 
-class SelectionClearCmd extends Command {
+class SelectionCmd extends Command {
   constructor(box) {
     super();
     /** @type {SelectionBox} */
     this.box = box;
     this.pos = { ...this.box.pos };
     this.size = { ...this.box.size };
-    this.prevActive = box.active;
   }
+}
 
-  execute() {
-    this.box.clear(true);
+class SelectionClearCmd extends SelectionCmd {
+  constructor(box) {
+    super(box);
+    this.prevActive = box.active;
   }
 
   undo() {
@@ -249,6 +256,30 @@ class SelectionClearCmd extends Command {
     this.box.size.x = this.size.x;
     this.box.size.y = this.size.y;
     this.box.active = this.prevActive; // restore the previous active state
+  }
+
+  execute() {
+    this.box.clear(true);
+  }
+}
+
+class SelectionSizeCmd extends SelectionCmd {
+  constructor(box) {
+    super(box);
+  }
+
+  execute() {
+    this.box.updateSelectionRange(this.sizeTo.x, this.sizeTo.y);
+    console.log(this.box.size.x);
+    console.log(this.box.size.y);
+  }
+
+  undo() {
+    this.box.updateSelectionRange(-this.sizeTo.x, -this.sizeTo.y);
+  }
+
+  setSizeTo(x, y) {
+    this.sizeTo = { x, y };
   }
 }
 
