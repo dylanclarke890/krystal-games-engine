@@ -66,8 +66,11 @@ export class Krystallizer {
       clicked: false,
       mouseDownTimer: null,
       objectBelowMouse: null,
-      draggingCloneEntity: null,
-      dragTarget: null,
+    };
+    this.drag = {
+      target: null,
+      start: { x: 0, y: 0 },
+      clone: null,
     };
     this.setCurrentMode("cursor");
 
@@ -175,25 +178,26 @@ export class Krystallizer {
     move: new Mode("Move", {
       onModeEnter: () => this.setCanvasCursor("move"),
       onMouseDown: () => {
-        this.inputState.dragTarget = this.getObjectBelowMouse(false);
-        if (this.inputState.dragTarget === this.selectionBox) this.selectionBox.startMoving();
+        this.drag.target = this.getObjectBelowMouse(false);
+        if (this.drag.target === this.selectionBox) this.selectionBox.startMoving();
       },
       onMouseMove: () => {
-        const { dragTarget, mouseIsDown } = this.inputState;
-        if (!mouseIsDown || !dragTarget) return;
+        const { mouseIsDown } = this.inputState;
+        const { target } = this.drag;
+        if (!mouseIsDown || !target) return;
         const { dx, dy } = this.mouse;
 
-        if (dragTarget === this.system.canvas) this.scroll(dx, dy);
-        else if (dragTarget === this.selectionBox) this.selectionBox.move(dx, dy);
+        if (target === this.system.canvas) this.scroll(dx, dy);
+        else if (target === this.selectionBox) this.selectionBox.move(dx, dy);
         else {
-          dragTarget.pos.x += dx;
-          dragTarget.pos.y += dy;
+          target.pos.x += dx;
+          target.pos.y += dy;
         }
       },
       onMouseUp: () => {
-        if (this.inputState.dragTarget === this.selectionBox) this.selectionBox.endMoving();
+        if (this.drag.target === this.selectionBox) this.selectionBox.endMoving();
         else this.selectionBox.getSelection();
-        this.inputState.dragTarget = null;
+        this.inputState.target = null;
       },
     }),
     select: new Mode("Select Objects", {
@@ -231,7 +235,7 @@ export class Krystallizer {
   }
 
   getObjectBelowMouse(setCursor) {
-    if (this.inputState.draggingCloneEntity) return;
+    if (this.drag.clone) return;
     const sx = this.screen.actual.x;
     const sy = this.screen.actual.y;
     const p = { x: this.mouse.x + sx, y: this.mouse.y + sy };
@@ -257,12 +261,12 @@ export class Krystallizer {
     EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick), PriorityLevel.Critical);
     EventSystem.on(
       EditorActions.EntityDragStart,
-      (e) => (this.inputState.draggingCloneEntity = e),
+      (e) => (this.drag.clone = e),
       PriorityLevel.High
     );
     EventSystem.on(
       EditorActions.EntityDragEnd,
-      () => (this.inputState.draggingCloneEntity = null),
+      () => (this.drag.clone = null),
       PriorityLevel.High
     );
   }
