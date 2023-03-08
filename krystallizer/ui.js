@@ -401,7 +401,7 @@ export class SelectLevelModal extends Modal {
 }
 
 export class EntityDisplay {
-  constructor(entity, { className, filepath }, onDrop) {
+  constructor(entity, { className, filepath }) {
     Guard.againstNull({ entity });
     Guard.againstNull({ className }).isTypeOf("string");
     Guard.againstNull({ filepath }).isTypeOf("string");
@@ -409,7 +409,6 @@ export class EntityDisplay {
     this.entity = entity;
     this.className = className;
     this.filepath = filepath;
-    this.onDrop = bind(onDrop);
     this.mouse = { x: 0, y: 0 };
     this.construct();
   }
@@ -439,11 +438,14 @@ export class EntityDisplay {
       const canvas = document.createElement("canvas");
       canvas.width = this.entity.size.x;
       canvas.height = this.entity.size.y;
+
       const ctx = canvas.getContext("2d");
       const origCtx = this.entity.game.system.ctx;
+
       this.entity.game.system.ctx = ctx;
       this.entity.draw();
       this.entity.game.system.ctx = origCtx;
+
       preview.width = this.entity.size.x;
       preview.height = this.entity.size.y;
       preview.classList.remove("loading");
@@ -530,8 +532,7 @@ export class EntityDisplay {
         x: parseInt(clone.style.left),
         y: parseInt(clone.style.top),
       };
-      this.onDrop(this.className, pos);
-      EventSystem.dispatch(EditorActions.EntityDragEnd, this.entity);
+      EventSystem.dispatch(EditorActions.EntityDragEnd, { className: this.className, pos });
     };
 
     document.addEventListener("pointermove", mouseMove);
