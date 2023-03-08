@@ -163,6 +163,10 @@ export class SelectionBox {
     return this.absoluteRect.containsPoint({ x, y });
   }
 
+  startMoving() {
+    this.moveCmd = new SelectionMoveCmd(this);
+  }
+
   /**
    * Move the selection box. Number passed should be the distance to move, not the new position.
    * @param {number} x
@@ -175,6 +179,13 @@ export class SelectionBox {
       this.selected[i].pos.x += x;
       this.selected[i].pos.y += y;
     }
+  }
+
+  endMoving() {
+    this.moveCmd.finishedMoving(this.pos.x, this.pos.y);
+    this.getSelection();
+    EventSystem.dispatch(EditorEvents.NewUndoState, this.moveCmd);
+    this.moveCmd = null;
   }
 
   /**
@@ -255,6 +266,26 @@ class SelectionCmd extends Command {
   setBackToOriginalPosition() {
     this.box.pos.x = this.pos.x;
     this.box.pos.y = this.pos.y;
+  }
+}
+
+class SelectionMoveCmd extends SelectionCmd {
+  constructor(box) {
+    super(box);
+    this.diff = { x: 0, y: 0 };
+  }
+
+  undo() {
+    this.box.move(-this.diff.x, -this.diff.y);
+  }
+
+  execute() {
+    this.box.move(this.diff.x, this.diff.y);
+  }
+
+  finishedMoving(x, y) {
+    this.diff.x = x - this.pos.x;
+    this.diff.y = y - this.pos.y;
   }
 }
 

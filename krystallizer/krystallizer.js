@@ -145,6 +145,7 @@ export class Krystallizer {
       onTransitionEnter: () => this.setCanvasCursor("move"),
       mouseDown: () => {
         this.inputState.dragTarget = this.getObjectBelowMouse(false);
+        if (this.inputState.dragTarget === this.selectionBox) this.selectionBox.startMoving();
       },
       mouseMove: () => {
         const { dragTarget, mouseIsDown } = this.inputState;
@@ -159,7 +160,8 @@ export class Krystallizer {
         }
       },
       mouseUp: () => {
-        this.selectionBox.getSelection();
+        if (this.inputState.dragTarget === this.selectionBox) this.selectionBox.endMoving();
+        else this.selectionBox.getSelection();
         this.inputState.dragTarget = null;
       },
       click: noop,
