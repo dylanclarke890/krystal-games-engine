@@ -71,30 +71,42 @@ export class CanvasMoveCommand extends MoveCommand {
 // #region Entity Commands
 
 class EntityCommand extends Command {
-  constructor(entity) {
+  constructor(entity, entityList) {
     super();
+    /** @type {import("../../modules/core/entity.js").Entity} */
     this.entity = entity;
+    /** @type {import("../../modules/core/entity.js").Entity[]} */
+    this.entityList = entityList;
   }
 }
 
 export class EntityDeleteCommand extends EntityCommand {
   constructor(entity, entityList) {
-    super(entity);
-    this.entityList = entityList;
+    super(entity, entityList);
   }
 
-  undo() {}
-  execute() {}
+  undo() {
+    this.entityList.push(this.entity);
+  }
+  execute() {
+    const eIndex = this.entityList.findIndex((e) => e === this.entity);
+    if (eIndex !== -1) this.entityList.splice(eIndex, 1);
+  }
 }
 
 export class EntityCreateCommand extends EntityCommand {
   constructor(entity, entityList) {
-    super(entity);
-    this.entityList = entityList;
+    super(entity, entityList);
   }
 
-  undo() {}
-  execute() {}
+  undo() {
+    const eIndex = this.entityList.findIndex((e) => e === this.entity);
+    if (eIndex !== -1) this.entityList.splice(eIndex, 1);
+  }
+
+  execute() {
+    this.entityList.push(this.entity);
+  }
 }
 
 // #endregion Entity Commands

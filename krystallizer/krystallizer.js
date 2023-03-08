@@ -8,19 +8,24 @@ import { $el, loadImages, loadScript } from "../modules/lib/utils/dom.js";
 import { noop } from "../modules/lib/utils/func.js";
 import { Logger } from "../modules/lib/utils/logger.js";
 import { formatAsJSON, hyphenToCamelCase } from "../modules/lib/utils/string.js";
+import { PriorityLevel } from "../modules/lib/data-structures/p-queue.js";
+import { Guard } from "../modules/lib/sanity/guard.js";
 import Sortable from "./third-party/sortable/src/Sortable.js";
 
 import { SelectionBox } from "./tools/selection-box.js";
 import { CommandManager } from "./tools/command-manager.js";
+import {
+  CanvasMoveCommand,
+  EntityCreateCommand,
+  EntityDeleteCommand,
+  MoveCommand,
+} from "./tools/base-commands.js";
 import { config } from "./config.js";
 import { EditMap } from "./edit-map.js";
 import { EditorActions, EditorEvents, InputEvents } from "./enums.js";
 import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
 import { ConfirmModal, EntityDisplay, Panel, SelectLevelModal } from "./ui.js";
-import { PriorityLevel } from "../modules/lib/data-structures/p-queue.js";
-import { Guard } from "../modules/lib/sanity/guard.js";
-import { CanvasMoveCommand, MoveCommand } from "./tools/base-commands.js";
 
 class Mode {
   /**
@@ -739,19 +744,26 @@ export class Krystallizer {
     newEntity._additionalSettings = structuredClone(settings);
     this.entities.push(newEntity);
     if (settings.name) this.namedEntities[settings.name] = newEntity;
+    EventSystem.dispatch(
+      EditorEvents.NewUndoState,
+      new EntityCreateCommand(newEntity, this.entities)
+    );
     return newEntity;
   }
 
-  removeEntity() {
+  removeSelectedEntity() {
     if (!this.selectedEntity) return;
-
-    const eIndex = this.entities.indexOf(this.selectedEntity);
-    if (eIndex === -1)
+    if (!this.removeEntity(this.selectedEntity))
       throw new Error("Unable to find selected entity: " + JSON.stringify(this.selectedEntity));
-    this.entities.splice(eIndex, 1);
-    EventSystem.dispatch(EditorEvents.EntityDeleted, this.selectedEntity);
-
     this.setActiveEntity(null);
+  }
+
+  removeEntity(entity) {
+    const eIndex = this.entities.indexOf(entity);
+    if (eIndex === -1) return false;
+    this.entities.splice(eIndex, 1);
+    EventSystem.dispatch(EditorEvents.EntityDeleted, entity);
+    EventSystem.dispatch(EditorEvents.NewUndoState, new EntityDeleteCommand(entity, this.entities));
     this.setModifiedState(true);
   }
 
