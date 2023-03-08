@@ -93,9 +93,8 @@ export class SelectionBox {
   }
 
   startSelection(x, y) {
-    this.currentMultiCmd.addCmd(new SelectionClearCmd(this));
+    this.currentMultiCmd.addCmd(this.clear(true, false));
     this.selectCmd = new SelectionSizeCmd(this, x, y);
-    this.clear(true);
     this.move(x, y);
     this.size.x = 1;
     this.size.y = 1;
@@ -223,8 +222,11 @@ export class SelectionBox {
   /**
    * Reset the selection box, ready for the next selection.
    * @param {[boolean]} active If passed, will set the active state of the selection box. Defaults to false.
+   * @param {[boolean]} dispatchEvent If passed, will automatically dispatch a 'NewUndoState' event. Defaults to false.
    */
-  clear(active) {
+  clear(active, dispatchEvent) {
+    const clearCmd = new SelectionClearCmd(this);
+
     this.pos.x = 0;
     this.pos.y = 0;
     this.size.x = 0;
@@ -239,6 +241,9 @@ export class SelectionBox {
     this.active = !!active;
     this.isSelecting = false;
     this.updatePanel();
+
+    if (dispatchEvent) EventSystem.dispatch(EditorEvents.NewUndoState, clearCmd);
+    return clearCmd;
   }
 
   /**

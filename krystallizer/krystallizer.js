@@ -160,8 +160,7 @@ export class Krystallizer {
       onModeEnter: () => this.setCanvasCursor("default"),
       onMouseDown: () => {
         this.setActiveEntity(this.mouse.objectBelow);
-        // Deselect deselectable things selected by other tools - probs could phrase this better :)
-        if (this.mouse.objectBelow === this.system.canvas) this.selectionBox.clear(false);
+        if (this.mouse.objectBelow === this.system.canvas) this.selectionBox.clear(false, true);
       },
       onMouseMove: () => this.getObjectBelowMouse(true),
     }),
@@ -233,7 +232,7 @@ export class Krystallizer {
         this.selectionBox.updateSelectionRange(this.mouse.dx, this.mouse.dy);
       },
       onMouseUp: () => this.selectionBox.endSelection(),
-      onClick: () => this.selectionBox.clear(false),
+      onClick: () => this.selectionBox.clear(false, true),
       onModeLeave: () => {
         this.selectionBox.leaveMode();
         this.setCanvasCursor("default");
