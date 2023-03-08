@@ -20,21 +20,25 @@ import { System } from "./system.js";
 import { ConfirmModal, EntityDisplay, Panel, SelectLevelModal } from "./ui.js";
 import { PriorityLevel } from "../modules/lib/data-structures/p-queue.js";
 
-class ModeEvents {
+class Mode {
   /**
+   * @param {string} name
    * @param {{
    * onModeEnter: () => void,
    * onMouseDown: () => void,
    * onMouseMove: () => void,
    * onMouseUp: () => void,
+   * onClick: () => void,
    * onModeLeave: () => void
    * }} events
    */
-  constructor(events) {
+  constructor(name, events) {
+    this.name = name;
     this.onModeEnter = events.onModeEnter ?? noop;
     this.onMouseDown = events.onMouseDown ?? noop;
     this.onMouseMove = events.onMouseMove ?? noop;
     this.onMouseUp = events.onMouseUp ?? noop;
+    this.onClick = events.onClick ?? noop;
     this.onModeLeave = events.onModeLeave ?? noop;
   }
 }
@@ -147,28 +151,25 @@ export class Krystallizer {
     this.commandManager = new CommandManager();
   }
 
-  actions = {
-    curs: new ModeEvents({ onModeEnter: () => this.setCanvasCursor("default") }),
-    cursor: {
-      onTransitionEnter: () => this.setCanvasCursor("default"),
-      mouseDown: () => {
+  modes = {
+    template: new Mode({
+      onModeEnter: () => {},
+      onMouseDown: () => {},
+      onMouseMove: () => {},
+      onMouseUp: () => {},
+      onClick: () => {},
+      onModeLeave: () => {},
+    }),
+    cursor: new Mode("Cursor", {
+      onModeEnter: () => this.setCanvasCursor("default"),
+      onMouseDown: () => {
         this.setActiveEntity(this.inputState.objectBelowMouse);
         // Deselect deselectable things selected by other tools - probs could phrase this better :)
         if (this.inputState.objectBelowMouse === this.system.canvas) this.selectionBox.clear(false);
       },
-      mouseMove: () => this.getObjectBelowMouse(true),
-      mouseUp: noop,
-      click: noop,
-      onTransitionLeave: noop,
-    },
-    tileSelect: {
-      onTransitionEnter: noop,
-      mouseDown: noop,
-      mouseMove: noop,
-      mouseUp: noop,
-      click: noop,
-      onTransitionLeave: noop,
-    },
+      onMouseMove: () => this.getObjectBelowMouse(true),
+    }),
+    tileSelect: new Mode("Tile Select"),
     move: {
       onTransitionEnter: () => this.setCanvasCursor("move"),
       mouseDown: () => {
@@ -218,27 +219,13 @@ export class Krystallizer {
         this.setCanvasCursor("default");
       },
     },
-    eraser: {
-      onTransitionEnter: noop,
-      mouseDown: noop,
-      mouseMove: noop,
-      mouseUp: noop,
-      click: noop,
-      onTransitionLeave: noop,
-    },
-    shape: {
-      onTransitionEnter: noop,
-      mouseDown: noop,
-      mouseMove: noop,
-      mouseUp: noop,
-      click: noop,
-      onTransitionLeave: noop,
-    },
+    eraser: new Mode("Erase Objects"),
+    shape: new Mode("Create Shapes"),
   };
 
   setCurrentAction(action) {
     this.currentAction.onTransitionLeave();
-    this.currentAction = this.actions[action ?? "cursor"];
+    this.currentAction = this.modes[action ?? "cursor"];
     this.currentAction.onTransitionEnter();
   }
 
