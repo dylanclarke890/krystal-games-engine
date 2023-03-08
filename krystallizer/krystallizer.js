@@ -20,6 +20,25 @@ import { System } from "./system.js";
 import { ConfirmModal, EntityDisplay, Panel, SelectLevelModal } from "./ui.js";
 import { PriorityLevel } from "../modules/lib/data-structures/p-queue.js";
 
+class ModeEvents {
+  /**
+   * @param {{
+   * onModeEnter: () => void,
+   * onMouseDown: () => void,
+   * onMouseMove: () => void,
+   * onMouseUp: () => void,
+   * onModeLeave: () => void
+   * }} events
+   */
+  constructor(events) {
+    this.onModeEnter = events.onModeEnter ?? noop;
+    this.onMouseDown = events.onMouseDown ?? noop;
+    this.onMouseMove = events.onMouseMove ?? noop;
+    this.onMouseUp = events.onMouseUp ?? noop;
+    this.onModeLeave = events.onModeLeave ?? noop;
+  }
+}
+
 export class Krystallizer {
   constructor() {
     this.system = new System();
@@ -129,6 +148,7 @@ export class Krystallizer {
   }
 
   actions = {
+    curs: new ModeEvents({ onModeEnter: () => this.setCanvasCursor("default") }),
     cursor: {
       onTransitionEnter: () => this.setCanvasCursor("default"),
       mouseDown: () => {
@@ -137,6 +157,14 @@ export class Krystallizer {
         if (this.inputState.objectBelowMouse === this.system.canvas) this.selectionBox.clear(false);
       },
       mouseMove: () => this.getObjectBelowMouse(true),
+      mouseUp: noop,
+      click: noop,
+      onTransitionLeave: noop,
+    },
+    tileSelect: {
+      onTransitionEnter: noop,
+      mouseDown: noop,
+      mouseMove: noop,
       mouseUp: noop,
       click: noop,
       onTransitionLeave: noop,
