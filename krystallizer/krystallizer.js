@@ -60,18 +60,8 @@ export class Krystallizer {
     this.entityClassesInfo = {};
     this.drawEntities = true;
     this.screen = { actual: { x: 0, y: 0 }, rounded: { x: 0, y: 0 } };
-    this.mouse = { x: 0, y: 0, dx: 0, dy: 0 };
-    this.inputState = {
-      mouseIsDown: false,
-      clicked: false,
-      mouseDownTimer: null,
-      objectBelowMouse: null,
-    };
-    this.drag = {
-      target: null,
-      start: { x: 0, y: 0 },
-      clone: null,
-    };
+    this.mouse = { x: 0, y: 0, dx: 0, dy: 0, isDown: false, downTimer: null, objectBelow: null };
+    this.drag = { target: null, start: { x: 0, y: 0 }, clone: null };
     this.setCurrentMode("cursor");
 
     this.fileName = config.general.newFileName;
@@ -168,9 +158,9 @@ export class Krystallizer {
     cursor: new Mode("Cursor", {
       onModeEnter: () => this.setCanvasCursor("default"),
       onMouseDown: () => {
-        this.setActiveEntity(this.inputState.objectBelowMouse);
+        this.setActiveEntity(this.mouse.objectBelow);
         // Deselect deselectable things selected by other tools - probs could phrase this better :)
-        if (this.inputState.objectBelowMouse === this.system.canvas) this.selectionBox.clear(false);
+        if (this.mouse.objectBelow === this.system.canvas) this.selectionBox.clear(false);
       },
       onMouseMove: () => this.getObjectBelowMouse(true),
     }),
@@ -182,9 +172,8 @@ export class Krystallizer {
         if (this.drag.target === this.selectionBox) this.selectionBox.startMoving();
       },
       onMouseMove: () => {
-        const { mouseIsDown } = this.inputState;
         const { target } = this.drag;
-        if (!mouseIsDown || !target) return;
+        if (!this.mouse.isDown || !target) return;
         const { dx, dy } = this.mouse;
 
         if (target === this.system.canvas) this.scroll(dx, dy);
@@ -253,7 +242,7 @@ export class Krystallizer {
     if (setCursor) this.setCanvasCursor(found ? "pointer" : "default");
 
     found ??= this.system.canvas;
-    this.inputState.objectBelowMouse = found;
+    this.mouse.objectBelow = found;
     return found;
   }
 
@@ -277,22 +266,22 @@ export class Krystallizer {
       PriorityLevel.High
     );
     this.system.canvas.addEventListener("pointerdown", () => {
-      this.inputState.mouseIsDown = true;
-      this.inputState.clicked = true;
-      this.inputState.mouseDownTimer = setTimeout(() => (this.inputState.clicked = false), 150);
+      this.mouse.isDown = true;
+      this.mouse.downTimer = setTimeout(() => (this.mouse.clicked = false), 150);
+      this.mouse.clicked = true;
       this.handleMouseDown();
     });
     document.addEventListener("pointerup", () => {
-      const { mouseIsDown, mouseDownTimer, clicked } = this.inputState;
-      if (!mouseIsDown) return; // Canvas wasn't source of click
-      clearTimeout(mouseDownTimer);
+      const { isDown, downTimer, clicked } = this.mouse;
+      if (!isDown) return; // Canvas wasn't source of click
+      clearTimeout(downTimer);
 
       this.handleMouseUp();
       if (clicked) this.handleClick();
 
-      this.inputState.mouseDownTimer = null;
-      this.inputState.mouseIsDown = false;
-      this.inputState.clicked = false;
+      this.mouse.downTimer = null;
+      this.mouse.isDown = false;
+      this.mouse.clicked = false;
     });
   }
 
@@ -574,7 +563,10 @@ export class Krystallizer {
   }
 
   handleMouseMove(mouse) {
-    this.mouse = { ...mouse };
+    this.mouse.x = mouse.x;
+    this.mouse.y = mouse.y;
+    this.mouse.dx = mouse.dx;
+    this.mouse.dy = mouse.dy;
     this.currentMode?.onMouseMove();
   }
 
