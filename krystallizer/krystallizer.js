@@ -101,6 +101,7 @@ export class Krystallizer {
       toolbar: {
         actions: document.querySelectorAll(".toolbar-icon"),
       },
+      tooltips: document.querySelectorAll(".tooltip"),
     };
     this.panels = {
       entities: new Panel({ selector: this.DOMElements.entities }),
@@ -274,13 +275,31 @@ export class Krystallizer {
     this.bindEventSystemListeners();
     this.bindMouseEvents();
 
-    const { layers, level, layerActions, entityActions, entitiesLayer, layerSettings, toolbar } =
-      this.DOMElements;
+    const {
+      layers,
+      level,
+      layerActions,
+      entityActions,
+      entitiesLayer,
+      layerSettings,
+      toolbar,
+      tooltips,
+    } = this.DOMElements;
 
     toolbar.actions.forEach((action) => {
       action.addEventListener("click", () => {
         toolbar.actions.forEach((a) => a.classList.toggle("active", a === action));
         this.setCurrentAction(action.getAttribute("data-action"));
+      });
+    });
+
+    tooltips.forEach((tooltip) => {
+      const child = tooltip.querySelector("img");
+      child.addEventListener("mouseover", () => {
+        tooltip.classList.add("open");
+      });
+      child.addEventListener("mouseout", () => {
+        tooltip.classList.remove("open");
       });
     });
 

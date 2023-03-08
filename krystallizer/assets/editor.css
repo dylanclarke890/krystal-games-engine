@@ -632,7 +632,7 @@ input:checked + .slider:before {
   position: relative;
 }
 
-.tooltip:before {
+.tooltip::before {
   background: var(--ui-bg-primary);
   border-radius: 10px;
   color: black;
@@ -644,25 +644,25 @@ input:checked + .slider:before {
   white-space: nowrap;
 }
 
-.tooltip:after {
+.tooltip::after {
   border: 10px solid var(--ui-bg-primary);
   border-color: transparent var(--ui-bg-primary) transparent transparent;
   content: "";
   margin-left: -4px;
 }
 
-.tooltip:before,
-.tooltip:after {
+.tooltip::before,
+.tooltip::after {
   left: 100%;
-  opacity:0;
+  opacity: 0;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  transition:.3s opacity;  
+  transition: 0.3s opacity;
 }
 
-.tooltip:hover:before,
-.tooltip:hover:after {
+.tooltip.open::before,
+.tooltip.open::after {
   opacity: 1;
 }
 
