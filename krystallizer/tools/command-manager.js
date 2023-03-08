@@ -16,17 +16,7 @@ export class CommandManager {
     this.#depth = depth ?? config.general.undoDepth;
     this.#undoStack = [];
     this.#redoStack = [];
-    this.#bindEvents();
-  }
-
-  #bindEvents() {
     EventSystem.on(EditorEvents.NewUndoState, (command) => this.#addUndoCommand(command));
-    // TODO: This should be moved to the input class when it's created.
-    document.addEventListener("keyup", (e) => {
-      const key = e.key.toUpperCase();
-      if (key === "Z") this.undo();
-      else if (key === "Y") this.redo();
-    });
   }
 
   #addUndoCommand(command, clearRedoStack = true) {

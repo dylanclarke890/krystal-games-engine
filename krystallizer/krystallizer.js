@@ -289,6 +289,12 @@ export class Krystallizer {
     this.bindEventSystemListeners();
     this.bindMouseEvents();
 
+    document.addEventListener("keyup", (e) => {
+      const key = e.key.toUpperCase();
+      if (key === "Z") this.commandManager.undo();
+      else if (key === "Y") this.commandManager.redo();
+    });
+
     const {
       layers,
       level,
