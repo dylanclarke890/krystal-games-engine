@@ -225,6 +225,7 @@ export class Krystallizer {
 
   setCurrentMode(mode) {
     if (this.currentMode) this.currentMode.onModeLeave();
+    /** @type {Mode} */
     this.currentMode = this.modes[mode];
     this.currentMode.onModeEnter();
   }
@@ -566,20 +567,20 @@ export class Krystallizer {
   }
 
   handleMouseDown() {
-    this.currentMode?.mouseDown();
+    this.currentMode?.onMouseDown();
   }
 
   handleMouseMove(mouse) {
     this.mouse = { ...mouse };
-    this.currentMode?.mouseMove();
+    this.currentMode?.onMouseMove();
   }
 
   handleMouseUp() {
-    this.currentMode?.mouseUp();
+    this.currentMode?.onMouseUp();
   }
 
   handleClick() {
-    this.currentMode?.click();
+    this.currentMode?.onClick();
   }
 
   scroll(x, y) {
