@@ -35,6 +35,8 @@ export class CompositeCommand extends Command {
   }
 }
 
+// #region Move Commands
+
 export class MoveCommand extends Command {
   constructor(object, dx, dy) {
     super();
@@ -63,3 +65,36 @@ export class CanvasMoveCommand extends MoveCommand {
     this.object.scroll(this.dx, this.dy);
   }
 }
+
+// #endregion Move Commands
+
+// #region Entity Commands
+
+class EntityCommand extends Command {
+  constructor(entity) {
+    super();
+    this.entity = entity;
+  }
+}
+
+export class EntityDeleteCommand extends EntityCommand {
+  constructor(entity, entityList) {
+    super(entity);
+    this.entityList = entityList;
+  }
+
+  undo() {}
+  execute() {}
+}
+
+export class EntityCreateCommand extends EntityCommand {
+  constructor(entity, entityList) {
+    super(entity);
+    this.entityList = entityList;
+  }
+
+  undo() {}
+  execute() {}
+}
+
+// #endregion Entity Commands
