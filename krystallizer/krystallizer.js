@@ -169,13 +169,18 @@ export class Krystallizer {
       onModeEnter: () => this.setCanvasCursor("move"),
       onMouseDown: () => {
         this.drag.target = this.getObjectBelowMouse(false);
-        if (this.drag.target === this.selectionBox) this.selectionBox.startMoving();
-        else if (this.drag.target === this.system.canvas) {
-          this.drag.start.x = this.screen.actual.x;
-          this.drag.start.y = this.screen.actual.y;
-        } else {
-          this.drag.start.x = this.drag.target.pos.x;
-          this.drag.start.y = this.drag.target.pos.y;
+        switch (this.drag.target) {
+          case this.system.canvas:
+            this.drag.start.x = this.screen.actual.x;
+            this.drag.start.y = this.screen.actual.y;
+            break;
+          case this.selectionBox:
+            this.selectionBox.startMoving();
+            break;
+          default:
+            this.drag.start.x = this.drag.target.pos.x;
+            this.drag.start.y = this.drag.target.pos.y;
+            break;
         }
       },
       onMouseMove: () => {
@@ -183,36 +188,46 @@ export class Krystallizer {
         if (!this.mouse.isDown || !target) return;
         const { dx, dy } = this.mouse;
 
-        if (target === this.system.canvas) this.scroll(dx, dy);
-        else if (target === this.selectionBox) this.selectionBox.move(dx, dy);
-        else {
-          target.pos.x += dx;
-          target.pos.y += dy;
+        switch (target) {
+          case this.system.canvas:
+            this.scroll(dx, dy);
+            break;
+          case this.selectionBox:
+            this.selectionBox.move(dx, dy);
+            break;
+          default:
+            target.pos.x += dx;
+            target.pos.y += dy;
+            break;
         }
       },
       onMouseUp: () => {
-        if (this.drag.target === this.selectionBox) {
-          this.selectionBox.endMoving();
-          this.drag.target = null;
-          return;
-        }
-
-        this.selectionBox.getSelection();
-        const t = this.drag.target;
+        const target = this.drag.target;
         let cmd;
 
-        if (t === this.system.canvas) {
-          const dx = this.drag.start.x - this.screen.actual.x;
-          const dy = this.drag.start.y - this.screen.actual.y;
-          cmd = new CanvasMoveCommand(this, dx, dy);
-        } else {
-          const dx = t.pos.x - this.drag.start.x;
-          const dy = t.pos.y - this.drag.start.y;
-          cmd = new MoveCommand(t, dx, dy);
+        switch (target) {
+          case this.system.canvas: {
+            const dx = this.drag.start.x - this.screen.actual.x;
+            const dy = this.drag.start.y - this.screen.actual.y;
+            cmd = new CanvasMoveCommand(this, dx, dy);
+            break;
+          }
+          case this.selectionBox: {
+            this.selectionBox.endMoving();
+            this.drag.target = null;
+            return;
+          }
+          default: {
+            const dx = target.pos.x - this.drag.start.x;
+            const dy = target.pos.y - this.drag.start.y;
+            cmd = new MoveCommand(target, dx, dy);
+            break;
+          }
         }
 
         EventSystem.dispatch(EditorEvents.NewUndoState, cmd);
         this.drag.target = null;
+        this.selectionBox.getSelection();
       },
     }),
     select: new Mode("Select Objects", {
