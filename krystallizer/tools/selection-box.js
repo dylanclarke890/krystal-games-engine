@@ -91,7 +91,7 @@ export class SelectionBox {
   }
 
   startSelection(x, y) {
-    this.currentMultiCmd.addCmd(new SelectionClearCmd(this)); // describes the next line.
+    this.currentMultiCmd.addCmd(new SelectionClearCmd(this));
     this.clear(true);
     this.move(x, y);
     this.size.x = 1;
@@ -232,18 +232,22 @@ export class SelectionBox {
 class SelectionClearCmd extends Command {
   constructor(box) {
     super();
+    /** @type {SelectionBox} */
     this.box = box;
-    this.prevSelected = box.selected.slice(); // make a copy of the previously selected entities
+    this.pos = { ...this.box.pos };
+    this.size = { ...this.box.size };
     this.prevActive = box.active;
   }
 
   execute() {
-    this.box.clear(false); // clear the selection box without changing the active state
+    this.box.clear(true);
   }
 
   undo() {
-    this.box.selected = this.prevSelected; // restore the previous selection
-    this.box.updatePanel();
+    this.box.pos.x = this.pos.x;
+    this.box.pos.y = this.pos.y;
+    this.box.size.x = this.size.x;
+    this.box.size.y = this.size.y;
     this.box.active = this.prevActive; // restore the previous active state
   }
 }
