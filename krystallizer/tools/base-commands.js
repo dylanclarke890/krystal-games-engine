@@ -34,3 +34,32 @@ export class CompositeCommand extends Command {
     for (let i = this.#cmds.length - 1; i >= 0; i--) this.#cmds[i].undo();
   }
 }
+
+export class MoveCommand extends Command {
+  constructor(object, dx, dy) {
+    super();
+    this.object = object;
+    this.dx = dx;
+    this.dy = dy;
+  }
+
+  undo() {
+    this.object.pos.x -= this.dx;
+    this.object.pos.y -= this.dy;
+  }
+
+  execute() {
+    this.object.pos.x += this.dx;
+    this.object.pos.y += this.dy;
+  }
+}
+
+export class CanvasMoveCommand extends MoveCommand {
+  undo() {
+    this.object.scroll(-this.dx, -this.dy);
+  }
+
+  execute() {
+    this.object.scroll(this.dx, this.dy);
+  }
+}
