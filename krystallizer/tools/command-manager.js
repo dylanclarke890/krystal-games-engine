@@ -25,19 +25,18 @@ export class CommandManager {
     document.addEventListener("keyup", (e) => {
       const key = e.key.toUpperCase();
       if (key === "Z") this.undo();
-      else if (key === "R") this.redo();
+      else if (key === "Y") this.redo();
     });
   }
 
   #addUndoCommand(command, clearRedoStack = true) {
+    console.log(command);
     if (this.#undoStack.push(command) > this.#depth) this.#undoStack.shift();
     if (clearRedoStack) this.#redoStack.length = 0;
-    console.log(this.#undoStack);
   }
 
   #addRedoCommand(command) {
     if (this.#redoStack.push(command) > this.#depth) this.#redoStack.shift();
-    console.log(this.#redoStack);
   }
 
   undo() {

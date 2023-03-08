@@ -92,7 +92,7 @@ export class SelectionBox {
 
   startSelection(x, y) {
     this.currentMultiCmd.addCmd(new SelectionClearCmd(this));
-    this.selectCmd = new SelectionSizeCmd(this);
+    this.selectCmd = new SelectionSizeCmd(this, x, y);
     this.clear(true);
     this.move(x, y);
     this.size.x = 1;
@@ -155,6 +155,7 @@ export class SelectionBox {
    * @returns False if not currently active, else true if the point is within the selection box.
    */
   isPointWithinSelection(x, y) {
+    console.log(this.active);
     if (!this.active) return false;
     return this.absoluteRect.containsPoint({ x, y });
   }
@@ -242,6 +243,16 @@ class SelectionCmd extends Command {
     this.pos = { ...this.box.pos };
     this.size = { ...this.box.size };
   }
+
+  setBackToOriginalSize() {
+    this.box.size.x = this.size.x;
+    this.box.size.y = this.size.y;
+  }
+
+  setBackToOriginalPosition() {
+    this.box.pos.x = this.pos.x;
+    this.box.pos.y = this.pos.y;
+  }
 }
 
 class SelectionClearCmd extends SelectionCmd {
@@ -251,11 +262,9 @@ class SelectionClearCmd extends SelectionCmd {
   }
 
   undo() {
-    this.box.pos.x = this.pos.x;
-    this.box.pos.y = this.pos.y;
-    this.box.size.x = this.size.x;
-    this.box.size.y = this.size.y;
-    this.box.active = this.prevActive; // restore the previous active state
+    this.setBackToOriginalPosition();
+    this.setBackToOriginalSize();
+    this.box.active = this.prevActive;
   }
 
   execute() {
@@ -264,18 +273,20 @@ class SelectionClearCmd extends SelectionCmd {
 }
 
 class SelectionSizeCmd extends SelectionCmd {
-  constructor(box) {
+  constructor(box, sx, sy) {
     super(box);
-  }
-
-  execute() {
-    this.box.updateSelectionRange(this.sizeTo.x, this.sizeTo.y);
-    console.log(this.box.size.x);
-    console.log(this.box.size.y);
+    this.startPos = { x: sx, y: sy };
   }
 
   undo() {
-    this.box.updateSelectionRange(-this.sizeTo.x, -this.sizeTo.y);
+    this.setBackToOriginalPosition();
+    this.setBackToOriginalSize();
+  }
+
+  execute() {
+    this.pos = { ...this.startPos };
+    this.setBackToOriginalPosition();
+    this.box.updateSelectionRange(this.sizeTo.x, this.sizeTo.y);
   }
 
   setSizeTo(x, y) {
