@@ -60,7 +60,7 @@ export class SelectionBox {
   }
 
   leaveMode() {
-    this.panel.hide();
+    if (!this.active) this.panel.hide();
   }
 
   updatePanel() {
