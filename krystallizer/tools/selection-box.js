@@ -33,7 +33,8 @@ export class SelectionBox {
     /** @type {import("../ui.js").Panel} */
     this.panel = panel;
 
-    this.rect = new Rect({ x: 0, y: 0 }, { x: 0, y: 0 });
+    this.pos = { x: 0, y: 0 };
+    this.size = { x: 0, y: 0 };
     this.absoluteRect = new Rect({ x: 0, y: 0 }, { x: 0, y: 0 });
 
     this.#entities = entities;
@@ -93,8 +94,8 @@ export class SelectionBox {
     this.currentMultiCmd.addCmd(new SelectionClearCmd(this)); // describes the next line.
     this.clear(true);
     this.move(x, y);
-    this.rect.size.x = 1;
-    this.rect.size.y = 1;
+    this.size.x = 1;
+    this.size.y = 1;
     this.isSelecting = true;
   }
 
@@ -104,8 +105,8 @@ export class SelectionBox {
    * @param {number} y
    */
   updateSelectionRange(x, y) {
-    this.rect.size.x += x;
-    this.rect.size.y += y;
+    this.size.x += x;
+    this.size.y += y;
   }
 
   endSelection() {
@@ -118,27 +119,27 @@ export class SelectionBox {
   getSelection() {
     if (!this.active) return;
 
-    const r = this.rect;
-    this.absoluteRect.pos.x = r.pos.x;
-    this.absoluteRect.pos.y = r.pos.y;
-    this.absoluteRect.size.x = r.size.x;
-    this.absoluteRect.size.y = r.size.y;
+    const a = this.absoluteRect;
+    a.pos.x = this.pos.x;
+    a.pos.y = this.pos.y;
+    a.size.x = this.size.x;
+    a.size.y = this.size.y;
 
-    if (r.size.x < 0) {
-      const size = Math.abs(r.size.x);
-      const pos = r.pos.x;
-      this.absoluteRect.pos.x = pos - size;
-      this.absoluteRect.size.x = size;
+    if (a.size.x < 0) {
+      const size = Math.abs(a.size.x);
+      const pos = a.pos.x;
+      a.pos.x = pos - size;
+      a.size.x = size;
     }
 
-    if (r.size.y < 0) {
-      const size = Math.abs(r.size.y);
-      const pos = r.pos.y;
-      this.absoluteRect.pos.y = pos - size;
-      this.absoluteRect.size.y = size;
+    if (a.size.y < 0) {
+      const size = Math.abs(a.size.y);
+      const pos = a.pos.y;
+      a.pos.y = pos - size;
+      a.size.y = size;
     }
 
-    this.selected = this.#entities.filter((e) => this.absoluteRect.overlapsRect(e));
+    this.selected = this.#entities.filter((e) => a.overlapsRect(e));
     this.updatePanel();
   }
 
@@ -159,8 +160,8 @@ export class SelectionBox {
    * @param {number} y
    */
   move(x, y) {
-    this.rect.pos.x += x;
-    this.rect.pos.y += y;
+    this.pos.x += x;
+    this.pos.y += y;
     for (let i = 0; i < this.selected.length; i++) {
       this.selected[i].pos.x += x;
       this.selected[i].pos.y += y;
@@ -176,15 +177,14 @@ export class SelectionBox {
     if (!this.active) return;
     const { actual } = screen;
     const ctx = this.ctx;
-    const { pos, size } = this.rect;
 
-    const x = pos.x - actual.x;
-    const y = pos.y - actual.y;
+    const x = this.pos.x - actual.x;
+    const y = this.pos.y - actual.y;
     ctx.globalAlpha = 0.5;
     ctx.fillStyle = "lightblue";
-    ctx.fillRect(x, y, size.x, size.y);
+    ctx.fillRect(x, y, this.size.x, this.size.y);
     ctx.strokeStyle = "darkblue";
-    ctx.strokeRect(x, y, size.x, size.y);
+    ctx.strokeRect(x, y, this.size.x, this.size.y);
     ctx.globalAlpha = 1;
 
     ctx.strokeStyle = "#2196f3";
@@ -203,10 +203,10 @@ export class SelectionBox {
    * @param {[boolean]} active If passed, will set the active state of the selection box. Defaults to false.
    */
   clear(active) {
-    this.rect.pos.x = 0;
-    this.rect.pos.y = 0;
-    this.rect.size.x = 0;
-    this.rect.size.y = 0;
+    this.pos.x = 0;
+    this.pos.y = 0;
+    this.size.x = 0;
+    this.size.y = 0;
 
     this.absoluteRect.pos.x = 0;
     this.absoluteRect.pos.y = 0;
