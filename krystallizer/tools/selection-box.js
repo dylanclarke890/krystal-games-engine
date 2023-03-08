@@ -229,7 +229,8 @@ export class SelectionBox {
   }
 }
 
-// TODO - Carry on with these.
+// #region Undo/Redo Commands
+
 export class SelectionMoveCmd extends Command {
   constructor(box, x, y) {
     super();
@@ -284,3 +285,5 @@ export class SelectionCmd extends Command {
   execute() {}
   undo() {}
 }
+
+// #endregion Undo/Redo Commands
