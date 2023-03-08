@@ -207,8 +207,8 @@ export class Krystallizer {
           const dy = this.drag.start.y - this.screen.actual.y;
           cmd = new CanvasMoveCommand(this, dx, dy);
         } else {
-          const dx = this.drag.start.x - t.pos.x;
-          const dy = this.drag.start.y - t.pos.y;
+          const dx = t.pos.x - this.drag.start.x;
+          const dy = t.pos.y - this.drag.start.y;
           cmd = new MoveCommand(t, dx, dy);
         }
 
