@@ -41,7 +41,7 @@ export class SelectionBox {
     this.selected = [];
     this.active = false;
     this.isSelecting = false;
-    this.currentCommand = new CompositeCommand();
+    this.currentMultiCmd = new CompositeCommand();
     this.#bindEvents();
   }
 
@@ -90,11 +90,14 @@ export class SelectionBox {
   }
 
   startSelection(x, y) {
+    this.currentMultiCmd.addCmd(new SelectionClearedCmd(this, true)); // describes the next line.
     this.clear(true);
     this.move(x, y);
     this.rect.size.x = 1;
     this.rect.size.y = 1;
     this.isSelecting = true;
+    this.selectCmd = new SelectionCmd(this, x, y);
+    this.currentMultiCmd.addCmd(this.selectCmd);
   }
 
   /**
@@ -105,13 +108,13 @@ export class SelectionBox {
   resize(x, y) {
     this.rect.size.x += x;
     this.rect.size.y += y;
-    this.currentCommand.updateSize(x, y);
+    this.selectCmd.updateSize(x, y);
   }
 
   endSelection() {
     this.isSelecting = false;
-    EventSystem.dispatch(EditorEvents.NewUndoState, this.currentCommand);
-    this.currentCommand = null;
+    EventSystem.dispatch(EditorEvents.NewUndoState, this.currentMultiCmd);
+    this.currentMultiCmd = new CompositeCommand();
   }
 
   getSelection() {
@@ -221,7 +224,7 @@ export class SelectionBox {
   /**
    * @param {import("../../modules/core/entity.js").Entity[]} entities
    */
-  set updateEntitiesReference(entities) {
+  set newEntitiesReference(entities) {
     this.#entities = entities;
   }
 }
@@ -240,7 +243,31 @@ export class SelectionMoveCmd extends Command {
   undo() {}
 }
 
-export class SelectionSizeCmd extends Command {
+export class SelectionClearedCmd extends Command {
+  constructor(box, setActive) {
+    super();
+    this.box = box;
+    this.x = box.rect.pos.x;
+    this.y = box.rect.pos.y;
+    this.w = box.rect.size.x;
+    this.h = box.rect.size.y;
+    this.origActive = box.active;
+    this.setActive = setActive;
+  }
+
+  execute() {
+    this.box.clear(this.setActive);
+  }
+
+  undo() {
+    this.box.clear(this.origActive);
+    this.box.move(this.x, this.y);
+    this.box.resize(this.w, this.h);
+    this.box.getSelection();
+  }
+}
+
+export class SelectionCmd extends Command {
   constructor(box, w, h) {
     super();
     /** @type {SelectionBox} */
