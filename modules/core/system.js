@@ -97,22 +97,4 @@ export class System {
     };
   }
 
-  /** Extract the real, actual pixels from an image. */
-  getImagePixels(image, x, y, width, height) {
-    const canvas = $new("canvas");
-    canvas.width = image.width;
-    canvas.height = image.height;
-    const ctx = canvas.getContext("2d");
-
-    this.SCALE.CRISP(ctx); // Try to draw pixels as accurately as possible
-    const ratio = 1;
-
-    const realWidth = image.width / ratio,
-      realHeight = image.height / ratio;
-    canvas.width = Math.ceil(realWidth);
-    canvas.height = Math.ceil(realHeight);
-
-    ctx.drawImage(image, 0, 0, realWidth, realHeight);
-    return ctx.getImageData(x, y, width, height);
-  }
 }
