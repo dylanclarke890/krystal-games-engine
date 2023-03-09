@@ -1,21 +1,25 @@
-import { System } from "./system.js";
-import { SoundManager } from "./sound.js";
-import { MediaFactory } from "./media-factory.js";
-import { GameLoop } from "./loop.js";
-import { GameLoader, LoaderEvents } from "./loader.js";
-import { Entity } from "./entity.js";
-import { EventSystem } from "./event-system.js";
+import { Logger } from "../lib/utils/logger.js";
 import { PriorityLevel } from "../lib/data-structures/p-queue.js";
 
+import { Entity } from "./entity.js";
+import { EventSystem } from "./event-system.js";
+import { GameLoop } from "./loop.js";
+import { GameLoader, LoaderEvents } from "./loader.js";
+import { MediaFactory } from "./media-factory.js";
+import { SoundManager } from "./sound.js";
+import { System } from "./system.js";
+
 export class GameRunner {
+  // Game Settings
   customGameOptions;
-  debugSystem;
   fonts;
   game;
-  loop;
   newGameClass;
-  mediaFactory;
   ready;
+
+  // Dependencies
+  loop;
+  mediaFactory;
   soundManager;
   system;
 
@@ -33,20 +37,15 @@ export class GameRunner {
   } = {}) {
     this.system = new System({ runner: this, canvasId, width, height, scale, fps });
     this.soundManager = new SoundManager(this);
-    this.mediaFactory = new MediaFactory({
-      system: this.system,
-      soundManager: this.soundManager,
-    });
-
+    this.mediaFactory = new MediaFactory({ system: this.system, soundManager: this.soundManager });
     this.fonts = Object.entries(fonts).reduce((acc, [name, path]) => {
       acc[name] = this.mediaFactory.createFont({ name, path });
       return acc;
     }, {});
-
     this.customGameOptions = customGameOptions;
+
     this.bindEvents();
     this.ready = true;
-
     this.loadedInfo = { gameClass, debugMode, fps };
     new (loaderClass ?? GameLoader)(this.system);
   }
@@ -56,7 +55,7 @@ export class GameRunner {
       LoaderEvents.LoadingComplete,
       () => {
         this.setGame(this.loadedInfo.gameClass);
-        if (this.loadedInfo.debugMode) this.launchDebugger();
+        if (this.loadedInfo.debugMode) this.#launchDebugger();
       },
       PriorityLevel.Critical
     );
@@ -78,8 +77,8 @@ export class GameRunner {
     this.loop.start();
   }
 
-  launchDebugger() {
-    console.debug("GameDebugger: Loading...");
+  #launchDebugger() {
+    Logger.getInstance.debug("GameDebugger: Loading...");
     import("../debug/debug.js").then(({ GameDebugger }) => {
       this.gameDebugger = new GameDebugger({
         baseEntityClass: Entity,

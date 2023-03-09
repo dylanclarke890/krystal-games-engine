@@ -24,7 +24,7 @@ class TestGame extends KrystalGame {
   }
 }
 
-Register.entityType(TestPlayer);
+Register.entityTypes(TestPlayer);
 
 new GameRunner({
   gameClass: TestGame,

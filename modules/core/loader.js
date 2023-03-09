@@ -52,6 +52,7 @@ export class GameLoader {
       this.end();
       return;
     }
+
     this.#pending = [];
     for (let i = 0; i < this.#assetsToPreload.length; i++) {
       this.#pending.push(this.#assetsToPreload[i].path);
