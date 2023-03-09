@@ -1,5 +1,5 @@
 import { Entity } from "../modules/core/entity.js";
-import { Font } from "../modules/core/font.js";
+import { Align } from "../modules/core/font.js";
 import { KrystalGame } from "../modules/core/game.js";
 import { Register } from "../modules/core/register.js";
 import { GameRunner } from "../modules/core/runner.js";
@@ -17,8 +17,8 @@ class TestGame extends KrystalGame {
 
   draw() {
     super.draw();
-    this.fonts.standard.write("Working", 250, 250, {
-      align: Font.ALIGN.CENTER,
+    this.fonts.standard.write("Working!", 250, 250, {
+      align: Align.Center,
       color: "green",
     });
   }

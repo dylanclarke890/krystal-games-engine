@@ -1,18 +1,29 @@
 import { Guard } from "../lib/sanity/guard.js";
 import { uniqueId } from "../lib/utils/string.js";
+import { Enum } from "../lib/utils/enum.js";
+import { noop } from "../lib/utils/func.js";
 import { Register } from "./register.js";
 
-export class Font {
-  static ALIGN = {
-    LEFT: 1,
-    RIGHT: 2,
-    CENTER: 3,
-  };
+export class Align extends Enum {
+  static {
+    this.Center = new Align();
+    this.Left = new Align();
+    this.Right = new Align();
+    this.freeze();
+  }
+}
 
-  align = null;
-  alpha = 1;
-  color = null;
-  size = null;
+export class Font {
+  /** @type {Align.Center|Align.Left|Align.Right } */
+  align;
+  /** @type {number} */
+  alpha;
+  /** @type {string} */
+  color;
+  /** @type {() => void} */
+  loadCallback;
+  /** @type {number} */
+  size;
 
   constructor({ system, name, path } = {}) {
     Guard.againstNull({ system });
@@ -22,12 +33,11 @@ export class Font {
     this.loaded = false;
     this.failed = false;
     this.load();
-    this.loadCallback = () => {};
   }
 
   load(loadCallback) {
     if (!this.loaded && this.system.ready) {
-      this.loadCallback = loadCallback || (() => {});
+      this.loadCallback = loadCallback || noop;
       const fontFace = new FontFace(this.name, `url(${this.path})`);
       document.fonts.add(fontFace);
       this.data = fontFace;
@@ -56,7 +66,7 @@ export class Font {
   write(text, x, y, opts = {}) {
     if (typeof text !== "string") text = text.toString();
     let { align, alpha, color, size } = opts;
-    align = align ?? this.align ?? Font.ALIGN.LEFT;
+    align = align ?? this.align ?? Align.Left;
     alpha = alpha ?? this.alpha ?? 1;
     color = color ?? this.color ?? "black";
     size = size ?? this.size ?? 36;
@@ -64,10 +74,10 @@ export class Font {
     const ctx = this.system.ctx;
     ctx.font = `${size}px ${this.name}`;
 
-    if (align && align !== Font.ALIGN.LEFT) {
+    if (align && align !== Align.Left) {
       const textWidth = this.sizeOf(text).width;
-      if (align === Font.ALIGN.CENTER) x -= textWidth / 2;
-      else if (align === Font.ALIGN.RIGHT) x += textWidth;
+      if (align === Align.Center) x -= textWidth / 2;
+      else if (align === Align.Right) x += textWidth;
     }
 
     if (alpha !== 1) ctx.globalAlpha = alpha;
