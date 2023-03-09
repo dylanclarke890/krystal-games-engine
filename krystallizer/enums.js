@@ -13,6 +13,7 @@ export class EditorEvents extends Enum {
     this.NewUndoState = new EditorEvents();
     this.EntityAdded = new EditorEvents();
     this.EntityDeleted = new EditorEvents();
+    this.ObjectMoved = new EditorEvents();
     this.freeze();
   }
 }

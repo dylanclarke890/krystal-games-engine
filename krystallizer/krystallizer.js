@@ -231,9 +231,9 @@ export class Krystallizer {
           }
         }
 
+        EventSystem.dispatch(EditorEvents.ObjectMoved, { obj: target, dx: cmd.dx, dy: cmd.dy });
         EventSystem.dispatch(EditorEvents.NewUndoState, cmd);
         this.drag.target = null;
-        this.selectionBox.getSelection();
       },
     }),
     select: new Mode("Select Objects", {

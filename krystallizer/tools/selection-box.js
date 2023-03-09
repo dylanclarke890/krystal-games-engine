@@ -49,6 +49,9 @@ export class SelectionBox {
   #bindEvents() {
     EventSystem.on(EditorEvents.EntityAdded, () => this.getSelection());
     EventSystem.on(EditorEvents.EntityDeleted, () => this.getSelection());
+    EventSystem.on(EditorEvents.ObjectMoved, (info) => {
+      if (!(info.obj instanceof HTMLCanvasElement)) this.getSelection();
+    });
   }
 
   enterMode() {
