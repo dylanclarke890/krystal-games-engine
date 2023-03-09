@@ -1,6 +1,7 @@
 import { Guard } from "../lib/sanity/guard.js";
 import { Register } from "./register.js";
 import { $new } from "../lib/utils/dom.js";
+import { noop } from "../lib/utils/func.js";
 
 export class GameImage {
   data = null;
@@ -9,20 +10,24 @@ export class GameImage {
   loadCallback = () => {};
   loaded = false;
   path = "";
-  /** @type {System} */
-  system;
   width = 0;
+
+  // Dependencies
+  /** @type {import("./system.js").System} */
+  system;
 
   constructor({ system, path } = {}) {
     Guard.againstNull({ system });
     Guard.againstNull({ path });
+
     this.system = system;
     this.path = path;
+
     this.load();
   }
 
   load(loadCallback) {
-    this.loadCallback = loadCallback || (() => {});
+    this.loadCallback = loadCallback || noop;
     if (!this.loaded && this.system.ready) {
       this.data = new Image();
       this.data.onload = (ev) => this.onload(ev);

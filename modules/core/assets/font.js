@@ -1,8 +1,8 @@
-import { Guard } from "../lib/sanity/guard.js";
-import { uniqueId } from "../lib/utils/string.js";
-import { Enum } from "../lib/utils/enum.js";
-import { noop } from "../lib/utils/func.js";
-import { Register } from "./register.js";
+import { Guard } from "../../lib/sanity/guard.js";
+import { uniqueId } from "../../lib/utils/string.js";
+import { Enum } from "../../lib/utils/enum.js";
+import { noop } from "../../lib/utils/func.js";
+import { Register } from "../register.js";
 
 export class Align extends Enum {
   static {
@@ -37,7 +37,7 @@ export class Font {
   failed;
 
   // Dependencies
-  /** @type {import("./system.js").System} */
+  /** @type {import("../system.js").System} */
   system;
 
   constructor({ system, path, name = uniqueId("font-") } = {}) {

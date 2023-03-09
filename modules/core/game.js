@@ -28,7 +28,7 @@ export class KrystalGame {
   entities = [];
   /** @type {import("./media-factory.js").MediaFactory} */
   media;
-  /** @type {Object.<string, import("./font.js").Font>} */
+  /** @type {Object.<string, import("./assets/font.js").Font>} */
   fonts = {};
   gravity = 0;
   /** @type {Input} */

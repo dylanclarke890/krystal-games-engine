@@ -1,5 +1,5 @@
 import { Entity } from "../modules/core/entity.js";
-import { Align } from "../modules/core/font.js";
+import { Align } from "../modules/core/assets/font.js";
 import { KrystalGame } from "../modules/core/game.js";
 import { Register } from "../modules/core/register.js";
 import { GameRunner } from "../modules/core/runner.js";
