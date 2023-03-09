@@ -445,4 +445,4 @@ export class Entity {
  * @property {Position2D} tile
  */
 
-Register.entityType(Entity);
+Register.entityTypes(Entity);

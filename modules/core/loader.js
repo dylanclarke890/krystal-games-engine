@@ -34,7 +34,7 @@ export class GameLoader {
 
   constructor(system) {
     Guard.againstNull({ system });
-    this.system = system;
+    this.#system = system;
     this.load();
   }
 
@@ -47,7 +47,7 @@ export class GameLoader {
 
   load() {
     this.#system.clear("#000");
-    this.#assetsToPreload = Register.getAssetsToPreload();
+    this.#assetsToPreload = Register.assetsToPreload;
     if (!this.#assetsToPreload?.length) {
       this.end();
       return;
