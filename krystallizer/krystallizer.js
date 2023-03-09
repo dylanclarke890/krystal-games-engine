@@ -209,7 +209,6 @@ export class Krystallizer {
       },
       onMouseUp: () => {
         const target = this.drag.target;
-        EventSystem.dispatch(EditorEvents.ObjectMoved, target);
         let cmd;
 
         switch (target) {
@@ -222,22 +221,24 @@ export class Krystallizer {
           case this.selectionBox: {
             this.selectionBox.endMoving();
             this.drag.target = null;
+            EventSystem.dispatch(EditorEvents.ObjectMoved, target);
             return;
           }
           default: {
-            const dx = target.pos.x - this.drag.start.x;
-            const dy = target.pos.y - this.drag.start.y;
+            const dx = Math.round(target.pos.x - this.drag.start.x);
+            const dy = Math.round(target.pos.y - this.drag.start.y);
             cmd = new MoveCommand(target, dx, dy);
             break;
           }
         }
 
         EventSystem.dispatch(EditorEvents.NewUndoState, cmd);
-        if (target === this.selectedEntity) {
+        if (target instanceof Entity) {
           target.pos.x = Math.round(target.pos.x);
           target.pos.y = Math.round(target.pos.y);
-          this.updateActiveEntity();
+          if (target === this.selectedEntity) this.updateActiveEntity();
         }
+        EventSystem.dispatch(EditorEvents.ObjectMoved, target);
         this.drag.target = null;
       },
     }),
