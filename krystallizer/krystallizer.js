@@ -398,7 +398,7 @@ export class Krystallizer {
 
     entityActions.apply.addEventListener("click", () => this.saveEntitySettings());
     entityActions.delete.addEventListener("click", () => {
-      if (!config.general.confirmDeleteEntity) this.removeEntity();
+      if (!config.general.confirmDeleteEntity) this.removeSelectedEntity();
     });
 
     const { div, visibility } = entitiesLayer;
@@ -483,7 +483,7 @@ export class Krystallizer {
       title: "Delete Entity?",
       body: "<p class='text-center'>Are you sure you wish to delete this entity?</p>",
       triggeredBy: [this.DOMElements.entityActions.delete],
-      onOk: () => this.removeEntity(),
+      onOk: () => this.removeSelectedEntity(),
     });
     const confirmDiscard = new ConfirmModal({
       id: "modal-discard-changes",
@@ -756,17 +756,21 @@ export class Krystallizer {
   removeSelectedEntity() {
     if (!this.selectedEntity) return;
     if (!this.removeEntity(this.selectedEntity))
-      throw new Error("Unable to find selected entity: " + JSON.stringify(this.selectedEntity));
+      this.logger.critical("Unable to find selected entity.");
     this.setActiveEntity(null);
   }
 
   removeEntity(entity) {
     const eIndex = this.entities.indexOf(entity);
     if (eIndex === -1) return false;
+
     this.entities.splice(eIndex, 1);
+    this.setModifiedState(true);
+
     EventSystem.dispatch(EditorEvents.EntityDeleted, entity);
     EventSystem.dispatch(EditorEvents.NewUndoState, new EntityDeleteCommand(entity, this.entities));
-    this.setModifiedState(true);
+
+    return true;
   }
 
   saveEntitySettings() {
