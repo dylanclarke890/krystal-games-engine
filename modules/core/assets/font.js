@@ -87,8 +87,8 @@ export class Font {
     color = color ?? this.#color ?? "black";
     size = size ?? this.#size ?? 36;
 
-    const ctx = this.system.ctx;
-    ctx.font = `${size}px ${this.name}`;
+    const { ctx, scale } = this.system;
+    ctx.font = `${size * scale}px ${this.name}`;
 
     if (align && align !== Align.Left) {
       const textWidth = this.sizeOf(text).width;
