@@ -62,6 +62,8 @@ export class GameImage {
   resize(scale) {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
+    ctx.imageSmoothingQuality = "high";
 
     this.width *= scale;
     this.height *= scale;
@@ -69,6 +71,7 @@ export class GameImage {
     canvas.height = this.height;
 
     ctx.drawImage(this.data, 0, 0, canvas.width, canvas.height);
+    this.data = canvas;
   }
 
   draw(targetX, targetY, sourceX = 0, sourceY = 0, width = this.width, height = this.height) {

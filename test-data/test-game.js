@@ -41,6 +41,6 @@ new GameRunner({
   canvasId: "canvas1",
   width: 500,
   height: 500,
-  scale: 1,
+  scale: 2,
   fonts: { standard: "./test-data/assets/arcade-classic.TTF" },
 });
