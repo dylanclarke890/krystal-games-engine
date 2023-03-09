@@ -261,7 +261,9 @@ export class Krystallizer {
       },
     }),
     eraser: new Mode("Erase Objects", {}),
-    shape: new Mode("Create Shapes", {}),
+    shape: new Mode("Create Shapes", {
+      onModeEnter: () => this.setCanvasCursor("crosshair"),
+    }),
   };
 
   setCurrentMode(mode) {
