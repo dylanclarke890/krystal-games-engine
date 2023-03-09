@@ -96,6 +96,7 @@ export class Krystallizer {
         visibility: $el("#layer-entities > .layer__visibility"),
       },
       entitySettings: {
+        entityInternalId: $el("#entity-internal-id"),
         className: $el("#class-name"),
         div: $el("#entity-settings"),
         panelHeader: $el("#entity-settings .panel__header"),
@@ -674,9 +675,10 @@ export class Krystallizer {
       return;
     }
 
-    const { className, posX, posY } = this.DOMElements.entitySettings;
+    const { entityInternalId, className, posX, posY } = this.DOMElements.entitySettings;
     this.selectedEntity = entity;
 
+    entityInternalId.value = entity.id;
     className.value = entity.constructor.name;
     posX.value = entity.pos.x;
     posY.value = entity.pos.y;
