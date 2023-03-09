@@ -209,6 +209,7 @@ export class Krystallizer {
       },
       onMouseUp: () => {
         const target = this.drag.target;
+        EventSystem.dispatch(EditorEvents.ObjectMoved, target);
         let cmd;
 
         switch (target) {
@@ -231,9 +232,12 @@ export class Krystallizer {
           }
         }
 
-        EventSystem.dispatch(EditorEvents.ObjectMoved, { obj: target, dx: cmd.dx, dy: cmd.dy });
         EventSystem.dispatch(EditorEvents.NewUndoState, cmd);
-        if (target === this.selectedEntity) this.updateActiveEntity();
+        if (target === this.selectedEntity) {
+          target.pos.x = Math.round(target.pos.x);
+          target.pos.y = Math.round(target.pos.y);
+          this.updateActiveEntity();
+        }
         this.drag.target = null;
       },
     }),

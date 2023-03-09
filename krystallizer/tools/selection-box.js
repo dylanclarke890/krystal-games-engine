@@ -49,8 +49,8 @@ export class SelectionBox {
   #bindEvents() {
     EventSystem.on(EditorEvents.EntityAdded, () => this.getSelection());
     EventSystem.on(EditorEvents.EntityDeleted, () => this.getSelection());
-    EventSystem.on(EditorEvents.ObjectMoved, (info) => {
-      if (!(info.obj instanceof HTMLCanvasElement)) this.getSelection();
+    EventSystem.on(EditorEvents.ObjectMoved, (obj) => {
+      if (!(obj instanceof HTMLCanvasElement)) this.getSelection();
     });
   }
 
@@ -180,9 +180,17 @@ export class SelectionBox {
     }
   }
 
-  endMoving() {
-    this.moveCmd.finishedMoving(this.pos.x, this.pos.y);
+  syncSelectedPositions() {
+    for (let i = 0; i < this.selected.length; i++) {
+      this.selected[i].pos.x = Math.round(this.selected[i].pos.x);
+      this.selected[i].pos.y = Math.round(this.selected[i].pos.y);
+    }
     this.getSelection();
+  }
+
+  endMoving() {
+    this.syncSelectedPositions();
+    this.moveCmd.finishedMoving(this.pos.x, this.pos.y);
     EventSystem.dispatch(EditorEvents.NewUndoState, this.moveCmd);
     this.moveCmd = null;
   }
@@ -282,10 +290,12 @@ class SelectionMoveCmd extends SelectionCmd {
 
   undo() {
     this.box.move(-this.diff.x, -this.diff.y);
+    this.box.syncSelectedPositions();
   }
 
   execute() {
     this.box.move(this.diff.x, this.diff.y);
+    this.box.syncSelectedPositions();
   }
 
   finishedMoving(x, y) {

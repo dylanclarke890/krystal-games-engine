@@ -48,16 +48,20 @@ export class MoveCommand extends Command {
     this.dy = dy;
   }
 
+  #emitEvent() {
+    EventSystem.dispatch(EditorEvents.ObjectMoved, this.object);
+  }
+
   undo() {
     this.object.pos.x -= this.dx;
     this.object.pos.y -= this.dy;
-    EventSystem.dispatch(EditorEvents.ObjectMoved, { obj: this.object, dx: -this.dx, dy: -this.dy });
+    this.#emitEvent();
   }
 
   execute() {
     this.object.pos.x += this.dx;
     this.object.pos.y += this.dy;
-    EventSystem.dispatch(EditorEvents.ObjectMoved, { obj: this.object, dx: this.dx, dy: this.dy });
+    this.#emitEvent();
   }
 }
 
