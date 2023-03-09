@@ -29,7 +29,7 @@ export class GameImage {
       this.data.onerror = (ev) => this.onerror(ev);
       this.data.src = this.path;
     } else if (this.loaded) this.loadCallback(this.path, true);
-    else Register.preloadImage(this);
+    else Register.preloadImages(this);
   }
 
   onload() {

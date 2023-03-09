@@ -36,7 +36,7 @@ export class Font {
         (err) => this.onerror(err)
       );
     } else if (this.loaded) this.loadCallback(this.path, true);
-    else Register.preloadFont(this);
+    else Register.preloadFonts(this);
   }
 
   onload() {
