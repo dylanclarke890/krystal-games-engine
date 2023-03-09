@@ -4,13 +4,23 @@ import { $new } from "../lib/utils/dom.js";
 import { noop } from "../lib/utils/func.js";
 
 export class GameImage {
-  data = null;
-  failed = false;
-  height = 0;
-  loadCallback = () => {};
-  loaded = false;
-  path = "";
-  width = 0;
+  // Image properties
+  /** @type {Image} */
+  data;
+  /** @type {number} */
+  height;
+  /** @type {number} */
+  width;
+  /** @type {string} */
+  path;
+
+  // Load properties
+  /** @type {(path: string, success: boolean) => void} */
+  loadCallback;
+  /** @type {boolean} */
+  loaded;
+  /** @type {boolean} */
+  failed;
 
   // Dependencies
   /** @type {import("./system.js").System} */
