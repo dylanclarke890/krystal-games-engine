@@ -14,49 +14,62 @@ export class Align extends Enum {
 }
 
 export class Font {
+  // Font Settings
   /** @type {Align.Center|Align.Left|Align.Right } */
-  align;
+  #align;
   /** @type {number} */
-  alpha;
+  #alpha;
   /** @type {string} */
-  color;
-  /** @type {() => void} */
-  loadCallback;
+  #color;
+  /** @type {(path:string, success: boolean) => void} */
+  #loadCallback;
   /** @type {number} */
-  size;
+  #size;
+
+  // Asset Info
+  /** @type {string} */
+  name;
+  /** @type {string} */
+  path;
+  /** @type {boolean} */
+  loaded;
+  /** @type {boolean} */
+  failed;
+
+  // Dependencies
+  /** @type {import("./system.js").System} */
+  system;
 
   constructor({ system, name, path } = {}) {
     Guard.againstNull({ system });
     this.system = system;
     this.name = name ?? uniqueId("font-");
     this.path = path;
-    this.loaded = false;
-    this.failed = false;
     this.load();
   }
 
   load(loadCallback) {
     if (!this.loaded && this.system.ready) {
-      this.loadCallback = loadCallback || noop;
+      this.#loadCallback = loadCallback || noop;
       const fontFace = new FontFace(this.name, `url(${this.path})`);
       document.fonts.add(fontFace);
       this.data = fontFace;
       this.data.load().then(
-        () => this.onload(),
-        (err) => this.onerror(err)
+        () => this.#onload(),
+        (err) => this.#onerror(err)
       );
-    } else if (this.loaded) this.loadCallback(this.path, true);
+    } else if (this.loaded) this.#loadCallback(this.path, true);
     else Register.preloadFonts(this);
   }
 
-  onload() {
+  #onload() {
     this.loaded = true;
-    this.loadCallback(this.path, true);
+    this.#loadCallback(this.path, true);
   }
 
-  onerror() {
+  #onerror() {
     this.failed = true;
-    this.loadCallback(this.path, false);
+    this.#loadCallback(this.path, false);
   }
 
   sizeOf(text) {
@@ -66,10 +79,10 @@ export class Font {
   write(text, x, y, opts = {}) {
     if (typeof text !== "string") text = text.toString();
     let { align, alpha, color, size } = opts;
-    align = align ?? this.align ?? Align.Left;
-    alpha = alpha ?? this.alpha ?? 1;
-    color = color ?? this.color ?? "black";
-    size = size ?? this.size ?? 36;
+    align = align ?? this.#align ?? Align.Left;
+    alpha = alpha ?? this.#alpha ?? 1;
+    color = color ?? this.#color ?? "black";
+    size = size ?? this.#size ?? 36;
 
     const ctx = this.system.ctx;
     ctx.font = `${size}px ${this.name}`;
