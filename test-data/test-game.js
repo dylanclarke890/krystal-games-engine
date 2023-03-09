@@ -7,12 +7,21 @@ import { GameRunner } from "../modules/core/runner.js";
 class TestPlayer extends Entity {
   constructor(opts) {
     super(opts);
+    this.size = { x: 24, y: 8 };
+    this.createAnimationSheet("./test-data/assets/entities/mover.png", { x: 24, y: 8 });
+    this.addAnim("standard", 1, [0], true);
+  }
+
+  draw() {
+    super.draw();
   }
 }
 
 class TestGame extends KrystalGame {
   constructor(opts) {
     super(opts);
+    this.spawnEntity(TestPlayer, 100, 100);
+    console.log(this.entities);
   }
 
   draw() {
@@ -25,11 +34,13 @@ class TestGame extends KrystalGame {
 }
 
 Register.entityTypes(TestPlayer);
+Register.preloadImages("./test-data/assets/entities/mover.png");
 
 new GameRunner({
   gameClass: TestGame,
   canvasId: "canvas1",
   width: 500,
   height: 500,
-  fonts: { standard: "test-data/assets/arcade-classic.TTF" },
+  scale: 1,
+  fonts: { standard: "./test-data/assets/arcade-classic.TTF" },
 });
