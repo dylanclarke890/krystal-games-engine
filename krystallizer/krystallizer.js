@@ -233,6 +233,7 @@ export class Krystallizer {
 
         EventSystem.dispatch(EditorEvents.ObjectMoved, { obj: target, dx: cmd.dx, dy: cmd.dy });
         EventSystem.dispatch(EditorEvents.NewUndoState, cmd);
+        if (target === this.selectedEntity) this.updateActiveEntity();
         this.drag.target = null;
       },
     }),
@@ -652,7 +653,7 @@ export class Krystallizer {
   onEntityDrop(className, pos) {
     // Sync the current position of the entity to spawn with it's position on the canvas.
     const bounds = this.system.canvas.getBoundingClientRect();
-    const screen = this.screen.actual;
+    const screen = this.screen.rounded;
     const x = Math.round(pos.x - bounds.x + screen.x);
     const y = Math.round(pos.y - bounds.y + screen.y);
     this.setActiveEntity(this.spawnEntity(className, x, y));
@@ -675,8 +676,13 @@ export class Krystallizer {
       return;
     }
 
-    const { entityInternalId, className, posX, posY } = this.DOMElements.entitySettings;
     this.selectedEntity = entity;
+    this.updateActiveEntity();
+  }
+
+  updateActiveEntity() {
+    const entity = this.selectedEntity;
+    const { entityInternalId, className, posX, posY } = this.DOMElements.entitySettings;
 
     entityInternalId.value = entity.id;
     className.value = entity.constructor.name;
@@ -742,18 +748,18 @@ export class Krystallizer {
   spawnEntity(className, x, y, settings = {}) {
     const entityClass = Register.getEntityByType(className);
     if (!entityClass) return null;
-    
+
     const newEntity = new entityClass({ x, y, game: this, settings });
     newEntity._additionalSettings = structuredClone(settings);
     this.entities.push(newEntity);
     if (settings.name) this.namedEntities[settings.name] = newEntity;
-    
+
     EventSystem.dispatch(EditorEvents.EntityAdded, this.entity);
     EventSystem.dispatch(
       EditorEvents.NewUndoState,
       new EntityCreateCommand(newEntity, this.entities)
     );
-    
+
     return newEntity;
   }
 
