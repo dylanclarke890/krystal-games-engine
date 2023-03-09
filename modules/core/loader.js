@@ -3,44 +3,39 @@ import { Guard } from "../lib/sanity/guard.js";
 import { Register } from "./register.js";
 import { Enum } from "../lib/utils/enum.js";
 import { EventSystem } from "./event-system.js";
-import { PriorityLevel } from "../lib/data-structures/p-queue.js";
 
 export class LoaderEvents extends Enum {
   static {
-    this.ReadyForPreloading = new LoaderEvents();
     this.LoadingComplete = new LoaderEvents();
     this.freeze();
   }
 }
 
 export class GameLoader {
-  #assetsToPreload = [];
+  // Asset Data
+  /** @type {any[]} */
+  #assetsToPreload;
+  /** @type {any[]} */
+  #pending;
+
+  // Load Status
+  /** @type {boolean} */
+  #done;
+  /** @type {number} */
+  #intervalId;
+  /** @type {number} */
   #progressPercent = 0;
-  #pending = [];
+  /** @type {number} */
+  status;
 
-  status = 0;
-  debugMode = false;
-  done = false;
-  gameClass = null;
-  intervalId = 0;
-  runner = null;
+  // Dependencies
+  /** @type {import("./system.js").System} */
+  #system;
 
-  constructor({ runner, gameClass, debugMode }) {
-    Guard.againstNull({ runner });
-    Guard.againstNull({ gameClass });
-
-    this.runner = runner;
-    this.gameClass = gameClass;
-    this.debugMode = debugMode;
-    this.bindEvents();
-  }
-
-  bindEvents() {
-    EventSystem.on(LoaderEvents.ReadyForPreloading, () => {
-      this.#assetsToPreload = Register.getAssetsToPreload();
-      for (let i = 0; i < this.#assetsToPreload.length; i++)
-        this.#pending.push(this.#assetsToPreload[i].path);
-    }, PriorityLevel.Critical);
+  constructor(system) {
+    Guard.againstNull({ system });
+    this.system = system;
+    this.load();
   }
 
   #loadCallback(path, wasSuccessful) {
@@ -51,27 +46,32 @@ export class GameLoader {
   }
 
   load() {
-    this.runner.system.clear("#000");
-    if (!this.#assetsToPreload.length) {
+    this.#system.clear("#000");
+    this.#assetsToPreload = Register.getAssetsToPreload();
+    if (!this.#assetsToPreload?.length) {
       this.end();
       return;
     }
-    for (let i = 0; i < this.#assetsToPreload.length; i++)
+    this.#pending = [];
+    for (let i = 0; i < this.#assetsToPreload.length; i++) {
+      this.#pending.push(this.#assetsToPreload[i].path);
       this.#assetsToPreload[i].load((path, success) => this.#loadCallback(path, success));
-    this.intervalId = setInterval(() => this.#drawLoadingScreen(), 16);
+    }
+    this.#intervalId = setInterval(() => this.#drawLoadingScreen(), 16);
   }
 
   end() {
-    if (this.done) return;
-    this.done = true;
-    clearInterval(this.intervalId);
+    if (this.#done) return;
+    this.#done = true;
+    clearInterval(this.#intervalId);
     Register.clearPreloadCache();
     EventSystem.dispatch(LoaderEvents.LoadingComplete);
   }
 
   #drawLoadingScreen() {
     this.#progressPercent += (this.status - this.#progressPercent) / 5;
-    const { scale, width, height, ctx } = this.runner.system;
+    const { scale, width, height, ctx } = this.#system;
+
     let barWidth = Math.floor(width * 0.6);
     let barHeight = Math.floor(height * 0.1);
     const x = Math.floor(width * 0.5 - barWidth / 2) * scale;

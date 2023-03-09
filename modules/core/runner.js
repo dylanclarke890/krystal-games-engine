@@ -2,21 +2,22 @@ import { System } from "./system.js";
 import { SoundManager } from "./sound.js";
 import { MediaFactory } from "./media-factory.js";
 import { GameLoop } from "./loop.js";
-import { GameLoader } from "./loader.js";
+import { GameLoader, LoaderEvents } from "./loader.js";
 import { Entity } from "./entity.js";
+import { EventSystem } from "./event-system.js";
+import { PriorityLevel } from "../lib/data-structures/p-queue.js";
 
 export class GameRunner {
-  customGameOptions = null;
-  debugSystem = null;
-  fonts = {};
-  game = null;
-  loader = null;
-  loop = null;
-  newGameClass = null; // TODO: link up to run() in loop
-  mediaFactory = null;
-  ready = false;
-  soundManager = null;
-  system = null;
+  customGameOptions;
+  debugSystem;
+  fonts;
+  game;
+  loop;
+  newGameClass;
+  mediaFactory;
+  ready;
+  soundManager;
+  system;
 
   constructor({
     canvasId,
@@ -27,34 +28,38 @@ export class GameRunner {
     scale,
     loaderClass,
     debugMode,
-    fonts,
+    fonts = {},
     ...customGameOptions
   } = {}) {
-    this.customGameOptions = customGameOptions;
     this.system = new System({ runner: this, canvasId, width, height, scale, fps });
     this.soundManager = new SoundManager(this);
     this.mediaFactory = new MediaFactory({
       system: this.system,
       soundManager: this.soundManager,
     });
-    this.loop = new GameLoop(fps);
 
-    // TODO - handle cases of no fonts being specified i.e fallback to a font that's always available.
-    Object.keys(fonts).forEach((fontName) => {
-      this.fonts[fontName] = this.mediaFactory.createFont({
-        name: fontName,
-        path: fonts[fontName],
-      });
-    });
+    this.fonts = Object.entries(fonts).reduce((acc, [name, path]) => {
+      acc[name] = this.mediaFactory.createFont({ name, path });
+      return acc;
+    }, {});
 
+    this.customGameOptions = customGameOptions;
+    this.bindEvents();
     this.ready = true;
-    loaderClass ??= GameLoader;
-    this.loader = new loaderClass({
-      runner: this,
-      gameClass,
-      debugMode,
-    });
-    this.loader.load();
+
+    this.loadedInfo = { gameClass, debugMode, fps };
+    new (loaderClass ?? GameLoader)(this.system);
+  }
+
+  bindEvents() {
+    EventSystem.on(
+      LoaderEvents.LoadingComplete,
+      () => {
+        this.setGame(this.loadedInfo.gameClass);
+        if (this.loadedInfo.debugMode) this.launchDebugger();
+      },
+      PriorityLevel.Critical
+    );
   }
 
   setGame(gameClass) {
@@ -69,6 +74,7 @@ export class GameRunner {
       mediaFactory: this.mediaFactory,
       ...this.customGameOptions,
     });
+    this.loop ??= new GameLoop(this.loadedInfo.fps);
     this.loop.start();
   }
 
