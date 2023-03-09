@@ -1,5 +1,4 @@
 import { uniqueId } from "../lib/utils/string.js";
-import { Guard } from "../lib/sanity/guard.js";
 
 /**
  * To be used when the asset passed to MediaFactory.create-* is just a path to the resource, instead of one of the various
@@ -55,7 +54,6 @@ export class AssetToPreload {
 
 export class Register {
   static #assetCache = {};
-
   static #preloadCache = {
     classDefinitions: {},
     assets: {
@@ -65,14 +63,25 @@ export class Register {
     },
   };
 
-  static entityType(classDefinition) {
-    Guard.againstNull({ classDefinition });
-    const store = this.#preloadCache.classDefinitions;
-    store[classDefinition.name] = classDefinition;
+  static get assetsToPreload() {
+    const preload = this.#preloadCache.assets;
+    const allAssets = new Set([...preload.font, ...preload.image, ...preload.sound]);
+    return [...allAssets.values()];
+  }
+
+  static get classDefinitions() {
+    return this.#preloadCache.classDefinitions;
+  }
+
+  static get assetCache() {
+    return this.#assetCache;
   }
 
   static entityTypes(...classDefinitions) {
-    classDefinitions.forEach((cd) => Register.entityType(cd));
+    const store = this.#preloadCache.classDefinitions;
+    classDefinitions.forEach((cd) => {
+      store[cd.name] = cd;
+    });
   }
 
   static getEntityByType(className) {
@@ -80,43 +89,22 @@ export class Register {
     return this.#preloadCache.classDefinitions[className];
   }
 
-  static preloadImage(imgOrPath) {
-    Guard.againstNull({ imgOrPath });
-    Register.preloadAsset(imgOrPath, "image");
-  }
-
   static preloadImages(...imgOrPaths) {
-    imgOrPaths.forEach((i) => Register.preloadImage(i));
-  }
-
-  static preloadSound(soundOrPath) {
-    Guard.againstNull({ soundOrPath });
-    Register.preloadAsset(soundOrPath, "sound");
+    imgOrPaths.forEach((i) => this.preloadAsset(i, "image"));
   }
 
   static preloadSounds(...soundsOrPaths) {
-    soundsOrPaths.forEach((i) => Register.preloadSound(i));
-  }
-
-  static preloadFont(fontFaceOrPath) {
-    Guard.againstNull({ fontFaceOrPath });
-    Register.preloadAsset(fontFaceOrPath, "font");
+    soundsOrPaths.forEach((i) => this.preloadAsset(i, "sound"));
   }
 
   static preloadFonts(...fontFacesOrPaths) {
-    fontFacesOrPaths.forEach((i) => Register.preloadFont(i));
+    fontFacesOrPaths.forEach((i) => this.preloadAsset(i, "font"));
   }
 
   static preloadAsset(asset, type = "image") {
     if (typeof asset === "string") asset = new AssetToPreload({ path: asset, type });
     const store = this.#preloadCache.assets[type];
     store.add(asset);
-  }
-
-  static getAssetsToPreload() {
-    const preload = this.#preloadCache.assets;
-    const allAssets = new Set([...preload.font, ...preload.image, ...preload.sound]);
-    return [...allAssets.values()];
   }
 
   static clearPreloadCache() {
@@ -127,11 +115,11 @@ export class Register {
     };
   }
 
-  static cacheAsset(path, asset) {
+  static setCacheAsset(path, asset) {
     this.#assetCache[path] = asset;
   }
 
-  static getCachedAsset(path) {
+  static getCacheAsset(path) {
     return this.#assetCache[path];
   }
 
@@ -141,20 +129,8 @@ export class Register {
    * @param {type[]} omitEntriesOfType
    */
   static getAssetCacheEntries(...omitEntriesOfType) {
-    const cacheEntries = Object.values(this.#assetCache);
-    const filtered = [];
-    cacheEntries.forEach((asset) => {
-      if (omitEntriesOfType.some((type) => asset instanceof type)) return;
-      filtered.push(asset);
-    });
-    return filtered;
-  }
-
-  static get classDefinitions() {
-    return this.#preloadCache.classDefinitions;
-  }
-
-  static get assetCache() {
-    return this.#assetCache;
+    return Object.values(this.#assetCache).filter(
+      (asset) => !omitEntriesOfType.some((type) => asset instanceof type)
+    );
   }
 }

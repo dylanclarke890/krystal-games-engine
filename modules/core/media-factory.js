@@ -28,7 +28,7 @@ export class MediaFactory {
 
   #createAsset(path, data, type) {
     if (!MediaFactory.noCache.includes(type)) {
-      const cached = Register.getCachedAsset(path);
+      const cached = Register.getCacheAsset(path);
       if (cached) return cached;
     }
 
@@ -50,7 +50,7 @@ export class MediaFactory {
         throw new Error(`Couldn't determine asset type of ${type}`);
     }
 
-    if (!MediaFactory.noCache.includes(type)) Register.cacheAsset(path, asset);
+    if (!MediaFactory.noCache.includes(type)) Register.setCacheAsset(path, asset);
     return asset;
   }
 
