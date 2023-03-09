@@ -40,11 +40,14 @@ export class Font {
   /** @type {import("./system.js").System} */
   system;
 
-  constructor({ system, name, path } = {}) {
+  constructor({ system, path, name = uniqueId("font-") } = {}) {
     Guard.againstNull({ system });
+    Guard.againstNull({ path });
+
     this.system = system;
-    this.name = name ?? uniqueId("font-");
     this.path = path;
+    this.name = name;
+
     this.load();
   }
 
