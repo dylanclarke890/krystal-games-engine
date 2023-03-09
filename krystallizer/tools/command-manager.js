@@ -20,7 +20,6 @@ export class CommandManager {
   }
 
   #addUndoCommand(command, clearRedoStack = true) {
-    console.log(command);
     if (this.#undoStack.push(command) > this.#depth) this.#undoStack.shift();
     if (clearRedoStack) this.#redoStack.length = 0;
   }

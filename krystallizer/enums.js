@@ -11,6 +11,7 @@ export class InputEvents extends Enum {
 export class EditorEvents extends Enum {
   static {
     this.NewUndoState = new EditorEvents();
+    this.EntityAdded = new EditorEvents();
     this.EntityDeleted = new EditorEvents();
     this.freeze();
   }

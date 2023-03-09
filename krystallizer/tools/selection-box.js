@@ -47,13 +47,8 @@ export class SelectionBox {
   }
 
   #bindEvents() {
-    EventSystem.on(EditorEvents.EntityDeleted, (e) => {
-      const deletedEntityIndex = this.selected.findIndex((s) => s === e);
-      if (deletedEntityIndex !== -1) {
-        this.selected.splice(deletedEntityIndex, 1);
-        this.updatePanel();
-      }
-    });
+    EventSystem.on(EditorEvents.EntityAdded, () => this.getSelection());
+    EventSystem.on(EditorEvents.EntityDeleted, () => this.getSelection());
   }
 
   enterMode() {

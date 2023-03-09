@@ -1,3 +1,6 @@
+import { EventSystem } from "../../modules/core/event-system.js";
+import { EditorEvents } from "../enums.js";
+
 export class Command {
   execute() {
     throw new Error("execute() must be implemented");
@@ -87,10 +90,13 @@ export class EntityDeleteCommand extends EntityCommand {
 
   undo() {
     this.entityList.push(this.entity);
+    EventSystem.dispatch(EditorEvents.EntityAdded, this.entity);
   }
+
   execute() {
     const eIndex = this.entityList.findIndex((e) => e === this.entity);
     if (eIndex !== -1) this.entityList.splice(eIndex, 1);
+    EventSystem.dispatch(EditorEvents.EntityDeleted, this.entity);
   }
 }
 
@@ -102,10 +108,12 @@ export class EntityCreateCommand extends EntityCommand {
   undo() {
     const eIndex = this.entityList.findIndex((e) => e === this.entity);
     if (eIndex !== -1) this.entityList.splice(eIndex, 1);
+    EventSystem.dispatch(EditorEvents.EntityDeleted, this.entity);
   }
 
   execute() {
     this.entityList.push(this.entity);
+    EventSystem.dispatch(EditorEvents.EntityAdded, this.entity);
   }
 }
 

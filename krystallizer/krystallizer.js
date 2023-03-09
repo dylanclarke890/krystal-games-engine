@@ -742,14 +742,18 @@ export class Krystallizer {
   spawnEntity(className, x, y, settings = {}) {
     const entityClass = Register.getEntityByType(className);
     if (!entityClass) return null;
+    
     const newEntity = new entityClass({ x, y, game: this, settings });
     newEntity._additionalSettings = structuredClone(settings);
     this.entities.push(newEntity);
     if (settings.name) this.namedEntities[settings.name] = newEntity;
+    
+    EventSystem.dispatch(EditorEvents.EntityAdded, this.entity);
     EventSystem.dispatch(
       EditorEvents.NewUndoState,
       new EntityCreateCommand(newEntity, this.entities)
     );
+    
     return newEntity;
   }
 
