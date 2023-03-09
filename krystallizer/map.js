@@ -12,6 +12,7 @@ export class Map {
 
 class MapCell {
   constructor() {
+    this.fgLayers = [];
     this.bgLayers = [];
     this.collision = false;
   }

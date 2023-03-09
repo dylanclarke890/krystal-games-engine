@@ -1,11 +1,22 @@
 import { removeItem } from "../lib/utils/array.js";
 import { Guard } from "../lib/sanity/guard.js";
 import { Register } from "./register.js";
+import { Enum } from "../lib/utils/enum.js";
+import { EventSystem } from "./event-system.js";
+import { PriorityLevel } from "../lib/data-structures/p-queue.js";
+
+export class LoaderEvents extends Enum {
+  static {
+    this.ReadyForPreloading = new LoaderEvents();
+    this.LoadingComplete = new LoaderEvents();
+    this.freeze();
+  }
+}
 
 export class GameLoader {
   #assetsToPreload = [];
   #progressPercent = 0;
-  #unloaded = [];
+  #pending = [];
 
   status = 0;
   debugMode = false;
@@ -21,9 +32,22 @@ export class GameLoader {
     this.runner = runner;
     this.gameClass = gameClass;
     this.debugMode = debugMode;
-    this.#assetsToPreload = Register.getAssetsToPreload();
-    for (let i = 0; i < this.#assetsToPreload.length; i++)
-      this.#unloaded.push(this.#assetsToPreload[i].path);
+    this.bindEvents();
+  }
+
+  bindEvents() {
+    EventSystem.on(LoaderEvents.ReadyForPreloading, () => {
+      this.#assetsToPreload = Register.getAssetsToPreload();
+      for (let i = 0; i < this.#assetsToPreload.length; i++)
+        this.#pending.push(this.#assetsToPreload[i].path);
+    }, PriorityLevel.Critical);
+  }
+
+  #loadCallback(path, wasSuccessful) {
+    if (!wasSuccessful) throw new Error(`Failed to load resource: ${path}`);
+    removeItem(this.#pending, path);
+    this.status = 1 - this.#pending.length / this.#assetsToPreload.length;
+    if (this.#pending.length === 0) setTimeout(() => this.end(), 250);
   }
 
   load() {
@@ -41,9 +65,8 @@ export class GameLoader {
     if (this.done) return;
     this.done = true;
     clearInterval(this.intervalId);
-    this.runner.setGame(this.gameClass);
     Register.clearPreloadCache();
-    if (this.debugMode) this.runner.launchDebugger();
+    EventSystem.dispatch(LoaderEvents.LoadingComplete);
   }
 
   #drawLoadingScreen() {
@@ -64,12 +87,5 @@ export class GameLoader {
     ctx.fillRect(x + scale, y + scale, barWidth - scale - scale, barHeight - scale - scale);
     ctx.fillStyle = "#fff";
     ctx.fillRect(x, y, barWidth * this.#progressPercent, barHeight);
-  }
-
-  #loadCallback(path, wasSuccessful) {
-    if (!wasSuccessful) throw new Error(`Failed to load resource: ${path}`);
-    removeItem(this.#unloaded, path);
-    this.status = 1 - this.#unloaded.length / this.#assetsToPreload.length;
-    if (this.#unloaded.length === 0) setTimeout(() => this.end(), 250);
   }
 }

@@ -6,6 +6,8 @@ import { Register } from "../core/register.js";
 import { CollisionMap, BackgroundMap } from "./map.js";
 import { Input } from "./input.js";
 import { Entity } from "./entity.js";
+import { EventSystem } from "./event-system.js";
+import { LoopEvents } from "./loop.js";
 
 export class KrystalGame {
   #autoSort = false;
@@ -58,6 +60,14 @@ export class KrystalGame {
     this.fonts = fonts;
     this.input = new Input({ system: this.system });
     this.#sortBy = this.#sortBy || KrystalGame.SORT.Z_INDEX;
+    this.bindEvents();
+  }
+
+  bindEvents() {
+    EventSystem.on(LoopEvents.NextFrame, () => {
+      this.update();
+      this.draw();
+    });
   }
 
   update() {

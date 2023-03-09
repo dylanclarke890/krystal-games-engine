@@ -27,7 +27,6 @@ export class GameRunner {
     scale,
     loaderClass,
     debugMode,
-    showStats,
     fonts,
     ...customGameOptions
   } = {}) {
@@ -38,7 +37,7 @@ export class GameRunner {
       system: this.system,
       soundManager: this.soundManager,
     });
-    this.loop = new GameLoop({ runner: this, showStats, targetFps: fps });
+    this.loop = new GameLoop(fps);
 
     // TODO - handle cases of no fonts being specified i.e fallback to a font that's always available.
     Object.keys(fonts).forEach((fontName) => {
