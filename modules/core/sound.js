@@ -26,8 +26,10 @@ const SoundFormats = {
 };
 
 export class SoundManager {
+  /** @type {{[x: string]: HTMLAudioElement[] | WebAudioSource}} */
   #clips = {};
-  #userAgent = null;
+  /** @type {UserAgent} */
+  #userAgent;
   volume = 1;
 
   static isSoundEnabled = !!window.Audio;
@@ -48,6 +50,7 @@ export class SoundManager {
   }
 
   #bindEvents() {
+    EventSystem.on(RunnerEvents.Ready, () => (this.ready = true));
     EventSystem.on(SoundEvents.UnlockWebAudio, () => {
       if (SoundManager.isSoundEnabled && SoundManager.useWebAudio) this.unlockWebAudio();
     });
@@ -295,6 +298,7 @@ export class Sound extends GameAudio {
   path;
   /** @type {number} */
   volume;
+  /** @type {HTMLAudioElement} */
   #currentClip;
 
   get loop() {
@@ -323,7 +327,7 @@ export class Sound extends GameAudio {
     onResultCallback ??= noop;
     if (!SoundManager.isSoundEnabled)
       onResultCallback(this.path, true); // Probably mobile, no need to load.
-    else if (!this.soundManager.runner.ready) Register.preloadSound(this);
+    else if (!this.soundManager.ready) Register.preloadSound(this);
     else this.soundManager.load(this.path, this.#multiChannel, onResultCallback);
   }
 

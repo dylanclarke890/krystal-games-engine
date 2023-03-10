@@ -6,7 +6,7 @@ import { Register } from "../modules/core/register.js";
 
 import { $el, loadImages, loadScript } from "../modules/lib/utils/dom.js";
 import { noop } from "../modules/lib/utils/func.js";
-import { Logger } from "../modules/lib/utils/logger.js";
+import { GameLogger } from "../modules/lib/utils/logger.js";
 import { formatAsJSON, hyphenToCamelCase } from "../modules/lib/utils/string.js";
 import { PriorityLevel } from "../modules/lib/data-structures/p-queue.js";
 import { Guard } from "../modules/lib/sanity/guard.js";
@@ -57,7 +57,6 @@ export class Krystallizer {
     this.system = new System();
     this.media = new MediaFactory({ system: this.system, noSound: true });
     this.loop = new GameLoop();
-    this.logger = Logger.getInstance(config.logging.level);
     /** @type {EditMap[]} */
     this.layers = [];
     /** @type {"entities" | EditMap} */
@@ -427,16 +426,16 @@ export class Krystallizer {
    */
   preloadImages(paths) {
     if (!paths.some((p) => p === config.collisionTiles.path)) {
-      this.logger.debug("preloadImages: Appending collision tiles path...");
+      GameLogger.debug("preloadImages: Appending collision tiles path...");
       paths.push(config.collisionTiles.path);
     }
 
     loadImages(paths)
       .then(() => {
-        this.logger.debug(`preloadImages: ${paths.length} images loaded.`);
+        GameLogger.debug(`preloadImages: ${paths.length} images loaded.`);
         this.initModals();
       })
-      .catch((err) => this.logger.critical(err));
+      .catch((err) => GameLogger.critical(err));
   }
 
   /**
@@ -451,7 +450,7 @@ export class Krystallizer {
         this.preloadImages(imagesResult);
         this.loadEntityScripts(entitiesResult);
       })
-      .catch((err) => this.logger.error(`Error occurred during loading: ${err}`));
+      .catch((err) => GameLogger.error(`Error occurred during loading: ${err}`));
   }
 
   initModals() {
@@ -726,7 +725,7 @@ export class Krystallizer {
   }
 
   logInvalidClasses(invalidClasses) {
-    this.logger.warn(`
+    GameLogger.warn(`
     Entity class definitions could not be fetched. Please ensure you've correctly registered the entity type by calling:
     Register.entityType(classDefinition) or
     Register.entityTypes(...classDefinitions).
@@ -773,7 +772,7 @@ export class Krystallizer {
   removeSelectedEntity() {
     if (!this.selectedEntity) return;
     if (!this.removeEntity(this.selectedEntity))
-      this.logger.critical("Unable to find selected entity.");
+      GameLogger.critical("Unable to find selected entity.");
     this.setActiveEntity(null);
   }
 
