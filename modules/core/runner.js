@@ -5,7 +5,7 @@ import { EventSystem, GameEvents } from "./event-system.js";
 import { GameLoop } from "./loop.js";
 import { GameLoader } from "./loader.js";
 import { MediaFactory } from "./media-factory.js";
-import { SoundManager } from "./sound.js";
+import { SoundManager } from "./assets/sound.js";
 import { System } from "./system.js";
 import { GameLogger } from "../lib/utils/logger.js";
 
