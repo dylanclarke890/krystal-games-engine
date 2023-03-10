@@ -1,14 +1,6 @@
 import { EventSystem } from "./event-system.js";
-import { Enum } from "../lib/utils/enum.js";
+import { GameEvents } from "./events.js";
 import { Timer } from "./timer.js";
-
-export class LoopEvents extends Enum {
-  static {
-    this.NextFrame = new LoopEvents();
-    this.StopLoop = new LoopEvents();
-    this.freeze();
-  }
-}
 
 export class GameLoop {
   /** @type {number} */
@@ -29,7 +21,7 @@ export class GameLoop {
   }
 
   #bindEvents() {
-    EventSystem.on(LoopEvents.StopLoop, () => this.stop(), 999);
+    EventSystem.on(GameEvents.Loop_Stop, () => this.stop(), 999);
   }
 
   start() {
@@ -46,7 +38,7 @@ export class GameLoop {
     if (elapsed < this.fpsInterval) return;
     this.#lastFrame = timestamp - (elapsed % this.fpsInterval);
 
-    EventSystem.dispatch(LoopEvents.NextFrame, this.clock.tick());
+    EventSystem.dispatch(GameEvents.Loop_NextFrame, this.clock.tick());
   }
 
   stop() {

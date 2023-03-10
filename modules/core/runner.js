@@ -9,6 +9,7 @@ import { SoundEvents, SoundManager } from "./sound.js";
 import { System } from "./system.js";
 import { GameLogger } from "../lib/utils/logger.js";
 import { Enum } from "../lib/utils/enum.js";
+import { GameEvents } from "./events.js";
 
 export class RunnerEvents extends Enum {
   static {
@@ -54,14 +55,14 @@ export class GameRunner {
 
     this.bindEvents();
     this.onReady();
-    
+
     this.loadedInfo = { gameClass, debugMode, fps };
     new (loaderClass ?? GameLoader)(this.system);
   }
 
   onReady() {
     this.ready = true;
-    EventSystem.dispatch(RunnerEvents.Ready);
+    EventSystem.dispatch(GameEvents.System_Ready);
   }
 
   bindEvents() {

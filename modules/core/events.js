@@ -1,14 +1,23 @@
 import { Enum } from "../lib/utils/enum.js";
 
 export class GameEvents extends Enum {
-  //region Input
-  static MouseMove = new GameEvents();
-  static WindowResized = new GameEvents();
-  static KeyPressed = new GameEvents();
-  //endregion Input
-
-  static GameInitialised = new GameEvents();
-  static NextFrame = new GameEvents();
+  //#region System (1 - 10)
+  static System_Ready = new GameEvents();
+  //#endregion System (1 - 10)
+  //region Loop (11 - 20)
+  static Loop_Start = new GameEvents();
+  static Loop_NextFrame = new GameEvents();
+  static Loop_Pause = new GameEvents();
+  static Loop_Stop = new GameEvents();
+  static Loop_Restart = new GameEvents();
+  //endregion Loop (11 - 20)
+  //region Input (21 - 40)
+  static Mouse_Down = new GameEvents();
+  static Mouse_Move = new GameEvents();
+  static Mouse_Up = new GameEvents();
+  static Mouse_Click = new GameEvents();
+  static Window_Resized = new GameEvents();
+  //endregion Input (21 - 40)
 
   static {
     this.freeze();
