@@ -22,6 +22,7 @@ export class SoundManager {
   #clips = {};
   /** @type {UserAgent} */
   #userAgent;
+  /** @type {number} */
   volume = 1;
 
   static isSoundEnabled = !!window.Audio;
@@ -58,15 +59,15 @@ export class SoundManager {
     source.start(0);
   }
 
-  load(path, multiChannel, loadCallback) {
+  load(path, multiChannel, onResultCallback) {
     return multiChannel && SoundManager.useWebAudio
-      ? this.loadWebAudio(path, multiChannel, loadCallback) // Requested as MultiChannel and we're using WebAudio.
-      : this.loadHTML5Audio(path, multiChannel, loadCallback); // HTML5 Audio - always used for Music.
+      ? this.loadWebAudio(path, multiChannel, onResultCallback) // Requested as MultiChannel and we're using WebAudio.
+      : this.loadHTML5Audio(path, onResultCallback); // HTML5 Audio - always used for Music.
   }
 
-  loadWebAudio(path, _multiChannel, loadCallback) {
-    if (this.#clips[path]) return this.#clips[path];
-    loadCallback = loadCallback || (() => {});
+  loadWebAudio(path, onResultCallback) {
+    if (this.#clips[path] instanceof WebAudioSource) return this.#clips[path];
+    onResultCallback = onResultCallback || (() => {});
     const audioSource = new WebAudioSource();
     this.#clips[path] = audioSource;
 
@@ -78,18 +79,24 @@ export class SoundManager {
         request.response,
         (buffer) => {
           audioSource.buffer = buffer;
-          loadCallback(path, true, event);
+          onResultCallback(path, true, event);
         },
-        (event) => loadCallback(path, false, event)
+        (event) => onResultCallback(path, false, event)
       );
     };
-    request.onerror = (event) => loadCallback(path, false, event);
+    request.onerror = (event) => onResultCallback(path, false, event);
     request.send();
 
     return audioSource;
   }
 
-  loadHTML5Audio(path, multiChannel, loadCallback) {
+  /**
+   * @param {string} path
+   * @param {boolean} multiChannel
+   * @param {(path:string, success: boolean) => void} onResultCallback
+   * @returns {WebAudioSource|HTMLAudioElement}
+   */
+  loadHTML5Audio(path, multiChannel, onResultCallback) {
     // Sound file already loaded?
     if (this.#clips[path]) {
       // Loaded as WebAudio, but now requested as HTML5 Audio? Probably Music?
@@ -107,19 +114,19 @@ export class SoundManager {
     }
 
     const clip = new Audio(path);
-    if (loadCallback) {
+    if (onResultCallback) {
       // The canplaythrough event is dispatched when the browser determines
       // that the sound can be played without interuption, provided the
       // download rate doesn't change.
       // Mobile browsers stubbornly refuse to preload HTML5, so we simply
       // ignore the canplaythrough event and immediately "fake" a successful
       // load callback
-      if (this.#userAgent.device.mobile) setTimeout(() => loadCallback(path, true, null), 0);
+      if (this.#userAgent.device.mobile) setTimeout(() => onResultCallback(path, true, null), 0);
       else {
-        clip.addEventListener("canplaythrough", (ev) => loadCallback(path, true, ev), {
+        clip.addEventListener("canplaythrough", (ev) => onResultCallback(path, true, ev), {
           once: true,
         });
-        clip.addEventListener("error", (ev) => loadCallback(path, false, ev), false);
+        clip.addEventListener("error", (ev) => onResultCallback(path, false, ev), false);
       }
     }
     clip.preload = "auto";
@@ -158,6 +165,7 @@ export class SoundManager {
 }
 
 export class GameAudio {
+  // Dependencies
   /** @type {SoundManager} */
   soundManager;
 
@@ -168,34 +176,51 @@ export class GameAudio {
 }
 
 export class Music extends GameAudio {
-  #currentIndex = 0;
-  #currentTrack = null;
-  #tracks = [];
-  #fadeInterval = 0;
-  #fadeTimer = null;
-  #loop = false;
-  #namedTracks = {};
-  #random = false;
-  #volume = 1;
+  /** @type {number} */
+  #currentIndex;
+  /** @type {HTMLAudioElement} */
+  #currentTrack;
+  /** @type {HTMLAudioElement[]} */
+  #tracks;
+  /** @type {number} */
+  #fadeInterval;
+  /** @type {Timer} */
+  #fadeTimer;
+  /** @type {boolean} */
+  #loop;
+  /** @type {{[x: string]: HTMLAudioElement}} */
+  #namedTracks;
+  /** @type {boolean} */
+  #random;
+  /** @type {number} */
+  #volume;
+
+  constructor(opts) {
+    super(opts);
+    this.#volume = 1;
+    this.#fadeInterval = 1;
+    this.#loop = false;
+    this.#random = false;
+    this.#namedTracks = {};
+    this.#tracks = [];
+  }
 
   get loop() {
-    return {
-      get: () => this.#loop,
-      set: (value) => {
-        this.#loop = value;
-        for (let i in this.#tracks) this.#tracks[i].loop = this.#loop;
-      },
-    };
+    return this.#loop;
+  }
+
+  set loop(value) {
+    this.#loop = value;
+    for (let i in this.#tracks) this.#tracks[i].loop = this.#loop;
   }
 
   get volume() {
-    return {
-      get: () => this.#volume,
-      set: (value) => {
-        this.#volume = constrain(value, 0, 1);
-        for (let i in this.#tracks) this.#tracks[i].volume = this.#volume;
-      },
-    };
+    return this.#volume;
+  }
+
+  set volume(value) {
+    this.#volume = value;
+    for (let i in this.#tracks) this.#tracks[i].volume = this.#volume;
   }
 
   add(music, name) {
@@ -212,7 +237,7 @@ export class Music extends GameAudio {
 
     track.loop = this.#loop;
     track.volume = this.#volume;
-    track.addEventListener("ended", () => this.#endedCallback, false);
+    track.addEventListener("ended", () => this.#onEndedCallback(), false);
     this.#tracks.push(track);
 
     if (name) this.#namedTracks[name] = track;
@@ -273,7 +298,7 @@ export class Music extends GameAudio {
     } else this.#currentTrack.volume = v;
   }
 
-  #endedCallback() {
+  #onEndedCallback() {
     if (this.#loop) this.play();
     else this.next();
   }
@@ -294,13 +319,12 @@ export class Sound extends GameAudio {
   #currentClip;
 
   get loop() {
-    return {
-      get: () => this.#loop,
-      set: (value) => {
-        this.#loop = value;
-        if (this.#currentClip) this.#currentClip.loop = this.#loop;
-      },
-    };
+    return this.#loop;
+  }
+
+  set loop(value) {
+    this.#loop = value;
+    if (this.#currentClip) this.#currentClip.loop = this.#loop;
   }
 
   constructor({ path, multiChannel, soundManager }) {
