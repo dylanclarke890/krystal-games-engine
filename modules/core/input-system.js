@@ -1,18 +1,23 @@
 import { Enum } from "../lib/utils/enum.js";
 
 export class InputKeys extends Enum {
+  //#region Mouse
   static Mouse_BtnOne = new InputKeys();
   static Mouse_BtnTwo = new InputKeys();
   static Context_Menu = new InputKeys();
   static Mouse_WheelUp = new InputKeys();
   static Mouse_WheelDown = new InputKeys();
   static Mouse_Move = new InputKeys();
+  //#endregion Mouse
 
+  //#region Touch Device
   static Touch_Start = new InputKeys();
   static Touch_End = new InputKeys();
   static Touch_Move = new InputKeys();
   static Touch_Cancel = new InputKeys();
+  //#endregion Touch Device
 
+  //#region Keyboard
   static Escape = new InputKeys();
   static BackSpace = new InputKeys();
   static Space = new InputKeys();
@@ -119,6 +124,12 @@ export class InputKeys extends Enum {
   static F10 = new InputKeys();
   static F11 = new InputKeys();
   static F12 = new InputKeys();
+  //#endregion Keyboard
+
+  //#region Accelerometer
+  static Device_Motion = new InputKeys();
+  static Device_Orientation = new InputKeys();
+  //#endregion Accelerometer
 
   //#region Gamepad
   static Button_A = new InputKeys();
@@ -131,8 +142,10 @@ export class InputKeys extends Enum {
   static Button_RT = new InputKeys();
   static Button_Back = new InputKeys();
   static Button_Start = new InputKeys();
+
   static Stick_Left = new InputKeys();
   static Stick_Right = new InputKeys();
+
   static Dpad_Up = new InputKeys();
   static Dpad_Down = new InputKeys();
   static Dpad_Left = new InputKeys();
