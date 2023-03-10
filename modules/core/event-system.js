@@ -1,11 +1,25 @@
 import { PQueue, PriorityLevel } from "../lib/data-structures/p-queue.js";
+import { Guard } from "../lib/sanity/guard.js";
 
 class GameEventSystem {
   /** @type {Map<import("../lib/utils/enum.js").Enum, PQueue>} */
   #subscribers;
+  /** @type {GameEventSystem} */
+  #parent;
 
-  constructor() {
+  constructor(parent = null) {
     this.#subscribers = new Map();
+    if (parent) {
+      Guard.isInstanceOf({ parent }, GameEventSystem);
+      this.#parent = parent;
+    }
+  }
+
+  /**
+   * Get the parent EventSystem.
+   */
+  get parent() {
+    return this.#parent;
   }
 
   /**
@@ -39,8 +53,8 @@ class GameEventSystem {
    */
   dispatch(event, data) {
     const queue = this.#subscribers.get(event);
-    if (!queue) return;
-    queue.forEach((listener) => listener(data));
+    if (queue) queue.forEach((listener) => listener(data));
+    if (this.#parent) this.#parent.dispatch(event, data);
   }
 }
 
