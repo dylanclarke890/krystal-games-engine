@@ -5,7 +5,7 @@ import { EventSystem } from "./event-system.js";
 import { GameLoop } from "./loop.js";
 import { GameLoader, LoaderEvents } from "./loader.js";
 import { MediaFactory } from "./media-factory.js";
-import { SoundManager } from "./sound.js";
+import { SoundEvents, SoundManager } from "./sound.js";
 import { System } from "./system.js";
 import { GameLogger } from "../lib/utils/logger.js";
 
@@ -36,7 +36,7 @@ export class GameRunner {
     ...customGameOptions
   } = {}) {
     this.system = new System({ runner: this, canvasId, width, height, scale, fps });
-    this.soundManager = new SoundManager(this);
+    this.soundManager = new SoundManager();
     this.mediaFactory = new MediaFactory({ system: this.system, soundManager: this.soundManager });
     this.fonts = Object.entries(fonts).reduce((acc, [name, path]) => {
       acc[name] = this.mediaFactory.createFont({ name, path });
@@ -51,6 +51,15 @@ export class GameRunner {
   }
 
   bindEvents() {
+    this.system.canvas.addEventListener(
+      "pointerdown",
+      () => EventSystem.dispatch(SoundEvents.UnlockWebAudio),
+      {
+        once: true,
+        passive: true,
+      }
+    );
+
     EventSystem.on(
       LoaderEvents.LoadingComplete,
       () => {

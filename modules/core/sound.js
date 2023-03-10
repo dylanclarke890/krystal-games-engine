@@ -1,49 +1,56 @@
 import { VendorAttributes } from "../lib/utils/vendor-attributes.js";
 import { constrain, map } from "../lib/utils/number.js";
 import { removeItem } from "../lib/utils/array.js";
+import { Enum } from "../lib/utils/enum.js";
 import { UserAgent } from "../lib/utils/user-agent.js";
 import { Guard } from "../lib/sanity/guard.js";
-import { Timer } from "./timer.js";
 
+import { Timer } from "./timer.js";
+import { EventSystem } from "./event-system.js";
 import { Register } from "./register.js";
+import { noop } from "../lib/utils/func.js";
+
+export class SoundEvents extends Enum {
+  static {
+    this.UnlockWebAudio = new SoundEvents();
+    this.freeze();
+  }
+}
+
+const SoundFormats = {
+  M4A: { ext: "m4a", mime: "audio/mp4; codecs=mp4a.40.2" },
+  MP3: { ext: "mp3", mime: "audio/mpeg" },
+  OGG: { ext: "ogg", mime: "audio/ogg; codecs=vorbis" },
+  WEBM: { ext: "webm", mime: "audio/webm; codecs=vorbis" },
+  CAF: { ext: "caf", mime: "audio/x-caf" },
+};
 
 export class SoundManager {
   #clips = {};
-  #format = null;
   #userAgent = null;
-
-  runner = null;
   volume = 1;
 
-  constructor(runner) {
-    this.runner = runner;
+  static isSoundEnabled = !!window.Audio;
+  static useWebAudio = !!window.AudioContext;
+
+  constructor() {
     VendorAttributes.normalize(window, "AudioContext");
     this.#userAgent = UserAgent.info;
 
-    // Quick sanity check if the Browser supports the Audio tag
-    if (!Sound.enabled || !window.Audio) {
-      Sound.enabled = false;
-      return;
-    }
-
+    if (!SoundManager.isSoundEnabled) return;
     // Probe sound formats and determine the file extension to load
     const probe = new Audio();
-    for (let i = 0; i < Sound.use.length; i++) {
-      const format = Sound.FORMAT[Sound.use[i]];
-      if (!probe.canPlayType(format.mime)) continue;
-      this.#format = format;
-      break;
-    }
-
     // Disable sound if no compatible format found
-    if (!this.#format) Sound.enabled = false;
+    SoundManager.isSoundEnabled = Object.entries(SoundFormats).some(([, { mime }]) =>
+      probe.canPlayType(mime)
+    );
+    this.#bindEvents();
+  }
 
-    if (Sound.enabled && Sound.useWebAudio) {
-      const canvas = this.runner.system.canvas;
-      const eventSettings = { once: true, passive: true };
-      canvas.addEventListener("touchstart", () => this.unlockWebAudio(), eventSettings);
-      canvas.addEventListener("mousedown", () => this.unlockWebAudio(), eventSettings);
-    }
+  #bindEvents() {
+    EventSystem.on(SoundEvents.UnlockWebAudio, () => {
+      if (SoundManager.isSoundEnabled && SoundManager.useWebAudio) this.unlockWebAudio();
+    });
   }
 
   /** Initialises the WebAudio Context */
@@ -57,7 +64,7 @@ export class SoundManager {
   }
 
   load(path, multiChannel, loadCallback) {
-    return multiChannel && Sound.useWebAudio
+    return multiChannel && SoundManager.useWebAudio
       ? this.loadWebAudio(path, multiChannel, loadCallback) // Requested as MultiChannel and we're using WebAudio.
       : this.loadHTML5Audio(path, multiChannel, loadCallback); // HTML5 Audio - always used for Music.
   }
@@ -197,7 +204,7 @@ export class Music extends GameAudio {
   }
 
   add(music, name) {
-    if (!Sound.enabled) return;
+    if (!SoundManager.isSoundEnabled) return;
     const path = music instanceof Sound ? music.path : music;
     const track = this.soundManager.load(path, false);
 
@@ -239,7 +246,7 @@ export class Music extends GameAudio {
   }
 
   play(name) {
-    if (!Sound.enabled) return;
+    if (!SoundManager.isSoundEnabled) return;
     // If a name was provided, stop playing the current track (if any)
     // and play the named track
     if (name && this.#namedTracks[name]) {
@@ -278,24 +285,17 @@ export class Music extends GameAudio {
 }
 
 export class Sound extends GameAudio {
-  static FORMAT = {
-    M4A: { ext: "m4a", mime: "audio/mp4; codecs=mp4a.40.2" },
-    MP3: { ext: "mp3", mime: "audio/mpeg" },
-    OGG: { ext: "ogg", mime: "audio/ogg; codecs=vorbis" },
-    WEBM: { ext: "webm", mime: "audio/webm; codecs=vorbis" },
-    CAF: { ext: "caf", mime: "audio/x-caf" },
-  };
   static channels = 4;
-  static enabled = true;
-  static use = Object.keys(Sound.FORMAT);
-  static useWebAudio = !!window.AudioContext;
 
-  #loop = false;
-
-  path = "";
-  volume = 1;
-  #currentClip = null;
-  #multiChannel = true;
+  /** @type {boolean} */
+  #loop;
+  /** @type {boolean} */
+  #multiChannel;
+  /** @type {string} */
+  path;
+  /** @type {number} */
+  volume;
+  #currentClip;
 
   get loop() {
     return {
@@ -310,20 +310,25 @@ export class Sound extends GameAudio {
   constructor({ path, multiChannel, soundManager }) {
     super({ soundManager });
     Guard.againstNull({ path });
+
     this.path = path;
-    this.#multiChannel = !!multiChannel;
+    this.volume = 1;
+    this.#loop = false;
+    this.#multiChannel = multiChannel ?? true;
+
     this.load();
   }
 
-  load(loadCallback) {
-    loadCallback = loadCallback || (() => {});
-    if (!Sound.enabled) loadCallback(this.path, true); // Probably mobile, no need to load.
+  load(onResultCallback) {
+    onResultCallback ??= noop;
+    if (!SoundManager.isSoundEnabled)
+      onResultCallback(this.path, true); // Probably mobile, no need to load.
     else if (!this.soundManager.runner.ready) Register.preloadSound(this);
-    else this.soundManager.load(this.path, this.#multiChannel, loadCallback);
+    else this.soundManager.load(this.path, this.#multiChannel, onResultCallback);
   }
 
   play() {
-    if (!Sound.enabled) return;
+    if (!SoundManager.isSoundEnabled) return;
     this.#currentClip = this.soundManager.get(this.path);
     this.#currentClip.loop = this.#loop;
     this.#currentClip.volume = this.soundManager.volume * this.volume;
@@ -338,53 +343,59 @@ export class Sound extends GameAudio {
 }
 
 export class WebAudioSource extends GameAudio {
-  #gain = null;
-  #loop = false;
-  #sources = [];
+  /** @type {GainNode} */
+  #gainNode;
+  /** @type {AudioBufferSourceNode[]} */
+  #bufferSources;
+  /** @type {boolean} */
+  #loop;
 
-  buffer = null;
+  /** @type {AudioBufferSourceNode} */
+  buffer;
 
   get loop() {
     return {
       get: () => this.#loop,
       set: (value) => {
         this.#loop = value;
-        for (let i = 0; i < this.#sources.length; i++) this.#sources[i].loop = this.#loop;
+        for (let i = 0; i < this.#bufferSources.length; i++)
+          this.#bufferSources[i].loop = this.#loop;
       },
     };
   }
 
   get volume() {
     return {
-      get: () => this.#gain.gain.value,
-      set: (value) => (this.#gain.gain.value = constrain(value, 0, 1)),
+      get: () => this.#gainNode.gain.value,
+      set: (value) => (this.#gainNode.gain.value = constrain(value, 0, 1)),
     };
   }
 
   constructor(opts) {
     super(opts);
-    this.#gain = this.soundManager.audioContext.createGain();
-    this.#gain.connect(this.soundManager.audioContext.destination);
+    this.#bufferSources = [];
+    this.#gainNode = this.soundManager.audioContext.createGain();
+    this.#gainNode.connect(this.soundManager.audioContext.destination);
   }
 
   play() {
     if (!this.buffer) return;
     const source = this.soundManager.audioContext.createBufferSource();
     source.buffer = this.buffer;
-    source.connect(this.#gain);
+    source.connect(this.#gainNode);
     source.loop = this.#loop;
-    this.#sources.push(source);
-    source.onended = () => removeItem(this.#sources, source);
+    this.#bufferSources.push(source);
+    source.onended = () => removeItem(this.#bufferSources, source);
     source.start(0);
   }
 
   pause() {
-    for (let i = 0; i < this.#sources.length; i++) {
+    this.#bufferSources.forEach((src) => {
       try {
-        this.#sources[i].stop();
+        src.stop();
       } catch (err) {
         /* empty */
       }
-    }
+    });
   }
 }
