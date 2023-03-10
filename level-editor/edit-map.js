@@ -2,7 +2,7 @@ import { $new, $el } from "../modules/lib/utils/dom.js";
 import { toInt } from "../modules/lib/utils/number.js";
 import { Guard } from "../modules/lib/sanity/guard.js";
 
-import { GameImage } from "../modules/core/image.js";
+import { GameImage } from "../modules/core/assets/image.js";
 import { BackgroundMap } from "../modules/core/map.js";
 
 import { TileSelect } from "./tile-select.js";

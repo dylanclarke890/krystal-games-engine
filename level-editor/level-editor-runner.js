@@ -2,7 +2,7 @@ import { $new } from "../modules/lib/utils/dom.js";
 import { plugin } from "../modules/lib/plugin.js";
 
 import { System } from "../modules/core/system.js";
-import { GameImage } from "../modules/core/image.js";
+import { GameImage } from "../modules/core/assets/image.js";
 import { SoundManager } from "../modules/core/sound.js";
 import { MediaFactory } from "../modules/core/media-factory.js";
 

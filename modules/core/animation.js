@@ -6,7 +6,7 @@ import { Timer } from "./timer.js";
 export class GameAnimationSheet {
   /** @type {number} */
   height;
-  /** @type {import("./image.js").GameImage} */
+  /** @type {import("./assets/image.js").GameImage} */
   image;
   /** @type {import("./system.js").System} */
   system;

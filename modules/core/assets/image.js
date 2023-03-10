@@ -1,6 +1,6 @@
-import { Guard } from "../lib/sanity/guard.js";
-import { noop } from "../lib/utils/func.js";
-import { Register } from "./register.js";
+import { Guard } from "../../lib/sanity/guard.js";
+import { noop } from "../../lib/utils/func.js";
+import { Register } from "../register.js";
 
 export class GameImage {
   // Image properties
@@ -22,7 +22,7 @@ export class GameImage {
   failed;
 
   // Dependencies
-  /** @type {import("./system.js").System} */
+  /** @type {import("../system.js").System} */
   #system;
 
   constructor({ system, path } = {}) {

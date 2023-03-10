@@ -2,9 +2,9 @@
 
 /// <reference path="modules/core/animation.js"/>
 /// <reference path="modules/core/entity.js"/>
-/// <reference path="modules/core/font.js"/>
+/// <reference path="modules/core/assets/font.js"/>
 /// <reference path="modules/core/game.js"/>
-/// <reference path="modules/core/image.js"/>
+/// <reference path="modules/core/assets/image.js"/>
 /// <reference path="modules/core/input.js"/>
 /// <reference path="modules/core/loader.js"/>
 /// <reference path="modules/core/loop.js"/>
@@ -74,7 +74,6 @@
 /// <reference path="modules/lib/mixins/edges.js"/>
 /// <reference path="modules/lib/mixins/fade-entity.js"/>
 /// <reference path="modules/lib/mixins/fixed-entity.js"/>
-/// <reference path="modules/lib/mixins/observable.js"/>
 /// <reference path="modules/lib/mixins/state-machine.js"/>
 //#endregion LIB.MIXINS
 

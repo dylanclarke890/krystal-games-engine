@@ -3,7 +3,7 @@ import { Register } from "./register.js";
 import { Font } from "./assets/font.js";
 import { Sound } from "./sound.js";
 import { GameAnimationSheet } from "./animation.js";
-import { GameImage } from "./image.js";
+import { GameImage } from "./assets/image.js";
 
 export class MediaFactory {
   #system = null;
