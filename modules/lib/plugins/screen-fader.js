@@ -1,4 +1,4 @@
-import { GameAnimation } from "../core/animation.js";
+import { GameAnimation } from "../core/assets/animation.js";
 import { Guard } from "../lib/guard.js";
 import { Timer } from "../lib/timer.js";
 

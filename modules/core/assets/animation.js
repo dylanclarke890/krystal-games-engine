@@ -1,14 +1,14 @@
-import { Assert } from "../lib/sanity/assert.js";
-import { Guard } from "../lib/sanity/guard.js";
-import { arrayFromInterval } from "../lib/utils/array.js";
-import { Timer } from "./timer.js";
+import { Assert } from "../../lib/sanity/assert.js";
+import { Guard } from "../../lib/sanity/guard.js";
+import { arrayFromInterval } from "../../lib/utils/array.js";
+import { Timer } from "../timer.js";
 
 export class GameAnimationSheet {
   /** @type {number} */
   height;
-  /** @type {import("./assets/image.js").GameImage} */
+  /** @type {import("./image.js").GameImage} */
   image;
-  /** @type {import("./system.js").System} */
+  /** @type {import("../system.js").System} */
   system;
   /** @type {number} */
   width;

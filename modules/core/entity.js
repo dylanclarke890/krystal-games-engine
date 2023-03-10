@@ -1,7 +1,7 @@
 import { constrain, toRad } from "../lib/utils/number.js";
 import { Guard } from "../lib/sanity/guard.js";
 import { Register } from "./register.js";
-import { GameAnimation } from "./animation.js";
+import { GameAnimation } from "./assets/animation.js";
 
 export class Entity {
   /** Collision Types - Determine if and how entities collide with each other.
@@ -43,7 +43,7 @@ export class Entity {
   minBounceVelocity = 40;
   /** @type {Object.<string, GameAnimation>} */
   anims = {};
-  /** @type {import("./animation.js").GameAnimationSheet} */
+  /** @type {import("./assets/animation.js").GameAnimationSheet} */
   animSheet = null;
   /** @type {GameAnimation} */
   currentAnim = null;
