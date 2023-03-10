@@ -9,6 +9,7 @@ import { Timer } from "./timer.js";
 import { EventSystem } from "./event-system.js";
 import { Register } from "./register.js";
 import { noop } from "../lib/utils/func.js";
+import { RunnerEvents } from "./runner.js";
 
 export class SoundEvents extends Enum {
   static {

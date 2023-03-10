@@ -8,6 +8,14 @@ import { MediaFactory } from "./media-factory.js";
 import { SoundEvents, SoundManager } from "./sound.js";
 import { System } from "./system.js";
 import { GameLogger } from "../lib/utils/logger.js";
+import { Enum } from "../lib/utils/enum.js";
+
+export class RunnerEvents extends Enum {
+  static {
+    this.Ready = new RunnerEvents();
+    this.freeze();
+  }
+}
 
 export class GameRunner {
   // Game Settings
@@ -45,9 +53,15 @@ export class GameRunner {
     this.customGameOptions = customGameOptions;
 
     this.bindEvents();
-    this.ready = true;
+    this.onReady();
+    
     this.loadedInfo = { gameClass, debugMode, fps };
     new (loaderClass ?? GameLoader)(this.system);
+  }
+
+  onReady() {
+    this.ready = true;
+    EventSystem.dispatch(RunnerEvents.Ready);
   }
 
   bindEvents() {
