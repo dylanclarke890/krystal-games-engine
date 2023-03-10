@@ -53,7 +53,15 @@ class Mode {
 }
 
 export class Krystallizer {
+  initLogger() {
+    if (config.logging.enabled) {
+      GameLogger.setLevel(config.logging.level);
+      GameLogger.setShowTimestamp(config.logging.showTimestamp);
+    } else GameLogger.setEnabled(false);
+  }
+
   constructor() {
+    this.initLogger();
     this.system = new System();
     this.media = new MediaFactory({ system: this.system, noSound: true });
     this.loop = new GameLoop();
@@ -889,13 +897,13 @@ export class Krystallizer {
       .save(path, dataString)
       .then((res) => {
         if (res.error) {
-          this.logger.error(res.msg);
+          GameLogger.error(res.msg);
           return;
         }
         this.setModifiedState(false);
         localStorage.setItem(config.storageKeys.lastLevel, path);
       })
-      .catch((err) => this.logger.error(err));
+      .catch((err) => GameLogger.error(err));
   }
 
   //#endregion Level

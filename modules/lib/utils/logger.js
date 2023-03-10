@@ -1,5 +1,3 @@
-import { config } from "../../../krystallizer/config.js";
-
 class Logger {
   static #levels = {
     critical: { lvl: 0, prefix: "[CRITICAL]", color: "darkred", background: "red" },
@@ -11,10 +9,10 @@ class Logger {
 
   /** @type {Logger} */
   static #instance;
-  static #enabled = config.logging.enabled;
-  static #showTimestamp = config.logging.showTimestamp;
+  static #enabled = true;
+  static #showTimestamp = true;
 
-  static getInstance(level = config.logging.level) {
+  static getInstance(level = "debug") {
     if (this.#instance) {
       if (level) this.#instance.setLevel(level);
       return this.#instance;
@@ -27,7 +25,7 @@ class Logger {
   /**
    * @param {[string]} initialLevel
    */
-  constructor(initialLevel = config.logging.level) {
+  constructor(initialLevel = "debug") {
     if (Logger.#instance) return Logger.#instance;
     this.setLevel(initialLevel);
   }
@@ -71,6 +69,22 @@ class Logger {
   setLevel(level) {
     if (!(level in Logger.#levels)) throw new Error(`Invalid logging level '${level}'`);
     this.level = level;
+  }
+
+  /**
+   * Globally sets whether logging is enabled.
+   * Defined on the instance as we export an instance as opposed to the class (Singleton pattern).
+   */
+  setEnabled(enabled) {
+    Logger.#enabled = !!enabled;
+  }
+
+  /**
+   * Globally sets whether to show a timestamp when outputting a log.
+   * Defined on the instance as we export an instance as opposed to the class (Singleton pattern).
+   */
+  setShowTimestamp(show) {
+    Logger.#showTimestamp = !!show;
   }
 }
 
