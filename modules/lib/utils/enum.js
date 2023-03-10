@@ -28,7 +28,7 @@ export class Enum {
    * @param {string} str
    * @returns {undefined|Enum}
    */
-  static enumValueOf(str) {
+  static from(str) {
     const index = this.enumKeys.indexOf(str);
     return index >= 0 ? this.enumValues[index] : undefined;
   }
@@ -41,11 +41,12 @@ export class Enum {
   enumKey;
   /** @type {number} */
   enumOrdinal;
-  /** @type {any} */
+  /** @type {number|any} */
   #value;
 
   /**
-   * @param {any} [value]
+   * @param {number|any} [value] Optional value to use instead of it's index.
+   * Recommended to be a number but can technically be anything.
    */
   constructor(value) {
     this.#value = value;

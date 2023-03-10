@@ -3,7 +3,7 @@ import { Guard } from "../lib/sanity/guard.js";
 import { Enum } from "../lib/utils/enum.js";
 
 class GameEventSystem {
-  /** @type {Map<import("../lib/utils/enum.js").Enum, PQueue>} */
+  /** @type {Map<Enum, PQueue>} */
   #subscribers;
   /** @type {GameEventSystem} */
   #parent;
@@ -25,7 +25,7 @@ class GameEventSystem {
 
   /**
    * Subscribe to an event.
-   * @param {import("../lib/utils/enum.js").Enum} event
+   * @param {Enum} event
    * @param {(data:any) => void} listener
    * @param {number|PriorityLevel} priority
    */
@@ -38,7 +38,7 @@ class GameEventSystem {
 
   /**
    * Unsubscribe from an event.
-   * @param {import("../lib/utils/enum.js").Enum} event
+   * @param {Enum} event
    * @param {(data:any) => void} listener
    */
   off(event, listener) {
@@ -49,7 +49,7 @@ class GameEventSystem {
 
   /**
    * Dispatch an event to subscribers.
-   * @param {import("../lib/utils/enum.js").Enum} event
+   * @param {Enum} event
    * @param {any} data
    */
   dispatch(event, data) {
@@ -60,31 +60,40 @@ class GameEventSystem {
 }
 
 export class GameEvents extends Enum {
-  //#region System (1 - 10)
+  //#region System
   static System_ReadyToLoad = new GameEvents();
   static System_PreloadingAssets = new GameEvents();
   static System_PreloadingComplete = new GameEvents();
-  //#endregion System (1 - 10)
+  //#endregion System
 
-  //region Loop (11 - 20)
+  //region Entity
+  static Entity_Created = new GameEvents();
+  static Entity_Destroyed = new GameEvents();
+  //endregion Entity
+
+  //region Loop
   static Loop_Start = new GameEvents();
   static Loop_NextFrame = new GameEvents();
   static Loop_Pause = new GameEvents();
   static Loop_Stop = new GameEvents();
   static Loop_Restart = new GameEvents();
-  //endregion Loop (11 - 20)
+  //endregion Loop
 
-  //region Input (21 - 40)
+  //region Input
   static Mouse_Down = new GameEvents();
   static Mouse_Move = new GameEvents();
   static Mouse_Up = new GameEvents();
   static Mouse_Click = new GameEvents();
   static Window_Resized = new GameEvents();
-  //endregion Input (21 - 40)
+  //endregion Input
 
-  //region Sound (41 - 50)
+  //region Sound
   static Sound_UnlockWebAudio = new GameEvents();
-  //endregion Sound (41 - 50)
+  static Sound_Played = new GameEvents();
+  static Sound_Paused = new GameEvents();
+  static Sound_Stopped = new GameEvents();
+  static Sound_Looped = new GameEvents();
+  //endregion Sound
 
   static {
     this.freeze();
