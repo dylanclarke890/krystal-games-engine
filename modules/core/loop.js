@@ -11,7 +11,14 @@ export class LoopEvents extends Enum {
 }
 
 export class GameLoop {
+  /** @type {number} */
   #lastFrame;
+  /** @type {Timer} */
+  clock;
+  /** @type {number} */
+  fpsInterval;
+  /** @type {number} */
+  targetFps;
 
   constructor(targetFps = 60) {
     this.clock = new Timer();
