@@ -24,19 +24,30 @@ export class GameAnimationSheet {
 }
 
 export class GameAnimation {
+  /** @type {number} */
   #frame;
+  /** @type {number} */
   #frameTime;
+  /** @type {number[]} */
   #sequence;
   /** @type {GameAnimationSheet} */
   #sheet;
+  /** @type {boolean} */
   #stop;
+  /** @type {number} */
   #tile;
+  /** @type {Timer} */
   #timer;
 
+  /** @type {number} */
   alpha;
+  /** @type {number} */
   angle;
+  /** @type {{x: boolean, y:boolean}} */
   flip;
+  /** @type {{x:number, y:number}} */
   pivot;
+  /** @type {number} */
   loopCount;
 
   constructor(sheet, frameTime, sequence, stop) {
@@ -54,6 +65,11 @@ export class GameAnimation {
     this.flip = { x: false, y: false };
   }
 
+  /**
+   * Draw the current animation frame.
+   * @param {number} targetX
+   * @param {number} targetY
+   */
   draw(targetX, targetY) {
     const bbsize = Math.max(this.#sheet.width, this.#sheet.height);
     const { width, height, ctx, drawPosition } = this.#sheet.system;
@@ -89,6 +105,7 @@ export class GameAnimation {
     if (this.alpha !== 1) ctx.globalAlpha = 1;
   }
 
+  /** Updates the current frame of the animation. */
   update() {
     const frameTotal = Math.floor(this.#timer.delta() / this.#frameTime);
     this.loopCount = Math.floor(frameTotal / this.#sequence.length);
@@ -97,6 +114,7 @@ export class GameAnimation {
     this.#tile = this.#sequence[this.#frame];
   }
 
+  /** Restart this animation. */
   rewind() {
     this.#timer.set();
     this.loopCount = 0;
@@ -105,13 +123,18 @@ export class GameAnimation {
     return this;
   }
 
-  gotoFrame(f) {
+  /**
+   * Go to a specific frame.
+   * @param {number} frame
+   */
+  gotoFrame(frame) {
     // Offset the timer by one tenth of a millisecond to make sure we
     // jump to the correct frame and circumvent rounding errors
-    this.#timer.set(this.#frameTime * -f - 0.0001);
+    this.#timer.set(this.#frameTime * -frame - 0.0001);
     this.update();
   }
 
+  /** Go to a random frame. */
   gotoRandomFrame() {
     this.gotoFrame(Math.floor(Math.random() * this.#sequence.length));
   }
