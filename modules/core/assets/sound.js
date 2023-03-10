@@ -59,32 +59,29 @@ export class SoundManager {
     source.start(0);
   }
 
-  load(path, multiChannel, onResultCallback) {
+  load(path, multiChannel, onResultCallback = noop) {
     return multiChannel && SoundManager.useWebAudio
       ? this.loadWebAudio(path, multiChannel, onResultCallback) // Requested as MultiChannel and we're using WebAudio.
       : this.loadHTML5Audio(path, onResultCallback); // HTML5 Audio - always used for Music.
   }
 
-  loadWebAudio(path, onResultCallback) {
-    if (this.#clips[path] instanceof WebAudioSource) return this.#clips[path];
-    onResultCallback = onResultCallback || (() => {});
-    const audioSource = new WebAudioSource();
-    this.#clips[path] = audioSource;
+  loadWebAudio(path, onResultCallback = noop) {
+    const audioSource = this.#clips[path];
+    if (audioSource instanceof WebAudioSource) return audioSource;
 
     const request = new XMLHttpRequest();
-    request.open("GET", path, true);
-    request.responseType = "arraybuffer";
+    request.open("GET", path, true).responseType = "arraybuffer";
     request.onload = (event) => {
       this.audioContext.decodeAudioData(
         request.response,
         (buffer) => {
           audioSource.buffer = buffer;
-          onResultCallback(path, true, event);
+          onResultCallback(`${path}`, true, event);
         },
-        (event) => onResultCallback(path, false, event)
+        (event) => onResultCallback(`${path}`, false, event)
       );
     };
-    request.onerror = (event) => onResultCallback(path, false, event);
+    request.onerror = (event) => onResultCallback(`${path}`, false, event);
     request.send();
 
     return audioSource;
