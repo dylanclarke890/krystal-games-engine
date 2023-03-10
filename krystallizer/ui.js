@@ -1,5 +1,4 @@
-import { EventSystem } from "../modules/core/event-system.js";
-import { GameEvents } from "../modules/core/events.js";
+import { EventSystem, GameEvents } from "../modules/core/event-system.js";
 import { BackgroundMap } from "../modules/core/map.js";
 import { Guard } from "../modules/lib/sanity/guard.js";
 import { $el, screenshotCanvas } from "../modules/lib/utils/dom.js";

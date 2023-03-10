@@ -5,10 +5,9 @@ import { UserAgent } from "../lib/utils/user-agent.js";
 import { Guard } from "../lib/sanity/guard.js";
 
 import { Timer } from "./timer.js";
-import { EventSystem } from "./event-system.js";
+import { EventSystem, GameEvents } from "./event-system.js";
 import { Register } from "./register.js";
 import { noop } from "../lib/utils/func.js";
-import { GameEvents } from "./events.js";
 
 const SoundFormats = {
   M4A: { ext: "m4a", mime: "audio/mp4; codecs=mp4a.40.2" },

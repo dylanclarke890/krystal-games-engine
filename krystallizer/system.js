@@ -1,5 +1,4 @@
-import { EventSystem } from "../modules/core/event-system.js";
-import { GameEvents } from "../modules/core/events.js";
+import { EventSystem, GameEvents } from "../modules/core/event-system.js";
 import { config } from "./config.js";
 
 export class System {

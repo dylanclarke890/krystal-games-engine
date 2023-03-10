@@ -6,8 +6,7 @@ import { Register } from "../core/register.js";
 import { CollisionMap, BackgroundMap } from "./map.js";
 import { Input } from "./input.js";
 import { Entity } from "./entity.js";
-import { EventSystem } from "./event-system.js";
-import { GameEvents } from "./events.js";
+import { EventSystem, GameEvents } from "./event-system.js";
 
 export class KrystalGame {
   #autoSort = false;

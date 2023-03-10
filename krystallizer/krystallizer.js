@@ -1,5 +1,5 @@
 import { Entity } from "../modules/core/entity.js";
-import { EventSystem } from "../modules/core/event-system.js";
+import { EventSystem, GameEvents } from "../modules/core/event-system.js";
 import { GameLoop } from "../modules/core/loop.js";
 import { MediaFactory } from "../modules/core/media-factory.js";
 import { Register } from "../modules/core/register.js";
@@ -26,7 +26,6 @@ import { EditorActions, EditorEvents } from "./enums.js";
 import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
 import { ConfirmModal, EntityDisplay, Panel, SelectLevelModal } from "./ui.js";
-import { GameEvents } from "../modules/core/events.js";
 
 class Mode {
   /**

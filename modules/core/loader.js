@@ -1,8 +1,7 @@
 import { removeItem } from "../lib/utils/array.js";
 import { Guard } from "../lib/sanity/guard.js";
 import { Register } from "./register.js";
-import { EventSystem } from "./event-system.js";
-import { GameEvents } from "./events.js";
+import { EventSystem, GameEvents } from "./event-system.js";
 
 export class GameLoader {
   // Asset Data
