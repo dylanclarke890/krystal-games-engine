@@ -1,6 +1,6 @@
 import { config } from "../../../krystallizer/config.js";
 
-export class Logger {
+class Logger {
   static #levels = {
     critical: { lvl: 0, prefix: "[CRITICAL]", color: "darkred", background: "red" },
     error: { lvl: 1, prefix: "[ERROR]", color: "darkred", background: "lightcoral" },
@@ -14,7 +14,7 @@ export class Logger {
   static #enabled = config.logging.enabled;
   static #showTimestamp = config.logging.showTimestamp;
 
-  static getInstance(level) {
+  static getInstance(level = config.logging.level) {
     if (this.#instance) {
       if (level) this.#instance.setLevel(level);
       return this.#instance;
@@ -27,7 +27,8 @@ export class Logger {
   /**
    * @param {[string]} initialLevel
    */
-  constructor(initialLevel = "info") {
+  constructor(initialLevel = config.logging.level) {
+    if (Logger.#instance) return Logger.#instance;
     this.setLevel(initialLevel);
   }
 
@@ -72,3 +73,5 @@ export class Logger {
     this.level = level;
   }
 }
+
+export const GameLogger = Logger.getInstance();

@@ -1,4 +1,3 @@
-import { Logger } from "../lib/utils/logger.js";
 import { PriorityLevel } from "../lib/data-structures/p-queue.js";
 
 import { Entity } from "./entity.js";
@@ -8,6 +7,7 @@ import { GameLoader, LoaderEvents } from "./loader.js";
 import { MediaFactory } from "./media-factory.js";
 import { SoundManager } from "./sound.js";
 import { System } from "./system.js";
+import { GameLogger } from "../lib/utils/logger.js";
 
 export class GameRunner {
   // Game Settings
@@ -78,7 +78,7 @@ export class GameRunner {
   }
 
   #launchDebugger() {
-    Logger.getInstance.debug("GameDebugger: Loading...");
+    GameLogger.debug("GameDebugger: Loading...");
     import("../debug/debug.js").then(({ GameDebugger }) => {
       this.gameDebugger = new GameDebugger({
         baseEntityClass: Entity,

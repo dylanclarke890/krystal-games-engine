@@ -3,7 +3,7 @@ import { BackgroundMap } from "../modules/core/map.js";
 import { Guard } from "../modules/lib/sanity/guard.js";
 import { $el, screenshotCanvas } from "../modules/lib/utils/dom.js";
 import { bind } from "../modules/lib/utils/func.js";
-import { Logger } from "../modules/lib/utils/logger.js";
+import { GameLogger } from "../modules/lib/utils/logger.js";
 import { config } from "./config.js";
 import { EditorActions, InputEvents } from "./enums.js";
 
@@ -200,7 +200,6 @@ export class SelectLevelModal extends Modal {
     this.httpClient.api
       .browse(config.directories.levels, "scripts")
       .then((paths) => this.loadLevels(paths));
-    this.logger = Logger.getInstance();
     this.selected = null;
   }
 
@@ -243,7 +242,7 @@ export class SelectLevelModal extends Modal {
 
   parseData(data) {
     if (!data) {
-      Logger.getInstance().error("parseData - no data provided.");
+      GameLogger.error("parseData - no data provided.");
       return;
     }
 
@@ -453,7 +452,7 @@ export class EntityDisplay {
     };
     img.addEventListener("load", onLoad);
     img.addEventListener("error", (e) =>
-      Logger.getInstance().critical("EntityDisplay - construct - error loading image:", e)
+      GameLogger.critical("EntityDisplay - construct - error loading image:", e)
     );
     img.src = src;
 
@@ -506,7 +505,7 @@ export class EntityDisplay {
 
     const canvas = document.querySelector("canvas");
     if (!canvas) {
-      Logger.getInstance().critical("EntityDisplay: canvas not found.");
+      GameLogger.critical("EntityDisplay: canvas not found.");
       return;
     }
     const origCursor = canvas.style.cursor;
