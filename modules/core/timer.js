@@ -41,7 +41,8 @@ export class Timer {
   }
 
   delta() {
-    return (this.pausedAt || Timer.time) - this.base - this.target;
+    const d = (this.pausedAt || Timer.time) - this.base - this.target;
+    return d < 0 ? 0 : d;
   }
 
   pause() {
