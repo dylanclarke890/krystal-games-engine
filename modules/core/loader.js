@@ -1,15 +1,8 @@
 import { removeItem } from "../lib/utils/array.js";
 import { Guard } from "../lib/sanity/guard.js";
 import { Register } from "./register.js";
-import { Enum } from "../lib/utils/enum.js";
 import { EventSystem } from "./event-system.js";
-
-export class LoaderEvents extends Enum {
-  static {
-    this.LoadingComplete = new LoaderEvents();
-    this.freeze();
-  }
-}
+import { GameEvents } from "./events.js";
 
 export class GameLoader {
   // Asset Data
@@ -66,7 +59,7 @@ export class GameLoader {
     this.#done = true;
     clearInterval(this.#intervalId);
     Register.clearPreloadCache();
-    EventSystem.dispatch(LoaderEvents.LoadingComplete);
+    EventSystem.dispatch(GameEvents.System_PreloadingComplete);
   }
 
   #drawLoadingScreen() {

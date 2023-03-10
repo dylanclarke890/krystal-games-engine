@@ -7,7 +7,7 @@ import { CollisionMap, BackgroundMap } from "./map.js";
 import { Input } from "./input.js";
 import { Entity } from "./entity.js";
 import { EventSystem } from "./event-system.js";
-import { LoopEvents } from "./loop.js";
+import { GameEvents } from "./events.js";
 
 export class KrystalGame {
   #autoSort = false;
@@ -64,7 +64,7 @@ export class KrystalGame {
   }
 
   bindEvents() {
-    EventSystem.on(LoopEvents.NextFrame, () => {
+    EventSystem.on(GameEvents.Loop_NextFrame, () => {
       this.update();
       this.draw();
     });

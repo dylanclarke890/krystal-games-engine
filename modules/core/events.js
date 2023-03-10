@@ -2,7 +2,9 @@ import { Enum } from "../lib/utils/enum.js";
 
 export class GameEvents extends Enum {
   //#region System (1 - 10)
-  static System_Ready = new GameEvents();
+  static System_ReadyToLoad = new GameEvents();
+  static System_PreloadingAssets = new GameEvents();
+  static System_PreloadingComplete = new GameEvents();
   //#endregion System (1 - 10)
 
   //region Loop (11 - 20)

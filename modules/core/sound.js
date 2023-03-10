@@ -43,7 +43,7 @@ export class SoundManager {
   }
 
   #bindEvents() {
-    EventSystem.on(GameEvents.System_Ready, () => (this.ready = true));
+    EventSystem.on(GameEvents.System_ReadyToLoad, () => (this.ready = true));
     EventSystem.on(GameEvents.Sound_UnlockWebAudio, () => {
       if (SoundManager.isSoundEnabled && SoundManager.useWebAudio) this.unlockWebAudio();
     });

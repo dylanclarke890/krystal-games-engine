@@ -8,15 +8,7 @@ import { MediaFactory } from "./media-factory.js";
 import { SoundManager } from "./sound.js";
 import { System } from "./system.js";
 import { GameLogger } from "../lib/utils/logger.js";
-import { Enum } from "../lib/utils/enum.js";
 import { GameEvents } from "./events.js";
-
-export class RunnerEvents extends Enum {
-  static {
-    this.Ready = new RunnerEvents();
-    this.freeze();
-  }
-}
 
 export class GameRunner {
   // Game Settings
@@ -62,7 +54,7 @@ export class GameRunner {
 
   onReady() {
     this.ready = true;
-    EventSystem.dispatch(GameEvents.System_Ready);
+    EventSystem.dispatch(GameEvents.System_ReadyToLoad);
   }
 
   bindEvents() {
