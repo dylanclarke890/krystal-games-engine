@@ -1,6 +1,6 @@
 import { Entity } from "../modules/core/entity.js";
 import { EventSystem } from "../modules/core/event-system.js";
-import { GameLoop, LoopEvents } from "../modules/core/loop.js";
+import { GameLoop } from "../modules/core/loop.js";
 import { MediaFactory } from "../modules/core/media-factory.js";
 import { Register } from "../modules/core/register.js";
 
@@ -22,10 +22,11 @@ import {
 } from "./tools/base-commands.js";
 import { config } from "./config.js";
 import { EditMap } from "./edit-map.js";
-import { EditorActions, EditorEvents, InputEvents } from "./enums.js";
+import { EditorActions, EditorEvents } from "./enums.js";
 import { KrystallizerHttpClient } from "./http-client.js";
 import { System } from "./system.js";
 import { ConfirmModal, EntityDisplay, Panel, SelectLevelModal } from "./ui.js";
+import { GameEvents } from "../modules/core/events.js";
 
 class Mode {
   /**
@@ -309,7 +310,11 @@ export class Krystallizer {
   }
 
   bindEventSystemListeners() {
-    EventSystem.on(LoopEvents.NextFrame, (tick) => this.nextFrame(tick), PriorityLevel.Critical);
+    EventSystem.on(
+      GameEvents.Loop_NextFrame,
+      (tick) => this.nextFrame(tick),
+      PriorityLevel.Critical
+    );
     EventSystem.on(EditorActions.EntityDragStart, (e) => (this.drag.clone = e), PriorityLevel.High);
     EventSystem.on(
       EditorActions.EntityDragEnd,
@@ -323,7 +328,7 @@ export class Krystallizer {
 
   bindMouseEvents() {
     EventSystem.on(
-      InputEvents.MouseMove,
+      GameEvents.Mouse_Move,
       (mouse) => this.handleMouseMove(mouse),
       PriorityLevel.High
     );

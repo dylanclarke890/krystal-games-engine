@@ -3,7 +3,7 @@ import { PriorityLevel } from "../lib/data-structures/p-queue.js";
 import { Entity } from "./entity.js";
 import { EventSystem } from "./event-system.js";
 import { GameLoop } from "./loop.js";
-import { GameLoader, LoaderEvents } from "./loader.js";
+import { GameLoader } from "./loader.js";
 import { MediaFactory } from "./media-factory.js";
 import { SoundManager } from "./sound.js";
 import { System } from "./system.js";
@@ -68,7 +68,7 @@ export class GameRunner {
     );
 
     EventSystem.on(
-      LoaderEvents.LoadingComplete,
+      GameEvents.System_PreloadingComplete,
       () => {
         this.setGame(this.loadedInfo.gameClass);
         if (this.loadedInfo.debugMode) this.#launchDebugger();

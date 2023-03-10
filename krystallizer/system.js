@@ -1,6 +1,6 @@
 import { EventSystem } from "../modules/core/event-system.js";
+import { GameEvents } from "../modules/core/events.js";
 import { config } from "./config.js";
-import { InputEvents } from "./enums.js";
 
 export class System {
   constructor() {
@@ -41,7 +41,7 @@ export class System {
     this.mouse.dx = this.mouse.x - this.mouseLast.x;
     this.mouse.dy = this.mouse.y - this.mouseLast.y;
 
-    EventSystem.dispatch(InputEvents.MouseMove, this.mouse);
+    EventSystem.dispatch(GameEvents.Mouse_Move, this.mouse);
   }
 
   resize() {
@@ -52,7 +52,7 @@ export class System {
     this.canvas.height = this.height;
     this.canvas.width = this.width;
 
-    EventSystem.dispatch(InputEvents.WindowResized, {
+    EventSystem.dispatch(GameEvents.Window_Resized, {
       w: this.width,
       h: this.height,
       rw: this.realWidth,

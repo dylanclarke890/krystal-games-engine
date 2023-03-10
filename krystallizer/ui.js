@@ -1,11 +1,12 @@
 import { EventSystem } from "../modules/core/event-system.js";
+import { GameEvents } from "../modules/core/events.js";
 import { BackgroundMap } from "../modules/core/map.js";
 import { Guard } from "../modules/lib/sanity/guard.js";
 import { $el, screenshotCanvas } from "../modules/lib/utils/dom.js";
 import { bind } from "../modules/lib/utils/func.js";
 import { GameLogger } from "../modules/lib/utils/logger.js";
 import { config } from "./config.js";
-import { EditorActions, InputEvents } from "./enums.js";
+import { EditorActions } from "./enums.js";
 
 export class Modal {
   /**
@@ -475,7 +476,7 @@ export class EntityDisplay {
 
     this.mouseDown = (e) => this.mousedown(e);
     div.addEventListener("pointerdown", this.mouseDown);
-    EventSystem.on(InputEvents.MouseMove, this.updateMousePosition);
+    EventSystem.on(GameEvents.Mouse_Move, this.updateMousePosition);
     parent.append(div);
     this.DOMElements = { div, name, preview };
     this.toolbarOffset = $el("#toolbar").offsetWidth;
@@ -543,7 +544,7 @@ export class EntityDisplay {
     const { div } = this.DOMElements;
     div.removeEventListener("pointerdown", this.mouseDown);
     div.parentElement.removeChild(div);
-    EventSystem.off(InputEvents.MouseMove, this.updateMousePosition);
+    EventSystem.off(GameEvents.Mouse_Move, this.updateMousePosition);
   }
 }
 
