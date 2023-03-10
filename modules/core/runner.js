@@ -2,7 +2,7 @@ import { PriorityLevel } from "../lib/data-structures/p-queue.js";
 
 import { Entity } from "./entity.js";
 import { EventSystem, GameEvents } from "./event-system.js";
-import { GameLoop } from "./loop.js";
+import { GameLoop } from "./game-loop.js";
 import { GameLoader } from "./loader.js";
 import { MediaFactory } from "./media-factory.js";
 import { SoundManager } from "./assets/sound.js";

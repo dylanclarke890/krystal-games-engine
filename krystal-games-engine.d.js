@@ -3,16 +3,16 @@
 /// <reference path="modules/core/assets/animation.js"/>
 /// <reference path="modules/core/assets/image.js"/>
 /// <reference path="modules/core/assets/font.js"/>
+/// <reference path="modules/core/assets/sound.js"/>
 /// <reference path="modules/core/entity.js"/>
 /// <reference path="modules/core/game.js"/>
 /// <reference path="modules/core/input.js"/>
 /// <reference path="modules/core/loader.js"/>
-/// <reference path="modules/core/loop.js"/>
+/// <reference path="modules/core/game-loop.js"/>
 /// <reference path="modules/core/map.js"/>
 /// <reference path="modules/core/media-factory.js"/>
 /// <reference path="modules/core/register.js"/>
 /// <reference path="modules/core/runner.js"/>
-/// <reference path="modules/core/sound.js"/>
 /// <reference path="modules/core/system.js"/>
 /// <reference path="modules/core/timer.js"/>
 
