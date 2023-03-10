@@ -5,7 +5,7 @@ import { EventSystem } from "./event-system.js";
 import { GameLoop } from "./loop.js";
 import { GameLoader, LoaderEvents } from "./loader.js";
 import { MediaFactory } from "./media-factory.js";
-import { SoundEvents, SoundManager } from "./sound.js";
+import { SoundManager } from "./sound.js";
 import { System } from "./system.js";
 import { GameLogger } from "../lib/utils/logger.js";
 import { Enum } from "../lib/utils/enum.js";
@@ -68,7 +68,7 @@ export class GameRunner {
   bindEvents() {
     this.system.canvas.addEventListener(
       "pointerdown",
-      () => EventSystem.dispatch(SoundEvents.UnlockWebAudio),
+      () => EventSystem.dispatch(GameEvents.Sound_UnlockWebAudio),
       {
         once: true,
         passive: true,

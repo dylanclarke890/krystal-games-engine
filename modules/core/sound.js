@@ -1,7 +1,6 @@
 import { VendorAttributes } from "../lib/utils/vendor-attributes.js";
 import { constrain, map } from "../lib/utils/number.js";
 import { removeItem } from "../lib/utils/array.js";
-import { Enum } from "../lib/utils/enum.js";
 import { UserAgent } from "../lib/utils/user-agent.js";
 import { Guard } from "../lib/sanity/guard.js";
 
@@ -9,14 +8,7 @@ import { Timer } from "./timer.js";
 import { EventSystem } from "./event-system.js";
 import { Register } from "./register.js";
 import { noop } from "../lib/utils/func.js";
-import { RunnerEvents } from "./runner.js";
-
-export class SoundEvents extends Enum {
-  static {
-    this.UnlockWebAudio = new SoundEvents();
-    this.freeze();
-  }
-}
+import { GameEvents } from "./events.js";
 
 const SoundFormats = {
   M4A: { ext: "m4a", mime: "audio/mp4; codecs=mp4a.40.2" },
@@ -51,8 +43,8 @@ export class SoundManager {
   }
 
   #bindEvents() {
-    EventSystem.on(RunnerEvents.Ready, () => (this.ready = true));
-    EventSystem.on(SoundEvents.UnlockWebAudio, () => {
+    EventSystem.on(GameEvents.System_Ready, () => (this.ready = true));
+    EventSystem.on(GameEvents.Sound_UnlockWebAudio, () => {
       if (SoundManager.isSoundEnabled && SoundManager.useWebAudio) this.unlockWebAudio();
     });
   }
