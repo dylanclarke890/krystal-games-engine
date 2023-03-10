@@ -1,5 +1,5 @@
 import { Entity } from "../modules/core/entity.js";
-import { Align } from "../modules/core/assets/font.js";
+import { TextAlign } from "../modules/core/assets/font.js";
 import { KrystalGame } from "../modules/core/game.js";
 import { Register } from "../modules/core/register.js";
 import { GameRunner } from "../modules/core/runner.js";
@@ -21,13 +21,12 @@ class TestGame extends KrystalGame {
   constructor(opts) {
     super(opts);
     this.spawnEntity(TestPlayer, 100, 100);
-    console.log(this.entities);
   }
 
   draw() {
     super.draw();
     this.fonts.standard.write("Working!", 250, 250, {
-      align: Align.Center,
+      align: TextAlign.Center,
       color: "green",
     });
   }
@@ -41,6 +40,6 @@ new GameRunner({
   canvasId: "canvas1",
   width: 500,
   height: 500,
-  scale: 2,
+  scale: 1,
   fonts: { standard: "./test-data/assets/arcade-classic.TTF" },
 });
