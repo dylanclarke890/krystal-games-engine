@@ -4,7 +4,7 @@ import { removeItem } from "../lib/utils/array.js";
 import { Register } from "../core/register.js";
 
 import { CollisionMap, BackgroundMap } from "./map.js";
-import { Input } from "./input.js";
+import { InputManager } from "./input/input-manager.js";
 import { Entity } from "./entity.js";
 import { EventSystem, GameEvents } from "./event-system.js";
 
@@ -30,7 +30,7 @@ export class KrystalGame {
   /** @type {Object.<string, import("./assets/font.js").Font>} */
   fonts = {};
   gravity = 0;
-  /** @type {Input} */
+  /** @type {InputManager} */
   input;
   /** @type {Object.<string, Entity>} */
   namedEntities = {};
@@ -57,12 +57,13 @@ export class KrystalGame {
     this.system = system;
     this.media = mediaFactory;
     this.fonts = fonts;
-    this.input = new Input({ system: this.system });
+    this.input = new InputManager(this.system);
+
     this.#sortBy = this.#sortBy || KrystalGame.SORT.Z_INDEX;
-    this.bindEvents();
+    this.#bindEvents();
   }
 
-  bindEvents() {
+  #bindEvents() {
     EventSystem.on(GameEvents.Loop_NextFrame, () => {
       this.update();
       this.draw();
