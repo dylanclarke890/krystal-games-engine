@@ -18,6 +18,8 @@ export class InputManager {
   /** @type {Map<string, boolean>} */
   #actions;
 
+  #using;
+
   /** @type {{x:number, y:number}} */
   mouse;
 
@@ -30,27 +32,33 @@ export class InputManager {
     this.#delayedActions = new Map();
     this.#locks = new Map();
     this.#actions = new Map();
-
-    this.mouse = { x: 0, y: 0 };
-
-    this.#initializeMouseEvents();
-    this.#initializeTouchEvents();
-    this.#initializeKeyboardEvents();
+    this.#using = {
+      mouse: false,
+      touch: false,
+      keyboard: false,
+    };
   }
 
   //#region Initialise
 
   #initializeMouseEvents() {
+    if (this.#using.mouse) return;
+    this.#using.mouse = true;
+
+    this.mouse = { x: 0, y: 0 };
     const canvas = this.#system.canvas;
     canvas.addEventListener("wheel", (e) => this.#onMouseWheel(e), { passive: false }); // Stops Chrome warning
     canvas.addEventListener("contextmenu", (e) => this.#onContextMenu(e), false);
     canvas.addEventListener("mousedown", (e) => this.#onMouseDown(e), false);
     canvas.addEventListener("mouseup", (e) => this.#onMouseUp(e), false);
     canvas.addEventListener("mousemove", (e) => this.#onMouseMove(e), false);
+    if (UserAgent.instance.device.touchDevice) this.#initializeTouchEvents();
   }
 
   #initializeTouchEvents() {
-    if (!UserAgent.instance.device.touchDevice) return;
+    if (this.#using.touch) return;
+    this.#using.touch = true;
+
     const canvas = this.#system.canvas;
     // Standard
     canvas.addEventListener("touchstart", (e) => this.#onTouchStart(e), false);
@@ -66,8 +74,29 @@ export class InputManager {
   }
 
   #initializeKeyboardEvents() {
+    if (this.#using.keyboard) return;
+    this.#using.keyboard = true;
+
     document.addEventListener("keydown", (e) => this.#onKeyDown(e));
     document.addEventListener("keyup", (e) => this.#onKeyUp(e));
+  }
+
+  #initInputTypeEvents(key) {
+    switch (key) {
+      case InputKeys.Mouse_BtnOne:
+      case InputKeys.Mouse_BtnTwo:
+      case InputKeys.Mouse_WheelDown:
+      case InputKeys.Mouse_WheelUp:
+        this.#initializeMouseEvents();
+        return;
+      case InputKeys.Touch_Start:
+      case InputKeys.Touch_End:
+        this.#initializeTouchEvents();
+        return;
+      default:
+        this.#initializeKeyboardEvents();
+        return;
+    }
   }
 
   //#endregion Initialise
@@ -83,6 +112,7 @@ export class InputManager {
     if (this.#bindings.has(key))
       GameLogger.warn(`${key} already bound to action ${this.#bindings.get(key)}`);
     this.#bindings.set(key, action);
+    this.#initInputTypeEvents(key);
   }
 
   /**
