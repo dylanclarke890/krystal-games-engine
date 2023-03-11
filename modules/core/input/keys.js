@@ -40,6 +40,14 @@ export class InputKeys extends Enum {
   static Tilde = new InputKeys();
   static GraveAccent = new InputKeys();
   static Question = new InputKeys();
+  static Exclamation = new InputKeys();
+  static AtSign = new InputKeys();
+  static Hash = new InputKeys();
+  static Dollar = new InputKeys();
+  static Percent = new InputKeys();
+  static Caret = new InputKeys();
+  static Pipe = new InputKeys();
+  static Ampersand = new InputKeys();
   static Colon = new InputKeys();
   static Colon_Semi = new InputKeys();
   static Slash_Backward = new InputKeys();
@@ -58,6 +66,7 @@ export class InputKeys extends Enum {
   static Page_Up = new InputKeys();
   static Page_Down = new InputKeys();
   static Pause = new InputKeys();
+  // Doesn't have a keydown event but has keyup
   static PrintScreen = new InputKeys();
   static Insert = new InputKeys();
   static Delete = new InputKeys();
@@ -70,6 +79,7 @@ export class InputKeys extends Enum {
   static Caps_Lock = new InputKeys();
   static Scroll_Lock = new InputKeys();
   static Num_Lock = new InputKeys();
+  static Meta = new InputKeys();
 
   static Arrow_Left = new InputKeys();
   static Arrow_Right = new InputKeys();
@@ -102,6 +112,7 @@ export class InputKeys extends Enum {
   static X = new InputKeys();
   static Y = new InputKeys();
   static Z = new InputKeys();
+  static Zero = new InputKeys();
   static One = new InputKeys();
   static Two = new InputKeys();
   static Three = new InputKeys();

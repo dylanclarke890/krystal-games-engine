@@ -11,12 +11,14 @@ export class InputSystem {
   #bindEvents() {
     document.addEventListener("keydown", (e) => this.onKeyDown(e));
     document.addEventListener("keyup", (e) => this.onKeyUp(e));
+    // Buttons get stuck in the pressed position if the tab is changed while a key is pressed
     document.addEventListener("visibilitychange", () =>
       Object.keys(this.pressed).forEach((key) => (this.pressed[key] = false))
     );
   }
 
   onKeyDown(e) {
+    console.log(e.key);
     const key = keyboardMap[e.key.toLowerCase()];
     this.pressed[key] = true;
   }
@@ -79,7 +81,7 @@ const keyboardMap = {
   enter: InputKeys.Enter,
   tab: InputKeys.Tab,
   shift: InputKeys.Shift,
-  ctrl: InputKeys.Ctrl,
+  control: InputKeys.Ctrl,
   alt: InputKeys.Alt,
 
   ">": InputKeys.Greater_Than,
@@ -99,15 +101,28 @@ const keyboardMap = {
   "{": InputKeys.Bracket_Curly_Left,
   "}": InputKeys.Bracket_Curly_Right,
   "?": InputKeys.Question,
+  "!": InputKeys.Exclamation,
+  "@": InputKeys.AtSign,
+  "#": InputKeys.Hash,
+  $: InputKeys.Dollar,
+  "%": InputKeys.Percent,
+  "^": InputKeys.Caret,
+  "|": InputKeys.Pipe,
+  "&": InputKeys.Ampersand,
   "'": InputKeys.Quote_Single,
   // eslint-disable-next-line quotes
   '"': InputKeys.Quote_Double,
 
+  capslock: InputKeys.Caps_Lock,
+  scrollock: InputKeys.Scroll_Lock,
+  numlock: InputKeys.Num_Lock,
+  meta: InputKeys.Meta,
   home: InputKeys.Home,
   end: InputKeys.End,
   pageup: InputKeys.Page_Up,
   pagedown: InputKeys.Page_Down,
   pause: InputKeys.Pause,
+  // Doesn't have a keydown event but has keyup
   printscreen: InputKeys.PrintScreen,
   insert: InputKeys.Insert,
   delete: InputKeys.Delete,
