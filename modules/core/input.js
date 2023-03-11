@@ -159,6 +159,7 @@ export class Input {
     if (this.#isUsingAccelerometer) return;
     this.#isUsingAccelerometer = true;
     window.addEventListener("devicemotion", (e) => this.devicemotion(e), false);
+    window.addEventListener("deviceorientation", (e) => this.devicemotion(e), false);
   }
 
   mousewheel(event) {

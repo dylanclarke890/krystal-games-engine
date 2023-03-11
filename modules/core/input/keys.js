@@ -136,7 +136,6 @@ export class InputKeys extends Enum {
 
   //#region Accelerometer
   static Device_Motion = new InputKeys();
-  static Device_Orientation = new InputKeys();
   //#endregion Accelerometer
 
   //#region Gamepad

@@ -22,6 +22,8 @@ export class InputManager {
 
   /** @type {{x:number, y:number}} */
   mouse;
+  /** @type {number} */
+  accel;
 
   constructor(system) {
     Guard.againstNull({ system });
@@ -81,6 +83,12 @@ export class InputManager {
     document.addEventListener("keyup", (e) => this.#onKeyUp(e));
   }
 
+  #initializeAccelerometer() {
+    if (this.#using.accelerometer) return;
+    this.#using.accelerometer = true;
+    window.addEventListener("devicemotion", (e) => this.onDeviceMotion(e), false);
+  }
+
   #initInputTypeEvents(key) {
     switch (key) {
       case InputKeys.Mouse_BtnOne:
@@ -92,6 +100,9 @@ export class InputManager {
       case InputKeys.Touch_Start:
       case InputKeys.Touch_End:
         this.#initializeTouchEvents();
+        return;
+      case InputKeys.Device_Motion:
+        this.#initializeAccelerometer();
         return;
       default:
         this.#initializeKeyboardEvents();
@@ -319,6 +330,11 @@ export class InputManager {
   /** @param {MouseEvent} e */
   #onContextMenu(e) {
     if (this.#bindings.has(InputKeys.Context_Menu)) this.#youShallNotDefault(e);
+  }
+
+  /** @param {DeviceMotionEvent} e */
+  onDeviceMotion(e) {
+    this.accel = e.accelerationIncludingGravity;
   }
 
   //#endregion Events
