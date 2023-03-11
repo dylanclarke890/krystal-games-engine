@@ -8,7 +8,6 @@ import { MediaFactory } from "./media-factory.js";
 import { SoundManager } from "./assets/sound.js";
 import { System } from "./system.js";
 import { GameLogger } from "../lib/utils/logger.js";
-import { InputManager } from "./input/input-system.js";
 
 export class GameRunner {
   // Game Settings
@@ -39,7 +38,6 @@ export class GameRunner {
     this.system = new System({ runner: this, canvasId, width, height, scale, fps });
     this.sound = new SoundManager();
     this.media = new MediaFactory({ system: this.system, soundManager: this.sound });
-    this.input = new InputManager(this.system);
     this.fonts = Object.entries(fonts).reduce((acc, [name, path]) => {
       acc[name] = this.media.createFont({ name, path });
       return acc;
