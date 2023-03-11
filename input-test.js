@@ -1,4 +1,4 @@
-import { InputSystem } from "./modules/core/input-system.js";
+import { InputSystem } from "./modules/core/input/input-system.js";
 
 const system = new InputSystem();
 const display = document.querySelector("#keys-pressed");
