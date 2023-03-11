@@ -1,6 +1,6 @@
-import { InputSystem } from "./modules/core/input/input-system.js";
+import { InputManager } from "./modules/core/input/input-system.js";
 
-const system = new InputSystem();
+const system = new InputManager({ canvas: document.querySelector("canvas") });
 const display = document.querySelector("#keys-pressed");
 setInterval(checkForInputs, 16);
 

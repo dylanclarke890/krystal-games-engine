@@ -8,6 +8,7 @@ import { MediaFactory } from "./media-factory.js";
 import { SoundManager } from "./assets/sound.js";
 import { System } from "./system.js";
 import { GameLogger } from "../lib/utils/logger.js";
+import { InputManager } from "./input/input-system.js";
 
 export class GameRunner {
   // Game Settings
@@ -19,8 +20,8 @@ export class GameRunner {
 
   // Dependencies
   loop;
-  mediaFactory;
-  soundManager;
+  media;
+  sound;
   system;
 
   constructor({
@@ -36,10 +37,11 @@ export class GameRunner {
     ...customGameOptions
   } = {}) {
     this.system = new System({ runner: this, canvasId, width, height, scale, fps });
-    this.soundManager = new SoundManager();
-    this.mediaFactory = new MediaFactory({ system: this.system, soundManager: this.soundManager });
+    this.sound = new SoundManager();
+    this.media = new MediaFactory({ system: this.system, soundManager: this.sound });
+    this.input = new InputManager(this.system);
     this.fonts = Object.entries(fonts).reduce((acc, [name, path]) => {
-      acc[name] = this.mediaFactory.createFont({ name, path });
+      acc[name] = this.media.createFont({ name, path });
       return acc;
     }, {});
     this.customGameOptions = customGameOptions;
@@ -85,7 +87,7 @@ export class GameRunner {
     this.game = new gameClass({
       system: this.system,
       fonts: this.fonts,
-      mediaFactory: this.mediaFactory,
+      mediaFactory: this.media,
       ...this.customGameOptions,
     });
     this.loop ??= new GameLoop(this.loadedInfo.fps);
