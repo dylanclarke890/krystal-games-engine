@@ -164,6 +164,7 @@ export class InputSystem {
   constructor() {
     this.mouse = { x: 0, y: 0 };
     this.keyBinds = {};
+    this.pressed = {};
     this.#bindEvents();
   }
 
@@ -182,5 +183,9 @@ export class InputSystem {
 
   contextMenu(e) {
     console.log(e);
+  }
+
+  getPressed() {
+    return this.pressed;
   }
 }
