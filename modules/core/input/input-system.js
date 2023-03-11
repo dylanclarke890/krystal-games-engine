@@ -7,10 +7,10 @@ export class InputManager {
   /** @type {import("../system.js").System}} */
   #system;
 
-  /** @type {Map<InputKeys, boolean>} */
-  #pressed;
   /** @type {Map<InputKeys, string>} */
   #bindings;
+  /** @type {Map<string, boolean>} */
+  #pressed;
   /** @type {Map<string, boolean>} */
   #delayedActions;
   /** @type {Map<string, boolean>} */
@@ -39,6 +39,7 @@ export class InputManager {
   }
 
   //#region Initialise
+
   #initializeMouseEvents() {
     const canvas = this.#system.canvas;
     canvas.addEventListener("wheel", (e) => this.#onMouseWheel(e), { passive: false }); // Stops Chrome warning
@@ -68,7 +69,10 @@ export class InputManager {
     document.addEventListener("keydown", (e) => this.#onKeyDown(e));
     document.addEventListener("keyup", (e) => this.#onKeyUp(e));
   }
+
   //#endregion Initialise
+
+  //#region Api
 
   /**
    * Bind an input key to an action.
@@ -82,7 +86,7 @@ export class InputManager {
   }
 
   /**
-   * Unbind an input key from an action.
+   * Unbind an action from a key.
    * @param {InputKeys} key
    */
   unbind(key) {
@@ -92,6 +96,9 @@ export class InputManager {
     this.#bindings.delete(key);
   }
 
+  /**
+   * Unbind all actions.
+   */
   unbindAll() {
     this.#bindings.clear();
     this.#actions.clear();
@@ -100,18 +107,43 @@ export class InputManager {
     this.#delayedActions.clear();
   }
 
+  /**
+   * Returns a boolean value indicating whether the input action began being pressed this frame.
+   * @param {string} action The string representing the input action to check.
+   */
   pressed(action) {
     return !!this.#pressed.get(action);
   }
 
+  /**
+   * Returns a boolean value indicating whether the input action is currently in a state of being pressed.
+   * @param {string} action The string representing the input action to check.
+   */
   state(action) {
     return !!this.#actions.get(action);
   }
 
+  /**
+   * Returns a boolean value indicating whether the input action was released in the last frame.
+   * @param {string} action The string representing the input action to check.
+   */
   released(action) {
     return !!this.#delayedActions.get(action);
   }
 
+  /**
+   * Clears any inputs that were pressed in the previous frame and updates the state of the inputs.
+   *
+   * This method should be called at the start of each game frame, before any input processing is done.
+   *
+   * Any inputs that were released in the previous frame will still be stored in the delayedActions map and can be
+   * checked using `released()`.
+   *
+   * After calling this method, `pressed()` will return false for all inputs that were pressed in the previous
+   * frame.
+   *
+   * Any inputs that are still held down will remain in the pressed state and can be checked using `state()`.
+   */
   clearPressed() {
     for (const action of this.#delayedActions.keys()) {
       this.#actions.set(action, false);
@@ -121,7 +153,10 @@ export class InputManager {
     this.#pressed.clear();
   }
 
+  //#endregion Api
+
   //#region Events
+
   /**
    * @param {Event} event
    * @returns {boolean}
@@ -255,5 +290,6 @@ export class InputManager {
   #onContextMenu(e) {
     if (this.#bindings.has(InputKeys.Context_Menu)) this.#youShallNotDefault(e);
   }
+
   //#endregion Events
 }
