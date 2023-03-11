@@ -163,5 +163,24 @@ export class InputKeys extends Enum {
 export class InputSystem {
   constructor() {
     this.mouse = { x: 0, y: 0 };
+    this.keyBinds = {};
+    this.#bindEvents();
+  }
+
+  #bindEvents() {
+    document.addEventListener("keydown", this.onKeyDown);
+    document.addEventListener("keyup", this.onKeyUp);
+  }
+
+  onKeyDown(e) {
+    console.log(e);
+  }
+
+  onKeyUp(e) {
+    console.log(e);
+  }
+
+  contextMenu(e) {
+    console.log(e);
   }
 }
