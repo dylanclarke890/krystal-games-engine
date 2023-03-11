@@ -4,11 +4,15 @@
 /// <reference path="modules/core/assets/image.js"/>
 /// <reference path="modules/core/assets/font.js"/>
 /// <reference path="modules/core/assets/sound.js"/>
+
+/// <reference path="modules/core/input/input-manager.js"/>
+/// <reference path="modules/core/input/keys.js"/>
+
 /// <reference path="modules/core/entity.js"/>
-/// <reference path="modules/core/game.js"/>
-/// <reference path="modules/core/input.js"/>
-/// <reference path="modules/core/loader.js"/>
+/// <reference path="modules/core/event-system.js"/>
 /// <reference path="modules/core/game-loop.js"/>
+/// <reference path="modules/core/game.js"/>
+/// <reference path="modules/core/loader.js"/>
 /// <reference path="modules/core/map.js"/>
 /// <reference path="modules/core/media-factory.js"/>
 /// <reference path="modules/core/register.js"/>
@@ -25,29 +29,21 @@
 
 // #endregion DEBUG
 
-//#region LEVEL-EDITOR
-
-/// <reference path="level-editor/jQuery/jquery-1.7.1.min.js"/>
-/// <reference path="level-editor/jQuery/jquery-ui-1.8.1.custom.min.js"/>
-/// <reference path="level-editor/config.js"/>
-/// <reference path="level-editor/edit-entities.js"/>
-/// <reference path="level-editor/edit-map.js"/>
-/// <reference path="level-editor/evented-input.js"/>
-/// <reference path="level-editor/http-client.js"/>
-/// <reference path="level-editor/level-editor-runner.js"/>
-/// <reference path="level-editor/level-editor.js"/>
-/// <reference path="level-editor/modal-dialogs.js"/>
-/// <reference path="level-editor/select-file-dropdown.js"/>
-/// <reference path="level-editor/tile-select.js"/>
-/// <reference path="level-editor/undo.js"/>
-
-//#endregion LEVEL-EDITOR
-
 //#region LIB
 
+/// <reference path="modules/lib/camera.js"/>
 /// <reference path="modules/lib/event-chain.js"/>
 /// <reference path="modules/lib/mixin.js"/>
 /// <reference path="modules/lib/plugin.js"/>
+
+//#region LIB.COLLISION
+/// <reference path="modules/lib/collision/quadtree.js"/>
+//#endregion LIB.COLLISION
+
+//#region LIB.DATA-STRUCTURES
+/// <reference path="modules/lib/data-structures/p-queue.js"/>
+//#endregion LIB.DATA-STRUCTURES
+
 
 //#region LIB.ENTITIES
 /// <reference path="modules/lib/entities/damage-zone.js"/>
@@ -119,14 +115,17 @@
 
 //#endregion LIB.SANITY
 
-
 //#region LIB.UTILS
 
 /// <reference path="modules/lib/utils/array.js"/>
 /// <reference path="modules/lib/utils/bezier.js"/>
 /// <reference path="modules/lib/utils/cookie.js"/>
 /// <reference path="modules/lib/utils/dom.js"/>
+/// <reference path="modules/lib/utils/enum.js"/>
+/// <reference path="modules/lib/utils/func.js"/>
+/// <reference path="modules/lib/utils/logger.js"/>
 /// <reference path="modules/lib/utils/number.js"/>
+/// <reference path="modules/lib/utils/shapes.js"/>
 /// <reference path="modules/lib/utils/ui-effects.js"/>
 /// <reference path="modules/lib/utils/user-agent.js"/>
 /// <reference path="modules/lib/utils/string.js"/>
