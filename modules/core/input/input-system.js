@@ -38,6 +38,7 @@ export class InputManager {
       mouse: false,
       touch: false,
       keyboard: false,
+      accelerometer: false,
     };
   }
 
@@ -86,6 +87,7 @@ export class InputManager {
   #initializeAccelerometer() {
     if (this.#using.accelerometer) return;
     this.#using.accelerometer = true;
+    this.accel = 0;
     window.addEventListener("devicemotion", (e) => this.onDeviceMotion(e), false);
   }
 
