@@ -10,14 +10,27 @@ export class InputManager {
   #pressed;
   /** @type {Map<InputKeys, string>} */
   #bindings;
+  /** @type {Map<string, boolean>} */
+  #delayedActions;
+  /** @type {Map<string, boolean>} */
+  #locks;
+  /** @type {Map<string, boolean>} */
+  #actions;
+
+  /** @type {{x:number, y:number}} */
+  mouse;
 
   constructor(system) {
     Guard.againstNull({ system });
     this.#system = system;
 
-    this.mouse = { x: 0, y: 0 };
     this.#bindings = new Map();
     this.#pressed = new Map();
+    this.#delayedActions = new Map();
+    this.#locks = new Map();
+    this.#actions = new Map();
+
+    this.mouse = { x: 0, y: 0 };
 
     this.#initializeMouseEvents();
     this.#initializeTouchEvents();
@@ -59,7 +72,7 @@ export class InputManager {
 
   /**
    * Bind an input key to an action.
-   * @param {import("./keys.js").InputKeys} key
+   * @param {InputKeys} key
    * @param {string} action
    */
   bind(key, action) {
@@ -68,8 +81,44 @@ export class InputManager {
     this.#bindings.set(key, action);
   }
 
-  getPressed() {
-    return this.#pressed;
+  /**
+   * Unbind an input key from an action.
+   * @param {InputKeys} key
+   */
+  unbind(key) {
+    const action = this.#bindings.get(key);
+    if (!action) return;
+    this.#delayedActions.set(action, true);
+    this.#bindings.delete(key);
+  }
+
+  unbindAll() {
+    this.#bindings.clear();
+    this.#actions.clear();
+    this.#pressed.clear();
+    this.#locks.clear();
+    this.#delayedActions.clear();
+  }
+
+  pressed(action) {
+    return !!this.#pressed[action];
+  }
+
+  state(action) {
+    return !!this.#actions[action];
+  }
+
+  released(action) {
+    return !!this.#delayedActions[action];
+  }
+
+  clearPressed() {
+    for (const action of this.#delayedActions.keys()) {
+      this.#actions.set(action, false);
+      this.#locks.set(action, false);
+    }
+    this.#delayedActions.clear();
+    this.#pressed.clear();
   }
 
   //#region Events
@@ -82,29 +131,44 @@ export class InputManager {
     return tagName === "INPUT" || tagName === "TEXTAREA";
   }
 
-  #onKeyDown(e) {
-    if (this.#targetIsInputOrText(e)) return;
+  /** @param {KeyboardEvent} e */
+  #getKeyboardAction(e) {
+    if (this.#targetIsInputOrText(e)) return null;
     const key = keyboardMap[e.key.toLowerCase()];
-    if (!key) return;
-    this.#pressed.set(key, true);
+    if (!key) return null;
+    return this.#bindings.get(key);
   }
 
+  /** @param {KeyboardEvent} e */
+  #onKeyDown(e) {
+    const action = this.#getKeyboardAction(e);
+    if (!action) return;
+
+    this.#actions.set(action, true);
+    if (!this.#locks.has(action)) {
+      this.#pressed.set(action, true);
+      this.#locks.set(action, true);
+    }
+    e.preventDefault();
+  }
+
+  /** @param {KeyboardEvent} e */
   #onKeyUp(e) {
-    if (this.#targetIsInputOrText(e)) return;
-    const key = keyboardMap[e.key.toLowerCase()];
-    if (!key) return;
-    this.#pressed.set(key, false);
+    const action = this.#getKeyboardAction(e);
+    if (!action) return;
+
+    this.#delayedActions.set(action, true);
+    e.preventDefault();
   }
 
   #onMouseWheel(e) {
     const scrollAmount = Math.sign(e.deltaY);
     const action = this.#bindings.get(InputKeys.Mouse_WheelUp);
 
-    if (scrollAmount > 0 && this.#bindings[InputKeys.Mouse_WheelDown]) {
+    if (scrollAmount > 0 && this.#bindings.has(InputKeys.Mouse_WheelDown))
       this.#pressed.set(InputKeys.Mouse_WheelDown, true);
-    } else if (scrollAmount < 0 && this.#bindings[InputKeys.Mouse_WheelUp]) {
+    else if (scrollAmount < 0 && this.#bindings.has(InputKeys.Mouse_WheelUp))
       this.#pressed.set(InputKeys.Mouse_WheelUp, true);
-    }
 
     if (action) {
       e.preventDefault();
@@ -124,7 +188,7 @@ export class InputManager {
   }
 
   #onContextMenu(e) {
-    if (!this.#bindings[InputKeys.Context_Menu]) return;
+    if (!this.#bindings.has(InputKeys.Context_Menu)) return;
     e.stopPropagation();
     e.preventDefault();
   }

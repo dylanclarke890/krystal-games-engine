@@ -175,6 +175,7 @@ export class InputKeys extends Enum {
   }
 }
 
+/** @type {{[x:string]: InputKeys}} */
 export const keyboardMap = {
   a: InputKeys.A,
   b: InputKeys.B,
