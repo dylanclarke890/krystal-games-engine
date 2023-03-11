@@ -1,9 +1,11 @@
 import { InputSystem } from "./modules/core/input-system.js";
 
 const system = new InputSystem();
-const list = document.querySelector("#keys-pressed");
+const display = document.querySelector("#keys-pressed");
 setInterval(checkForInputs, 16);
 
 function checkForInputs() {
-  list.innerHTML = "";
+  display.innerHTML = "";
+  const pressed = system.getPressed();
+  display.innerHTML = JSON.stringify(pressed);
 }

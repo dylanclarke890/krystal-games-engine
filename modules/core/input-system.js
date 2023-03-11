@@ -169,16 +169,16 @@ export class InputSystem {
   }
 
   #bindEvents() {
-    document.addEventListener("keydown", this.onKeyDown);
-    document.addEventListener("keyup", this.onKeyUp);
+    document.addEventListener("keydown", (e) => this.onKeyDown(e));
+    document.addEventListener("keyup", (e) => this.onKeyUp(e));
   }
 
   onKeyDown(e) {
-    console.log(e);
+    this.pressed[e.key] = true;
   }
 
   onKeyUp(e) {
-    console.log(e);
+    this.pressed[e.key] = false;
   }
 
   contextMenu(e) {
