@@ -9,12 +9,9 @@ export class InputKeys extends Enum {
   static Mouse_WheelDown = new InputKeys();
   static Mouse_Move = new InputKeys();
   //#endregion Mouse
-
   //#region Touch Device
   static Touch_Start = new InputKeys();
   static Touch_End = new InputKeys();
-  static Touch_Move = new InputKeys();
-  static Touch_Cancel = new InputKeys();
   //#endregion Touch Device
 
   //#region Keyboard
@@ -287,4 +284,3 @@ export const keyboardMap = {
   arrowright: InputKeys.Arrow_Right,
   arrowdown: InputKeys.Arrow_Down,
 };
-

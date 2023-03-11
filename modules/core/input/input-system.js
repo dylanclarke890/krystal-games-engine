@@ -1,5 +1,6 @@
 import { Guard } from "../../lib/sanity/guard.js";
 import { GameLogger } from "../../lib/utils/logger.js";
+import { UserAgent } from "../../lib/utils/user-agent.js";
 import { InputKeys, keyboardMap } from "./keys.js";
 
 export class InputManager {
@@ -48,6 +49,7 @@ export class InputManager {
   }
 
   #initializeTouchEvents() {
+    if (!UserAgent.instance.device.touchDevice) return;
     const canvas = this.#system.canvas;
     // Standard
     canvas.addEventListener("touchstart", (e) => this.#onTouchStart(e), false);
@@ -65,8 +67,6 @@ export class InputManager {
   #initializeKeyboardEvents() {
     document.addEventListener("keydown", (e) => this.#onKeyDown(e));
     document.addEventListener("keyup", (e) => this.#onKeyUp(e));
-    // Buttons get stuck in the pressed position if the tab is changed while a key is pressed
-    document.addEventListener("visibilitychange", () => this.pressed.clear());
   }
   //#endregion Initialise
 
@@ -101,15 +101,15 @@ export class InputManager {
   }
 
   pressed(action) {
-    return !!this.#pressed[action];
+    return !!this.#pressed.get(action);
   }
 
   state(action) {
-    return !!this.#actions[action];
+    return !!this.#actions.get(action);
   }
 
   released(action) {
-    return !!this.#delayedActions[action];
+    return !!this.#delayedActions.get(action);
   }
 
   clearPressed() {
@@ -131,6 +131,15 @@ export class InputManager {
     return tagName === "INPUT" || tagName === "TEXTAREA";
   }
 
+  /**
+   * @param {Event} e
+   * @param {[boolean]} orPropagate Defaults to true
+   */
+  #youShallNotDefault(e, orPropagate) {
+    e.preventDefault();
+    if (orPropagate ?? true === true) e.stopPropagation();
+  }
+
   /** @param {KeyboardEvent} e */
   #getKeyboardAction(e) {
     if (this.#targetIsInputOrText(e)) return null;
@@ -149,7 +158,7 @@ export class InputManager {
       this.#pressed.set(action, true);
       this.#locks.set(action, true);
     }
-    e.preventDefault();
+    this.#youShallNotDefault(false);
   }
 
   /** @param {KeyboardEvent} e */
@@ -158,7 +167,7 @@ export class InputManager {
     if (!action) return;
 
     this.#delayedActions.set(action, true);
-    e.preventDefault();
+    this.#youShallNotDefault(false);
   }
 
   /** @param {WheelEvent} e */
@@ -171,39 +180,80 @@ export class InputManager {
     this.#actions.set(action, true);
     this.#pressed.set(action, true);
     this.#delayedActions.set(action, true);
-
-    e.stopPropagation();
-    e.preventDefault();
+    this.#youShallNotDefault(e);
   }
 
-  /** @param {MouseEvent} e */
+  /** @param {TouchEvent|MouseEvent} e */
   #onMouseMove(e) {
     const system = this.#system;
     const internalWidth = system.canvas.offsetWidth || system.realWidth;
     const scale = system.scale * (internalWidth / system.realWidth);
 
     const pos = system.canvas.getBoundingClientRect();
-    const { clientX, clientY } = e.touches ? e.touches[0] : e;
+    const { clientX, clientY } = "touches" in e ? e.touches[0] : e;
     this.mouse.x = (clientX - pos.left) / scale;
     this.mouse.y = (clientY - pos.top) / scale;
   }
 
   /** @param {MouseEvent} e */
-  #onMouseDown(e) { }
-  
-  /** @param {MouseEvent} e */
-  #onMouseUp(e) { }
-  
-  /** @param {TouchEvent} e */
-  #onTouchStart(e) {}
-  
-  /** @param {TouchEvent} e */
-  #onTouchEnd(e) {}
+  #getMouseAction(e) {
+    if (this.#targetIsInputOrText(e)) return null;
+    switch (e.button) {
+      case 0:
+      case 1:
+        return InputKeys.Mouse_BtnOne;
+      case 2:
+        return InputKeys.Mouse_BtnTwo;
+      default:
+        return null;
+    }
+  }
 
+  /** @param {MouseEvent} e */
+  #onMouseDown(e) {
+    this.#onMouseMove(e);
+
+    const action = this.#getMouseAction(e);
+    if (!action) return;
+    this.#actions.set(action, true);
+    this.#pressed.set(action, true);
+    this.#youShallNotDefault(e);
+  }
+
+  /** @param {MouseEvent} e */
+  #onMouseUp(e) {
+    const action = this.#getMouseAction(e);
+    if (!action) return;
+    this.#delayedActions.set(action, true);
+    this.#youShallNotDefault(e);
+  }
+
+  /** @param {TouchEvent} e */
+  #onTouchStart(e) {
+    if (this.#targetIsInputOrText(e)) return null;
+    // Focus window element for mouse clicks. Prevents issues when running the game in an iframe.
+    if (UserAgent.instance.device.mobile) window.focus();
+    this.#onMouseMove(e);
+
+    const action = this.#bindings.get(InputKeys.Touch_Start);
+    if (!action) return;
+    this.#actions.set(action, true);
+    this.#pressed.set(action, true);
+    this.#youShallNotDefault(e);
+  }
+
+  /** @param {TouchEvent} e */
+  #onTouchEnd(e) {
+    if (this.#targetIsInputOrText(e)) return null;
+    const action = this.#bindings.get(InputKeys.Touch_End);
+    if (!action) return;
+    this.#delayedActions.set(action, true);
+    this.#youShallNotDefault(e);
+  }
+
+  /** @param {MouseEvent} e */
   #onContextMenu(e) {
-    if (!this.#bindings.has(InputKeys.Context_Menu)) return;
-    e.stopPropagation();
-    e.preventDefault();
+    if (this.#bindings.has(InputKeys.Context_Menu)) this.#youShallNotDefault(e);
   }
   //#endregion Events
 }

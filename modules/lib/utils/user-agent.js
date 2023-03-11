@@ -18,7 +18,8 @@ export class UserAgent {
     Object.assign(this, settings);
   }
 
-  static #cached = null;
+  /** @type {UserAgent} */
+  static #cached;
 
   static get instance() {
     if (!this.#cached) {
