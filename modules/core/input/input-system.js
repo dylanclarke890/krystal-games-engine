@@ -42,22 +42,22 @@ export class InputManager {
     const canvas = this.#system.canvas;
     canvas.addEventListener("wheel", (e) => this.#onMouseWheel(e), { passive: false }); // Stops Chrome warning
     canvas.addEventListener("contextmenu", (e) => this.#onContextMenu(e), false);
-    canvas.addEventListener("mousedown", (e) => this.#onKeyDown(e), false);
-    canvas.addEventListener("mouseup", (e) => this.#onKeyUp(e), false);
+    canvas.addEventListener("mousedown", (e) => this.#onMouseDown(e), false);
+    canvas.addEventListener("mouseup", (e) => this.#onMouseUp(e), false);
     canvas.addEventListener("mousemove", (e) => this.#onMouseMove(e), false);
   }
 
   #initializeTouchEvents() {
     const canvas = this.#system.canvas;
     // Standard
-    canvas.addEventListener("touchstart", (e) => this.#onKeyDown(e), false);
-    canvas.addEventListener("touchend", (e) => this.#onKeyUp(e), false);
-    canvas.addEventListener("touchcancel", (e) => this.#onKeyUp(e), false);
+    canvas.addEventListener("touchstart", (e) => this.#onTouchStart(e), false);
+    canvas.addEventListener("touchend", (e) => this.#onTouchEnd(e), false);
+    canvas.addEventListener("touchcancel", (e) => this.#onTouchEnd(e), false);
     canvas.addEventListener("touchmove", (e) => this.#onMouseMove(e), false);
 
     // MS
-    canvas.addEventListener("MSPointerDown", (e) => this.#onKeyDown(e), false);
-    canvas.addEventListener("MSPointerUp", (e) => this.#onKeyUp(e), false);
+    canvas.addEventListener("MSPointerDown", (e) => this.#onTouchStart(e), false);
+    canvas.addEventListener("MSPointerUp", (e) => this.#onTouchEnd(e), false);
     canvas.addEventListener("MSPointerMove", (e) => this.#onMouseMove(e), false);
     canvas.style.msTouchAction = "none";
   }
@@ -161,21 +161,22 @@ export class InputManager {
     e.preventDefault();
   }
 
+  /** @param {WheelEvent} e */
   #onMouseWheel(e) {
     const scrollAmount = Math.sign(e.deltaY);
-    const action = this.#bindings.get(InputKeys.Mouse_WheelUp);
+    const key = scrollAmount > 0 ? InputKeys.Mouse_WheelDown : InputKeys.Mouse_WheelUp;
+    const action = this.#bindings.get(key);
+    if (!action) return;
 
-    if (scrollAmount > 0 && this.#bindings.has(InputKeys.Mouse_WheelDown))
-      this.#pressed.set(InputKeys.Mouse_WheelDown, true);
-    else if (scrollAmount < 0 && this.#bindings.has(InputKeys.Mouse_WheelUp))
-      this.#pressed.set(InputKeys.Mouse_WheelUp, true);
+    this.#actions.set(action, true);
+    this.#pressed.set(action, true);
+    this.#delayedActions.set(action, true);
 
-    if (action) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
+    e.stopPropagation();
+    e.preventDefault();
   }
 
+  /** @param {MouseEvent} e */
   #onMouseMove(e) {
     const system = this.#system;
     const internalWidth = system.canvas.offsetWidth || system.realWidth;
@@ -186,6 +187,18 @@ export class InputManager {
     this.mouse.x = (clientX - pos.left) / scale;
     this.mouse.y = (clientY - pos.top) / scale;
   }
+
+  /** @param {MouseEvent} e */
+  #onMouseDown(e) { }
+  
+  /** @param {MouseEvent} e */
+  #onMouseUp(e) { }
+  
+  /** @param {TouchEvent} e */
+  #onTouchStart(e) {}
+  
+  /** @param {TouchEvent} e */
+  #onTouchEnd(e) {}
 
   #onContextMenu(e) {
     if (!this.#bindings.has(InputKeys.Context_Menu)) return;
