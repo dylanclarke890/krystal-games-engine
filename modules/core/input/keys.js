@@ -33,14 +33,25 @@ export class InputKeys extends Enum {
   static Alt_Left = new InputKeys();
   static Alt_Right = new InputKeys();
 
+  static Greater_Than = new InputKeys();
+  static Less_Than = new InputKeys();
   static Comma = new InputKeys();
   static Period = new InputKeys();
   static Tilde = new InputKeys();
-  static Semicolon = new InputKeys();
-  static Backslash = new InputKeys();
-  static Bracket_Left = new InputKeys();
-  static Bracket_Right = new InputKeys();
-  static Quote = new InputKeys();
+  static GraveAccent = new InputKeys();
+  static Question = new InputKeys();
+  static Colon = new InputKeys();
+  static Colon_Semi = new InputKeys();
+  static Slash_Backward = new InputKeys();
+  static Slash_Forward = new InputKeys();
+  static Bracket_Round_Left = new InputKeys();
+  static Bracket_Round_Right = new InputKeys();
+  static Bracket_Square_Left = new InputKeys();
+  static Bracket_Square_Right = new InputKeys();
+  static Bracket_Curly_Left = new InputKeys();
+  static Bracket_Curly_Right = new InputKeys();
+  static Quote_Single = new InputKeys();
+  static Quote_Double = new InputKeys();
 
   static Home = new InputKeys();
   static End = new InputKeys();
@@ -52,12 +63,9 @@ export class InputKeys extends Enum {
   static Delete = new InputKeys();
 
   static Multiply = new InputKeys();
-  static Add = new InputKeys();
-  static Subtract = new InputKeys();
-  static Decimal = new InputKeys();
-  static Divide = new InputKeys();
   static Plus = new InputKeys();
   static Minus = new InputKeys();
+  static UnderScore = new InputKeys();
 
   static Caps_Lock = new InputKeys();
   static Scroll_Lock = new InputKeys();
@@ -103,15 +111,7 @@ export class InputKeys extends Enum {
   static Seven = new InputKeys();
   static Eight = new InputKeys();
   static Nine = new InputKeys();
-  static NumPad_One = new InputKeys();
-  static NumPad_Two = new InputKeys();
-  static NumPad_Three = new InputKeys();
-  static NumPad_Four = new InputKeys();
-  static NumPad_Five = new InputKeys();
-  static NumPad_Six = new InputKeys();
-  static NumPad_Seven = new InputKeys();
-  static NumPad_Eight = new InputKeys();
-  static NumPad_Nine = new InputKeys();
+
   static F1 = new InputKeys();
   static F2 = new InputKeys();
   static F3 = new InputKeys();
