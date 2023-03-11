@@ -115,7 +115,7 @@ export class Input {
   constructor({ system } = {}) {
     Guard.againstNull({ system });
     this.system = system;
-    this.#userAgent = UserAgent.info;
+    this.#userAgent = UserAgent.instance;
   }
 
   targetIsInputOrText(event) {

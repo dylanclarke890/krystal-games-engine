@@ -20,7 +20,7 @@ export class UserAgent {
 
   static #cached = null;
 
-  static get info() {
+  static get instance() {
     if (!this.#cached) {
       const pixelRatio = window.devicePixelRatio || 1;
       const iPhone = /iPhone|iPod/i.test(navigator.userAgent);

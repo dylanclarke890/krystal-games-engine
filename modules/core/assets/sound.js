@@ -30,7 +30,7 @@ export class SoundManager {
 
   constructor() {
     VendorAttributes.normalize(window, "AudioContext");
-    this.#userAgent = UserAgent.info;
+    this.#userAgent = UserAgent.instance;
 
     if (!SoundManager.isSoundEnabled) return;
     // Probe sound formats and determine the file extension to load
