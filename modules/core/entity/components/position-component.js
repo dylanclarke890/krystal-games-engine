@@ -10,6 +10,29 @@ export class PositionComponent {
   }
 
   /**
+   * Calculates the distance between the current position and another position.
+   * @param {PositionComponent} otherPosition
+   * @returns {number}
+   */
+  distanceTo(otherPosition) {
+    const dx = this.x - otherPosition.x;
+    const dy = this.y - otherPosition.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  /**
+   * Calculates the squared distance between the current position and another position, which can be faster
+   * than calculating the actual distance if you only need to compare distances.
+   * @param {PositionComponent} otherPosition
+   * @returns {number}
+   */
+  distanceToSquared(otherPosition) {
+    const dx = this.x - otherPosition.x;
+    const dy = this.y - otherPosition.y;
+    return dx * dx + dy * dy;
+  }
+
+  /**
    * @param {number} x
    * @param {number} y
    */
@@ -19,12 +42,21 @@ export class PositionComponent {
   }
 
   /**
+   * Sets the position component to a new position specified by an angle (in radians) and distance from the origin.
+   * @param {number} angle The angle in radians.
+   * @param {number} distance The distance from the origin.
+   */
+  setToPolar(angle, distance) {
+    this.x = Math.cos(angle) * distance;
+    this.y = Math.sin(angle) * distance;
+  }
+
+  /**
    * @param {number} dx
    * @param {number} dy
    */
   move(dx, dy) {
-    this.x += dx;
-    this.y += dy;
+    this.add(dx, dy);
   }
 
   /**
@@ -66,17 +98,6 @@ export class PositionComponent {
   }
 
   /**
-   * Calculates the distance between the current position and another position.
-   * @param {PositionComponent} otherPosition
-   * @returns {number}
-   */
-  distanceTo(otherPosition) {
-    const dx = this.x - otherPosition.x;
-    const dy = this.y - otherPosition.y;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-  /**
    * Returns the dot product of the current position and the specified position.
    * @param {PositionComponent} otherPosition
    * @returns {number}
@@ -112,18 +133,6 @@ export class PositionComponent {
    */
   angleBetween(otherPosition) {
     return Math.atan2(otherPosition.y - this.y, otherPosition.x - this.x);
-  }
-
-  /**
-   * Calculates the squared distance between the current position and another position, which can be faster
-   * than calculating the actual distance if you only need to compare distances.
-   * @param {PositionComponent} otherPosition
-   * @returns {number}
-   */
-  distanceToSquared(otherPosition) {
-    const dx = this.x - otherPosition.x;
-    const dy = this.y - otherPosition.y;
-    return dx * dx + dy * dy;
   }
 
   /**
@@ -163,6 +172,17 @@ export class PositionComponent {
   }
 
   /**
+   * Linearly interpolates between the current position and another position by the specified amount t
+   * (a value between 0 and 1).
+   * @param {PositionComponent} otherPosition
+   * @param {number} t
+   */
+  lerp(otherPosition, t) {
+    this.x = this.x + (otherPosition.x - this.x) * t;
+    this.y = this.y + (otherPosition.y - this.y) * t;
+  }
+
+  /**
    * Sets the current position to a linear interpolation between two other positions, based on an alpha value
    * between 0 and 1.
    * @param {PositionComponent} vector1
@@ -172,27 +192,6 @@ export class PositionComponent {
   lerpVectors(vector1, vector2, alpha) {
     this.x = vector1.x + (vector2.x - vector1.x) * alpha;
     this.y = vector1.y + (vector2.y - vector1.y) * alpha;
-  }
-
-  /**
-   * Sets the position component to a new position specified by an angle (in radians) and distance from the origin.
-   * @param {number} angle The angle in radians.
-   * @param {number} distance The distance from the origin.
-   */
-  setToPolar(angle, distance) {
-    this.x = Math.cos(angle) * distance;
-    this.y = Math.sin(angle) * distance;
-  }
-
-  /**
-   * Linearly interpolates between the current position and another position by the specified amount t
-   * (a value between 0 and 1).
-   * @param {PositionComponent} otherPosition
-   * @param {number} t
-   */
-  lerp(otherPosition, t) {
-    this.x = this.x + (otherPosition.x - this.x) * t;
-    this.y = this.y + (otherPosition.y - this.y) * t;
   }
 
   /**
