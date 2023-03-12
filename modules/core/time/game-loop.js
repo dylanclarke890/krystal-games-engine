@@ -1,4 +1,4 @@
-import { EventSystem, GameEvents } from "./event-system.js";
+import { EventSystem, GameEvents } from "../event-system.js";
 import { Timer } from "./timer.js";
 
 export class GameLoop {

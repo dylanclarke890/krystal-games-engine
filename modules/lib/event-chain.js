@@ -1,4 +1,4 @@
-import { Timer } from "../core/timer.js";
+import { Timer } from "../core/time/timer.js";
 import { Assert } from "./sanity/assert.js";
 import { Guard } from "./sanity/guard.js";
 

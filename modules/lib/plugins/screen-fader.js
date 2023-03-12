@@ -1,6 +1,6 @@
 import { GameAnimation } from "../core/assets/animation.js";
 import { Guard } from "../lib/guard.js";
-import { Timer } from "../lib/timer.js";
+import { Timer } from "../lib/time/timer.js";
 
 export class ScreenFader {
   defaultOptions = {

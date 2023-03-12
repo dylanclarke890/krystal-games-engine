@@ -1,6 +1,6 @@
 import { Entity } from "../modules/core/entity.js";
 import { Register } from "../modules/core/register.js";
-import { Timer } from "../modules/lib/timer.js";
+import { Timer } from "../modules/lib/time/timer.js";
 
 /**
  * This entity passes through all calls to triggeredBy() to its own targets

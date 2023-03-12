@@ -1,6 +1,6 @@
 import { Entity } from "../modules/core/entity.js";
 import { EventSystem, GameEvents } from "../modules/core/event-system.js";
-import { GameLoop } from "../modules/core/game-loop.js";
+import { GameLoop } from "../modules/core/time/game-loop.js";
 import { MediaFactory } from "../modules/core/media-factory.js";
 import { Register } from "../modules/core/register.js";
 

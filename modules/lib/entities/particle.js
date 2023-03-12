@@ -1,7 +1,7 @@
 import { Entity } from "../../core/entity.js";
 import { Register } from "../../core/register.js";
 import { map } from "../modules/lib/number-utils.js";
-import { Timer } from "../../core/timer.js";
+import { Timer } from "../../core/time/timer.js";
 
 /**
  * Base entity class for particle entities. Subclass your own particles from

@@ -11,7 +11,7 @@ export class System {
   canvas;
   /** @type {CanvasRenderingContext2D} */
   ctx;
-  /** @type {import("./timer.js").Timer} */
+  /** @type {import("./time/timer.js").Timer} */
   clock;
   tick = 0;
   scale = 1;
@@ -96,5 +96,4 @@ export class System {
       },
     };
   }
-
 }

@@ -1,4 +1,4 @@
-import { Timer } from "../lib/timer.js";
+import { Timer } from "../lib/time/timer.js";
 
 export const FixedTickPlugin = {
   loop: [

@@ -1,6 +1,6 @@
 import { Entity } from "../modules/core/entity.js";
 import { Register } from "../modules/core/register.js";
-import { Timer } from "../modules/lib/timer.js";
+import { Timer } from "../modules/lib/time/timer.js";
 
 /**
  * This entity shakes the screen when its triggeredBy() method is called - usually

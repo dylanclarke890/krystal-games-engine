@@ -8,9 +8,11 @@
 /// <reference path="modules/core/input/input-manager.js"/>
 /// <reference path="modules/core/input/keys.js"/>
 
+/// <reference path="modules/core/time/game-loop.js"/>
+/// <reference path="modules/core/time/timer.js"/>
+
 /// <reference path="modules/core/entity.js"/>
 /// <reference path="modules/core/event-system.js"/>
-/// <reference path="modules/core/game-loop.js"/>
 /// <reference path="modules/core/game.js"/>
 /// <reference path="modules/core/loader.js"/>
 /// <reference path="modules/core/map.js"/>
@@ -18,7 +20,6 @@
 /// <reference path="modules/core/register.js"/>
 /// <reference path="modules/core/runner.js"/>
 /// <reference path="modules/core/system.js"/>
-/// <reference path="modules/core/timer.js"/>
 
 // #endregion CORE
 
@@ -43,7 +44,6 @@
 //#region LIB.DATA-STRUCTURES
 /// <reference path="modules/lib/data-structures/p-queue.js"/>
 //#endregion LIB.DATA-STRUCTURES
-
 
 //#region LIB.ENTITIES
 /// <reference path="modules/lib/entities/damage-zone.js"/>
