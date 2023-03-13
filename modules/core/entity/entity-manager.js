@@ -1,39 +1,62 @@
 export class EntityManager {
   constructor() {
-    this.entities = new Map();
     this.nextEntityId = 1;
+    /** @type {Map<int, Set<string>>} */
+    this.entities = new Map();
+    /** @type {Map<string, Map<int, Component>>} */
+    this.components = new Map();
   }
 
-  // create a new entity with a given set of components
-  createEntity(components = {}) {
-    const id = this.nextEntityId++;
-    this.entities.set(id, components);
-    return id;
+  createEntity() {
+    const entityId = this.nextEntityId++;
+    this.entities.set(entityId, new Set());
+    return entityId;
   }
 
-  // destroy an entity
   destroyEntity(entityId) {
+    const componentTypes = this.entities.get(entityId);
+    if (!componentTypes) {
+      return;
+    }
+    for (const componentType of componentTypes) {
+      const componentList = this.components.get(componentType);
+      componentList.delete(entityId);
+    }
     this.entities.delete(entityId);
   }
 
-  // get the components of an entity
-  getComponents(entityId) {
-    return this.entities.get(entityId);
+  hasComponent(entityId, componentType) {
+    const componentList = this.components.get(componentType);
+    return !!componentList && componentList.has(entityId);
   }
 
-  // update the components of an entity
-  updateComponents(entityId, newComponents) {
-    const components = this.entities.get(entityId);
-    this.entities.set(entityId, Object.assign({}, components, newComponents));
+  addComponent(entityId, componentType, componentData) {
+    let componentList = this.components.get(componentType);
+    if (!componentList) {
+      componentList = new Map();
+      this.components.set(componentType, componentList);
+    }
+    componentList.set(entityId, componentData);
+    const componentTypes = this.entities.get(entityId);
+    componentTypes.add(componentType);
   }
 
-  // get an array of all entity IDs
-  getAllEntityIds() {
-    return Array.from(this.entities.keys());
+  removeComponent(entityId, componentType) {
+    const componentList = this.components.get(componentType);
+    if (componentList) {
+      componentList.delete(entityId);
+    }
+    const componentTypes = this.entities.get(entityId);
+    componentTypes.delete(componentType);
   }
 
-  // get an array of all entities
-  getAllEntities() {
-    return Array.from(this.entities.values());
+  getComponent(entityId, componentType) {
+    const componentList = this.components.get(componentType);
+    return componentList ? componentList.get(entityId) : null;
+  }
+
+  getEntitiesWithComponent(componentType) {
+    const entityIds = this.components.get(componentType);
+    return entityIds ? [...entityIds.keys()] : [];
   }
 }
