@@ -1,7 +1,7 @@
 import { Assert } from "../../lib/sanity/assert.js";
 import { Guard } from "../../lib/sanity/guard.js";
 import { arrayFromInterval } from "../../lib/utils/array.js";
-import { Timer } from "../timer.js";
+import { Timer } from "../time/timer.js";
 
 export class GameAnimationSheet {
   /** @type {number} */

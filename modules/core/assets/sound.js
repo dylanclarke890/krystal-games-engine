@@ -3,11 +3,11 @@ import { constrain, map } from "../../lib/utils/number.js";
 import { removeItem } from "../../lib/utils/array.js";
 import { UserAgent } from "../../lib/utils/user-agent.js";
 import { Guard } from "../../lib/sanity/guard.js";
+import { noop } from "../../lib/utils/func.js";
 
-import { Timer } from "../timer.js";
+import { Timer } from "../time/timer.js";
 import { EventSystem, GameEvents } from "../event-system.js";
 import { Register } from "../register.js";
-import { noop } from "../../lib/utils/func.js";
 
 const SoundFormats = {
   M4A: { ext: "m4a", mime: "audio/mp4; codecs=mp4a.40.2" },
