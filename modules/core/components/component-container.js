@@ -8,7 +8,7 @@ export class ComponentContainer {
   }
 
   removeComponent(componentClass) {
-    this.components.delete(componentClass);
+    return this.components.delete(componentClass);
   }
 
   getComponent(componentClass) {

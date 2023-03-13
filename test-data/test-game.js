@@ -8,6 +8,7 @@ import { SpriteComponent } from "../modules/core/components/sprite-component.js"
 import { RenderSystem } from "../modules/core/systems/render-system.js";
 import { VelocitySystem } from "../modules/core/systems/velocity-system.js";
 import { PositionSystem } from "../modules/core/systems/position-system.js";
+import { EntityManager } from "../modules/core/managers/entity-manager.js";
 
 const moverAsset = "test-data/assets/entities/mover.png";
 
@@ -20,7 +21,9 @@ class Game {
   constructor() {
     this.loop = new GameLoop(60);
     this.screen = new Screen(500, 500);
-
+    const entityManager = new EntityManager();
+    this.entityManager = entityManager;
+    entityManager.createEntity("Mover");
     this.systems = [new RenderSystem(), new VelocitySystem(), new PositionSystem()];
     this.entities = [mover];
 
