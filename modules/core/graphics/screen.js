@@ -1,6 +1,19 @@
 import { uniqueId } from "../../lib/utils/string.js";
 
-export class CanvasContext {
+export class Screen {
+  /** @type {string} */
+  canvasId;
+  /** @type {number} */
+  width;
+  /** @type {number} */
+  height;
+  /** @type {HTMLElement} */
+  parent;
+  /** @type {HTMLCanvasElement} */
+  canvas;
+  /** @type {CanvasRenderingContext2D} */
+  ctx;
+
   constructor(width, height, canvasId = null, parent = document.body) {
     this.canvasId = canvasId;
     this.width = width;
@@ -15,6 +28,7 @@ export class CanvasContext {
       canvas = document.createElement("canvas");
       this.parent.appendChild(canvas);
       canvas.id = this.canvasId ?? uniqueId("kg-canvas-");
+      this.canvasId = canvas.id;
     }
     canvas.width = this.width;
     canvas.height = this.height;

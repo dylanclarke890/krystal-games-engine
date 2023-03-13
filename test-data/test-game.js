@@ -1,4 +1,4 @@
-import { CanvasContext } from "../modules/core/graphics/canvas-context.js";
+import { Screen } from "../modules/core/graphics/screen.js";
 import { EventSystem, GameEvents } from "../modules/core/event-system.js";
 import { GameLoop } from "../modules/core/time/game-loop.js";
 
@@ -7,7 +7,7 @@ const moverAssets = "test-data/assets/entities/mover.png";
 class Game {
   constructor() {
     this.loop = new GameLoop(60);
-    this.ctx = new CanvasContext(500, 500);
+    this.screen = new Screen(500, 500);
     this.tick = 0;
     this.#bindEvents();
     this.img = new Image();
@@ -27,8 +27,9 @@ class Game {
 
   update() {}
   draw() {
-    this.ctx.clear();
-    this.ctx.drawRect(250, 250, 200, 200, "orange");
+    this.screen.clear();
+    this.screen.drawRect(250, 250, 200, 200, "orange");
+    this.screen.ctx.drawImage(this.img, 200, 200);
   }
 }
 
