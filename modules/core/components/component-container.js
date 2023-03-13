@@ -1,6 +1,6 @@
 export class ComponentContainer {
-  constructor() {
-    this.components = new Map();
+  constructor(components) {
+    this.components = new Map(components);
   }
 
   addComponent(component) {

@@ -5,4 +5,8 @@ export class SystemBase {
     Guard.againstNull({ entityManager });
     this.entityManager = entityManager;
   }
+
+  update() {
+    throw new Error("Update method must be implemented.");
+  }
 }

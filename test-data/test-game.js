@@ -1,17 +1,31 @@
 import { Screen } from "../modules/core/graphics/screen.js";
 import { EventSystem, GameEvents } from "../modules/core/event-system.js";
 import { GameLoop } from "../modules/core/time/game-loop.js";
+import { ComponentContainer } from "../modules/core/components/component-container.js";
+import { VelocityComponent } from "../modules/core/components/velocity-component.js";
+import { PositionComponent } from "../modules/core/components/position-component.js";
+import { SpriteComponent } from "../modules/core/components/sprite-component.js";
+import { RenderSystem } from "../modules/core/systems/render-system.js";
+import { VelocitySystem } from "../modules/core/systems/velocity-system.js";
+import { PositionSystem } from "../modules/core/systems/position-system.js";
 
-const moverAssets = "test-data/assets/entities/mover.png";
+const moverAsset = "test-data/assets/entities/mover.png";
+
+const sprite = new SpriteComponent(moverAsset);
+const pos = new PositionComponent(50, 50);
+const vel = new VelocityComponent(0, 0);
+const mover = new ComponentContainer(sprite, pos, vel);
 
 class Game {
   constructor() {
     this.loop = new GameLoop(60);
     this.screen = new Screen(500, 500);
+
+    this.systems = [new RenderSystem(), new VelocitySystem(), new PositionSystem()];
+    this.entities = [mover];
+
     this.tick = 0;
     this.#bindEvents();
-    this.img = new Image();
-    this.img.src = moverAssets;
     this.loop.start();
   }
 
@@ -25,7 +39,9 @@ class Game {
     this.draw();
   }
 
-  update() {}
+  update() {
+    for (let i = 0; i < this.systems.length; i++) this.systems[i].update();
+  }
   draw() {
     this.screen.clear();
     this.screen.drawRect(250, 250, 200, 200, "orange");
