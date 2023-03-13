@@ -1,7 +1,7 @@
 import { Guard } from "../../lib/sanity/guard.js";
 import { GameLogger } from "../../lib/utils/logger.js";
 import { UserAgent } from "../../lib/utils/user-agent.js";
-import { InputKeys, keyboardMap } from "./keys.js";
+import { InputKeys, keyboardMap } from "../utils/keys.js";
 
 export class InputManager {
   /** @type {import("../system.js").System}} */

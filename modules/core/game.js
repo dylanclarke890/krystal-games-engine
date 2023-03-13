@@ -4,7 +4,7 @@ import { removeItem } from "../lib/utils/array.js";
 import { Register } from "../core/register.js";
 
 import { CollisionMap, BackgroundMap } from "./map.js";
-import { InputManager } from "./input/input-manager.js";
+import { InputManager } from "./managers/input-manager.js";
 import { Entity } from "./entity.js";
 import { EventSystem, GameEvents } from "./event-system.js";
 
