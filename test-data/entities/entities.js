@@ -1,25 +1,23 @@
-import { Entity } from "../../modules/core/entity.js";
+import { PositionComponent } from "../../modules/core/entity/components/position-component.js";
+import { VelocityComponent } from "../../modules/core/entity/components/velocity-component.js";
 import { Register } from "../../modules/core/register.js";
 
-class Test extends Entity {}
+class Entity {
+  constructor() {
+    this.components = [];
+  }
 
-export class A extends Test {
-  constructor(opts) {
-    super(opts);
-    this.size = {
-      x: 50,
-      y: 58,
-    };
-    this.offset = {
-      x: 8,
-      y: 3,
-    };
-    this.createAnimationSheet("./test-data/assets/spritesheets/pitchfork_guy.png", this.size);
-    const threeFrames = (1 / 60) * 3;
-    this.addAnim("attack", threeFrames, "[0..19]", false);
+  addComponent(component) {
+    this.components.push(component);
   }
 }
-export class B extends Test {}
-export class C extends Test {}
 
-Register.entityTypes(A, B, C);
+export class Player extends Entity {
+  constructor() {
+    super();
+    this.addComponent(PositionComponent);
+    this.addComponent(VelocityComponent);
+  }
+}
+
+Register.entityTypes(Player);

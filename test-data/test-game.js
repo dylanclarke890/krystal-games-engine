@@ -1,26 +1,13 @@
-import { Entity } from "../modules/core/entity.js";
 import { TextAlign } from "../modules/core/assets/font.js";
 import { KrystalGame } from "../modules/core/game.js";
 import { Register } from "../modules/core/register.js";
 import { GameRunner } from "../modules/core/runner.js";
-
-class TestPlayer extends Entity {
-  constructor(opts) {
-    super(opts);
-    this.size = { x: 24, y: 8 };
-    this.createAnimationSheet("./test-data/assets/entities/mover.png", { x: 24, y: 8 });
-    this.addAnim("standard", 1, [0], true);
-  }
-
-  draw() {
-    super.draw();
-  }
-}
+import { Player } from "./entities/entities.js";
 
 class TestGame extends KrystalGame {
   constructor(opts) {
     super(opts);
-    this.spawnEntity(TestPlayer, 100, 100);
+    this.spawnEntity(Player, 100, 100);
   }
 
   draw() {
@@ -32,7 +19,6 @@ class TestGame extends KrystalGame {
   }
 }
 
-Register.entityTypes(TestPlayer);
 Register.preloadImages("./test-data/assets/entities/mover.png");
 
 new GameRunner({
