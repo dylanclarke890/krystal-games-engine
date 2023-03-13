@@ -1,4 +1,4 @@
-import { CanvasContext } from "../modules/core/canvas-context.js";
+import { CanvasContext } from "../modules/core/graphics/canvas-context.js";
 import { EventSystem, GameEvents } from "../modules/core/event-system.js";
 import { GameLoop } from "../modules/core/time/game-loop.js";
 
