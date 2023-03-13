@@ -1,6 +1,8 @@
-export class PositionSystem {
+import { SystemBase } from "./base-system.js";
+
+export class PositionSystem extends SystemBase {
   constructor(entityManager) {
-    this.entityManager = entityManager;
+    super(entityManager);
   }
 
   update() {}
