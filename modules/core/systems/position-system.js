@@ -5,5 +5,8 @@ export class PositionSystem extends SystemBase {
     super(entityManager);
   }
 
-  update() {}
+  update() {
+    const entities = this.entityManager.getEntitiesWithComponents("position");
+    console.log(entities);
+  }
 }

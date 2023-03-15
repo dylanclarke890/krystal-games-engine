@@ -14,4 +14,11 @@ export class World {
       physics: new PhysicsSystem(this.managers.entity),
     };
   }
+
+  update(tick) {
+    this.tick = tick;
+    this.systems.position.update();
+    this.systems.physics.update();
+    this.systems.graphics.update();
+  }
 }
