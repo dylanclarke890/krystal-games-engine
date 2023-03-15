@@ -18,7 +18,7 @@ class Game {
     };
     this.systems = {
       position: new PositionSystem(this.managers.entity),
-      graphics: new RenderSystem(this.managers.entity),
+      graphics: new RenderSystem(this.managers.entity, this.screen),
       physics: new PhysicsSystem(this.managers.entity),
     };
     this.world = new World([this.systems.position, this.systems.physics, this.systems.graphics]);
