@@ -7,6 +7,5 @@ export class PhysicsSystem extends SystemBase {
 
   update() {
     const entities = this.entityManager.getEntitiesWithComponents("position", "velocity");
-    console.log(entities);
   }
 }

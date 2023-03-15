@@ -7,6 +7,5 @@ export class RenderSystem extends SystemBase {
 
   update() {
     const entities = this.entityManager.getEntitiesWithComponents("sprite", "position");
-    console.log(entities);
   }
 }
