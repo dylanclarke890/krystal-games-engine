@@ -6,7 +6,7 @@ import { VelocityComponent } from "../modules/core/components/velocity-component
 import { PositionComponent } from "../modules/core/components/position-component.js";
 import { SpriteComponent } from "../modules/core/components/sprite-component.js";
 import { RenderSystem } from "../modules/core/systems/render-system.js";
-import { VelocitySystem } from "../modules/core/systems/velocity-system.js";
+import { PhysicsSystem } from "../modules/core/systems/physics-system.js";
 import { PositionSystem } from "../modules/core/systems/position-system.js";
 import { EntityManager } from "../modules/core/managers/entity-manager.js";
 
@@ -24,7 +24,7 @@ class Game {
     const entityManager = new EntityManager();
     this.entityManager = entityManager;
     entityManager.createEntity("Mover");
-    this.systems = [new RenderSystem(), new VelocitySystem(), new PositionSystem()];
+    this.systems = [new RenderSystem(), new PhysicsSystem(), new PositionSystem()];
     this.entities = [mover];
 
     this.tick = 0;
