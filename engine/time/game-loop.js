@@ -12,6 +12,7 @@ export class GameLoop {
   targetFps;
 
   constructor(eventSystem, targetFps = 60) {
+    this.eventSystem = eventSystem;
     this.clock = new Timer();
     this.targetFps = targetFps;
     this.fpsInterval = 1000 / targetFps;
