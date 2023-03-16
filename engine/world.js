@@ -17,6 +17,10 @@ export class World {
     return this.entityManager.removeComponent(entityId, componentType);
   }
 
+  destroyEntity(entityId) {
+    return this.entityManager.destroyEntity(entityId);
+  }
+
   registerSystem(system) {
     return this.systemManager.registerSystem(system);
   }

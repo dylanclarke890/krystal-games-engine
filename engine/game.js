@@ -1,8 +1,8 @@
 import { EventSystem } from "./events/event-system.js";
 import { EntityManager } from "./entities/entity-manager.js";
 import { SystemManager } from "./systems/system-manager.js";
-import { World } from "./world.js";
 import { GameLoop } from "./time/game-loop.js";
+import { World } from "./world.js";
 
 export class Game {
   constructor() {
