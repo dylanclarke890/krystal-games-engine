@@ -2,16 +2,16 @@ import { PQueue, PriorityLevel } from "../lib/data-structures/p-queue.js";
 import { Guard } from "../lib/sanity/guard.js";
 import { Enum } from "../lib/utils/enum.js";
 
-class GameEventSystem {
+class EventSystem {
   /** @type {Map<Enum, PQueue>} */
   #subscribers;
-  /** @type {GameEventSystem} */
+  /** @type {EventSystem} */
   #parent;
 
   constructor(parent = null) {
     this.#subscribers = new Map();
     if (parent) {
-      Guard.isInstanceOf({ parent }, GameEventSystem);
+      Guard.isInstanceOf({ parent }, EventSystem);
       this.#parent = parent;
     }
   }
@@ -99,5 +99,3 @@ export class GameEvents extends Enum {
     this.freeze();
   }
 }
-
-export const EventSystem = new GameEventSystem();

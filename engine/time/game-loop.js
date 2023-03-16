@@ -11,7 +11,7 @@ export class GameLoop {
   /** @type {number} */
   targetFps;
 
-  constructor(targetFps = 60) {
+  constructor(eventSystem, targetFps = 60) {
     this.clock = new Timer();
     this.targetFps = targetFps;
     this.fpsInterval = 1000 / targetFps;
@@ -19,9 +19,7 @@ export class GameLoop {
     this.#bindEvents();
   }
 
-  #bindEvents() {
-    EventSystem.on(GameEvents.Loop_Stop, () => this.stop(), 999);
-  }
+  #bindEvents() {}
 
   start() {
     this.stopped = false;
@@ -42,5 +40,6 @@ export class GameLoop {
 
   stop() {
     this.stopped = true;
+    EventSystem.dispatch(GameEvents.Loop_Stop, () => this.stop(), 999);
   }
 }
