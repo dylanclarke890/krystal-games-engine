@@ -3,7 +3,7 @@ import { SystemBase } from "./base-system.js";
 
 export class RenderSystem extends SystemBase {
   /**
-   * @param {import("../managers/entity-manager.js")} entityManager
+   * @param {import("../managers/entity-manager.js").EntityManager} entityManager
    * @param {import("../graphics/screen.js").Screen} screen
    */
   constructor(entityManager, screen) {
