@@ -1,8 +1,21 @@
+import { EventSystem } from "../events/event-system.js";
 import { GameEvents } from "../events/events.js";
+import { Guard } from "../utils/guard.js";
 
 export class EntityManager {
+  /** @type {EventSystem} */
+  eventSystem;
+  /** @type {Set<int>} */
+  entities;
+  /** @type {Map<string, any>} */
+  components;
+  /** @type {Map<int, Set<string>} */
+  entityMasks;
+  /** @type {number} */
+  nextEntityId;
+
   constructor(eventSystem) {
-    /** @type {import("../events/event-system.js").EventSystem} */
+    Guard.againstNull({ eventSystem }).isInstanceOf(EventSystem);
     this.eventSystem = eventSystem;
     this.entities = new Set();
     this.components = new Map();

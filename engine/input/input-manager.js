@@ -2,6 +2,7 @@ import { Guard } from "../utils/guard.js";
 import { UserAgent } from "../utils/user-agent.js";
 import { InputKeys, keyboardMap } from "./input-keys.js";
 
+// TODO: Still uses old way of accessing canvas through system. Needs to be passed the class responsible for the canvas
 export class InputManager {
   /** @type {import("../system.js").System}} */
   #system;

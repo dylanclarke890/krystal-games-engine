@@ -5,6 +5,17 @@ import { GameLoop } from "./time/game-loop.js";
 import { World } from "./world.js";
 
 export class Game {
+  /** @type {EventSystem} */
+  eventSystem;
+  /** @type {EntityManager} */
+  entityManager;
+  /** @type {SystemManager} */
+  systemManager;
+  /** @type {GameLoop} */
+  loop;
+  /** @type {World} */
+  world;
+
   constructor() {
     this.eventSystem = new EventSystem();
     this.entityManager = new EntityManager();
