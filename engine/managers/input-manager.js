@@ -1,7 +1,6 @@
-import { Guard } from "../../lib/sanity/guard.js";
-import { GameLogger } from "../../lib/utils/logger.js";
-import { UserAgent } from "../../lib/utils/user-agent.js";
-import { InputKeys, keyboardMap } from "../utils/keys.js";
+import { Guard } from "../utils/guard.js";
+import { UserAgent } from "../utils/user-agent.js";
+import { InputKeys, keyboardMap } from "./input-keys.js";
 
 export class InputManager {
   /** @type {import("../system.js").System}} */
@@ -123,7 +122,7 @@ export class InputManager {
    */
   bind(key, action) {
     if (this.#bindings.has(key))
-      GameLogger.warn(`${key} already bound to action ${this.#bindings.get(key)}`);
+      console.warn(`${key} already bound to action ${this.#bindings.get(key)}`);
     this.#bindings.set(key, action);
     this.#initInputTypeEvents(key);
   }
