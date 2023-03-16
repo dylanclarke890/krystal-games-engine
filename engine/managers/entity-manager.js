@@ -1,5 +1,9 @@
+import { GameEvents } from "../events/events.js";
+
 export class EntityManager {
-  constructor() {
+  constructor(eventSystem) {
+    /** @type {import("../events/event-system.js").EventSystem} */
+    this.eventSystem = eventSystem;
     this.entities = new Set();
     this.components = new Map();
     this.entityMasks = new Map();
@@ -11,6 +15,7 @@ export class EntityManager {
     const entity = this.nextEntityId;
     this.entities.add(entity);
     this.nextEntityId++;
+    this.eventSystem.dispatch(GameEvents.Entity_Created, entity);
     return entity;
   }
 
@@ -61,5 +66,6 @@ export class EntityManager {
     }
     this.entityMasks.delete(entity);
     this.entities.delete(entity);
+    this.eventSystem.dispatch(GameEvents.Entity_Destroyed, entity);
   }
 }
