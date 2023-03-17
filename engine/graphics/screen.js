@@ -1,4 +1,4 @@
-import { uniqueId } from "../../lib/utils/string.js";
+import { uniqueId } from "../utils/string.js";
 
 export class Screen {
   /** @type {string} */
