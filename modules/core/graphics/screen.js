@@ -34,7 +34,6 @@ export class Screen {
     canvas.height = this.height;
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
-    console.log("hello");
   }
 
   clear(color) {

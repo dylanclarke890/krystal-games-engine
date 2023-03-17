@@ -61,6 +61,16 @@ export class EntityManager {
     return this.entityMasks.get(entity).has(componentType);
   }
 
+  /** Check if any entity has the specified component type. */
+  hasComponentType(componentType) {
+    for (const key of this.components.keys()) {
+      if (key.endsWith(componentType)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /** Get all entities that have a set of components. */
   getEntitiesWithComponents(...componentTypes) {
     const entities = [];

@@ -1,5 +1,8 @@
 import { Guard } from "./utils/guard.js";
 import { Game } from "./game.js";
+import { SpriteComponent } from "./components/sprite-component.js";
+import { VelocityComponent } from "./components/velocity-component.js";
+import { PositionComponent } from "./components/position-component.js";
 
 export class World {
   /** @type {import("./events/event-system.js").EventSystem} */
@@ -16,6 +19,17 @@ export class World {
     this.game = game;
     this.entityManager = game.entityManager;
     this.systemManager = game.systemManager;
+    this.createTestEntity();
+  }
+
+  createTestEntity() {
+    const id = this.entityManager.createEntity();
+    this.entityManager.addComponent(id, new PositionComponent(50, 50));
+    this.entityManager.addComponent(id, new VelocityComponent(0, 0));
+    this.entityManager.addComponent(
+      id,
+      new SpriteComponent("test-data/assets/entities/mover.png", 24, 8)
+    );
   }
 
   createEntity() {
