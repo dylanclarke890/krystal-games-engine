@@ -6,7 +6,7 @@ export class RenderSystem extends System {
   static requiredComponents = ["SpriteComponent", "PositionComponent"];
 
   /**
-   * @param {import("../managers/entity-manager.js").EntityManager} entityManager
+   * @param {import("../entities/entity-manager.js").EntityManager} entityManager
    * @param {Viewport} viewport
    */
   constructor(entityManager, viewport) {
