@@ -1,4 +1,5 @@
-import { Guard } from "../../lib/sanity/guard.js";
+import { Screen } from "../graphics/screen.js";
+import { Guard } from "../utils/guard.js";
 import { System } from "./system.js";
 
 export class RenderSystem extends System {
@@ -6,11 +7,11 @@ export class RenderSystem extends System {
 
   /**
    * @param {import("../managers/entity-manager.js").EntityManager} entityManager
-   * @param {import("../graphics/screen.js").Screen} screen
+   * @param {Screen} screen
    */
   constructor(entityManager, screen) {
     super(entityManager);
-    Guard.againstNull({ screen });
+    Guard.againstNull({ screen }).isInstanceOf(Screen);
     this.screen = screen;
   }
 

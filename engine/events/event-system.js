@@ -1,5 +1,5 @@
-import { PQueue, PriorityLevel } from "../lib/data-structures/p-queue.js";
-import { Guard } from "../lib/sanity/guard.js";
+import { PQueue, PriorityLevel } from "../utils/priority-queue.js";
+import { Guard } from "../utils/guard.js";
 
 export class EventSystem {
   /** @type {Map<Enum, PQueue>} */
