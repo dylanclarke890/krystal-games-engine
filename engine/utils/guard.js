@@ -25,7 +25,7 @@ export class Guard {
    * Throws an error if 'keyValue' is not of the specified 'type'. Variables to validate must be passed wrapped
    * in an object.
    * @param {"function" | "object" | "number" | "string" | "boolean" | "undefined" | "bigint" | "symbol"} type
-   * @example Guard.isTypeOf({ valueToCheck });
+   * @example Guard.isTypeOf({ valueToCheck }, "string");
    */
   static isTypeOf(keyValue, type) {
     const { key, value } = this.#getKeyValue(keyValue);
@@ -35,11 +35,11 @@ export class Guard {
   /**
    * Throws an error if 'keyValue' is not an instance of 'instanceOf'. Variables to validate must be passed
    * wrapped in an object.
-   * @example Guard.isInstanceOf({ valueToCheck });
+   * @example Guard.isInstanceOf({ valueToCheck }, ClassDefinition);
    */
   static isInstanceOf(keyValue, instanceOf) {
     const { key, value } = this.#getKeyValue(keyValue);
-    if (!(value.prototype instanceof instanceOf))
-      throw new Error(`${key} must be instance of "${instanceOf.name}".`);
+    if (!(value instanceof instanceOf))
+      throw new TypeError(`${key} must be an instance of "${instanceOf.name}".`);
   }
 }

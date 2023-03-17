@@ -6,3 +6,5 @@ export class TestGame extends Game {
     this.start();
   }
 }
+
+new TestGame();

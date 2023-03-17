@@ -23,9 +23,9 @@ export class Game {
   constructor(canvasId, width, height) {
     this.screen = new Screen(width, height, canvasId);
     this.eventSystem = new EventSystem();
-    this.entityManager = new EntityManager();
+    this.entityManager = new EntityManager(this.eventSystem);
     this.systemManager = new SystemManager(this.eventSystem, this.entityManager);
-    this.loop = new GameLoop(60);
+    this.loop = new GameLoop(this.eventSystem, 60);
     this.world = new World(this);
     this.#registerSystems();
   }
