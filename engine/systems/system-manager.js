@@ -20,6 +20,7 @@ export class SystemManager {
   }
 
   #ensureRequiredComponentsArePresent(requiredComponents) {
+    Guard.againstNull({ requiredComponents });
     for (const componentType of requiredComponents) {
       if (!this.entityManager.hasComponentType(componentType)) {
         throw new Error(`Missing required component type: ${componentType}`);
@@ -29,7 +30,6 @@ export class SystemManager {
 
   registerSystem(system) {
     Guard.againstNull({ system }).isInstanceOf(System);
-    Guard.againstNull({ requiredComponents: system.constructor.requiredComponents });
     this.#ensureRequiredComponentsArePresent(system.constructor.requiredComponents);
     this.systems.add(system);
   }

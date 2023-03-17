@@ -1,7 +1,9 @@
 import { Guard } from "../../lib/sanity/guard.js";
-import { SystemBase } from "./base-system.js";
+import { System } from "./system.js";
 
-export class RenderSystem extends SystemBase {
+export class RenderSystem extends System {
+  static requiredComponents = ["SpriteComponent", "PositionComponent"];
+
   /**
    * @param {import("../managers/entity-manager.js").EntityManager} entityManager
    * @param {import("../graphics/screen.js").Screen} screen

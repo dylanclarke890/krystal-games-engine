@@ -1,9 +1,7 @@
-import { SystemBase } from "./base-system.js";
+import { System } from "./system.js";
 
-export class PositionSystem extends SystemBase {
-  constructor(entityManager) {
-    super(entityManager);
-  }
+export class PositionSystem extends System {
+  static requiredComponents = ["PositionComponent"];
 
   update() {
     const entities = this.entityManager.getEntitiesWithComponents("PositionComponent");
