@@ -6,6 +6,8 @@ export class World {
   eventSystem;
   /** @type {import("./entities/entity-manager.js").EntityManager} */
   entityManager;
+  /** @type {import("./systems/system-manager.js").SystemManager} */
+  systemManager;
   /** @type {Game} */
   game;
 

@@ -4,7 +4,7 @@ import { Guard } from "../lib/sanity/guard.js";
 export class EventSystem {
   /** @type {Map<Enum, PQueue>} */
   #subscribers;
-  /** @type {EventSystem} */
+  /** @type {EventSystem|undefined} */
   #parent;
 
   constructor(parent = null) {
