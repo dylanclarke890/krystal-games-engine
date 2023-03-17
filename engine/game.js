@@ -6,9 +6,11 @@ import { World } from "./world.js";
 import { PhysicsSystem } from "./systems/physics-system.js";
 import { PositionSystem } from "./systems/position-system.js";
 import { RenderSystem } from "./systems/render-system.js";
-import { Screen } from "../modules/core/graphics/screen.js";
+import { Viewport } from "./graphics/viewport.js";
 
 export class Game {
+  /** @type {Viewport} */
+  viewport;
   /** @type {EventSystem} */
   eventSystem;
   /** @type {EntityManager} */
@@ -21,7 +23,7 @@ export class Game {
   world;
 
   constructor(canvasId, width, height) {
-    this.screen = new Screen(width, height, canvasId);
+    this.viewport = new Viewport(width, height, canvasId);
     this.eventSystem = new EventSystem();
     this.entityManager = new EntityManager(this.eventSystem);
     this.systemManager = new SystemManager(this.eventSystem, this.entityManager);
@@ -33,7 +35,7 @@ export class Game {
   #registerSystems() {
     this.systemManager.registerSystem(new PositionSystem(this.entityManager));
     this.systemManager.registerSystem(new PhysicsSystem(this.entityManager));
-    this.systemManager.registerSystem(new RenderSystem(this.entityManager, this.screen));
+    this.systemManager.registerSystem(new RenderSystem(this.entityManager, this.viewport));
   }
 
   start() {

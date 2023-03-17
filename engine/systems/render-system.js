@@ -1,4 +1,4 @@
-import { Screen } from "../graphics/screen.js";
+import { Viewport } from "../graphics/viewport.js";
 import { Guard } from "../utils/guard.js";
 import { System } from "./system.js";
 
@@ -7,16 +7,16 @@ export class RenderSystem extends System {
 
   /**
    * @param {import("../managers/entity-manager.js").EntityManager} entityManager
-   * @param {Screen} screen
+   * @param {Viewport} viewport
    */
-  constructor(entityManager, screen) {
+  constructor(entityManager, viewport) {
     super(entityManager);
-    Guard.againstNull({ screen }).isInstanceOf(Screen);
-    this.screen = screen;
+    Guard.againstNull({ viewport }).isInstanceOf(Viewport);
+    this.viewport = viewport;
   }
 
   update() {
-    this.screen.clear();
+    this.viewport.clear();
     const entities = this.entityManager.getEntitiesWithComponents(
       "SpriteComponent",
       "PositionComponent"
@@ -25,7 +25,7 @@ export class RenderSystem extends System {
       const entityId = entities[i];
       const pos = this.entityManager.getComponent(entityId, "PositionComponent");
       const sprite = this.entityManager.getComponent(entityId, "SpriteComponent");
-      this.screen.ctx.drawImage(sprite.image, pos.x, pos.y, sprite.width, sprite.height);
+      this.viewport.ctx.drawImage(sprite.image, pos.x, pos.y, sprite.width, sprite.height);
     }
   }
 }

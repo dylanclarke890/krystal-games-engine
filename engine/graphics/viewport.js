@@ -1,6 +1,6 @@
 import { uniqueId } from "../utils/string.js";
 
-export class Screen {
+export class Viewport {
   /** @type {string} */
   canvasId;
   /** @type {number} */
