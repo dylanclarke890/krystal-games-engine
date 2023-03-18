@@ -37,4 +37,8 @@ export class SystemManager {
   unregisterSystem(system) {
     this.systems.delete(system);
   }
+
+  update(dt) {
+    for (const system of this.systems) system.update(dt);
+  }
 }

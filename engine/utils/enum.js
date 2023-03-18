@@ -18,23 +18,31 @@ export class Enum {
       enumValues.push(value);
     }
 
-    // Important: only add more static properties *after* processing the enum entries
     this.enumKeys = enumKeys;
     this.enumValues = enumValues;
     Object.freeze(this);
   }
 
+  static [Symbol.iterator]() {
+    return this.enumValues[Symbol.iterator]();
+  }
+
   /**
    * @param {string} str
-   * @returns {undefined|Enum}
+   * @returns {Enum|undefined}
    */
   static from(str) {
     const index = this.enumKeys.indexOf(str);
     return index >= 0 ? this.enumValues[index] : undefined;
   }
 
-  static [Symbol.iterator]() {
-    return this.enumValues[Symbol.iterator]();
+  static toString() {
+    const entries = Object.entries(this)
+      .filter(([, value]) => value instanceof this)
+      .map(([key, value]) => `${key}: ${value.enumOrdinal}`)
+      .join(", ");
+
+    return `${this.name}: {${entries}}`;
   }
 
   /** @type {string} */
@@ -45,8 +53,8 @@ export class Enum {
   #value;
 
   /**
-   * @param {number|any} [value] Optional value to use instead of it's index.
-   * Recommended to be a number but can technically be anything.
+   * @param {number|any} [value] Optional value to use instead of the enum's index.
+   * Recommended to be a number for consistency but can technically be anything.
    */
   constructor(value) {
     this.#value = value;
@@ -58,14 +66,5 @@ export class Enum {
 
   valueOf() {
     return this.#value !== undefined ? this.#value : this.enumOrdinal;
-  }
-
-  static toString() {
-    const entries = Object.entries(this)
-      .filter(([, value]) => value instanceof this)
-      .map(([key, value]) => `${key}: ${value.enumOrdinal}`)
-      .join(", ");
-
-    return `${this.name}: {${entries}}`;
   }
 }
