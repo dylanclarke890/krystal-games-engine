@@ -4,7 +4,7 @@ import { Guard } from "../utils/guard.js";
 export class System {
   /** @type {string[]} */
   static requiredComponents;
-  /** @type {string} */
+  /** @type {import("./system-types.js").SystemTypes} */
   static systemType;
 
   /** @type {EntityManager} */

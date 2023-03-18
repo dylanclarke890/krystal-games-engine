@@ -1,9 +1,11 @@
 import { Viewport } from "../graphics/viewport.js";
 import { Guard } from "../utils/guard.js";
+import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 
 export class RenderSystem extends System {
   static requiredComponents = ["SpriteComponent", "PositionComponent"];
+  static systemType = SystemTypes.Graphics;
 
   /**
    * @param {import("../entities/entity-manager.js").EntityManager} entityManager
