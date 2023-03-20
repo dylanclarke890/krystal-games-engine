@@ -1,6 +1,8 @@
 import { EntityManager } from "../entities/entity-manager.js";
 import { EventSystem } from "../events/event-system.js";
+import { GameEvents } from "../events/events.js";
 import { Guard } from "../utils/guard.js";
+import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 
 export class SystemManager {
@@ -17,6 +19,11 @@ export class SystemManager {
     this.eventSystem = eventSystem;
     this.entityManager = entityManager;
     this.systems = new Set();
+    this.#bindEvents();
+  }
+
+  #bindEvents() {
+    this.eventSystem.on(GameEvents.Loop_NextFrame, (dt) => this.update(dt));
   }
 
   #ensureRequiredComponentsArePresent(requiredComponents) {
@@ -30,6 +37,7 @@ export class SystemManager {
 
   registerSystem(system) {
     Guard.againstNull({ system }).isInstanceOf(System);
+    Guard.againstNull({ systemType: system.constructor.systemType }).isInstanceOf(SystemTypes);
     this.#ensureRequiredComponentsArePresent(system.constructor.requiredComponents);
     this.systems.add(system);
   }
