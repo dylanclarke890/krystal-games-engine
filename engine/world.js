@@ -23,12 +23,13 @@ export class World {
   }
 
   createTestEntity() {
-    const id = this.entityManager.createEntity();
-    this.entityManager.addComponent(id, new PositionComponent(50, 50));
-    this.entityManager.addComponent(id, new VelocityComponent(0, 0));
-    this.entityManager.addComponent(
+    const em = this.entityManager;
+    const id = em.createEntity();
+    em.addComponent(id, new PositionComponent(50, 50));
+    em.addComponent(id, new VelocityComponent(0, 0));
+    em.addComponent(
       id,
-      new SpriteComponent("test-data/assets/entities/mover.png", 24, 8)
+      new SpriteComponent("test-data/assets/multi-square.png", 16, 16, [0, 1, 2, 3], 1, true)
     );
   }
 
