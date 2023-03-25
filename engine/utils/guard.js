@@ -16,7 +16,7 @@ export class Guard {
     if (value == null) throw new Error(`"${key}" is required.`);
     return {
       isInstanceOf: (instance) => this.isInstanceOf(keyValue, instance),
-      /** @type {"function" | "object" | "number" | "string" | "boolean" | "undefined" | "bigint" | "symbol"} */
+      /** @param {"function" | "object" | "number" | "string" | "boolean" | "undefined" | "bigint" | "symbol"} type */
       isTypeOf: (type) => this.isTypeOf(keyValue, type),
     };
   }
