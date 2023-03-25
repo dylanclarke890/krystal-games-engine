@@ -20,8 +20,7 @@ export class RenderSystem extends System {
   update() {
     this.viewport.clear();
     const entities = this.entityManager.getEntitiesWithComponents(
-      "SpriteComponent",
-      "PositionComponent"
+      ...RenderSystem.requiredComponents
     );
     for (let i = 0; i < entities.length; i++) {
       const entityId = entities[i];

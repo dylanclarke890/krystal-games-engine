@@ -6,7 +6,9 @@ export class PositionSystem extends System {
   static systemType = SystemTypes.Position;
 
   update() {
-    const entities = this.entityManager.getEntitiesWithComponents("PositionComponent");
+    const entities = this.entityManager.getEntitiesWithComponents(
+      ...PositionSystem.requiredComponents
+    );
     console.log(entities);
   }
 }

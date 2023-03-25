@@ -6,7 +6,9 @@ export class PhysicsSystem extends System {
   static systemType = SystemTypes.Physics;
 
   update() {
-    const entities = this.entityManager.getEntitiesForSystem("physics");
+    const entities = this.entityManager.getEntitiesWithComponents(
+      ...PhysicsSystem.requiredComponents
+    );
     console.log(entities);
   }
 }
