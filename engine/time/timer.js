@@ -11,22 +11,45 @@ export class Timer {
    * The maximum allowed time step in seconds.
    */
   static maxStep = 0.05;
-  // The global application time in seconds
+
+  /**
+   * @type {number}
+   * Global time in seconds.
+   */
   static time = Number.MIN_VALUE;
-  // A scaling factor applied to the time delta
+
+  /**
+   * @type {number}
+   * Scaling factor for the time delta.
+   */
   static timeScale = 1;
 
-  // The base time of the timer instance in seconds
+  /**
+   * @type {number}
+   * The base time of the timer instance in seconds
+   */
   base = 0;
-  // The last time the tick was called in seconds
+
+  /**
+   * @type {number}
+   * The last time the tick was called in seconds
+   */
   last = 0;
-  // The time when the timer was paused in seconds
+
+  /**
+   * @type {number}
+   * The time when the timer was paused in seconds
+   */
   pausedAt = 0;
-  // The target time in seconds
+
+  /**
+   * @type {number}
+   * The target time in seconds
+   */
   target = 0;
 
   /**
-   * Updates the global time using the high-resolution time.
+   * Updates the global time.
    */
   static step() {
     const current = performance.now();
@@ -36,8 +59,8 @@ export class Timer {
   }
 
   /**
-   * Constructs a new Timer instance.
-   * @param {number} [seconds=0] - The target time for the timer in seconds.
+   * Construct a new Timer instance.
+   * @param {number?} seconds - The target time for the timer in seconds.
    */
   constructor(seconds) {
     this.base = Timer.time;
@@ -47,7 +70,7 @@ export class Timer {
 
   /**
    * Sets the target time for the timer and resets the timer.
-   * @param {number} [seconds=0] - The target time for the timer in seconds.
+   * @param {number?} seconds - The target time for the timer in seconds.
    */
   set(seconds) {
     this.target = seconds || 0;
