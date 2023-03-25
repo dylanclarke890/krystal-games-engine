@@ -26,10 +26,6 @@ export class SpriteComponent {
 
     this.frame = 0;
     this.loopCount = 0;
-    this.frameTimer = new Timer(this.frameDuration);
-  }
-
-  update() {
-    if (this.stop && this.loopCount > 0) this.frame = this.sequence.length - 1;
+    this.frameTimer = new Timer();
   }
 }

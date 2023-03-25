@@ -98,8 +98,8 @@ export class Timer {
 
   /**
    * Calculates the time delta between the timer's base time and its target time.
-   * @returns {number} - The time delta between the base and target times in seconds.
-   *                     Returns 0 if the base time has not yet reached the target time.
+   * @returns {number} The time delta between the base and target times in seconds.
+   * Returns 0 if the base time has not yet reached the target time.
    */
   delta() {
     const d = (this.pausedAt || Timer.time) - this.base - this.target;
