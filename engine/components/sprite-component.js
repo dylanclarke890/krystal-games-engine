@@ -1,4 +1,3 @@
-import { Timer } from "../time/timer.js";
 import { Assert } from "../utils/assert.js";
 import { Guard } from "../utils/guard.js";
 import { arrayFromInterval } from "../utils/interval.js";
@@ -17,6 +16,9 @@ export class SpriteComponent {
     Guard.againstNull({ path });
     Guard.againstNull({ sequence });
     this.image = new Image();
+    this.image.addEventListener("load", () => {
+      this.columns = Math.floor(this.image.width / width);
+    });
     this.image.src = path;
     this.width = width;
     this.height = height;
@@ -24,8 +26,6 @@ export class SpriteComponent {
     this.frameDuration = frameDuration ?? 1;
     this.stop = !!stop;
 
-    this.frame = 0;
     this.loopCount = 0;
-    this.frameTimer = new Timer();
   }
 }

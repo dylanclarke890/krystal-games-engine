@@ -9,6 +9,5 @@ export class PhysicsSystem extends System {
     const entities = this.entityManager.getEntitiesWithComponents(
       ...PhysicsSystem.requiredComponents
     );
-    console.log(entities);
   }
 }

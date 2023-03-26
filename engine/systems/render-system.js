@@ -35,10 +35,26 @@ export class RenderSystem extends System {
       sprite.loopCount = Math.floor(frameTotal / sprite.sequence.length);
       if (sprite.stop && sprite.loopCount > 0) sprite.frame = sprite.sequence.length - 1;
       else sprite.frame = frameTotal % sprite.sequence.length;
-      sprite.tile = sprite.sequence[sprite.frame];
+
+      // Calculate source position in the sprite sheet
+      const currentTile = sprite.sequence[sprite.frame];
+      const currentColumn = currentTile % sprite.columns;
+      const currentRow = Math.floor(currentTile / sprite.columns);
+      const sourceX = currentColumn * sprite.width;
+      const sourceY = currentRow * sprite.height;
 
       const pos = this.entityManager.getComponent(entityId, "PositionComponent");
-      this.viewport.ctx.drawImage(sprite.image, pos.x, pos.y, sprite.width, sprite.height);
+      this.viewport.ctx.drawImage(
+        sprite.image,
+        sourceX,
+        sourceY,
+        sprite.width,
+        sprite.height, // Source position and dimensions
+        pos.x,
+        pos.y,
+        sprite.width,
+        sprite.height // Destination position and dimensions
+      );
     }
   }
 }

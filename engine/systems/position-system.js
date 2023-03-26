@@ -9,6 +9,5 @@ export class PositionSystem extends System {
     const entities = this.entityManager.getEntitiesWithComponents(
       ...PositionSystem.requiredComponents
     );
-    console.log(entities);
   }
 }
