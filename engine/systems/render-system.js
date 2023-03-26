@@ -8,6 +8,9 @@ export class RenderSystem extends System {
   static requiredComponents = ["SpriteComponent", "PositionComponent", "AnimationComponent"];
   static systemType = SystemTypes.Graphics;
 
+  viewport;
+  timer;
+
   /**
    * @param {import("../entities/entity-manager.js").EntityManager} entityManager
    * @param {Viewport} viewport
@@ -39,23 +42,24 @@ export class RenderSystem extends System {
       else animation.frame = frameTotal % animation.sequence.length;
 
       // Calculate source position in the sprite sheet
+      const { width, height, image, columns } = sprite;
       const currentTile = animation.sequence[animation.frame];
-      const currentColumn = currentTile % sprite.columns;
-      const currentRow = Math.floor(currentTile / sprite.columns);
-      const sourceX = currentColumn * sprite.width;
-      const sourceY = currentRow * sprite.height;
+      const currentColumn = currentTile % columns;
+      const currentRow = Math.floor(currentTile / columns);
+      const sourceX = currentColumn * width;
+      const sourceY = currentRow * height;
 
       const pos = this.entityManager.getComponent(entityId, "PositionComponent");
       this.viewport.ctx.drawImage(
-        sprite.image,
+        image,
         sourceX,
         sourceY,
-        sprite.width,
-        sprite.height, // Source position and dimensions
+        width,
+        height,
         pos.x,
         pos.y,
-        sprite.width,
-        sprite.height // Destination position and dimensions
+        width,
+        height
       );
     }
   }
