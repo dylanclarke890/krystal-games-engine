@@ -7,6 +7,8 @@ import { PhysicsSystem } from "./systems/physics-system.js";
 import { PositionSystem } from "./systems/position-system.js";
 import { RenderSystem } from "./systems/render-system.js";
 import { Viewport } from "./graphics/viewport.js";
+import { InputSystem } from "./systems/input-system.js";
+import { InputManager } from "./input/input-manager.js";
 
 export class Game {
   /** @type {Viewport} */
@@ -17,6 +19,8 @@ export class Game {
   entityManager;
   /** @type {SystemManager} */
   systemManager;
+  /** @type {InputManager} */
+  inputManager;
   /** @type {GameLoop} */
   loop;
   /** @type {World} */
@@ -32,6 +36,7 @@ export class Game {
     this.eventSystem = new EventSystem();
     this.entityManager = new EntityManager(this.eventSystem);
     this.systemManager = new SystemManager(this.eventSystem, this.entityManager);
+    this.inputManager = new InputManager(this.eventSystem, this.viewport);
     this.loop = new GameLoop(this.eventSystem, 60);
     this.world = new World(this);
     this.#registerSystems();
@@ -41,6 +46,7 @@ export class Game {
     this.systemManager.registerSystem(new PositionSystem(this.entityManager));
     this.systemManager.registerSystem(new PhysicsSystem(this.entityManager));
     this.systemManager.registerSystem(new RenderSystem(this.entityManager, this.viewport));
+    this.systemManager.registerSystem(new InputSystem(this.entityManager, this.inputManager));
   }
 
   start() {

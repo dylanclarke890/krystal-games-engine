@@ -1,9 +1,11 @@
 import { InputManager } from "../input/input-manager.js";
 import { Guard } from "../utils/guard.js";
+import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 
 export class InputSystem extends System {
   static requiredComponents = ["InputComponent"];
+  static systemType = SystemTypes.Input;
 
   /** @type {InputManager} */
   inputManager;

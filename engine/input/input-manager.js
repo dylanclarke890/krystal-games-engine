@@ -1,3 +1,4 @@
+import { EventSystem } from "../events/event-system.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Guard } from "../utils/guard.js";
 import { UserAgent } from "../utils/user-agent.js";
@@ -24,11 +25,13 @@ export class InputManager {
   accel;
 
   /**
-   *
+   * @param {EventSystem} eventSystem
    * @param {Viewport} viewport
    */
-  constructor(viewport) {
+  constructor(eventSystem, viewport) {
+    Guard.againstNull({ eventSystem }).isInstanceOf(EventSystem);
     Guard.againstNull({ viewport }).isInstanceOf(Viewport);
+    this.eventSystem = eventSystem;
     this.viewport = viewport;
 
     this.#bindings = new Map();

@@ -26,20 +26,30 @@ export class SystemManager {
     this.eventSystem.on(GameEvents.Loop_NextFrame, (dt) => this.update(dt));
   }
 
-  #ensureRequiredComponentsArePresent(requiredComponents) {
+  /**
+   * @param {string[]} requiredComponents
+   * @param {boolean} throwIfMissing
+   * @returns {boolean}
+   */
+  #ensureRequiredComponentsArePresent(requiredComponents, throwIfMissing) {
     Guard.againstNull({ requiredComponents });
     for (const componentType of requiredComponents) {
       if (!this.entityManager.hasComponentType(componentType)) {
-        throw new Error(`Missing required component type: ${componentType}`);
+        if (throwIfMissing) throw new Error(`Missing required component type: ${componentType}`);
+        else return false;
       }
     }
+    return true;
   }
 
   registerSystem(system) {
     Guard.againstNull({ system }).isInstanceOf(System);
     Guard.againstNull({ systemType: system.constructor.systemType }).isInstanceOf(SystemTypes);
-    this.#ensureRequiredComponentsArePresent(system.constructor.requiredComponents);
-    this.systems.add(system);
+    const isPresent = this.#ensureRequiredComponentsArePresent(
+      system.constructor.requiredComponents,
+      false
+    );
+    if (isPresent) this.systems.add(system);
   }
 
   unregisterSystem(system) {
