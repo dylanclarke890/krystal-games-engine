@@ -29,7 +29,7 @@ export class World {
     em.addComponent(id, new VelocityComponent(0, 0));
     em.addComponent(
       id,
-      new SpriteComponent("test-data/assets/multi-square.png", 32, 32, [0, 1, 2, 3], 1, true)
+      new SpriteComponent("test-data/assets/multi-square.png", 32, 32, "[0..3]", 1, false)
     );
   }
 

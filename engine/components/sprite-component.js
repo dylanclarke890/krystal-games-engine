@@ -26,6 +26,7 @@ export class SpriteComponent {
     this.frameDuration = frameDuration ?? 1;
     this.stop = !!stop;
 
+    this.columns = 1;
     this.loopCount = 0;
   }
 }
