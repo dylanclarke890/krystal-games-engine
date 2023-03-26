@@ -22,6 +22,11 @@ export class Game {
   /** @type {World} */
   world;
 
+  /**
+   * @param {string?} canvasId Id of the canvas, if known.
+   * @param {number} width Width of the canvas.
+   * @param {number} height Height of the canvas.
+   */
   constructor(canvasId, width, height) {
     this.viewport = new Viewport(width, height, canvasId);
     this.eventSystem = new EventSystem();
