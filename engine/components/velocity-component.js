@@ -1,14 +1,20 @@
 export class VelocityComponent {
   x;
   y;
+  maxX;
+  maxY;
 
   /**
    * @param {number} x
    * @param {number} y
+   * @param {number} maxX
+   * @param {number} maxY
    */
-  constructor(x, y) {
+  constructor(x, y, maxX, maxY) {
     this.x = x || 0;
     this.y = y || 0;
+    this.maxX = maxX || x || 0;
+    this.maxY = maxY || y || 0;
   }
 
   /**
