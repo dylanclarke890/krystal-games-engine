@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { EntityManager } from "../entities/entity-manager.js";
 import { Guard } from "../utils/guard.js";
 
@@ -19,7 +20,6 @@ export class System {
   /**
    * @param {number} dt Delta time since last frame.
    */
-  // eslint-disable-next-line no-unused-vars
   update(dt) {
     throw new Error("Update method must be implemented.");
   }

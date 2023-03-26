@@ -5,11 +5,11 @@ import { Guard } from "../utils/guard.js";
 export class EntityManager {
   /** @type {EventSystem} */
   eventSystem;
-  /** @type {Set<int>} */
+  /** @type {Set<number>} */
   entities;
   /** @type {Map<string, any>} */
   components;
-  /** @type {Map<int, Set<string>} */
+  /** @type {Map<number, Set<string>} */
   entityMasks;
   /** @type {number} */
   nextEntityId;
@@ -48,12 +48,20 @@ export class EntityManager {
     this.entityMasks.get(entity).delete(componentType);
   }
 
-  /** Get a component from an entity */
+  /**
+   * Get a component of a given type for an entity.
+   * @param {number} entity
+   * @param {string} componentName
+   */
   getComponent(entity, componentType) {
     return this.components.get(entity + componentType);
   }
 
-  /** Check if an entity has a specific component */
+  /**
+   * Check if an entity has a specific component.
+   * @param {number} entity
+   * @param {string} componentName
+   */
   hasComponent(entity, componentType) {
     if (!this.entityMasks.has(entity)) {
       return false;
