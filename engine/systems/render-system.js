@@ -5,7 +5,7 @@ import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 
 export class RenderSystem extends System {
-  static requiredComponents = ["SpriteComponent", "PositionComponent"];
+  static requiredComponents = ["SpriteComponent", "PositionComponent", "AnimationComponent"];
   static systemType = SystemTypes.Graphics;
 
   /**
@@ -29,15 +29,17 @@ export class RenderSystem extends System {
     for (let i = 0; i < entities.length; i++) {
       const entityId = entities[i];
       const sprite = this.entityManager.getComponent(entityId, "SpriteComponent");
+      const animation = this.entityManager.getComponent(entityId, "AnimationComponent");
 
       // Update current animation frame of sprite
-      const frameTotal = Math.floor(delta / sprite.frameDuration);
-      sprite.loopCount = Math.floor(frameTotal / sprite.sequence.length);
-      if (sprite.stop && sprite.loopCount > 0) sprite.frame = sprite.sequence.length - 1;
-      else sprite.frame = frameTotal % sprite.sequence.length;
+      const frameTotal = Math.floor(delta / animation.frameDuration);
+      sprite.loopCount = Math.floor(frameTotal / animation.sequence.length);
+      if (animation.stop && animation.loopCount > 0)
+        animation.frame = animation.sequence.length - 1;
+      else animation.frame = frameTotal % animation.sequence.length;
 
       // Calculate source position in the sprite sheet
-      const currentTile = sprite.sequence[sprite.frame];
+      const currentTile = animation.sequence[animation.frame];
       const currentColumn = currentTile % sprite.columns;
       const currentRow = Math.floor(currentTile / sprite.columns);
       const sourceX = currentColumn * sprite.width;
