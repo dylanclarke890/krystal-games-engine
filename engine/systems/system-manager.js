@@ -13,11 +13,19 @@ export class SystemManager {
   /** @type {Set<System>} */
   systems;
 
-  constructor(eventSystem, entityManager) {
+  /**
+   *
+   * @param {EventSystem} eventSystem
+   * @param {EntityManager} entityManager
+   * @param {boolean} throwIfMissing
+   */
+  constructor(eventSystem, entityManager, throwIfMissing) {
     Guard.againstNull({ eventSystem }).isInstanceOf(EventSystem);
     Guard.againstNull({ entityManager }).isInstanceOf(EntityManager);
     this.eventSystem = eventSystem;
     this.entityManager = entityManager;
+    this.throwIfMissing = !!throwIfMissing;
+
     this.systems = new Set();
     this.#bindEvents();
   }
@@ -28,17 +36,16 @@ export class SystemManager {
 
   /**
    * @param {string[]} requiredComponents
-   * @param {boolean} throwIfMissing
    * @returns {{success: boolean, message: string?}}
    */
-  #ensureRequiredComponentsArePresent(requiredComponents, throwIfMissing) {
+  #ensureRequiredComponentsArePresent(requiredComponents) {
     Guard.againstNull({ requiredComponents });
     for (const componentType of requiredComponents) {
-      if (!this.entityManager.hasComponentType(componentType)) {
-        const msg = `Missing required component type: ${componentType}`;
-        if (throwIfMissing) throw new Error(msg);
-        else return { success: true, message: msg };
-      }
+      if (this.entityManager.hasComponentType(componentType)) continue;
+
+      const msg = `Missing required component type: ${componentType}`;
+      if (this.throwIfMissing) throw new Error(msg);
+      else return { success: true, message: msg };
     }
     return { success: true, message: "" };
   }
@@ -46,10 +53,7 @@ export class SystemManager {
   registerSystem(system) {
     Guard.againstNull({ system }).isInstanceOf(System);
     Guard.againstNull({ systemType: system.constructor.systemType }).isInstanceOf(SystemTypes);
-    const result = this.#ensureRequiredComponentsArePresent(
-      system.constructor.requiredComponents,
-      false
-    );
+    const result = this.#ensureRequiredComponentsArePresent(system.constructor.requiredComponents);
     if (result.success) this.systems.add(system);
     else console.warn(result.message);
   }
