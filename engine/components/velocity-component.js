@@ -13,16 +13,25 @@ export class VelocityComponent {
   constructor(x, y, maxX, maxY) {
     this.x = x || 0;
     this.y = y || 0;
-    this.maxX = maxX || x || 0;
-    this.maxY = maxY || y || 0;
+    this.maxX = maxX || Infinity;
+    this.maxY = maxY || Infinity;
   }
 
   /**
-   * @param {number} x
-   * @param {number} y
+   * @param {number} dx
+   * @param {number} dy
    */
-  set(x, y) {
-    this.x = x;
-    this.y = y;
+  add(dx, dy) {
+    this.x = Math.min(this.x + dx, this.maxX);
+    this.y = Math.min(this.y + dy, this.maxY);
+  }
+
+  /**
+   * @param {number} dx
+   * @param {number} dy
+   */
+  subtract(dx, dy) {
+    this.x = Math.max(this.x - dx, -this.maxX);
+    this.y = Math.max(this.y - dy, -this.maxY);
   }
 }
