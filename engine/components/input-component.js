@@ -1,3 +1,7 @@
 export class InputComponent {
-  constructor() {}
+  bindings;
+
+  constructor() {
+    this.bindings = new Map();
+  }
 }

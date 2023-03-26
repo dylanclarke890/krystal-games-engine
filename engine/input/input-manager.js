@@ -1,11 +1,10 @@
+import { Viewport } from "../graphics/viewport.js";
 import { Guard } from "../utils/guard.js";
 import { UserAgent } from "../utils/user-agent.js";
 import { InputKeys, keyboardMap } from "./input-keys.js";
 
-// TODO: Still uses old way of accessing canvas through system. Needs to be passed the class responsible for the canvas
 export class InputManager {
-  /** @type {import("../system.js").System}} */
-  #system;
+  viewport;
 
   /** @type {Map<InputKeys, string>} */
   #bindings;
@@ -17,7 +16,6 @@ export class InputManager {
   #locks;
   /** @type {Map<string, boolean>} */
   #actions;
-
   #using;
 
   /** @type {{x:number, y:number}} */
@@ -25,9 +23,13 @@ export class InputManager {
   /** @type {number} */
   accel;
 
-  constructor(system) {
-    Guard.againstNull({ system });
-    this.#system = system;
+  /**
+   *
+   * @param {Viewport} viewport
+   */
+  constructor(viewport) {
+    Guard.againstNull({ viewport }).isInstanceOf(Viewport);
+    this.viewport = viewport;
 
     this.#bindings = new Map();
     this.#pressed = new Map();
@@ -49,7 +51,7 @@ export class InputManager {
     this.#using.mouse = true;
 
     this.mouse = { x: 0, y: 0 };
-    const canvas = this.#system.canvas;
+    const canvas = this.viewport.canvas;
     canvas.addEventListener("wheel", (e) => this.#onMouseWheel(e), { passive: false }); // Stops Chrome warning
     canvas.addEventListener("contextmenu", (e) => this.#onContextMenu(e), false);
     canvas.addEventListener("mousedown", (e) => this.#onMouseDown(e), false);
@@ -62,7 +64,7 @@ export class InputManager {
     if (this.#using.touch) return;
     this.#using.touch = true;
 
-    const canvas = this.#system.canvas;
+    const canvas = this.viewport.canvas;
     // Standard
     canvas.addEventListener("touchstart", (e) => this.#onTouchStart(e), false);
     canvas.addEventListener("touchend", (e) => this.#onTouchEnd(e), false);
@@ -263,11 +265,11 @@ export class InputManager {
 
   /** @param {TouchEvent|MouseEvent} e */
   #onMouseMove(e) {
-    const system = this.#system;
-    const internalWidth = system.canvas.offsetWidth || system.realWidth;
-    const scale = system.scale * (internalWidth / system.realWidth);
+    const viewport = this.viewport;
+    const internalWidth = viewport.canvas.offsetWidth || viewport.realWidth;
+    const scale = viewport.scale * (internalWidth / viewport.realWidth);
 
-    const pos = system.canvas.getBoundingClientRect();
+    const pos = viewport.canvas.getBoundingClientRect();
     const { clientX, clientY } = "touches" in e ? e.touches[0] : e;
     this.mouse.x = (clientX - pos.left) / scale;
     this.mouse.y = (clientY - pos.top) / scale;
