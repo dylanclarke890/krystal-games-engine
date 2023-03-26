@@ -6,7 +6,13 @@ function setErrorAndType(res, error) {
   return res;
 }
 
-function getIntervalInfo(/** @type {string}*/ interval) {
+/**
+ *
+ * @param {string} interval
+ * @returns {{ from: number, to: number, includeStart: boolean,
+ * includeEnd: boolean, reverse: boolean, success: boolean, error: string }}
+ */
+function getIntervalInfo(interval) {
   interval = interval.trim();
   const first = interval[0];
   const last = interval[interval.length - 1];

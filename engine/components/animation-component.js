@@ -3,6 +3,11 @@ import { Guard } from "../utils/guard.js";
 import { arrayFromInterval } from "../utils/interval.js";
 
 export class AnimationComponent {
+  sequence;
+  frameDuration;
+  loopCount;
+  stop;
+
   /**
    * @param {number[]|string} sequence - The sequence in which to display frames.
    * Can be an array of numbers or a string in interval notation (if the frames to represent are contiguous).
