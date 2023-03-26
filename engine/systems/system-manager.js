@@ -29,27 +29,29 @@ export class SystemManager {
   /**
    * @param {string[]} requiredComponents
    * @param {boolean} throwIfMissing
-   * @returns {boolean}
+   * @returns {{success: boolean, message: string?}}
    */
   #ensureRequiredComponentsArePresent(requiredComponents, throwIfMissing) {
     Guard.againstNull({ requiredComponents });
     for (const componentType of requiredComponents) {
       if (!this.entityManager.hasComponentType(componentType)) {
-        if (throwIfMissing) throw new Error(`Missing required component type: ${componentType}`);
-        else return false;
+        const msg = `Missing required component type: ${componentType}`;
+        if (throwIfMissing) throw new Error(msg);
+        else return { success: true, message: msg };
       }
     }
-    return true;
+    return { success: true, message: "" };
   }
 
   registerSystem(system) {
     Guard.againstNull({ system }).isInstanceOf(System);
     Guard.againstNull({ systemType: system.constructor.systemType }).isInstanceOf(SystemTypes);
-    const isPresent = this.#ensureRequiredComponentsArePresent(
+    const result = this.#ensureRequiredComponentsArePresent(
       system.constructor.requiredComponents,
       false
     );
-    if (isPresent) this.systems.add(system);
+    if (result.success) this.systems.add(system);
+    else console.warn(result.message);
   }
 
   unregisterSystem(system) {
