@@ -14,6 +14,12 @@ export class Viewport {
   /** @type {CanvasRenderingContext2D} */
   ctx;
 
+  /**
+   * @param {number} width
+   * @param {number} height
+   * @param {string} canvasId
+   * @param {HTMLElement} parent
+   */
   constructor(width, height, canvasId = null, parent = document.body) {
     this.canvasId = canvasId;
     this.width = width;
