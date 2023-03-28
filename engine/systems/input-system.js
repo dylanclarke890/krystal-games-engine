@@ -21,10 +21,10 @@ export class InputSystem extends System {
       ...InputSystem.requiredComponents
     );
     for (const entity of entities) {
+      /** @type {{bindings: Map}} */
       const inputComponent = this.entityManager.getComponent(entity, "InputComponent");
-      for (const action in inputComponent.bindings) {
-        const key = inputComponent.bindings[action];
-        console.log(key);
+      for (const [key, value] of inputComponent.bindings) {
+        console.log(`The value for key ${key} is ${value}`);
       }
     }
     this.inputManager.clearPressed();
