@@ -5,7 +5,7 @@ import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 
 export class RenderSystem extends System {
-  static requiredComponents = ["SpriteComponent", "PositionComponent", "AnimationComponent"];
+  static requiredComponents = ["SpriteComponent", "PositionComponent"];
   static systemType = SystemTypes.Graphics;
 
   viewport;
