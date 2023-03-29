@@ -10,6 +10,7 @@ import { Viewport } from "./graphics/viewport.js";
 import { InputSystem } from "./systems/input-system.js";
 import { InputManager } from "./input/input-manager.js";
 import { settings } from "./config.js";
+import { InputKeys } from "./input/input-keys.js";
 
 export class Game {
   /** @type {Viewport} */
@@ -45,6 +46,7 @@ export class Game {
     this.loop = new GameLoop(this.eventSystem, 60);
     this.world = new World(this);
     this.#registerSystems();
+    this.#bindInput();
   }
 
   #registerSystems() {
@@ -52,6 +54,11 @@ export class Game {
     this.systemManager.registerSystem(new PhysicsSystem(this.entityManager));
     this.systemManager.registerSystem(new RenderSystem(this.entityManager, this.viewport));
     this.systemManager.registerSystem(new InputSystem(this.entityManager, this.inputManager));
+  }
+
+  #bindInput() {
+    this.inputManager.bind(InputKeys.Arrow_Left, "move-left");
+    this.inputManager.bind(InputKeys.Arrow_Right, "move-right");
   }
 
   start() {

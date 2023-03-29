@@ -17,6 +17,10 @@ export class System {
     this.entityManager = entityManager;
   }
 
+  setup() {
+    /* stub */
+  }
+
   /**
    * @param {number} dt Delta time since last frame.
    */

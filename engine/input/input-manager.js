@@ -237,11 +237,11 @@ export class InputManager {
     if (!action) return;
 
     this.#actions.set(action, true);
-    if (!this.#locks.has(action)) {
+    if (!this.#locks.get(action)) {
       this.#pressed.set(action, true);
       this.#locks.set(action, true);
     }
-    this.#youShallNotDefault(false);
+    this.#youShallNotDefault(e, false);
   }
 
   /** @param {KeyboardEvent} e */
@@ -250,7 +250,7 @@ export class InputManager {
     if (!action) return;
 
     this.#delayedActions.set(action, true);
-    this.#youShallNotDefault(false);
+    this.#youShallNotDefault(e, false);
   }
 
   /** @param {WheelEvent} e */
