@@ -48,7 +48,7 @@ export class PhysicsSystem2 extends System {
       const acceleration = entity.getComponent("AccelerationComponent");
       const friction = entity.getComponent("FrictionComponent");
       const size = entity.getComponent("SizeComponent");
-      const offset = entity.getComponent("OffsetComponent");
+      const offset = entity.getComponent("OffsetComponent") ?? { x: 0, y: 0 };
       const gravityFactor = entity.getComponent("GravityFactorComponent");
       const bounciness = entity.getComponent("BouncinessComponent");
       const minBounceVelocity = entity.getComponent("MinBounceVelocityComponent");
@@ -73,7 +73,7 @@ export class PhysicsSystem2 extends System {
       // Apply position
       position.x += velocity.x * deltaTime;
       position.y += velocity.y * deltaTime;
-      
+
       const canvasWidth = this.viewport.canvas.width;
 
       // Handle collisions with the walls
