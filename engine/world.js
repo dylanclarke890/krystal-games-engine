@@ -6,7 +6,7 @@ import { VelocityComponent } from "./components/velocity-component.js";
 import { PositionComponent } from "./components/position-component.js";
 import { AnimationComponent } from "./components/animation-component.js";
 import { InputComponent } from "./components/input-component.js";
-import { BouncinessComponent } from "./components/bounciness.js";
+import { BouncinessComponent } from "./components/bounciness-component.js";
 import { GravityFactorComponent } from "./components/gravity-factor-component.js";
 
 export class World {
