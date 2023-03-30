@@ -4,7 +4,7 @@ import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 
 export class PhysicsSystem extends System {
-  static requiredComponents = ["PositionComponent", "VelocityComponent"];
+  static requiredComponents = ["PositionComponent", "VelocityComponent", "SizeComponent"];
   static systemType = SystemTypes.Physics;
 
   viewport;
@@ -21,19 +21,18 @@ export class PhysicsSystem extends System {
   }
 
   update(deltaTime) {
-    const entities = this.entityManager.getEntitiesWithComponents(
-      ...PhysicsSystem.requiredComponents
-    );
+    const em = this.entityManager;
+    const entities = em.getEntitiesWithComponents(...PhysicsSystem.requiredComponents);
     for (const entity of entities) {
-      const position = entity.getComponent("PositionComponent");
-      const velocity = entity.getComponent("VelocityComponent");
-      const acceleration = entity.getComponent("AccelerationComponent");
-      const friction = entity.getComponent("FrictionComponent");
-      const size = entity.getComponent("SizeComponent");
-      const offset = entity.getComponent("OffsetComponent") ?? { x: 0, y: 0 };
-      const gravityFactor = entity.getComponent("GravityFactorComponent");
-      const bounciness = entity.getComponent("BouncinessComponent");
-      const minBounceVelocity = entity.getComponent("MinBounceVelocityComponent");
+      const position = em.getComponent(entity, "PositionComponent");
+      const velocity = em.getComponent(entity, "VelocityComponent");
+      const acceleration = em.getComponent(entity, "AccelerationComponent");
+      const friction = em.getComponent(entity, "FrictionComponent");
+      const size = em.getComponent(entity, "SizeComponent");
+      const offset = em.getComponent(entity, "OffsetComponent") ?? { x: 0, y: 0 };
+      const gravityFactor = em.getComponent(entity, "GravityFactorComponent");
+      const bounciness = em.getComponent(entity, "BouncinessComponent");
+      const minBounceVelocity = em.getComponent(entity, "MinBounceVelocityComponent");
 
       // Apply acceleration
       if (acceleration) {
