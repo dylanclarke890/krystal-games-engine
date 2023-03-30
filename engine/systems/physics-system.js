@@ -26,35 +26,32 @@ export class PhysicsSystem extends System {
     for (const entity of entities) {
       const position = em.getComponent(entity, "PositionComponent");
       const velocity = em.getComponent(entity, "VelocityComponent");
-      const offset = em.getComponent(entity, "OffsetComponent") ?? { x: 0, y: 0 };
       const size = em.getComponent(entity, "SizeComponent");
-      const acceleration = em.getComponent(entity, "AccelerationComponent");
-      const bounciness = em.getComponent(entity, "BouncinessComponent");
-      const gravityFactor = em.getComponent(entity, "GravityFactorComponent");
-      const friction = em.getComponent(entity, "FrictionComponent");
 
-      // Apply acceleration
+      // Update position first
+      position.x += velocity.x * deltaTime;
+      position.y += velocity.y * deltaTime;
+
+      const acceleration = em.getComponent(entity, "AccelerationComponent");
       if (acceleration) {
         velocity.x += acceleration.x * deltaTime;
         velocity.y += acceleration.y * deltaTime;
       }
 
-      // Apply friction
+      const friction = em.getComponent(entity, "FrictionComponent");
       if (friction) {
         velocity.x *= Math.pow(friction.x, deltaTime);
         velocity.y *= Math.pow(friction.y, deltaTime);
       }
 
-      // Apply gravity
+      const gravityFactor = em.getComponent(entity, "GravityFactorComponent");
       if (gravityFactor) {
         velocity.y += 9.81 * gravityFactor.value * deltaTime;
       }
 
-      // Apply position
-      position.x += velocity.x * deltaTime;
-      position.y += velocity.y * deltaTime;
-
       const canvasWidth = this.viewport.canvas.width;
+      const offset = em.getComponent(entity, "OffsetComponent") ?? { x: 0, y: 0 };
+      const bounciness = em.getComponent(entity, "BouncinessComponent");
 
       // Handle collisions with the walls
       if (position.x + offset.x < 0) {
