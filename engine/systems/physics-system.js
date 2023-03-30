@@ -26,12 +26,12 @@ export class PhysicsSystem extends System {
     for (const entity of entities) {
       const position = em.getComponent(entity, "PositionComponent");
       const velocity = em.getComponent(entity, "VelocityComponent");
-      const acceleration = em.getComponent(entity, "AccelerationComponent");
-      const friction = em.getComponent(entity, "FrictionComponent");
-      const size = em.getComponent(entity, "SizeComponent");
       const offset = em.getComponent(entity, "OffsetComponent") ?? { x: 0, y: 0 };
-      const gravityFactor = em.getComponent(entity, "GravityFactorComponent");
+      const size = em.getComponent(entity, "SizeComponent");
+      const acceleration = em.getComponent(entity, "AccelerationComponent");
       const bounciness = em.getComponent(entity, "BouncinessComponent");
+      const gravityFactor = em.getComponent(entity, "GravityFactorComponent");
+      const friction = em.getComponent(entity, "FrictionComponent");
 
       // Apply acceleration
       if (acceleration) {

@@ -7,6 +7,7 @@ import { PositionComponent } from "./components/position-component.js";
 import { AnimationComponent } from "./components/animation-component.js";
 import { InputComponent } from "./components/input-component.js";
 import { BouncinessComponent } from "./components/bounciness.js";
+import { GravityFactorComponent } from "./components/gravity-factor-component.js";
 
 export class World {
   /** @type {import("./events/event-system.js").EventSystem} */
@@ -33,6 +34,7 @@ export class World {
     em.addComponent(id, new VelocityComponent(50, 0));
     em.addComponent(id, new SizeComponent(32, 32));
     em.addComponent(id, new BouncinessComponent(1));
+    em.addComponent(id, new GravityFactorComponent(1));
     em.addComponent(id, new SpriteComponent("test-data/assets/multi-square.png", 32, 32));
     em.addComponent(id, new AnimationComponent("[0,3]", 0.5, false));
     const bindings = new Map([
