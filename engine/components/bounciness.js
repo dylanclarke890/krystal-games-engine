@@ -1,6 +1,10 @@
 export class BouncinessComponent {
-  /** @param {number} value */
-  constructor(value) {
-    this.value = value;
+  /**
+   * @param {number} bounce
+   * @param {number} minVelocity
+   */
+  constructor(bounce, minVelocity) {
+    this.bounce = bounce;
+    this.minVelocity = minVelocity;
   }
 }
