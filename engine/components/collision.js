@@ -1,19 +1,19 @@
 export class Collision {
-  /** @type {boolean} */
-  constrainWithinViewport;
-  /** @type {boolean} */
-  entityCollisionType;
+  /** @type {{start: boolean, end: boolean, top:boolean, bottom: boolean }} */
+  viewportCollision;
+  /** @type {EntityCollisionTypes} */
+  entityCollision;
 
   /**
-   * @param {boolean} constrainWithinViewport
-   * @param {CollisionTypes} entityCollisionType
+   * @param {{start: boolean, end: boolean, top:boolean, bottom: boolean }} viewportCollision
+   * @param {EntityCollisionTypes} entityCollision
    */
-  constructor(constrainWithinViewport, entityCollisionType = CollisionTypes.None) {
-    this.constrainWithinViewport = !!constrainWithinViewport;
-    this.entityCollisionType = entityCollisionType;
+  constructor(viewportCollision, entityCollision = EntityCollisionTypes.None) {
+    this.viewportCollision = viewportCollision;
+    this.entityCollision = entityCollision;
   }
 }
 
-export class CollisionTypes {
-  static None = new CollisionTypes();
+export class EntityCollisionTypes {
+  static None = new EntityCollisionTypes();
 }

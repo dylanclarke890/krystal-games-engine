@@ -1,5 +1,3 @@
-import { Viewport } from "../graphics/viewport.js";
-import { Guard } from "../utils/guard.js";
 import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 
@@ -7,21 +5,12 @@ export class PhysicsSystem extends System {
   static requiredComponents = ["Position", "Velocity", "Size"];
   static systemType = SystemTypes.Physics;
 
-  /** @type {Viewport} */
-  viewport;
-
-  /**
-   *
-   * @param {import("../entities/entity-manager.js").EntityManager} entityManager
-   * @param {Viewport} viewport
-   */
-  constructor(entityManager, viewport) {
+  /** @param {import("../entities/entity-manager.js").EntityManager} entityManager */
+  constructor(entityManager) {
     super(entityManager);
-    Guard.againstNull({ viewport }).isInstanceOf(Viewport);
-    this.viewport = viewport;
   }
 
-  update(deltaTime) {
+  update(dt) {
     const em = this.entityManager;
     const entities = em.getEntitiesWithComponents(...PhysicsSystem.requiredComponents);
     for (const entity of entities) {
@@ -29,24 +18,24 @@ export class PhysicsSystem extends System {
       const velocity = em.getComponent(entity, "Velocity");
 
       // Update position first
-      position.x += velocity.x * deltaTime;
-      position.y += velocity.y * deltaTime;
+      position.x += velocity.x * dt;
+      position.y += velocity.y * dt;
 
       const acceleration = em.getComponent(entity, "Acceleration");
       if (acceleration) {
-        velocity.x += acceleration.x * deltaTime;
-        velocity.y += acceleration.y * deltaTime;
+        velocity.x += acceleration.x * dt;
+        velocity.y += acceleration.y * dt;
       }
 
       const friction = em.getComponent(entity, "Friction");
       if (friction) {
-        velocity.x *= Math.pow(friction.x, deltaTime);
-        velocity.y *= Math.pow(friction.y, deltaTime);
+        velocity.x *= Math.pow(friction.x, dt);
+        velocity.y *= Math.pow(friction.y, dt);
       }
 
       const gravityFactor = em.getComponent(entity, "GravityFactor");
       if (gravityFactor) {
-        velocity.y += 9.81 * gravityFactor.value * deltaTime;
+        velocity.y += 9.81 * gravityFactor.value * dt;
       }
     }
   }

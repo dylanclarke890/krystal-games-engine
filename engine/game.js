@@ -51,8 +51,8 @@ export class Game {
 
   #registerSystems() {
     this.systemManager.registerSystem(new InputSystem(this.entityManager, this.inputManager));
-    this.systemManager.registerSystem(new PhysicsSystem(this.entityManager, this.viewport));
-    this.systemManager.registerSystem(new CollisionSystem(this.entityManager));
+    this.systemManager.registerSystem(new PhysicsSystem(this.entityManager));
+    this.systemManager.registerSystem(new CollisionSystem(this.entityManager, this.viewport));
     this.systemManager.registerSystem(new RenderSystem(this.entityManager, this.viewport));
   }
 
