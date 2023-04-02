@@ -13,6 +13,9 @@ export class SystemManager {
   /** @type {Set<System>} */
   systems;
 
+  /** @type {boolean} */
+  #throwIfMissing;
+
   /**
    *
    * @param {EventSystem} eventSystem
@@ -24,7 +27,7 @@ export class SystemManager {
     Guard.againstNull({ entityManager }).isInstanceOf(EntityManager);
     this.eventSystem = eventSystem;
     this.entityManager = entityManager;
-    this.throwIfMissing = !!throwIfMissing;
+    this.#throwIfMissing = !!throwIfMissing;
 
     this.systems = new Set();
     this.#bindEvents();
@@ -44,7 +47,7 @@ export class SystemManager {
       if (this.entityManager.hasComponentType(componentType)) continue;
 
       const msg = `Missing required component type: ${componentType}`;
-      if (this.throwIfMissing) throw new Error(msg);
+      if (this.#throwIfMissing) throw new Error(msg);
       else return { success: true, message: msg };
     }
     return { success: true, message: "" };
