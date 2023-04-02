@@ -9,7 +9,12 @@ export class Collision {
    * @param {EntityCollisionTypes} entityCollision
    */
   constructor(viewportCollision, entityCollision = EntityCollisionTypes.None) {
-    this.viewportCollision = viewportCollision;
+    this.viewportCollision = viewportCollision ?? {
+      left: false,
+      right: false,
+      top: false,
+      bottom: false,
+    };
     this.entityCollision = entityCollision;
   }
 }
