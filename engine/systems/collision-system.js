@@ -101,7 +101,7 @@ export class CollisionSystem extends System {
     }
 
     if (viewportCollision.top && position.y + offset.y + size.y > canvasHeight) {
-      position.y = canvasWidth - size.y - offset.y;
+      position.y = canvasHeight - size.y - offset.y;
       if (bounciness) velocity.y = -velocity.y * bounciness.bounce;
       if (absVelY < bounciness.minVelocity) {
         velocity.y = 0;
