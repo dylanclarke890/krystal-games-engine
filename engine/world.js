@@ -1,14 +1,14 @@
 import { Guard } from "./utils/guard.js";
 import { Game } from "./game.js";
-import { SpriteComponent } from "./components/sprite-component.js";
-import { SizeComponent } from "./components/size-component.js";
-import { VelocityComponent } from "./components/velocity-component.js";
-import { PositionComponent } from "./components/position-component.js";
-import { AnimationComponent } from "./components/animation-component.js";
-import { InputComponent } from "./components/input-component.js";
-import { BouncinessComponent } from "./components/bounciness-component.js";
-import { GravityFactorComponent } from "./components/gravity-factor-component.js";
-import { FrictionComponent } from "./components/friction-component.js";
+import { SpriteComponent } from "./components/sprite.js";
+import { SizeComponent } from "./components/size.js";
+import { VelocityComponent } from "./components/velocity.js";
+import { PositionComponent } from "./components/position.js";
+import { AnimationComponent } from "./components/animation.js";
+import { InputComponent } from "./components/input.js";
+import { BouncinessComponent } from "./components/bounciness.js";
+import { GravityFactorComponent } from "./components/gravity-factor.js";
+import { FrictionComponent } from "./components/friction.js";
 
 export class World {
   /** @type {import("./events/event-system.js").EventSystem} */
@@ -20,6 +20,9 @@ export class World {
   /** @type {Game} */
   game;
 
+  /**
+   * @param {Game} game
+   */
   constructor(game) {
     Guard.againstNull({ game }).isInstanceOf(Game);
     this.game = game;
