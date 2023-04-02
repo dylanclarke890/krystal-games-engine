@@ -1,4 +1,4 @@
-export class InputComponent {
+export class Input {
   bindings;
 
   /**

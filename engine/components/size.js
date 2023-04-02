@@ -1,7 +1,10 @@
-export class SizeComponent {
+export class Size {
+  x;
+  y;
+
   /**
    * @param {number} x width
-   * @param {number} y width
+   * @param {number} y height
    */
   constructor(x, y) {
     this.x = x;

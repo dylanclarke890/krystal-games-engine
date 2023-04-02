@@ -1,4 +1,4 @@
-export class PositionComponent {
+export class Position {
   /** @type {number} */
   x;
   /** @type {number} */
@@ -11,7 +11,7 @@ export class PositionComponent {
 
   /**
    * Calculates the distance between the current position and another position.
-   * @param {PositionComponent} otherPosition
+   * @param {Position} otherPosition
    * @returns {number}
    */
   distanceTo(otherPosition) {
@@ -23,7 +23,7 @@ export class PositionComponent {
   /**
    * Calculates the squared distance between the current position and another position, which can be faster
    * than calculating the actual distance if you only need to compare distances.
-   * @param {PositionComponent} otherPosition
+   * @param {Position} otherPosition
    * @returns {number}
    */
   distanceToSquared(otherPosition) {
@@ -99,7 +99,7 @@ export class PositionComponent {
 
   /**
    * Returns the dot product of the current position and the specified position.
-   * @param {PositionComponent} otherPosition
+   * @param {Position} otherPosition
    * @returns {number}
    */
   dot(otherPosition) {
@@ -108,7 +108,7 @@ export class PositionComponent {
 
   /**
    * Returns the cross product of the current position and the specified position.
-   * @param {PositionComponent} otherPosition
+   * @param {Position} otherPosition
    * @returns {number}
    */
   cross(otherPosition) {
@@ -117,7 +117,7 @@ export class PositionComponent {
 
   /**
    * Calculates the angle (in radians) between the current position and another position.
-   * @param {PositionComponent} otherPosition
+   * @param {Position} otherPosition
    * @returns {number}
    */
   angleTo(otherPosition) {
@@ -128,7 +128,7 @@ export class PositionComponent {
 
   /**
    * Calculates the angle (in radians) between the current position and another position, relative to the x-axis.
-   * @param {PositionComponent} otherPosition
+   * @param {Position} otherPosition
    * @returns {number}
    */
   angleBetween(otherPosition) {
@@ -174,7 +174,7 @@ export class PositionComponent {
   /**
    * Linearly interpolates between the current position and another position by the specified amount t
    * (a value between 0 and 1).
-   * @param {PositionComponent} otherPosition
+   * @param {Position} otherPosition
    * @param {number} t
    */
   lerp(otherPosition, t) {
@@ -185,8 +185,8 @@ export class PositionComponent {
   /**
    * Sets the current position to a linear interpolation between two other positions, based on an alpha value
    * between 0 and 1.
-   * @param {PositionComponent} vector1
-   * @param {PositionComponent} vector2
+   * @param {Position} vector1
+   * @param {Position} vector2
    * @param {number} alpha
    */
   lerpVectors(vector1, vector2, alpha) {
@@ -204,7 +204,7 @@ export class PositionComponent {
 
   /**
    * Returns true if the current position is equal to another position component.
-   * @param {PositionComponent} otherPosition
+   * @param {Position} otherPosition
    * @returns {boolean}
    */
   equals(otherPosition) {
@@ -213,9 +213,9 @@ export class PositionComponent {
 
   /**
    * Returns a new position component with the same x and y values as the current position.
-   * @returns {PositionComponent}
+   * @returns {Position}
    */
   clone() {
-    return new PositionComponent(this.x, this.y);
+    return new Position(this.x, this.y);
   }
 }

@@ -1,4 +1,4 @@
-export class VelocityComponent {
+export class Velocity {
   x;
   y;
   maxX;

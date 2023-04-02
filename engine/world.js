@@ -1,14 +1,14 @@
 import { Guard } from "./utils/guard.js";
 import { Game } from "./game.js";
-import { SpriteComponent } from "./components/sprite.js";
-import { SizeComponent } from "./components/size.js";
-import { VelocityComponent } from "./components/velocity.js";
-import { PositionComponent } from "./components/position.js";
-import { AnimationComponent } from "./components/animation.js";
-import { InputComponent } from "./components/input.js";
-import { BouncinessComponent } from "./components/bounciness.js";
-import { GravityFactorComponent } from "./components/gravity-factor.js";
-import { FrictionComponent } from "./components/friction.js";
+import { Sprite } from "./components/sprite.js";
+import { Size } from "./components/size.js";
+import { Velocity } from "./components/velocity.js";
+import { Position } from "./components/position.js";
+import { Animation } from "./components/animation.js";
+import { Input } from "./components/input.js";
+import { Bounciness } from "./components/bounciness.js";
+import { GravityFactor } from "./components/gravity-factor.js";
+import { Friction } from "./components/friction.js";
 
 export class World {
   /** @type {import("./events/event-system.js").EventSystem} */
@@ -34,22 +34,22 @@ export class World {
   createTestEntity() {
     const em = this.entityManager;
     const id = em.createEntity();
-    em.addComponent(id, new PositionComponent(50, 50));
-    em.addComponent(id, new SizeComponent(32, 32));
+    em.addComponent(id, new Position(50, 50));
+    em.addComponent(id, new Size(32, 32));
 
-    em.addComponent(id, new VelocityComponent(50, 0));
+    em.addComponent(id, new Velocity(50, 0));
 
-    em.addComponent(id, new BouncinessComponent(1));
-    em.addComponent(id, new GravityFactorComponent(0));
-    em.addComponent(id, new FrictionComponent(1, 1));
+    em.addComponent(id, new Bounciness(1));
+    em.addComponent(id, new GravityFactor(0));
+    em.addComponent(id, new Friction(1, 1));
 
-    em.addComponent(id, new SpriteComponent("test-data/assets/multi-square.png", 32, 32));
-    em.addComponent(id, new AnimationComponent("[0,3]", 0.5, false));
+    em.addComponent(id, new Sprite("test-data/assets/multi-square.png", 32, 32));
+    em.addComponent(id, new Animation("[0,3]", 0.5, false));
     const bindings = new Map([
       ["move-left", () => console.log("Moving left!")],
       ["move-right", () => console.log("Moving right!")],
     ]);
-    em.addComponent(id, new InputComponent(bindings));
+    em.addComponent(id, new Input(bindings));
   }
 
   createEntity() {

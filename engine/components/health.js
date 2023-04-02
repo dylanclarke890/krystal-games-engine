@@ -1,4 +1,4 @@
-export class HealthComponent {
+export class Health {
   maxHp;
   currentHp;
 

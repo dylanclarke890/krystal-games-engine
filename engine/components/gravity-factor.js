@@ -1,4 +1,4 @@
-export class GravityFactorComponent {
+export class GravityFactor {
   /**
    * @param {number} value
    */

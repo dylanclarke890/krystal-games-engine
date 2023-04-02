@@ -1,4 +1,4 @@
-export class BouncinessComponent {
+export class Bounciness {
   /**
    * @param {number} bounce
    * @param {number} minVelocity

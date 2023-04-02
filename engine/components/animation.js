@@ -2,7 +2,7 @@ import { Assert } from "../utils/assert.js";
 import { Guard } from "../utils/guard.js";
 import { arrayFromInterval } from "../utils/interval.js";
 
-export class AnimationComponent {
+export class Animation {
   sequence;
   frameDuration;
   loopCount;

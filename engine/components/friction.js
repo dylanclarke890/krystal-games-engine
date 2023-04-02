@@ -1,4 +1,4 @@
-export class FrictionComponent {
+export class Friction {
   /**
    * @param {number} x
    * @param {number} y

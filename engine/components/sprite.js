@@ -1,6 +1,6 @@
 import { Guard } from "../utils/guard.js";
 
-export class SpriteComponent {
+export class Sprite {
   /**
    * @param {string} path - The source path of the sprite image.
    * @param {number} width - The width of a single sprite frame.
