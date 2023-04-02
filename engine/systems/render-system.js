@@ -5,7 +5,7 @@ import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 
 export class RenderSystem extends System {
-  static requiredComponents = ["SpriteComponent", "PositionComponent"];
+  static requiredComponents = ["Sprite", "Position"];
   static systemType = SystemTypes.Graphics;
 
   viewport;
@@ -31,8 +31,8 @@ export class RenderSystem extends System {
     const delta = this.timer.delta();
     for (let i = 0; i < entities.length; i++) {
       const entityId = entities[i];
-      const sprite = this.entityManager.getComponent(entityId, "SpriteComponent");
-      const animation = this.entityManager.getComponent(entityId, "AnimationComponent");
+      const sprite = this.entityManager.getComponent(entityId, "Sprite");
+      const animation = this.entityManager.getComponent(entityId, "Animation");
 
       // Update current animation frame of sprite
       const frameTotal = Math.floor(delta / animation.frameDuration);
@@ -49,7 +49,7 @@ export class RenderSystem extends System {
       const sourceX = currentColumn * width;
       const sourceY = currentRow * height;
 
-      const pos = this.entityManager.getComponent(entityId, "PositionComponent");
+      const pos = this.entityManager.getComponent(entityId, "Position");
       this.viewport.ctx.drawImage(
         image,
         sourceX,

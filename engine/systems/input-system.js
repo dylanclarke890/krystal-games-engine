@@ -4,7 +4,7 @@ import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 
 export class InputSystem extends System {
-  static requiredComponents = ["InputComponent"];
+  static requiredComponents = ["Input"];
   static systemType = SystemTypes.Input;
 
   /** @type {InputManager} */
@@ -22,7 +22,7 @@ export class InputSystem extends System {
     );
     for (const entity of entities) {
       /** @type {{bindings: Map}} */
-      const inputComponent = this.entityManager.getComponent(entity, "InputComponent");
+      const inputComponent = this.entityManager.getComponent(entity, "Input");
       for (const [action, fn] of inputComponent.bindings) {
         if (this.inputManager.released(action)) fn();
       }
