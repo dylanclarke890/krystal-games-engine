@@ -29,16 +29,17 @@ export class World {
     this.game = game;
     this.entityManager = game.entityManager;
     this.systemManager = game.systemManager;
-    this.createTestEntity();
+    this.createTestEntity(50, 50);
+    this.createTestEntity(600, -50);
   }
 
-  createTestEntity() {
+  createTestEntity(posX, speedX) {
     const em = this.entityManager;
     const id = em.createEntity();
-    em.addComponent(id, new Position(50, 50));
+    em.addComponent(id, new Position(posX, 50));
     em.addComponent(id, new Size(32, 32));
 
-    em.addComponent(id, new Velocity(50, 0));
+    em.addComponent(id, new Velocity(speedX, 0));
 
     em.addComponent(id, new Bounciness(1));
     em.addComponent(id, new GravityFactor(0));

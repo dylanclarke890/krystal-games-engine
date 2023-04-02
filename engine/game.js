@@ -55,7 +55,7 @@ export class Game {
     this.systemManager.registerSystem(new PhysicsSystem(this.entityManager));
     const collisionStrategy = new AABBCollisionStrategy(this.entityManager, this.eventSystem);
     this.systemManager.registerSystem(
-      new CollisionSystem(this.entityManager, this.viewport, collisionStrategy)
+      new CollisionSystem(this.entityManager, this.viewport, this.eventSystem, collisionStrategy)
     );
     this.systemManager.registerSystem(new RenderSystem(this.entityManager, this.viewport));
   }

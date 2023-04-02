@@ -3,18 +3,18 @@ import { CollisionStrategy } from "./collision-strategy.js";
 
 export class AABBCollisionStrategy extends CollisionStrategy {
   /** @param {number[]} entities list of entity ids to check */
-  check(entities) {
+  resolve(entities) {
     const em = this.entityManager;
     for (let i = 0; i < entities.length; i++) {
       const entityA = entities[i];
       const posA = em.getComponent(entityA, "Position");
       const sizeA = em.getComponent(entityA, "Size");
 
-      for (let i = 0; i < entities.length; i++) {
-        const entityB = entities[i];
+      for (let j = 0; j < entities.length; j++) {
+        const entityB = entities[j];
         const posB = em.getComponent(entityB, "Position");
         const sizeB = em.getComponent(entityB, "Size");
-        if (this.resolve(posA, sizeA, posB, sizeB)) {
+        if (this.areEntitiesColliding(posA, sizeA, posB, sizeB)) {
           this.eventSystem.dispatch(GameEvents.Entity_Collided, { a: entityA, b: entityB });
         }
       }
@@ -28,7 +28,7 @@ export class AABBCollisionStrategy extends CollisionStrategy {
    * @param {import("../components/size.js").Size} sizeB
    * @returns {boolean}
    */
-  resolve(posA, sizeA, posB, sizeB) {
+  areEntitiesColliding(posA, sizeA, posB, sizeB) {
     return (
       posA.x < posB.x + sizeB.x &&
       posA.x + sizeA.x > posB.x &&

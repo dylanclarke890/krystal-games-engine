@@ -21,12 +21,13 @@ export class CollisionStrategy {
     this.eventSystem = eventSystem;
   }
 
-  check() {
+  /** @type {number[]} */
+  resolve(entities) {
     throw new Error("`check` must be implemented.");
   }
 
   /** @returns {boolean} */
-  resolve() {
+  areEntitiesColliding() {
     throw new Error("`resolve` must be implemented.");
   }
 }
