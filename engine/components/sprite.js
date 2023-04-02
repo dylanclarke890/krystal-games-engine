@@ -1,6 +1,15 @@
 import { Guard } from "../utils/guard.js";
 
 export class Sprite {
+  /** @type {HTMLImageElement} */
+  image;
+  /** @type {number} */
+  width;
+  /** @type {number} */
+  height;
+  /** @type {number} */
+  columns;
+
   /**
    * @param {string} path - The source path of the sprite image.
    * @param {number} width - The width of a single sprite frame.

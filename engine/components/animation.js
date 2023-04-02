@@ -3,9 +3,13 @@ import { Guard } from "../utils/guard.js";
 import { arrayFromInterval } from "../utils/interval.js";
 
 export class Animation {
+  /** @type {number[]} */
   sequence;
+  /** @type {number} */
   frameDuration;
+  /** @type {number} */
   loopCount;
+  /** @type {boolean} */
   stop;
 
   /**

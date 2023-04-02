@@ -1,4 +1,9 @@
 export class OffsetComponent {
+  /** @type {number} */
+  x;
+  /** @type {number} */
+  y;
+
   /**
    * @param {number} x
    * @param {number} y

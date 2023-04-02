@@ -1,4 +1,5 @@
 export class Input {
+  /** @type {string, Function} */
   bindings;
 
   /**

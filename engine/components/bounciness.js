@@ -1,4 +1,9 @@
 export class Bounciness {
+  /** @type {number} */
+  bounce;
+  /** @type {number} */
+  minVelocity;
+
   /**
    * @param {number} bounce
    * @param {number} minVelocity

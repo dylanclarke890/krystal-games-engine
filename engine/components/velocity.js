@@ -1,7 +1,11 @@
 export class Velocity {
+  /** @type {number} */
   x;
+  /** @type {number} */
   y;
+  /** @type {number} */
   maxX;
+  /** @type {number} */
   maxY;
 
   /**

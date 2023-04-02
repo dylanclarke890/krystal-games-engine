@@ -1,5 +1,7 @@
 export class Size {
+  /** @type {number} */
   x;
+  /** @type {number} */
   y;
 
   /**

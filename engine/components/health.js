@@ -1,5 +1,7 @@
 export class Health {
+  /** @type {number} */
   maxHp;
+  /** @type {number} */
   currentHp;
 
   /**
