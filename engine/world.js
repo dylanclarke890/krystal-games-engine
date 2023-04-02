@@ -9,6 +9,7 @@ import { Input } from "./components/input.js";
 import { Bounciness } from "./components/bounciness.js";
 import { GravityFactor } from "./components/gravity-factor.js";
 import { Friction } from "./components/friction.js";
+import { Collision, CollisionTypes } from "./components/collision.js";
 
 export class World {
   /** @type {import("./events/event-system.js").EventSystem} */
@@ -50,6 +51,7 @@ export class World {
       ["move-right", () => console.log("Moving right!")],
     ]);
     em.addComponent(id, new Input(bindings));
+    em.addComponent(id, new Collision(false, CollisionTypes.None));
   }
 
   createEntity() {

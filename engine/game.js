@@ -4,7 +4,6 @@ import { SystemManager } from "./systems/system-manager.js";
 import { GameLoop } from "./time/game-loop.js";
 import { World } from "./world.js";
 import { PhysicsSystem } from "./systems/physics-system.js";
-import { PositionSystem } from "./systems/position-system.js";
 import { RenderSystem } from "./systems/render-system.js";
 import { Viewport } from "./graphics/viewport.js";
 import { InputSystem } from "./systems/input-system.js";
@@ -52,7 +51,6 @@ export class Game {
 
   #registerSystems() {
     this.systemManager.registerSystem(new InputSystem(this.entityManager, this.inputManager));
-    this.systemManager.registerSystem(new PositionSystem(this.entityManager));
     this.systemManager.registerSystem(new PhysicsSystem(this.entityManager, this.viewport));
     this.systemManager.registerSystem(new CollisionSystem(this.entityManager));
     this.systemManager.registerSystem(new RenderSystem(this.entityManager, this.viewport));
