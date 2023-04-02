@@ -7,6 +7,7 @@ export class PhysicsSystem extends System {
   static requiredComponents = ["Position", "Velocity", "Size"];
   static systemType = SystemTypes.Physics;
 
+  /** @type {Viewport} */
   viewport;
 
   /**
@@ -32,8 +33,7 @@ export class PhysicsSystem extends System {
       position.x += velocity.x * deltaTime;
       position.y += velocity.y * deltaTime;
 
-      // TODO: Make one of these.
-      const acceleration = em.getComponent(entity, "AccelerationComponent");
+      const acceleration = em.getComponent(entity, "Acceleration");
       if (acceleration) {
         velocity.x += acceleration.x * deltaTime;
         velocity.y += acceleration.y * deltaTime;
