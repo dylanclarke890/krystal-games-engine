@@ -11,6 +11,7 @@ import { InputManager } from "./input/input-manager.js";
 import { settings } from "./config.js";
 import { InputKeys } from "./input/input-keys.js";
 import { CollisionSystem } from "./systems/collision-system.js";
+import { AABBCollisionStrategy } from "./collision-strategies/aabb.js";
 
 export class Game {
   /** @type {Viewport} */
@@ -52,7 +53,10 @@ export class Game {
   #registerSystems() {
     this.systemManager.registerSystem(new InputSystem(this.entityManager, this.inputManager));
     this.systemManager.registerSystem(new PhysicsSystem(this.entityManager));
-    this.systemManager.registerSystem(new CollisionSystem(this.entityManager, this.viewport));
+    const collisionStrategy = new AABBCollisionStrategy(this.entityManager, this.eventSystem);
+    this.systemManager.registerSystem(
+      new CollisionSystem(this.entityManager, this.viewport, collisionStrategy)
+    );
     this.systemManager.registerSystem(new RenderSystem(this.entityManager, this.viewport));
   }
 

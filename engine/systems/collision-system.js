@@ -2,6 +2,7 @@ import { Guard } from "../utils/guard.js";
 import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 import { Viewport } from "../graphics/viewport.js";
+import { CollisionStrategy } from "../collision-strategies/collision-strategy.js";
 
 export class CollisionSystem extends System {
   static requiredComponents = ["Position", "Size", "Collision"];
@@ -9,11 +10,13 @@ export class CollisionSystem extends System {
 
   /** @type {Viewport} */
   viewport;
+  /** @type {CollisionStrategy} */
+  entityCollisionStrategy;
 
   constructor(entityManager, viewport, entityCollisionStrategy) {
     super(entityManager);
     Guard.againstNull({ viewport }).isInstanceOf(Viewport);
-    Guard.againstNull({ entityCollisionStrategy }).isTypeOf("function");
+    Guard.againstNull({ entityCollisionStrategy }).isInstanceOf(CollisionStrategy);
     this.viewport = viewport;
     this.entityCollisionStrategy = entityCollisionStrategy;
   }
