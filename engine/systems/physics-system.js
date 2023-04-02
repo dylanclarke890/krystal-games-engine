@@ -51,7 +51,7 @@ export class PhysicsSystem extends System {
       }
 
       const collision = em.getComponent(entity, "Collision") ?? {
-        constrainWithinViewport: true,
+        constrainWithinViewport: false,
         entityCollisionType: CollisionTypes.None,
       };
 
