@@ -1,24 +1,22 @@
 export class Collision {
   /** @type {{start: boolean, end: boolean, top:boolean, bottom: boolean }} */
   viewportCollision;
-  /** @type {EntityCollisionTypes} */
+  /** @type {{enabled: boolean}} */
   entityCollision;
 
   /**
    * @param {{start: boolean, end: boolean, top:boolean, bottom: boolean }} viewportCollision
-   * @param {EntityCollisionTypes} entityCollision
+   * @param {{enabled: boolean}} entityCollision
    */
-  constructor(viewportCollision, entityCollision = EntityCollisionTypes.None) {
+  constructor(viewportCollision, entityCollision) {
     this.viewportCollision = viewportCollision ?? {
       left: false,
       right: false,
       top: false,
       bottom: false,
     };
-    this.entityCollision = entityCollision;
+    this.entityCollision = entityCollision ?? {
+      enabled: false,
+    };
   }
-}
-
-export class EntityCollisionTypes {
-  static None = new EntityCollisionTypes();
 }

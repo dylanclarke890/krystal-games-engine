@@ -1,4 +1,3 @@
-import { EntityCollisionTypes } from "../components/collision.js";
 import { Guard } from "../utils/guard.js";
 import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
@@ -11,10 +10,12 @@ export class CollisionSystem extends System {
   /** @type {Viewport} */
   viewport;
 
-  constructor(entityManager, viewport) {
+  constructor(entityManager, viewport, entityCollisionStrategy) {
     super(entityManager);
     Guard.againstNull({ viewport }).isInstanceOf(Viewport);
+    Guard.againstNull({ entityCollisionStrategy }).isTypeOf("function");
     this.viewport = viewport;
+    this.entityCollisionStrategy = entityCollisionStrategy;
   }
 
   update() {
@@ -27,7 +28,7 @@ export class CollisionSystem extends System {
 
       this.constrainToViewportDimensions(entity, collision.viewportCollision, position, velocity);
 
-      if (collision.entityCollisionType !== EntityCollisionTypes.None) {
+      if (collision.entityCollision.enabled) {
         /** empty */
       }
     }
