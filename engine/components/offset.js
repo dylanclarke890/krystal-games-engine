@@ -1,4 +1,4 @@
-export class OffsetComponent {
+export class Offset {
   /** @type {number} */
   x;
   /** @type {number} */

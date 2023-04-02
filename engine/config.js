@@ -1,7 +1,7 @@
 export const settings = {
   registration: {
     components: {
-      throwIfMissing: false,
+      throwIfMissing: true,
     },
   },
 };
