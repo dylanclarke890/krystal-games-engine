@@ -1,3 +1,4 @@
+import { CollisionTypes } from "../components/collision.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Guard } from "../utils/guard.js";
 import { SystemTypes } from "./system-types.js";
@@ -49,7 +50,18 @@ export class PhysicsSystem extends System {
         velocity.y += 9.81 * gravityFactor.value * deltaTime;
       }
 
-      this.constrainToViewportDimensions(entity, position, velocity);
+      const collision = em.getComponent(entity, "Collision") ?? {
+        constrainWithinViewport: true,
+        entityCollisionType: CollisionTypes.None,
+      };
+
+      if (collision.constrainWithinViewport) {
+        this.constrainToViewportDimensions(entity, position, velocity);
+      }
+
+      if (collision.entityCollisionType !== CollisionTypes.None) {
+        /** empty */
+      }
     }
   }
 
