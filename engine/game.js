@@ -11,6 +11,7 @@ import { InputSystem } from "./systems/input-system.js";
 import { InputManager } from "./input/input-manager.js";
 import { settings } from "./config.js";
 import { InputKeys } from "./input/input-keys.js";
+import { CollisionSystem } from "./systems/collision-system.js";
 
 export class Game {
   /** @type {Viewport} */
@@ -50,10 +51,11 @@ export class Game {
   }
 
   #registerSystems() {
+    this.systemManager.registerSystem(new InputSystem(this.entityManager, this.inputManager));
     this.systemManager.registerSystem(new PositionSystem(this.entityManager));
     this.systemManager.registerSystem(new PhysicsSystem(this.entityManager, this.viewport));
+    this.systemManager.registerSystem(new CollisionSystem(this.entityManager));
     this.systemManager.registerSystem(new RenderSystem(this.entityManager, this.viewport));
-    this.systemManager.registerSystem(new InputSystem(this.entityManager, this.inputManager));
   }
 
   #bindInput() {

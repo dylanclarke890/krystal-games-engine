@@ -5,6 +5,7 @@ export class SystemTypes extends Enum {
   static Physics = new SystemTypes();
   static Position = new SystemTypes();
   static Input = new SystemTypes();
+  static Collision = new SystemTypes();
 
   static {
     this.freeze();
