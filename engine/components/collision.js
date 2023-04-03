@@ -17,6 +17,6 @@ export class Collision {
       top: false,
       bottom: false,
     };
-    this.entityCollision = entityCollisionBehaviour ?? EntityCollisionBehaviour.None;
+    this.entityCollision = entityCollisionBehaviour ?? EntityCollisionBehaviour.Ignore;
   }
 }

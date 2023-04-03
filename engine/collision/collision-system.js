@@ -45,7 +45,7 @@ export class CollisionSystem extends System {
 
       this.constrainToViewportDimensions(entityA, collisionA.viewportCollision, posA, velA, sizeA);
       if (
-        !collisionA.entityCollisionBehaviour === EntityCollisionBehaviour.None ||
+        !collisionA.entityCollisionBehaviour === EntityCollisionBehaviour.Ignore ||
         checked.has(entityA)
       ) {
         continue;
@@ -56,7 +56,7 @@ export class CollisionSystem extends System {
         const collisionB = em.getComponent(entityB, "Collision");
         if (
           entityA === entityB ||
-          !collisionB.entityCollisionBehaviour === EntityCollisionBehaviour.None ||
+          !collisionB.entityCollisionBehaviour === EntityCollisionBehaviour.Ignore ||
           checked.has(entityB)
         ) {
           continue;
