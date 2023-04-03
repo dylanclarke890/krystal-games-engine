@@ -72,6 +72,7 @@ export class CollisionSystem extends System {
   }
 
   handleEntityCollision(entityA, entityB) {
+    //TODO - handle collision based on behaviours; see Ava
     this.eventSystem.dispatch(GameEvents.Entity_Collided, { a: entityA, b: entityB });
   }
 
