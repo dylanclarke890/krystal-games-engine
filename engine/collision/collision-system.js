@@ -86,13 +86,14 @@ export class CollisionSystem extends System {
     const sizeA = em.getComponent(entityA, "Size");
     const sizeB = em.getComponent(entityB, "Size");
 
-    switch (collisionA.entityCollisionBehaviour) {
+    switch (collisionA.entityCollision) {
       case EntityCollisionBehaviour.Elastic:
         {
-          switch (collisionB.entityCollisionBehaviour) {
+          switch (collisionB.entityCollision) {
             case EntityCollisionBehaviour.Elastic:
               this.elasticCollision(entityA, posA, sizeA, velA, entityB, posB, sizeB, velB);
               break;
+            case EntityCollisionBehaviour.Ignore:
             default:
               break;
           }
@@ -112,7 +113,6 @@ export class CollisionSystem extends System {
         break;
       case EntityCollisionBehaviour.Ignore:
       default:
-        // Ignore collision handling
         break;
     }
 
@@ -123,10 +123,10 @@ export class CollisionSystem extends System {
 
   elasticCollision(entityA, posA, sizeA, velA, entityB, posB, sizeB, velB) {
     const em = this.entityManager;
-    const massA = em.getComponent(entityA, "Mass");
-    const massB = em.getComponent(entityB, "Mass");
-    const coeffRestitutionA = em.getComponent(entityA, "CoeffRestitution") ?? 1;
-    const coeffRestitutionB = em.getComponent(entityB, "CoeffRestitution") ?? 1;
+    const massA = em.getComponent(entityA, "Mass")?.value ?? 1;
+    const massB = em.getComponent(entityB, "Mass")?.value ?? 1;
+    const coeffRestitutionA = em.getComponent(entityA, "CoeffRestitution")?.value ?? 1;
+    const coeffRestitutionB = em.getComponent(entityB, "CoeffRestitution")?.value ?? 1;
 
     const normal = {
       x: posB.x + sizeB.x / 2 - (posA.x + sizeA.x / 2),
