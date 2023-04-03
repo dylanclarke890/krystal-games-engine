@@ -9,9 +9,8 @@ import { Viewport } from "./graphics/viewport.js";
 import { InputSystem } from "./systems/input-system.js";
 import { InputManager } from "./input/input-manager.js";
 import { settings } from "./config.js";
-import { InputKeys } from "./input/input-keys.js";
 import { CollisionSystem } from "./systems/collision-system.js";
-import { AABBCollisionStrategy } from "./collision-strategies/aabb.js";
+import { AABBCollisionCheck } from "./collision-strategies/aabb.js";
 
 export class Game {
   /** @type {Viewport} */
@@ -47,22 +46,15 @@ export class Game {
     this.loop = new GameLoop(this.eventSystem, 60);
     this.world = new World(this);
     this.#registerSystems();
-    this.#bindInput();
   }
 
   #registerSystems() {
     this.systemManager.registerSystem(new InputSystem(this.entityManager, this.inputManager));
     this.systemManager.registerSystem(new PhysicsSystem(this.entityManager));
-    const collisionStrategy = new AABBCollisionStrategy(this.entityManager, this.eventSystem);
     this.systemManager.registerSystem(
-      new CollisionSystem(this.entityManager, this.viewport, this.eventSystem, collisionStrategy)
+      new CollisionSystem(this.entityManager, this.viewport, this.eventSystem, AABBCollisionCheck)
     );
     this.systemManager.registerSystem(new RenderSystem(this.entityManager, this.viewport));
-  }
-
-  #bindInput() {
-    this.inputManager.bind(InputKeys.Arrow_Left, "move-left");
-    this.inputManager.bind(InputKeys.Arrow_Right, "move-right");
   }
 
   start() {

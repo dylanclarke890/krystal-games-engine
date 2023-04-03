@@ -2,9 +2,7 @@ import { Guard } from "../utils/guard.js";
 import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 import { Viewport } from "../graphics/viewport.js";
-import { CollisionStrategy } from "../collision-strategies/collision-strategy.js";
 import { EventSystem } from "../events/event-system.js";
-import { GameEvents } from "../events/events.js";
 
 export class CollisionSystem extends System {
   static requiredComponents = ["Position", "Size", "Collision"];
@@ -12,7 +10,7 @@ export class CollisionSystem extends System {
 
   /** @type {Viewport} */
   viewport;
-  /** @type {CollisionStrategy} */
+  /** @type {Function} */
   entityCollisionStrategy;
 
   /**
@@ -26,35 +24,36 @@ export class CollisionSystem extends System {
     super(entityManager);
     Guard.againstNull({ viewport }).isInstanceOf(Viewport);
     Guard.againstNull({ eventSystem }).isInstanceOf(EventSystem);
-    Guard.againstNull({ entityCollisionStrategy }).isInstanceOf(CollisionStrategy);
+    Guard.againstNull({ entityCollisionStrategy }).isTypeOf("function");
     this.viewport = viewport;
     this.eventSystem = eventSystem;
     this.entityCollisionStrategy = entityCollisionStrategy;
-
-    this.#bindEvents();
-  }
-
-  #bindEvents() {
-    this.eventSystem.on(GameEvents.Entity_Collided, (a, b) => this.handleEntityCollision(a, b));
   }
 
   update() {
     const em = this.entityManager;
     const entities = em.getEntitiesWithComponents(...CollisionSystem.requiredComponents);
-    const toCheck = [];
-    for (const entity of entities) {
-      const collision = em.getComponent(entity, "Collision");
-      const position = em.getComponent(entity, "Position");
-      const velocity = em.getComponent(entity, "Velocity");
+    for (let i = 0; i < entities.length; i++) {
+      const entityA = entities[i];
+      const collisionA = em.getComponent(entityA, "Collision");
+      const posA = em.getComponent(entityA, "Position");
+      const velocity = em.getComponent(entityA, "Velocity") ?? { x: 0, y: 0 };
 
-      this.constrainToViewportDimensions(entity, collision.viewportCollision, position, velocity);
+      this.constrainToViewportDimensions(entityA, collisionA.viewportCollision, posA, velocity);
+      if (!collisionA.entityCollision.enabled) continue;
+      const sizeA = em.getComponent(entityA, "Size");
 
-      if (collision.entityCollision.enabled) {
-        toCheck.push(entity);
+      for (let j = 0; j < entities.length; j++) {
+        const entityB = entities[j];
+        const collisionB = em.getComponent(entityB, "Collision");
+        if (!collisionB.entityCollision.enabled) continue;
+
+        const posB = em.getComponent(entityA, "Position");
+        const sizeB = em.getComponent(entityB, "Size");
+        if (this.entityCollisionStrategy(posA, sizeA, posB, sizeB, em))
+          this.handleEntityCollision(entityA, entityB);
       }
     }
-
-    this.entityCollisionStrategy.resolve(entities);
   }
 
   handleEntityCollision(entityA, entityB) {

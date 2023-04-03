@@ -10,6 +10,7 @@ import { Bounciness } from "./components/bounciness.js";
 import { GravityFactor } from "./components/gravity-factor.js";
 import { Friction } from "./components/friction.js";
 import { Collision } from "./components/collision.js";
+import { InputKeys } from "./input/input-keys.js";
 
 export class World {
   /** @type {import("./events/event-system.js").EventSystem} */
@@ -29,8 +30,15 @@ export class World {
     this.game = game;
     this.entityManager = game.entityManager;
     this.systemManager = game.systemManager;
+    this.inputManager = game.inputManager;
+    this.#bindInput();
     this.createTestEntity(50, 50);
     this.createTestEntity(600, -50);
+  }
+
+  #bindInput() {
+    this.inputManager.bind(InputKeys.Arrow_Left, "move-left");
+    this.inputManager.bind(InputKeys.Arrow_Right, "move-right");
   }
 
   createTestEntity(posX, speedX) {
