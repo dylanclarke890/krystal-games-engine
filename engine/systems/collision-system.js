@@ -76,38 +76,46 @@ export class CollisionSystem extends System {
     const offset = this.entityManager.getComponent(entity, "Offset") ?? { x: 0, y: 0 };
     const bounciness = this.entityManager.getComponent(entity, "Bounciness");
     const size = this.entityManager.getComponent(entity, "Size");
-    const absVelX = Math.abs(velocity.x);
-    const absVelY = Math.abs(velocity.y);
+    const absVelX = bounciness ? Math.abs(velocity.x) : 0;
+    const absVelY = bounciness ? Math.abs(velocity.y) : 0;
 
     if (viewportCollision.left && position.x + offset.x < 0) {
       position.x = -offset.x;
-      if (bounciness) velocity.x = -velocity.x * bounciness.bounce;
-      if (absVelX < bounciness.minVelocity) {
-        velocity.x = 0;
+      if (bounciness) {
+        velocity.x = -velocity.x * bounciness.bounce;
+        if (absVelX < bounciness.minVelocity) {
+          velocity.x = 0;
+        }
       }
     }
 
     if (viewportCollision.right && position.x + offset.x + size.x > canvasWidth) {
       position.x = canvasWidth - size.x - offset.x;
-      if (bounciness) velocity.x = -velocity.x * bounciness.bounce;
-      if (absVelX < bounciness.minVelocity) {
-        velocity.x = 0;
+      if (bounciness) {
+        velocity.x = -velocity.x * bounciness.bounce;
+        if (absVelX < bounciness.minVelocity) {
+          velocity.x = 0;
+        }
       }
     }
 
     if (viewportCollision.bottom && position.y + offset.y < 0) {
       position.y = -offset.y;
-      if (bounciness) velocity.y = -velocity.y * bounciness.bounce;
-      if (absVelY < bounciness.minVelocity) {
-        velocity.y = 0;
+      if (bounciness) {
+        velocity.y = -velocity.y * bounciness.bounce;
+        if (absVelY < bounciness.minVelocity) {
+          velocity.y = 0;
+        }
       }
     }
 
     if (viewportCollision.top && position.y + offset.y + size.y > canvasHeight) {
       position.y = canvasHeight - size.y - offset.y;
-      if (bounciness) velocity.y = -velocity.y * bounciness.bounce;
-      if (absVelY < bounciness.minVelocity) {
-        velocity.y = 0;
+      if (bounciness) {
+        velocity.y = -velocity.y * bounciness.bounce;
+        if (absVelY < bounciness.minVelocity) {
+          velocity.y = 0;
+        }
       }
     }
   }
