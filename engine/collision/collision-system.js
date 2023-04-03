@@ -71,9 +71,44 @@ export class CollisionSystem extends System {
     }
   }
 
+  /**
+   * @param {number} entityA entity identifier for Entity A
+   * @param {number} entityB entity identifier for Entity B
+   */
   handleEntityCollision(entityA, entityB) {
-    //TODO - handle collision based on behaviours; see Ava
-    this.eventSystem.dispatch(GameEvents.Entity_Collided, { a: entityA, b: entityB });
+    const em = this.entityManager;
+    const collisionA = em.getComponent(entityA, "Collision");
+    // const collisionB = em.getComponent(entityB, "Collision");
+    // const posA = em.getComponent(entityA, "Position");
+    // const posB = em.getComponent(entityB, "Position");
+    // const velA = em.getComponent(entityA, "Velocity") ?? { x: 0, y: 0 };
+    // const velB = em.getComponent(entityB, "Velocity") ?? { x: 0, y: 0 };
+    // const sizeA = em.getComponent(entityA, "Size");
+    // const sizeB = em.getComponent(entityB, "Size");
+
+    switch (collisionA.entityCollisionBehaviour) {
+      case EntityCollisionBehaviour.Elastic:
+        // Elastic collision handling
+        break;
+      case EntityCollisionBehaviour.Inelastic:
+        // Inelastic collision handling
+        break;
+      case EntityCollisionBehaviour.OverlapResolution:
+        // Overlap resolution handling
+        break;
+      case EntityCollisionBehaviour.Trigger:
+        // Trigger handling
+        break;
+      case EntityCollisionBehaviour.Custom:
+        // Custom collision handling
+        break;
+      case EntityCollisionBehaviour.Ignore:
+      default:
+        // Ignore collision handling
+        break;
+    }
+
+    this.eventSystem.dispatch(GameEvents.Entity_Collided, { entityA, entityB });
   }
 
   /**
