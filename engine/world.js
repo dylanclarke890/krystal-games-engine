@@ -34,7 +34,7 @@ export class World {
     this.inputManager = game.inputManager;
     this.#bindInput();
     this.createTestEntity(50, 50);
-    this.createTestEntity(600, -50);
+    this.createTestEntity(600, -100);
   }
 
   #bindInput() {
@@ -61,7 +61,10 @@ export class World {
       ["move-right", () => console.log("Moving right!")],
     ]);
     em.addComponent(id, new Input(bindings));
-    const collision = new Collision({ right: true, left: true }, EntityCollisionBehaviour.Elastic);
+    const collision = new Collision(
+      { right: true, left: true },
+      EntityCollisionBehaviour.Inelastic
+    );
     em.addComponent(id, collision);
   }
 

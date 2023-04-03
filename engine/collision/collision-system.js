@@ -100,7 +100,16 @@ export class CollisionSystem extends System {
         }
         break;
       case EntityCollisionBehaviour.Inelastic:
-        // Inelastic collision handling
+        {
+          switch (collisionB.entityCollision) {
+            case EntityCollisionBehaviour.Inelastic:
+              this.inelasticCollision(entityA, velA, entityB, velB);
+              break;
+            case EntityCollisionBehaviour.Ignore:
+            default:
+              break;
+          }
+        }
         break;
       case EntityCollisionBehaviour.OverlapResolution:
         // Overlap resolution handling
@@ -157,6 +166,23 @@ export class CollisionSystem extends System {
 
     velB.x -= (impulseScalar * coeffRestitutionB * massA * normal.x) / massB;
     velB.y -= (impulseScalar * coeffRestitutionB * massA * normal.y) / massB;
+  }
+
+  inelasticCollision(entityA, velA, entityB, velB) {
+    const em = this.entityManager;
+    const massA = em.getComponent(entityA, "Mass")?.value ?? 1;
+    const massB = em.getComponent(entityB, "Mass")?.value ?? 1;
+    const totalMass = massA + massB;
+
+    // Compute the resulting velocity after the inelastic collision
+    const resultingVelX = (massA * velA.x + massB * velB.x) / totalMass;
+    const resultingVelY = (massA * velA.y + massB * velB.y) / totalMass;
+
+    // Update the velocities of both entities with the resulting velocity
+    velA.x = resultingVelX;
+    velA.y = resultingVelY;
+    velB.x = resultingVelX;
+    velB.y = resultingVelY;
   }
 
   //#endregion Entity Collision
