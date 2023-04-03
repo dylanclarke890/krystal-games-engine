@@ -77,7 +77,8 @@ export class CollisionSystem extends System {
 
   /**
    * @param {number} entity entity identifier
-   * @param {import("../components/collision.js").Collision} collision collision component
+   * @param {{left:boolean, right:boolean, top:boolean, bottom: boolean}} viewportCollision settings for colliding with
+   * the sides of the screen.
    * @param {import("../components/position.js").Position} position position component
    * @param {import("../components/velocity.js").Velocity} velocity velocity component
    * @param {import("../components/size.js").Size} size size component
