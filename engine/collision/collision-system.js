@@ -78,17 +78,25 @@ export class CollisionSystem extends System {
   handleEntityCollision(entityA, entityB) {
     const em = this.entityManager;
     const collisionA = em.getComponent(entityA, "Collision");
-    // const collisionB = em.getComponent(entityB, "Collision");
-    // const posA = em.getComponent(entityA, "Position");
-    // const posB = em.getComponent(entityB, "Position");
-    // const velA = em.getComponent(entityA, "Velocity") ?? { x: 0, y: 0 };
-    // const velB = em.getComponent(entityB, "Velocity") ?? { x: 0, y: 0 };
-    // const sizeA = em.getComponent(entityA, "Size");
-    // const sizeB = em.getComponent(entityB, "Size");
+    const collisionB = em.getComponent(entityB, "Collision");
+    const posA = em.getComponent(entityA, "Position");
+    const posB = em.getComponent(entityB, "Position");
+    const velA = em.getComponent(entityA, "Velocity") ?? { x: 0, y: 0 };
+    const velB = em.getComponent(entityB, "Velocity") ?? { x: 0, y: 0 };
+    const sizeA = em.getComponent(entityA, "Size");
+    const sizeB = em.getComponent(entityB, "Size");
 
     switch (collisionA.entityCollisionBehaviour) {
       case EntityCollisionBehaviour.Elastic:
-        // Elastic collision handling
+        {
+          switch (collisionB.entityCollisionBehaviour) {
+            case EntityCollisionBehaviour.Elastic:
+              this.elasticCollision(entityA, posA, sizeA, velA, entityB, posB, sizeB, velB);
+              break;
+            default:
+              break;
+          }
+        }
         break;
       case EntityCollisionBehaviour.Inelastic:
         // Inelastic collision handling
@@ -110,6 +118,48 @@ export class CollisionSystem extends System {
 
     this.eventSystem.dispatch(GameEvents.Entity_Collided, { entityA, entityB });
   }
+
+  //#region Entity Collision
+
+  elasticCollision(entityA, posA, sizeA, velA, entityB, posB, sizeB, velB) {
+    const em = this.entityManager;
+    const massA = em.getComponent(entityA, "Mass");
+    const massB = em.getComponent(entityB, "Mass");
+    const coeffRestitutionA = em.getComponent(entityA, "CoeffRestitution") ?? 1;
+    const coeffRestitutionB = em.getComponent(entityB, "CoeffRestitution") ?? 1;
+
+    const normal = {
+      x: posB.x + sizeB.x / 2 - (posA.x + sizeA.x / 2),
+      y: posB.y + sizeB.y / 2 - (posA.y + sizeA.y / 2),
+    };
+
+    const normalLength = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
+    normal.x /= normalLength;
+    normal.y /= normalLength;
+
+    const relativeVelocity = {
+      x: velA.x - velB.x,
+      y: velA.y - velB.y,
+    };
+
+    const impulseScalarNumerator =
+      -2 *
+      (relativeVelocity.x * normal.x + relativeVelocity.y * normal.y) *
+      (coeffRestitutionA * massA * coeffRestitutionB * massB);
+    const impulseScalarDenominator =
+      (coeffRestitutionA * massA + coeffRestitutionB * massB) *
+      (normal.x * normal.x + normal.y * normal.y);
+
+    const impulseScalar = impulseScalarNumerator / impulseScalarDenominator;
+
+    velA.x += (impulseScalar * coeffRestitutionA * massB * normal.x) / massA;
+    velA.y += (impulseScalar * coeffRestitutionA * massB * normal.y) / massA;
+
+    velB.x -= (impulseScalar * coeffRestitutionB * massA * normal.x) / massB;
+    velB.y -= (impulseScalar * coeffRestitutionB * massA * normal.y) / massB;
+  }
+
+  //#endregion Entity Collision
 
   /**
    * @param {number} entity entity identifier
