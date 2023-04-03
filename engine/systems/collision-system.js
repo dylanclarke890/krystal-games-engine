@@ -11,7 +11,7 @@ export class CollisionSystem extends System {
   /** @type {Viewport} */
   viewport;
   /** @type {Function} */
-  entityCollisionStrategy;
+  entityCollisionCheck;
 
   /**
    *
@@ -27,12 +27,13 @@ export class CollisionSystem extends System {
     Guard.againstNull({ entityCollisionStrategy }).isTypeOf("function");
     this.viewport = viewport;
     this.eventSystem = eventSystem;
-    this.entityCollisionStrategy = entityCollisionStrategy;
+    this.entityCollisionCheck = entityCollisionStrategy;
   }
 
   update() {
     const em = this.entityManager;
     const entities = em.getEntitiesWithComponents(...CollisionSystem.requiredComponents);
+    const checked = new Set();
     for (let i = 0; i < entities.length; i++) {
       const entityA = entities[i];
       const collisionA = em.getComponent(entityA, "Collision");
@@ -40,19 +41,22 @@ export class CollisionSystem extends System {
       const velocity = em.getComponent(entityA, "Velocity") ?? { x: 0, y: 0 };
 
       this.constrainToViewportDimensions(entityA, collisionA.viewportCollision, posA, velocity);
-      if (!collisionA.entityCollision.enabled) continue;
+      if (!collisionA.entityCollision.enabled || checked.has(entityA)) continue;
       const sizeA = em.getComponent(entityA, "Size");
 
       for (let j = 0; j < entities.length; j++) {
         const entityB = entities[j];
         const collisionB = em.getComponent(entityB, "Collision");
-        if (!collisionB.entityCollision.enabled) continue;
-
-        const posB = em.getComponent(entityA, "Position");
+        if (entityA === entityB || !collisionB.entityCollision.enabled || checked.has(entityB)) {
+          continue;
+        }
+        const posB = em.getComponent(entityB, "Position");
         const sizeB = em.getComponent(entityB, "Size");
-        if (this.entityCollisionStrategy(posA, sizeA, posB, sizeB, em))
+        if (this.entityCollisionCheck(posA, sizeA, posB, sizeB, em)) {
           this.handleEntityCollision(entityA, entityB);
+        }
       }
+      checked.add(entityA);
     }
   }
 
