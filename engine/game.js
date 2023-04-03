@@ -9,8 +9,8 @@ import { Viewport } from "./graphics/viewport.js";
 import { InputSystem } from "./systems/input-system.js";
 import { InputManager } from "./input/input-manager.js";
 import { settings } from "./config.js";
-import { CollisionSystem } from "./systems/collision-system.js";
-import { AABBCollisionCheck } from "./collision-strategies/aabb.js";
+import { CollisionSystem } from "./collision/collision-system.js";
+import { AABBCollisionCheck } from "./collision/strategies/aabb.js";
 
 export class Game {
   /** @type {Viewport} */

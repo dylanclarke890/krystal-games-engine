@@ -1,8 +1,9 @@
 import { Guard } from "../utils/guard.js";
-import { SystemTypes } from "./system-types.js";
-import { System } from "./system.js";
+import { SystemTypes } from "../systems/system-types.js";
+import { System } from "../systems/system.js";
 import { Viewport } from "../graphics/viewport.js";
 import { EventSystem } from "../events/event-system.js";
+import { GameEvents } from "../events/events.js";
 
 export class CollisionSystem extends System {
   static requiredComponents = ["Position", "Size", "Collision"];
@@ -61,7 +62,7 @@ export class CollisionSystem extends System {
   }
 
   handleEntityCollision(entityA, entityB) {
-    console.log(entityA, entityB);
+    this.eventSystem.dispatch(GameEvents.Entity_Collided, { a: entityA, b: entityB });
   }
 
   /**
