@@ -40,15 +40,16 @@ export class CollisionSystem extends System {
       const entityA = entities[i];
       const collisionA = em.getComponent(entityA, "Collision");
       const posA = em.getComponent(entityA, "Position");
-      const velocity = em.getComponent(entityA, "Velocity") ?? { x: 0, y: 0 };
+      const velA = em.getComponent(entityA, "Velocity") ?? { x: 0, y: 0 };
+      const sizeA = this.entityManager.getComponent(entityA, "Size");
 
-      this.constrainToViewportDimensions(entityA, collisionA.viewportCollision, posA, velocity);
+      this.constrainToViewportDimensions(entityA, collisionA.viewportCollision, posA, velA, sizeA);
       if (
         !collisionA.entityCollisionBehaviour === EntityCollisionBehaviour.None ||
         checked.has(entityA)
-      )
+      ) {
         continue;
-      const sizeA = em.getComponent(entityA, "Size");
+      }
 
       for (let j = i + 1; j < entities.length; j++) {
         const entityB = entities[j];
@@ -76,16 +77,15 @@ export class CollisionSystem extends System {
 
   /**
    * @param {number} entity entity identifier
-   * @param {import("../components/position.js").Position} collision collision component
+   * @param {import("../components/collision.js").Collision} collision collision component
    * @param {import("../components/position.js").Position} position position component
    * @param {import("../components/velocity.js").Velocity} velocity velocity component
+   * @param {import("../components/size.js").Size} size size component
    */
-  constrainToViewportDimensions(entity, viewportCollision, position, velocity) {
-    const canvasWidth = this.viewport.canvas.width;
-    const canvasHeight = this.viewport.canvas.height;
+  constrainToViewportDimensions(entity, viewportCollision, position, velocity, size) {
+    const { height, width } = this.viewport.canvas;
     const offset = this.entityManager.getComponent(entity, "Offset") ?? { x: 0, y: 0 };
     const bounciness = this.entityManager.getComponent(entity, "Bounciness");
-    const size = this.entityManager.getComponent(entity, "Size");
     const absVelX = bounciness ? Math.abs(velocity.x) : 0;
     const absVelY = bounciness ? Math.abs(velocity.y) : 0;
 
@@ -99,8 +99,8 @@ export class CollisionSystem extends System {
       }
     }
 
-    if (viewportCollision.right && position.x + offset.x + size.x > canvasWidth) {
-      position.x = canvasWidth - size.x - offset.x;
+    if (viewportCollision.right && position.x + offset.x + size.x > width) {
+      position.x = width - size.x - offset.x;
       if (bounciness) {
         velocity.x = -velocity.x * bounciness.bounce;
         if (absVelX < bounciness.minVelocity) {
@@ -119,8 +119,8 @@ export class CollisionSystem extends System {
       }
     }
 
-    if (viewportCollision.top && position.y + offset.y + size.y > canvasHeight) {
-      position.y = canvasHeight - size.y - offset.y;
+    if (viewportCollision.top && position.y + offset.y + size.y > height) {
+      position.y = height - size.y - offset.y;
       if (bounciness) {
         velocity.y = -velocity.y * bounciness.bounce;
         if (absVelY < bounciness.minVelocity) {
