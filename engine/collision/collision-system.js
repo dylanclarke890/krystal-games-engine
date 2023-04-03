@@ -4,6 +4,7 @@ import { System } from "../systems/system.js";
 import { Viewport } from "../graphics/viewport.js";
 import { EventSystem } from "../events/event-system.js";
 import { GameEvents } from "../events/events.js";
+import { EntityCollisionBehaviour } from "./behaviours.js";
 
 export class CollisionSystem extends System {
   static requiredComponents = ["Position", "Size", "Collision"];
@@ -19,7 +20,7 @@ export class CollisionSystem extends System {
    * @param {import("../entities/entity-manager.js").EntityManager} entityManager
    * @param {Viewport} viewport
    * @param {EventSystem} eventSystem
-   * @param {CollisionStrategy} entityCollisionStrategy
+   * @param {Function} entityCollisionStrategy
    */
   constructor(entityManager, viewport, eventSystem, entityCollisionStrategy) {
     super(entityManager);
@@ -42,13 +43,21 @@ export class CollisionSystem extends System {
       const velocity = em.getComponent(entityA, "Velocity") ?? { x: 0, y: 0 };
 
       this.constrainToViewportDimensions(entityA, collisionA.viewportCollision, posA, velocity);
-      if (!collisionA.entityCollision.enabled || checked.has(entityA)) continue;
+      if (
+        !collisionA.entityCollisionBehaviour === EntityCollisionBehaviour.None ||
+        checked.has(entityA)
+      )
+        continue;
       const sizeA = em.getComponent(entityA, "Size");
 
-      for (let j = 0; j < entities.length; j++) {
+      for (let j = i + 1; j < entities.length; j++) {
         const entityB = entities[j];
         const collisionB = em.getComponent(entityB, "Collision");
-        if (entityA === entityB || !collisionB.entityCollision.enabled || checked.has(entityB)) {
+        if (
+          entityA === entityB ||
+          !collisionB.entityCollisionBehaviour === EntityCollisionBehaviour.None ||
+          checked.has(entityB)
+        ) {
           continue;
         }
         const posB = em.getComponent(entityB, "Position");

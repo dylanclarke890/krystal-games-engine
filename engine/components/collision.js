@@ -1,22 +1,22 @@
+import { EntityCollisionBehaviour } from "../collision/behaviours.js";
+
 export class Collision {
   /** @type {{start: boolean, end: boolean, top:boolean, bottom: boolean }} */
   viewportCollision;
-  /** @type {{enabled: boolean}} */
+  /** @type {EntityCollisionBehaviour} */
   entityCollision;
 
   /**
    * @param {{start: boolean, end: boolean, top:boolean, bottom: boolean }} viewportCollision
-   * @param {{enabled: boolean}} entityCollision
+   * @param {EntityCollisionBehaviour} entityCollisionBehaviour
    */
-  constructor(viewportCollision, entityCollision) {
+  constructor(viewportCollision, entityCollisionBehaviour) {
     this.viewportCollision = viewportCollision ?? {
       left: false,
       right: false,
       top: false,
       bottom: false,
     };
-    this.entityCollision = entityCollision ?? {
-      enabled: false,
-    };
+    this.entityCollision = entityCollisionBehaviour ?? EntityCollisionBehaviour.None;
   }
 }

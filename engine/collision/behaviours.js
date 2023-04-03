@@ -1,10 +1,10 @@
 import { Enum } from "../utils/enum.js";
 
-export class CollisionBehaviours extends Enum {
-  static None = new CollisionBehaviours();
-  static Fixed = new CollisionBehaviours();
-  static Push = new CollisionBehaviours();
-  static Separate = new CollisionBehaviours();
+export class EntityCollisionBehaviour extends Enum {
+  static None = new EntityCollisionBehaviour();
+  static Fixed = new EntityCollisionBehaviour();
+  static Push = new EntityCollisionBehaviour();
+  static Separate = new EntityCollisionBehaviour();
 
   static {
     this.freeze();
