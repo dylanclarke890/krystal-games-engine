@@ -41,4 +41,18 @@ export class Collision {
   hasResponse(response) {
     return !!(this.responseFlags & CollisionResponseFlags[response]);
   }
+
+  /**
+   * Get a list of responses currently set.
+   * @returns {string[]}
+   */
+  getResponses() {
+    const flags = [];
+    for (const key in CollisionResponseFlags) {
+      if (this.responseFlags & CollisionResponseFlags[key]) {
+        flags.push(key);
+      }
+    }
+    return flags;
+  }
 }
