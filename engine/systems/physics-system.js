@@ -1,13 +1,16 @@
 import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 import { Guard } from "../utils/guard.js";
+import { CollisionResponseFlags } from "../components/collision.js";
 
 export class PhysicsSystem extends System {
   static requiredComponents = ["Position", "Velocity", "Size"];
   static systemType = SystemTypes.Physics;
 
-  /** @param {import("../entities/entity-manager.js").EntityManager} entityManager */
-  /** @param {Function} entityCollisionStrategy */
+  /**
+   * @param {import("../entities/entity-manager.js").EntityManager} entityManager
+   * @param {Function} entityCollisionStrategy
+   */
   constructor(entityManager, entityCollisionStrategy) {
     super(entityManager);
     Guard.againstNull({ entityCollisionStrategy }).isTypeOf("function");
@@ -20,7 +23,7 @@ export class PhysicsSystem extends System {
     console.log("UpdateStart");
     for (const entity of entities) {
       const collision = em.getComponent(entity, "Collision");
-      if (collision && !collision.hasResponse("Ignore")) {
+      if (collision && !collision.hasResponse(CollisionResponseFlags.Ignore)) {
         this.checkForCollisionsWithEntity(entity, entities, collision);
       }
 
@@ -56,7 +59,22 @@ export class PhysicsSystem extends System {
     for (const entity of allEntities) {
       if (currentEntity === entity) continue; // same entity
       const collisionB = em.getComponent(entity, "Collision");
-      if (!collisionB || collisionB.hasResponse("Ignore")) continue; // no collision
+      if (!collisionB || collisionB.hasResponse(CollisionResponseFlags.Ignore)) continue; // no collision
+
+      // handle collision
+      const response = this.entityCollisionStrategy(currentEntity, entity, collisionA, collisionB);
+      if (response) {
+        // apply collision response to entities
+        switch (response) {
+          case CollisionResponseFlags.Repel:
+            // repel entities
+            break;
+          case CollisionResponseFlags.Bounce:
+            // bounce entities
+            break;
+          // handle other collision responses
+        }
+      }
     }
   }
 }
