@@ -2,6 +2,7 @@ import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 import { CollisionResponseFlags } from "../components/collision.js";
 import { AABBCollisionCheck } from "../utils/collision-strategies/aabb.js";
+import { Guard } from "../utils/guard.js";
 
 export class PhysicsSystem extends System {
   static requiredComponents = ["Position", "Velocity", "Size"];
@@ -103,6 +104,42 @@ export class PhysicsSystem extends System {
           break;
       }
     }
+
+    const responsesB = collisionB.getResponses();
+    for (const response of responsesB) {
+      switch (response) {
+        case "Repel":
+          this.repel(entityB, collisionB, entityA, collisionA);
+          break;
+        case "Bounce":
+          this.bounce(entityB, collisionB, entityA, collisionA);
+          break;
+        case "Stick":
+          this.stick(entityB, collisionB, entityA, collisionA);
+          break;
+        case "Slide":
+          this.slide(entityB, collisionB, entityA, collisionA);
+          break;
+        case "Push_EntityA":
+          this.push(entityB, collisionB, entityA, collisionA);
+          break;
+        case "Push_EntityB":
+          this.push(entityA, collisionA, entityB, collisionB);
+          break;
+        case "Damage_EntityA":
+          this.damage(entityA, this.entityManager.getComponent(entityB, "Damage"));
+          break;
+        case "Damage_EntityB":
+          this.damage(entityB, this.entityManager.getComponent(entityB, "Damage"));
+          break;
+        case "Destroy_EntityA":
+          this.destroy(entityA);
+          break;
+        case "Destroy_EntityB":
+          this.destroy(entityB);
+          break;
+      }
+    }
   }
 
   // #region Collision responses
@@ -119,9 +156,7 @@ export class PhysicsSystem extends System {
    */
   damage(entity, damage) {
     const health = this.entityManager.getComponent(entity, "Health");
-    if (!health) {
-      return; // Should we destroy the entity if it has no health?
-    }
+    Guard.againstNull({ health });
     const dead = health.takeDamage(damage);
     if (dead) this.destroy(entity);
   }
