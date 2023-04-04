@@ -14,6 +14,7 @@ export class GameEvents extends Enum {
   //endregion Entity
 
   //region Loop
+  static Loop_BeforeStart = new GameEvents();
   static Loop_Start = new GameEvents();
   static Loop_NextFrame = new GameEvents();
   static Loop_Pause = new GameEvents();

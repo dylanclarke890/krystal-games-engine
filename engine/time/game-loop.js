@@ -26,6 +26,7 @@ export class GameLoop {
 
   start() {
     this.stopped = false;
+    this.eventSystem.dispatch(GameEvents.Loop_BeforeStart);
     this.main(performance.now());
   }
 

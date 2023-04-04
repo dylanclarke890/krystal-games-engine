@@ -9,7 +9,7 @@ import { Input } from "./components/input.js";
 import { Bounciness } from "./components/bounciness.js";
 import { GravityFactor } from "./components/gravity-factor.js";
 import { Friction } from "./components/friction.js";
-import { Collision } from "./components/collision.js";
+import { Collision, CollisionResponseFlags } from "./components/collision.js";
 import { InputKeys } from "./input/input-keys.js";
 import { PhysicsSystem } from "./systems/physics-system.js";
 import { RenderSystem } from "./systems/render-system.js";
@@ -30,14 +30,17 @@ export class World {
    */
   constructor(game) {
     Guard.againstNull({ game }).isInstanceOf(Game);
+
     this.game = game;
     this.entityManager = game.entityManager;
     this.systemManager = game.systemManager;
     this.inputManager = game.inputManager;
-    this.#registerSystems();
+    this.viewport = game.viewport;
     this.#bindInput();
-    this.createTestEntity(50, 50);
-    this.createTestEntity(450, -100);
+    this.#registerSystems();
+
+    this.#createTestEntity(50, 50);
+    this.#createTestEntity(450, -100);
   }
 
   #registerSystems() {
@@ -51,7 +54,7 @@ export class World {
     this.inputManager.bind(InputKeys.Arrow_Right, "move-right");
   }
 
-  createTestEntity(posX, speedX) {
+  #createTestEntity(posX, speedX) {
     const em = this.entityManager;
     const id = em.createEntity();
     em.addComponent(id, new Position(posX, 50));
@@ -72,8 +75,7 @@ export class World {
       ["move-right", () => console.log("Moving right!")],
     ]);
     em.addComponent(id, new Input(bindings));
-    const collision = new Collision();
-    em.addComponent(id, collision);
+    em.addComponent(id, new Collision(CollisionResponseFlags.Bounce));
   }
 
   createEntity() {

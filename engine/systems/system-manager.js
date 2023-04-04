@@ -34,7 +34,16 @@ export class SystemManager {
   }
 
   #bindEvents() {
+    this.eventSystem.on(GameEvents.Loop_BeforeStart, () => this.#beforeStart());
     this.eventSystem.on(GameEvents.Loop_NextFrame, (dt) => this.update(dt));
+  }
+
+  #beforeStart() {
+    this.systems.forEach((system) => {
+      const required = system.constructor.requiredComponents;
+      const result = this.#ensureRequiredComponentsArePresent(required);
+      if (!result.success) console.warn(result.message);
+    });
   }
 
   /**
@@ -56,9 +65,7 @@ export class SystemManager {
   registerSystem(system) {
     Guard.againstNull({ system }).isInstanceOf(System);
     Guard.againstNull({ systemType: system.constructor.systemType }).isInstanceOf(SystemTypes);
-    const result = this.#ensureRequiredComponentsArePresent(system.constructor.requiredComponents);
-    if (result.success) this.systems.add(system);
-    else console.warn(result.message);
+    this.systems.add(system);
   }
 
   unregisterSystem(system) {
