@@ -1,15 +1,25 @@
+import { constrain } from "../utils/number.js";
+
 export class Bounciness {
   /** @type {number} */
-  bounce;
+  x;
   /** @type {number} */
-  minVelocity;
+  y;
+  /** @type {number} */
+  minVelX;
+  /** @type {number} */
+  minVelY;
 
   /**
-   * @param {number} bounce
-   * @param {number} minVelocity
+   * @param {number} x number between 0 and 1.
+   * @param {number} y number between 0 and 1.
+   * @param {number} minVelX minimum velocity required for a bounce, else velocity will be set to 0.
+   * @param {number} minVelY minimum velocity required for a bounce, else velocity will be set to 0.
    */
-  constructor(bounce, minVelocity) {
-    this.bounce = bounce;
-    this.minVelocity = minVelocity;
+  constructor(x, y, minVelX, minVelY) {
+    this.x = constrain(x, 0, 1);
+    this.y = constrain(y, 0, 1);
+    this.minVelX = minVelX;
+    this.minVelY = minVelY;
   }
 }
