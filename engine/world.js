@@ -49,7 +49,7 @@ export class World {
 
     em.addComponent(id, new Velocity(speedX, 0));
 
-    em.addComponent(id, new Bounciness(1));
+    em.addComponent(id, new Bounciness(1, 1, 5, 5));
     em.addComponent(id, new GravityFactor(0));
     em.addComponent(id, new Friction(1, 1));
 
