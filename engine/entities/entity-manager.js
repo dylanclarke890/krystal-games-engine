@@ -81,9 +81,10 @@ export class EntityManager {
 
   /**
    * Get a specific component from an entity.
+   * @template {ComponentType} T
    * @param {number} entity entity identifier
-   * @param {ComponentType} componentType the name of the component.
-   * @returns {ComponentMap[ComponentType]?} the component type, if found.
+   * @param {T} componentType the name of the component.
+   * @returns {ComponentMap[T]?} the component type, if found.
    */
   getComponent(entity, componentType) {
     return this.components.get(entity + componentType);

@@ -119,6 +119,9 @@ export class PhysicsSystem extends System {
    */
   damage(entity, damage) {
     const health = this.entityManager.getComponent(entity, "Health");
+    if (!health) {
+      return; // Should we destroy the entity if it has no health?
+    }
     const dead = health.takeDamage(damage);
     if (dead) this.destroy(entity);
   }
