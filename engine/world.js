@@ -11,7 +11,6 @@ import { GravityFactor } from "./components/gravity-factor.js";
 import { Friction } from "./components/friction.js";
 import { Collision } from "./components/collision.js";
 import { InputKeys } from "./input/input-keys.js";
-import { EntityCollisionBehaviour } from "./collision/behaviours.js";
 
 export class World {
   /** @type {import("./events/event-system.js").EventSystem} */
@@ -33,8 +32,8 @@ export class World {
     this.systemManager = game.systemManager;
     this.inputManager = game.inputManager;
     this.#bindInput();
-    this.createTestEntity(50, 50, EntityCollisionBehaviour.Inelastic);
-    this.createTestEntity(450, -100, EntityCollisionBehaviour.Elastic);
+    this.createTestEntity(50, 50);
+    this.createTestEntity(450, -100);
   }
 
   #bindInput() {
@@ -42,7 +41,7 @@ export class World {
     this.inputManager.bind(InputKeys.Arrow_Right, "move-right");
   }
 
-  createTestEntity(posX, speedX, collisionBehaviour) {
+  createTestEntity(posX, speedX) {
     const em = this.entityManager;
     const id = em.createEntity();
     em.addComponent(id, new Position(posX, 50));
@@ -63,7 +62,7 @@ export class World {
       ["move-right", () => console.log("Moving right!")],
     ]);
     em.addComponent(id, new Input(bindings));
-    const collision = new Collision({ right: true, left: true }, collisionBehaviour);
+    const collision = new Collision();
     em.addComponent(id, collision);
   }
 
