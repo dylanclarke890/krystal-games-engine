@@ -144,11 +144,37 @@ export class PhysicsSystem extends System {
 
   // #region Collision responses
 
-  bounce(entityA, collisionA, entityB, collisionB) {}
-  repel(entityA, collisionA, entityB, collisionB) {}
-  stick(entityA, collisionA, entityB, collisionB) {}
-  slide(entityA, collisionA, entityB, collisionB) {}
-  push(entityA, collisionA, entityB, collisionB) {}
+  // bounce(entityA, collisionA, entityB, collisionB) {}
+  // repel(entityA, collisionA, entityB, collisionB) {}
+  // stick(entityA, collisionA, entityB, collisionB) {}
+  // slide(entityA, collisionA, entityB, collisionB) {}
+
+  push(entityA, collisionA, entityB, collisionB) {
+    const em = this.entityManager;
+    const posA = em.getComponent(entityA, "Position");
+    const posB = em.getComponent(entityB, "Position");
+
+    // Calculate the normal vector pointing from B to A
+    const normal = posA.clone().subtract(posB).normalize();
+
+    // Calculate the magnitude of the projection of A's velocity onto the normal vector
+    const velocityA = em.getComponent(entityA, "Velocity");
+    const velProj = velocityA.dot(normal);
+
+    // Calculate the impulse to apply
+    const restitution = collisionA.getRestitution() * collisionB.getRestitution();
+    const impulse =
+      ((1 + restitution) * velProj) /
+      (em.getComponent(entityA, "Mass") + em.getComponent(entityB, "Mass"));
+
+    // Apply the impulse
+    velocityA.x -= impulse * normal.x * em.getComponent(entityB, "Mass");
+    velocityA.y -= impulse * normal.y * em.getComponent(entityB, "Mass");
+
+    const velocityB = em.getComponent(entityB, "Velocity");
+    velocityB.x += impulse * normal.x * em.getComponent(entityA, "Mass");
+    velocityB.y += impulse * normal.y * em.getComponent(entityA, "Mass");
+  }
 
   /**
    * @param {number} entity

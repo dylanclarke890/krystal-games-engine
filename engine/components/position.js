@@ -43,6 +43,7 @@ export class Position {
   set(x, y) {
     this.x = x;
     this.y = y;
+    return this;
   }
 
   /**
@@ -53,6 +54,7 @@ export class Position {
   setToPolar(angle, distance) {
     this.x = Math.cos(angle) * distance;
     this.y = Math.sin(angle) * distance;
+    return this;
   }
 
   /**
@@ -71,6 +73,7 @@ export class Position {
   add(x, y) {
     this.x += x;
     this.y += y;
+    return this;
   }
 
   /**
@@ -81,6 +84,7 @@ export class Position {
   subtract(x, y) {
     this.x -= x;
     this.y -= y;
+    return this;
   }
 
   /**
@@ -90,6 +94,7 @@ export class Position {
   multiply(factor) {
     this.x *= factor;
     this.y *= factor;
+    return this;
   }
 
   /**
@@ -99,6 +104,7 @@ export class Position {
   divide(divisor) {
     this.x /= divisor;
     this.y /= divisor;
+    return this;
   }
 
   /**
@@ -145,6 +151,7 @@ export class Position {
   round() {
     this.x = Math.round(this.x);
     this.y = Math.round(this.y);
+    return this;
   }
 
   /**
@@ -153,6 +160,7 @@ export class Position {
   floor() {
     this.x = Math.floor(this.x);
     this.y = Math.floor(this.y);
+    return this;
   }
 
   /**
@@ -161,6 +169,7 @@ export class Position {
   ceil() {
     this.x = Math.ceil(this.x);
     this.y = Math.ceil(this.y);
+    return this;
   }
 
   /**
@@ -173,6 +182,7 @@ export class Position {
   clamp(minX, minY, maxX, maxY) {
     this.x = Math.max(minX, Math.min(this.x, maxX));
     this.y = Math.max(minY, Math.min(this.y, maxY));
+    return this;
   }
 
   /**
@@ -184,6 +194,7 @@ export class Position {
   lerp(otherPosition, t) {
     this.x = this.x + (otherPosition.x - this.x) * t;
     this.y = this.y + (otherPosition.y - this.y) * t;
+    return this;
   }
 
   /**
@@ -196,6 +207,7 @@ export class Position {
   lerpVectors(vector1, vector2, alpha) {
     this.x = vector1.x + (vector2.x - vector1.x) * alpha;
     this.y = vector1.y + (vector2.y - vector1.y) * alpha;
+    return this;
   }
 
   /**
@@ -204,6 +216,7 @@ export class Position {
   normalize() {
     const length = Math.sqrt(this.x * this.x + this.y * this.y);
     if (length > 0) this.divide(length);
+    return this;
   }
 
   /**
