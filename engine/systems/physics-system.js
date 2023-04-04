@@ -20,7 +20,7 @@ export class PhysicsSystem extends System {
     console.log("UpdateStart");
     for (const entity of entities) {
       const collision = em.getComponent(entity, "Collision");
-      if (collision) this.checkForCollisionsWithEntity(entity, collision);
+      if (collision) this.checkForCollisionsWithEntity(entity, entities, collision);
 
       const position = em.getComponent(entity, "Position");
       const velocity = em.getComponent(entity, "Velocity");

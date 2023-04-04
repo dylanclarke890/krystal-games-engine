@@ -3,7 +3,13 @@ export const CollisionResponseFlags = {
   Repel: 2,
   Bounce: 4,
   Stick: 8,
-  Destroy: 16,
+  Slide: 16,
+  Push_EntityA: 32,
+  Push_EntityB: 64,
+  Damage_EntityA: 128,
+  Damage_EntityB: 256,
+  Destroy_EntityA: 512,
+  Destroy_EntityB: 1024,
 };
 
 export class Collision {
