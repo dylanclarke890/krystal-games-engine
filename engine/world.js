@@ -11,6 +11,9 @@ import { GravityFactor } from "./components/gravity-factor.js";
 import { Friction } from "./components/friction.js";
 import { Collision } from "./components/collision.js";
 import { InputKeys } from "./input/input-keys.js";
+import { PhysicsSystem } from "./systems/physics-system.js";
+import { RenderSystem } from "./systems/render-system.js";
+import { InputSystem } from "./systems/input-system.js";
 
 export class World {
   /** @type {import("./events/event-system.js").EventSystem} */
@@ -31,9 +34,16 @@ export class World {
     this.entityManager = game.entityManager;
     this.systemManager = game.systemManager;
     this.inputManager = game.inputManager;
+    this.#registerSystems();
     this.#bindInput();
     this.createTestEntity(50, 50);
     this.createTestEntity(450, -100);
+  }
+
+  #registerSystems() {
+    this.systemManager.registerSystem(new InputSystem(this.entityManager, this.inputManager));
+    this.systemManager.registerSystem(new PhysicsSystem(this.entityManager));
+    this.systemManager.registerSystem(new RenderSystem(this.entityManager, this.viewport));
   }
 
   #bindInput() {
