@@ -132,6 +132,26 @@ export class CollisionSystem extends System {
         break;
     }
 
+    // Calculate the overlap depth and direction of the collision
+    const overlapX =
+      sizeA.x / 2 + sizeB.x / 2 - Math.abs(posA.x + sizeA.x / 2 - (posB.x + sizeB.x / 2));
+    const overlapY =
+      sizeA.y / 2 + sizeB.y / 2 - Math.abs(posA.y + sizeA.y / 2 - (posB.y + sizeB.y / 2));
+
+    // Determine the smallest overlap direction
+    const isXSmallestOverlap = overlapX < overlapY;
+
+    // Separate the entities based on the smallest overlap direction
+    if (isXSmallestOverlap) {
+      const separation = overlapX / 2;
+      posA.x -= posA.x < posB.x ? -separation : separation;
+      posB.x -= posA.x < posB.x ? -separation : separation;
+    } else {
+      const separation = overlapY / 2;
+      posA.y -= posA.y < posB.y ? -separation : separation;
+      posB.y -= posA.y < posB.y ? -separation : separation;
+    }
+
     this.eventSystem.dispatch(GameEvents.Entity_Collided, { entityA, entityB });
   }
 
