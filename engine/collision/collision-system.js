@@ -41,9 +41,10 @@ export class CollisionSystem extends System {
       const collisionA = em.getComponent(entityA, "Collision");
       const posA = em.getComponent(entityA, "Position");
       const velA = em.getComponent(entityA, "Velocity") ?? { x: 0, y: 0 };
-      const sizeA = this.entityManager.getComponent(entityA, "Size");
+      const sizeA = em.getComponent(entityA, "Size");
 
       this.constrainToViewportDimensions(entityA, collisionA.viewportCollision, posA, velA, sizeA);
+
       if (
         !collisionA.entityCollisionBehaviour === EntityCollisionBehaviour.Ignore ||
         checked.has(entityA)
@@ -93,6 +94,9 @@ export class CollisionSystem extends System {
             case EntityCollisionBehaviour.Elastic:
               this.elasticCollision(entityA, posA, sizeA, velA, entityB, posB, sizeB, velB);
               break;
+            case EntityCollisionBehaviour.Inelastic:
+              this.elasticInelasticCollision(entityA, velA, entityB, velB);
+              break;
             case EntityCollisionBehaviour.Ignore:
             default:
               break;
@@ -102,6 +106,9 @@ export class CollisionSystem extends System {
       case EntityCollisionBehaviour.Inelastic:
         {
           switch (collisionB.entityCollision) {
+            case EntityCollisionBehaviour.Elastic:
+              this.elasticInelasticCollision(entityB, velB, entityA, velA);
+              break;
             case EntityCollisionBehaviour.Inelastic:
               this.inelasticCollision(entityA, velA, entityB, velB);
               break;
@@ -183,6 +190,31 @@ export class CollisionSystem extends System {
     velA.y = resultingVelY;
     velB.x = resultingVelX;
     velB.y = resultingVelY;
+  }
+
+  elasticInelasticCollision(elasticEntity, elasticVel, inelasticEntity, inelasticVel) {
+    const em = this.entityManager;
+    const massElastic = em.getComponent(elasticEntity, "Mass")?.value ?? 1;
+    const massInelastic = em.getComponent(inelasticEntity, "Mass")?.value ?? 1;
+    const massTotal = massElastic + massInelastic;
+
+    // Calculate the velocity change for the elastic entity (based on mass ratio)
+    const deltaVelElastic = {
+      x:
+        (2 * massInelastic * inelasticVel.x -
+          massElastic * elasticVel.x +
+          massElastic * inelasticVel.x) /
+        massTotal,
+      y:
+        (2 * massInelastic * inelasticVel.y -
+          massElastic * elasticVel.y +
+          massElastic * inelasticVel.y) /
+        massTotal,
+    };
+
+    // Update the velocity of the elastic entity (the inelastic entity doesn't change it's velocity)
+    elasticVel.x = deltaVelElastic.x;
+    elasticVel.y = deltaVelElastic.y;
   }
 
   //#endregion Entity Collision

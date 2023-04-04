@@ -33,8 +33,8 @@ export class World {
     this.systemManager = game.systemManager;
     this.inputManager = game.inputManager;
     this.#bindInput();
-    this.createTestEntity(50, 50);
-    this.createTestEntity(600, -100);
+    this.createTestEntity(50, 50, EntityCollisionBehaviour.Inelastic);
+    this.createTestEntity(450, -100, EntityCollisionBehaviour.Elastic);
   }
 
   #bindInput() {
@@ -42,7 +42,7 @@ export class World {
     this.inputManager.bind(InputKeys.Arrow_Right, "move-right");
   }
 
-  createTestEntity(posX, speedX) {
+  createTestEntity(posX, speedX, collisionBehaviour) {
     const em = this.entityManager;
     const id = em.createEntity();
     em.addComponent(id, new Position(posX, 50));
@@ -55,16 +55,15 @@ export class World {
     em.addComponent(id, new Friction(1, 1));
 
     em.addComponent(id, new Sprite("test-data/assets/multi-square.png", 32, 32));
-    em.addComponent(id, new Animation("[0,3]", 0.5, false));
+    const rnd = Math.random();
+    const sequence = rnd > 0.5 ? "[0,3]" : "[3, 0]";
+    em.addComponent(id, new Animation(sequence, rnd, false));
     const bindings = new Map([
       ["move-left", () => console.log("Moving left!")],
       ["move-right", () => console.log("Moving right!")],
     ]);
     em.addComponent(id, new Input(bindings));
-    const collision = new Collision(
-      { right: true, left: true },
-      EntityCollisionBehaviour.Inelastic
-    );
+    const collision = new Collision({ right: true, left: true }, collisionBehaviour);
     em.addComponent(id, collision);
   }
 
