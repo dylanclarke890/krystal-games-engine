@@ -162,7 +162,9 @@ export class PhysicsSystem extends System {
     const velProj = velocityA.dot(normal);
 
     // Calculate the impulse to apply
-    const restitution = collisionA.getRestitution() * collisionB.getRestitution();
+    const bounceA = em.getComponent(entityA, "Bounciness");
+    const bounceB = em.getComponent(entityB, "Bounciness");
+    const restitution = bounceA.value * bounceB.value;
     const impulse =
       ((1 + restitution) * velProj) /
       (em.getComponent(entityA, "Mass") + em.getComponent(entityB, "Mass"));
@@ -178,13 +180,16 @@ export class PhysicsSystem extends System {
 
   /**
    * @param {number} entity
-   * @param {number} damage
+   * @param {import("../components/damage.js").Damage} damage
    */
   damage(entity, damage) {
+    Guard.againstNull({ damage });
+
     const health = this.entityManager.getComponent(entity, "Health");
     Guard.againstNull({ health });
-    const dead = health.takeDamage(damage);
-    if (dead) this.destroy(entity);
+
+    const isDead = health.takeDamage(damage.value);
+    if (isDead) this.destroy(entity);
   }
 
   /** @param {number} entity */

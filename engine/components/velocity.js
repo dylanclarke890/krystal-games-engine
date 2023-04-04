@@ -28,5 +28,15 @@ export class Velocity {
   set(x, y) {
     this.x = x;
     this.y = y;
+    return this;
+  }
+
+  /**
+   * Returns the dot product of the current velocity and the specified velocity.
+   * @param {Velocity} otherVelocity
+   * @returns {number}
+   */
+  dot(otherVelocity) {
+    return this.x * otherVelocity.x + this.y * otherVelocity.y;
   }
 }
