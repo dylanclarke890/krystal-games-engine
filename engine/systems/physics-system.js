@@ -1,19 +1,27 @@
 import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
+import { Guard } from "../utils/guard.js";
 
 export class PhysicsSystem extends System {
   static requiredComponents = ["Position", "Velocity", "Size"];
   static systemType = SystemTypes.Physics;
 
   /** @param {import("../entities/entity-manager.js").EntityManager} entityManager */
-  constructor(entityManager) {
+  /** @param {Function} entityCollisionStrategy */
+  constructor(entityManager, entityCollisionStrategy) {
     super(entityManager);
+    Guard.againstNull({ entityCollisionStrategy }).isTypeOf("function");
+    this.entityCollisionStrategy = entityCollisionStrategy;
   }
 
   update(dt) {
     const em = this.entityManager;
     const entities = em.getEntitiesWithComponents(...PhysicsSystem.requiredComponents);
+    console.log("UpdateStart");
     for (const entity of entities) {
+      const collision = em.getComponent(entity, "Collision");
+      if (collision) this.checkForCollisionsWithEntity(entity, collision);
+
       const position = em.getComponent(entity, "Position");
       const velocity = em.getComponent(entity, "Velocity");
 
@@ -37,6 +45,13 @@ export class PhysicsSystem extends System {
       if (gravityFactor) {
         velocity.y += 9.81 * gravityFactor.value * dt;
       }
+    }
+  }
+
+  checkForCollisionsWithEntity(currentEntity, allEntities, collision) {
+    console.log(collision);
+    for (const entity of allEntities) {
+      if (currentEntity === entity) continue;
     }
   }
 }
