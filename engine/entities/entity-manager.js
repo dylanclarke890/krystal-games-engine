@@ -2,6 +2,24 @@ import { EventSystem } from "../events/event-system.js";
 import { GameEvents } from "../events/events.js";
 import { Guard } from "../utils/guard.js";
 
+/**
+ * @typedef ComponentMap
+ * @property {import("../components/acceleration.js").Acceleration} Acceleration
+ * @property {import("../components/ai.js").AI} AI
+ * @property {import("../components/animation.js").Animation} Animation
+ * @property {import("../components/bounciness.js").Bounciness} Bounciness
+ * @property {import("../components/collision.js").Collision} Collision
+ * @property {import("../components/friction.js").Friction} Friction
+ * @property {import("../components/gravity-factor.js").GravityFactor} GravityFactor
+ * @property {import("../components/health.js").Health} Health
+ * @property {import("../components/input.js").Input} Input
+ * @property {import("../components/offset.js").Offset} Offset
+ * @property {import("../components/position.js").Position} Position
+ * @property {import("../components/size.js").Size} Size
+ * @property {import("../components/sprite.js").Sprite} Sprite
+ * @property {import("../components/velocity.js").Velocity} Velocity
+ */
+
 export class EntityManager {
   /** @type {EventSystem} */
   eventSystem;
@@ -49,9 +67,11 @@ export class EntityManager {
   }
 
   /**
-   * Get a component of a given type for an entity.
-   * @param {number} entity
-   * @param {string} componentName
+   * Get a specific component from an entity.
+   * @template {keyof ComponentMap} cT
+   * @param {number} entity entity identifier
+   * @param {cT} componentType - The name of the event.
+   * @returns {ComponentMap[cT]} - The component type, if found.
    */
   getComponent(entity, componentType) {
     return this.components.get(entity + componentType);
@@ -60,7 +80,7 @@ export class EntityManager {
   /**
    * Check if an entity has a specific component.
    * @param {number} entity
-   * @param {string} componentName
+   * @param {string} componentType
    */
   hasComponent(entity, componentType) {
     if (!this.entityMasks.has(entity)) {
@@ -69,7 +89,10 @@ export class EntityManager {
     return this.entityMasks.get(entity).has(componentType);
   }
 
-  /** Check if any entity has the specified component type. */
+  /**
+   * Check if any entity has the specified component type.
+   * @param {string} componentType
+   */
   hasComponentType(componentType) {
     for (const key of this.components.keys()) {
       if (key.endsWith(componentType)) {

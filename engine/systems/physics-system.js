@@ -69,12 +69,8 @@ export class PhysicsSystem extends System {
 
   handleCollisionResponse(entityA, collisionA, entityB, collisionB) {
     const responsesA = collisionA.getResponses();
-    const responsesB = collisionB.getResponses();
-
     for (const response of responsesA) {
       switch (response) {
-        case "Ignore":
-          break;
         case "Repel":
           this.repel(entityA, collisionA, entityB, collisionB);
           break;
@@ -88,61 +84,49 @@ export class PhysicsSystem extends System {
           this.slide(entityA, collisionA, entityB, collisionB);
           break;
         case "Push_EntityA":
-          this.push(entityA, collisionA, entityB, collisionB, true);
+          this.push(entityA, collisionA, entityB, collisionB);
           break;
         case "Push_EntityB":
-          this.push(entityA, collisionA, entityB, collisionB, false);
+          this.push(entityB, collisionB, entityA, collisionA);
           break;
         case "Damage_EntityA":
-          this.damage(entityA, collisionA, entityB, collisionB, true);
+          this.damage(entityA, this.entityManager.getComponent(entityA, "Damage"));
           break;
         case "Damage_EntityB":
-          this.damage(entityA, collisionA, entityB, collisionB, false);
+          this.damage(entityB, this.entityManager.getComponent(entityA, "Damage"));
           break;
         case "Destroy_EntityA":
-          this.destroy(entityA, collisionA, true);
+          this.destroy(entityA);
           break;
         case "Destroy_EntityB":
-          this.destroy(entityB, collisionB, true);
-          break;
-      }
-    }
-
-    for (const response of responsesB) {
-      switch (response) {
-        case "Ignore":
-          break;
-        case "Repel":
-          this.repel(entityA, collisionA, entityB, collisionB);
-          break;
-        case "Bounce":
-          this.bounce(entityA, collisionA, entityB, collisionB);
-          break;
-        case "Stick":
-          this.stick(entityA, collisionA, entityB, collisionB);
-          break;
-        case "Slide":
-          this.slide(entityA, collisionA, entityB, collisionB);
-          break;
-        case "Push_EntityA":
-          this.push(entityA, collisionA, entityB, collisionB, true);
-          break;
-        case "Push_EntityB":
-          this.push(entityA, collisionA, entityB, collisionB, false);
-          break;
-        case "Damage_EntityA":
-          this.damage(entityA, collisionA, entityB, collisionB, true);
-          break;
-        case "Damage_EntityB":
-          this.damage(entityA, collisionA, entityB, collisionB, false);
-          break;
-        case "Destroy_EntityA":
-          this.destroy(entityA, collisionA, true);
-          break;
-        case "Destroy_EntityB":
-          this.destroy(entityB, collisionB, true);
+          this.destroy(entityB);
           break;
       }
     }
   }
+
+  // #region Collision responses
+
+  bounce(entityA, collisionA, entityB, collisionB) {}
+  repel(entityA, collisionA, entityB, collisionB) {}
+  stick(entityA, collisionA, entityB, collisionB) {}
+  slide(entityA, collisionA, entityB, collisionB) {}
+  push(entityA, collisionA, entityB, collisionB) {}
+
+  /**
+   * @param {number} entity
+   * @param {number} damage
+   */
+  damage(entity, damage) {
+    const health = this.entityManager.getComponent(entity, "Health");
+    const dead = health.takeDamage(damage);
+    if (dead) this.destroy(entity);
+  }
+
+  /** @param {number} entity */
+  destroy(entity) {
+    this.entityManager.destroyEntity(entity);
+  }
+
+  // #endregion Collision responses
 }
