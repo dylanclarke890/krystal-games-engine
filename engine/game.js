@@ -9,7 +9,6 @@ import { Viewport } from "./graphics/viewport.js";
 import { InputSystem } from "./systems/input-system.js";
 import { InputManager } from "./input/input-manager.js";
 import { settings } from "./config.js";
-import { AABBCollisionCheck } from "./utils/collision-strategies/aabb.js";
 
 export class Game {
   /** @type {Viewport} */
@@ -49,7 +48,7 @@ export class Game {
 
   #registerSystems() {
     this.systemManager.registerSystem(new InputSystem(this.entityManager, this.inputManager));
-    this.systemManager.registerSystem(new PhysicsSystem(this.entityManager, AABBCollisionCheck));
+    this.systemManager.registerSystem(new PhysicsSystem(this.entityManager));
     this.systemManager.registerSystem(new RenderSystem(this.entityManager, this.viewport));
   }
 

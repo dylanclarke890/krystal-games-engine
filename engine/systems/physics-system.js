@@ -1,7 +1,7 @@
 import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
-import { Guard } from "../utils/guard.js";
 import { CollisionResponseFlags } from "../components/collision.js";
+import { AABBCollisionCheck } from "../utils/collision-strategies/aabb.js";
 
 export class PhysicsSystem extends System {
   static requiredComponents = ["Position", "Velocity", "Size"];
@@ -9,12 +9,9 @@ export class PhysicsSystem extends System {
 
   /**
    * @param {import("../entities/entity-manager.js").EntityManager} entityManager
-   * @param {Function} entityCollisionStrategy
    */
-  constructor(entityManager, entityCollisionStrategy) {
+  constructor(entityManager) {
     super(entityManager);
-    Guard.againstNull({ entityCollisionStrategy }).isTypeOf("function");
-    this.entityCollisionStrategy = entityCollisionStrategy;
   }
 
   update(dt) {
@@ -23,13 +20,13 @@ export class PhysicsSystem extends System {
     console.log("UpdateStart");
     for (const entity of entities) {
       const collision = em.getComponent(entity, "Collision");
+      const position = em.getComponent(entity, "Position");
+
       if (collision && !collision.hasResponse(CollisionResponseFlags.Ignore)) {
-        this.checkForCollisionsWithEntity(entity, entities, collision);
+        this.checkForCollisionsWithEntity(entity, entities, collision, position);
       }
 
-      const position = em.getComponent(entity, "Position");
       const velocity = em.getComponent(entity, "Velocity");
-
       // Update position first
       position.x += velocity.x * dt;
       position.y += velocity.y * dt;
@@ -53,26 +50,26 @@ export class PhysicsSystem extends System {
     }
   }
 
-  checkForCollisionsWithEntity(currentEntity, allEntities, collisionA) {
-    console.log(collisionA);
+  checkForCollisionsWithEntity(currentEntity, allEntities, _collisionA, posA) {
     const em = this.entityManager;
     for (const entity of allEntities) {
       if (currentEntity === entity) continue; // same entity
       const collisionB = em.getComponent(entity, "Collision");
       if (!collisionB || collisionB.hasResponse(CollisionResponseFlags.Ignore)) continue; // no collision
 
+      const sizeA = em.getComponent(currentEntity, "Size");
+      const sizeB = em.getComponent(entity, "Size");
+      const posB = em.getComponent(entity, "Position");
+
       // handle collision
-      const response = this.entityCollisionStrategy(currentEntity, entity, collisionA, collisionB);
-      if (response) {
+      const didCollide = AABBCollisionCheck(posA, sizeA, posB, sizeB);
+      if (didCollide) {
         // apply collision response to entities
-        switch (response) {
+        switch (didCollide) {
           case CollisionResponseFlags.Repel:
-            // repel entities
             break;
           case CollisionResponseFlags.Bounce:
-            // bounce entities
             break;
-          // handle other collision responses
         }
       }
     }
