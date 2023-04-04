@@ -2,16 +2,12 @@ import { constrain } from "../utils/number.js";
 
 export class Bounciness {
   /** @type {number} */
-  x;
-  /** @type {number} */
-  y;
+  value;
 
   /**
-   * @param {number} x number between 0 and 1.
-   * @param {number} y number between 0 and 1.
+   * @param {number} value number between 0 and 1.
    */
-  constructor(x, y) {
-    this.x = constrain(x, 0, 1);
-    this.y = constrain(y, 0, 1);
+  constructor(value) {
+    this.value = constrain(value, 0, 1);
   }
 }
