@@ -12,6 +12,11 @@ export const CollisionResponseFlags = {
   Destroy_EntityB: 1024,
 };
 
+const ResponseFlagKeys = Object.keys(CollisionResponseFlags).reduce((obj, key) => {
+  obj[CollisionResponseFlags[key]] = key;
+  return obj;
+}, {});
+
 export class Collision {
   constructor(responseFlags) {
     this.responseFlags = responseFlags ?? 0;
@@ -47,12 +52,14 @@ export class Collision {
    * @returns {string[]}
    */
   getResponses() {
-    const flags = [];
-    for (const key in CollisionResponseFlags) {
-      if (this.responseFlags & CollisionResponseFlags[key]) {
-        flags.push(key);
+    const responses = [];
+    let flag = 1;
+    while (flag <= this.responseFlags) {
+      if (flag & this.responseFlags) {
+        responses.push(ResponseFlagKeys[flag]);
       }
+      flag <<= 1;
     }
-    return flags;
+    return responses;
   }
 }
