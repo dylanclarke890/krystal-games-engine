@@ -21,14 +21,18 @@ import { Guard } from "../utils/guard.js";
  * @property {import("../components/velocity.js").Velocity} Velocity
  */
 
+/**
+ * @typedef {keyof ComponentMap} ComponentType
+ */
+
 export class EntityManager {
   /** @type {EventSystem} */
   eventSystem;
   /** @type {Set<number>} */
   entities;
-  /** @type {Map<string, any>} */
+  /** @type {Map<`${number}${ComponentType}`, ComponentMap[ComponentType]>} */
   components;
-  /** @type {Map<number, Set<string>} */
+  /** @type {Map<number, Set<ComponentType>} */
   entityMasks;
   /** @type {number} */
   nextEntityId;
@@ -51,17 +55,25 @@ export class EntityManager {
     return entity;
   }
 
-  /** Add a component to an entity */
-  addComponent(entityId, component) {
+  /**
+   * Add a component to an entity.
+   * @param {number} entity entity identifier
+   * @param {ComponentMap[ComponentType]} component component to add
+   */
+  addComponent(entity, component) {
     const componentType = component.constructor.name;
-    this.components.set(entityId + componentType, component);
-    if (!this.entityMasks.has(entityId)) {
-      this.entityMasks.set(entityId, new Set());
+    this.components.set(entity + componentType, component);
+    if (!this.entityMasks.has(entity)) {
+      this.entityMasks.set(entity, new Set());
     }
-    this.entityMasks.get(entityId).add(componentType);
+    this.entityMasks.get(entity).add(componentType);
   }
 
-  /** Remove a component from an entity */
+  /**
+   * Remove a component from an entity.
+   * @param {number} entity entity identifier
+   * @param {ComponentType} componentType component to remove
+   */
   removeComponent(entity, componentType) {
     this.components.delete(entity + componentType);
     this.entityMasks.get(entity).delete(componentType);
@@ -69,10 +81,9 @@ export class EntityManager {
 
   /**
    * Get a specific component from an entity.
-   * @template {keyof ComponentMap} cT
    * @param {number} entity entity identifier
-   * @param {cT} componentType - The name of the event.
-   * @returns {ComponentMap[cT]} - The component type, if found.
+   * @param {ComponentType} componentType the name of the component.
+   * @returns {ComponentMap[ComponentType]?} the component type, if found.
    */
   getComponent(entity, componentType) {
     return this.components.get(entity + componentType);
@@ -81,7 +92,7 @@ export class EntityManager {
   /**
    * Check if an entity has a specific component.
    * @param {number} entity
-   * @param {string} componentType
+   * @param {ComponentType} componentType the name of the component.
    */
   hasComponent(entity, componentType) {
     if (!this.entityMasks.has(entity)) {
@@ -92,7 +103,7 @@ export class EntityManager {
 
   /**
    * Check if any entity has the specified component type.
-   * @param {string} componentType
+   * @param {ComponentType} componentType
    */
   hasComponentType(componentType) {
     for (const key of this.components.keys()) {
@@ -103,7 +114,10 @@ export class EntityManager {
     return false;
   }
 
-  /** Get all entities that have a set of components. */
+  /**
+   * Get all entities that have a set of components.
+   * @param {ComponentType[]} componentTypes
+   */
   getEntitiesWithComponents(...componentTypes) {
     const entities = [];
     for (const entity of this.entities) {
@@ -114,7 +128,10 @@ export class EntityManager {
     return entities;
   }
 
-  /** Destroy an entity and remove all of its components */
+  /**
+   * Destroy an entity and remove all of its components.
+   * @param {number} entity
+   */
   destroyEntity(entity) {
     for (const componentType of this.entityMasks.get(entity)) {
       this.components.delete(entity + componentType);
