@@ -9,6 +9,7 @@ import { Guard } from "../utils/guard.js";
  * @property {import("../components/animation.js").Animation} Animation
  * @property {import("../components/bounciness.js").Bounciness} Bounciness
  * @property {import("../components/collision.js").Collision} Collision
+ * @property {import("../components/damage.js").Damage} Damage
  * @property {import("../components/friction.js").Friction} Friction
  * @property {import("../components/gravity-factor.js").GravityFactor} GravityFactor
  * @property {import("../components/health.js").Health} Health
