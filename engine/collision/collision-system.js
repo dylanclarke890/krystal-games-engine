@@ -142,14 +142,37 @@ export class CollisionSystem extends System {
     const isXSmallestOverlap = overlapX < overlapY;
 
     // Separate the entities based on the smallest overlap direction
+    const separation = isXSmallestOverlap ? overlapX / 2 : overlapY / 2;
     if (isXSmallestOverlap) {
-      const separation = overlapX / 2;
-      posA.x -= posA.x < posB.x ? -separation : separation;
-      posB.x -= posA.x < posB.x ? -separation : separation;
+      if (
+        collisionA.entityCollision === EntityCollisionBehaviour.Elastic &&
+        collisionB.entityCollision !== EntityCollisionBehaviour.Elastic
+      ) {
+        posA.x -= posA.x < posB.x ? -separation : separation;
+      } else if (
+        collisionB.entityCollision === EntityCollisionBehaviour.Elastic &&
+        collisionA.entityCollision !== EntityCollisionBehaviour.Elastic
+      ) {
+        posB.x -= posA.x < posB.x ? -separation : separation;
+      } else {
+        posA.x -= posA.x < posB.x ? -separation : separation;
+        posB.x -= posA.x < posB.x ? -separation : separation;
+      }
     } else {
-      const separation = overlapY / 2;
-      posA.y -= posA.y < posB.y ? -separation : separation;
-      posB.y -= posA.y < posB.y ? -separation : separation;
+      if (
+        collisionA.entityCollision === EntityCollisionBehaviour.Elastic &&
+        collisionB.entityCollision !== EntityCollisionBehaviour.Elastic
+      ) {
+        posA.y -= posA.y < posB.y ? -separation : separation;
+      } else if (
+        collisionB.entityCollision === EntityCollisionBehaviour.Elastic &&
+        collisionA.entityCollision !== EntityCollisionBehaviour.Elastic
+      ) {
+        posB.y -= posA.y < posB.y ? -separation : separation;
+      } else {
+        posA.y -= posA.y < posB.y ? -separation : separation;
+        posB.y -= posA.y < posB.y ? -separation : separation;
+      }
     }
 
     this.eventSystem.dispatch(GameEvents.Entity_Collided, { entityA, entityB });
@@ -214,27 +237,66 @@ export class CollisionSystem extends System {
 
   elasticInelasticCollision(elasticEntity, elasticVel, inelasticEntity, inelasticVel) {
     const em = this.entityManager;
-    const massElastic = em.getComponent(elasticEntity, "Mass")?.value ?? 1;
-    const massInelastic = em.getComponent(inelasticEntity, "Mass")?.value ?? 1;
-    const massTotal = massElastic + massInelastic;
+    const elasticMass = em.getComponent(elasticEntity, "Mass")?.value ?? 1;
+    const elasticPos = em.getComponent(elasticEntity, "Position");
+    const inelasticMass = em.getComponent(inelasticEntity, "Mass")?.value ?? 1;
+    const inelasticPos = em.getComponent(inelasticEntity, "Position");
+    const coeffRestitution = em.getComponent(elasticEntity, "CoeffRestitution")?.value ?? 1;
 
-    // Calculate the velocity change for the elastic entity (based on mass ratio)
-    const deltaVelElastic = {
-      x:
-        (2 * massInelastic * inelasticVel.x -
-          massElastic * elasticVel.x +
-          massElastic * inelasticVel.x) /
-        massTotal,
-      y:
-        (2 * massInelastic * inelasticVel.y -
-          massElastic * elasticVel.y +
-          massElastic * inelasticVel.y) /
-        massTotal,
+    const relativeVelocity = {
+      x: elasticVel.x - inelasticVel.x,
+      y: elasticVel.y - inelasticVel.y,
     };
 
-    // Update the velocity of the elastic entity (the inelastic entity doesn't change it's velocity)
-    elasticVel.x = deltaVelElastic.x;
-    elasticVel.y = deltaVelElastic.y;
+    const normal = {
+      x: inelasticPos.x - elasticPos.x,
+      y: inelasticPos.y - elasticPos.y,
+    };
+
+    const normalMagnitude = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
+    if (normalMagnitude === 0) return; // Prevent division by zero
+
+    normal.x /= normalMagnitude;
+    normal.y /= normalMagnitude;
+
+    const normalVelocity = relativeVelocity.x * normal.x + relativeVelocity.y * normal.y;
+
+    let impulseScalar;
+
+    if (inelasticMass === Infinity) {
+      // Elastic collision
+      impulseScalar =
+        (-(1 + coeffRestitution) * normalVelocity) /
+        (1 / elasticMass + (inelasticMass === Infinity ? 0 : 1 / inelasticMass));
+    } else {
+      // Inelastic collision
+      impulseScalar =
+        -normalVelocity /
+        (normalMagnitude *
+          (1 / elasticMass +
+            1 / inelasticMass -
+            (normalMagnitude * normalMagnitude) / (em.getSystem("Physics").timeStep * 4)));
+    }
+
+    elasticVel.x += (impulseScalar / elasticMass) * normal.x;
+    elasticVel.y += (impulseScalar / elasticMass) * normal.y;
+
+    // Move the elastic entity slightly in the opposite direction of the collision normal
+    // to prevent sticking
+    const separation = 0.001;
+    elasticPos.x -= separation * normal.x;
+    elasticPos.y -= separation * normal.y;
+
+    if (inelasticMass !== Infinity) {
+      // Inelastic collision
+      inelasticVel.x += (impulseScalar / inelasticMass) * normal.x;
+      inelasticVel.y += (impulseScalar / inelasticMass) * normal.y;
+
+      // Move the inelastic entity slightly in the opposite direction of the collision normal
+      // to prevent sticking
+      inelasticPos.x += separation * normal.x;
+      inelasticPos.y += separation * normal.y;
+    }
   }
 
   //#endregion Entity Collision
