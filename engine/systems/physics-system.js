@@ -149,7 +149,7 @@ export class PhysicsSystem extends System {
   // stick(entityA, collisionA, entityB, collisionB) {}
   // slide(entityA, collisionA, entityB, collisionB) {}
 
-  push(entityA, collisionA, entityB, collisionB) {
+  push(entityA, entityB) {
     const em = this.entityManager;
     const posA = em.getComponent(entityA, "Position");
     const posB = em.getComponent(entityB, "Position");
@@ -161,21 +161,24 @@ export class PhysicsSystem extends System {
     const velocityA = em.getComponent(entityA, "Velocity");
     const velProj = velocityA.dot(normal);
 
+    if (velProj <= 0) return; // If the two velocities are moving away from each other, return early
+
     // Calculate the impulse to apply
-    const bounceA = em.getComponent(entityA, "Bounciness");
-    const bounceB = em.getComponent(entityB, "Bounciness");
-    const restitution = bounceA.value * bounceB.value;
-    const impulse =
-      ((1 + restitution) * velProj) /
-      (em.getComponent(entityA, "Mass") + em.getComponent(entityB, "Mass"));
+    const bounceA = em.getComponent(entityA, "Bounciness")?.value ?? 0;
+    const bounceB = em.getComponent(entityB, "Bounciness")?.value ?? 0;
+    const restitution = bounceA * bounceB;
+
+    const massA = em.getComponent(entityA, "Mass")?.value ?? 1;
+    const massB = em.getComponent(entityB, "Mass")?.value ?? 1;
+    const impulse = ((1 + restitution) * velProj) / (massA + massB);
 
     // Apply the impulse
-    velocityA.x -= impulse * normal.x * em.getComponent(entityB, "Mass");
-    velocityA.y -= impulse * normal.y * em.getComponent(entityB, "Mass");
+    velocityA.x -= impulse * normal.x * massB;
+    velocityA.y -= impulse * normal.y * massB;
 
     const velocityB = em.getComponent(entityB, "Velocity");
-    velocityB.x += impulse * normal.x * em.getComponent(entityA, "Mass");
-    velocityB.y += impulse * normal.y * em.getComponent(entityA, "Mass");
+    velocityB.x += impulse * normal.x * massA;
+    velocityB.y += impulse * normal.y * massA;
   }
 
   /**
