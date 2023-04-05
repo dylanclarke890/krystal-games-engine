@@ -75,7 +75,7 @@ export class World {
       ["move-right", () => console.log("Moving right!")],
     ]);
     em.addComponent(id, new Input(bindings));
-    em.addComponent(id, new Collision(CollisionResponseFlags.Bounce));
+    em.addComponent(id, new Collision(CollisionResponseFlags.Destroy_Self));
   }
 
   createEntity() {

@@ -134,9 +134,10 @@ export class EntityManager {
    * @param {number} entity
    */
   destroyEntity(entity) {
-    for (const componentType of this.entityMasks.get(entity)) {
-      this.components.delete(entity + componentType);
-    }
+    this.entityMasks
+      .get(entity)
+      .forEach((componentType) => this.components.delete(entity + componentType));
+    console.log(...this.components.entries());
     this.entityMasks.delete(entity);
     this.entities.delete(entity);
     this.eventSystem.dispatch(GameEvents.Entity_Destroyed, entity);

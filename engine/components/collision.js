@@ -4,12 +4,12 @@ export const CollisionResponseFlags = {
   Bounce: 4,
   Stick: 8,
   Slide: 16,
-  Push_EntityA: 32,
-  Push_EntityB: 64,
-  Damage_EntityA: 128,
-  Damage_EntityB: 256,
-  Destroy_EntityA: 512,
-  Destroy_EntityB: 1024,
+  Push_Self: 32,
+  Push_Other: 64,
+  Damage_Self: 128,
+  Damage_Other: 256,
+  Destroy_Self: 512,
+  Destroy_Other: 1024,
 };
 
 const ResponseFlagKeys = Object.keys(CollisionResponseFlags).reduce((obj, key) => {

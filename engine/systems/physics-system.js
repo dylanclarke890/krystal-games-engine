@@ -18,13 +18,14 @@ export class PhysicsSystem extends System {
   update(dt) {
     const em = this.entityManager;
     const entities = em.getEntitiesWithComponents(...PhysicsSystem.requiredComponents);
-    console.log("UpdateStart");
+    const collisions = [];
     for (const entity of entities) {
+      console.log(entity);
       const collision = em.getComponent(entity, "Collision");
       const position = em.getComponent(entity, "Position");
 
       if (collision && !collision.hasResponse(CollisionResponseFlags.Ignore)) {
-        this.checkForCollisionsWithEntity(entity, entities, collision, position);
+        collisions.concat(this.checkForCollisionsWithEntity(entity, entities, position));
       }
 
       const velocity = em.getComponent(entity, "Velocity");
@@ -51,8 +52,9 @@ export class PhysicsSystem extends System {
     }
   }
 
-  checkForCollisionsWithEntity(currentEntity, allEntities, collisionA, posA) {
+  checkForCollisionsWithEntity(currentEntity, allEntities, posA) {
     const em = this.entityManager;
+    const collisions = [];
     for (const entity of allEntities) {
       if (currentEntity === entity) continue; // same entity
       const collisionB = em.getComponent(entity, "Collision");
@@ -63,11 +65,18 @@ export class PhysicsSystem extends System {
       const posB = em.getComponent(entity, "Position");
 
       if (!AABBCollisionCheck(posA, sizeA, posB, sizeB)) continue;
-
-      this.handleCollisionResponse(currentEntity, collisionA, entity, collisionB);
+      collisions.push([currentEntity, entity]);
     }
+    return collisions;
   }
 
+  /**
+   *
+   * @param {number} entityA
+   * @param {import("../components/collision.js").Collision} collisionA
+   * @param {number} entityB
+   * @param {import("../components/collision.js").Collision} collisionB
+   */
   handleCollisionResponse(entityA, collisionA, entityB, collisionB) {
     const responsesA = collisionA.getResponses();
     for (const response of responsesA) {
@@ -84,22 +93,22 @@ export class PhysicsSystem extends System {
         case "Slide":
           this.slide(entityA, collisionA, entityB, collisionB);
           break;
-        case "Push_EntityA":
+        case "Push_Self":
           this.push(entityA, collisionA, entityB, collisionB);
           break;
-        case "Push_EntityB":
+        case "Push_Other":
           this.push(entityB, collisionB, entityA, collisionA);
           break;
-        case "Damage_EntityA":
+        case "Damage_Self":
           this.damage(entityA, this.entityManager.getComponent(entityA, "Damage"));
           break;
-        case "Damage_EntityB":
+        case "Damage_Other":
           this.damage(entityB, this.entityManager.getComponent(entityA, "Damage"));
           break;
-        case "Destroy_EntityA":
+        case "Destroy_Self":
           this.destroy(entityA);
           break;
-        case "Destroy_EntityB":
+        case "Destroy_Other":
           this.destroy(entityB);
           break;
       }
@@ -120,23 +129,23 @@ export class PhysicsSystem extends System {
         case "Slide":
           this.slide(entityB, collisionB, entityA, collisionA);
           break;
-        case "Push_EntityA":
+        case "Push_Self":
           this.push(entityB, collisionB, entityA, collisionA);
           break;
-        case "Push_EntityB":
+        case "Push_Other":
           this.push(entityA, collisionA, entityB, collisionB);
           break;
-        case "Damage_EntityA":
-          this.damage(entityA, this.entityManager.getComponent(entityB, "Damage"));
-          break;
-        case "Damage_EntityB":
+        case "Damage_Self":
           this.damage(entityB, this.entityManager.getComponent(entityB, "Damage"));
           break;
-        case "Destroy_EntityA":
-          this.destroy(entityA);
+        case "Damage_Other":
+          this.damage(entityA, this.entityManager.getComponent(entityB, "Damage"));
           break;
-        case "Destroy_EntityB":
+        case "Destroy_Self":
           this.destroy(entityB);
+          break;
+        case "Destroy_Other":
+          this.destroy(entityA);
           break;
       }
     }
