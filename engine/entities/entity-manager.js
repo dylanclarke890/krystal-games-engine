@@ -137,7 +137,6 @@ export class EntityManager {
     this.entityMasks
       .get(entity)
       .forEach((componentType) => this.components.delete(entity + componentType));
-    console.log(...this.components.entries());
     this.entityMasks.delete(entity);
     this.entities.delete(entity);
     this.eventSystem.dispatch(GameEvents.Entity_Destroyed, entity);

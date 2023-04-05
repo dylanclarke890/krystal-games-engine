@@ -20,12 +20,11 @@ export class PhysicsSystem extends System {
     const entities = em.getEntitiesWithComponents(...PhysicsSystem.requiredComponents);
     const collisions = [];
     for (const entity of entities) {
-      console.log(entity);
       const collision = em.getComponent(entity, "Collision");
       const position = em.getComponent(entity, "Position");
 
       if (collision && !collision.hasResponse(CollisionResponseFlags.Ignore)) {
-        collisions.concat(this.checkForCollisionsWithEntity(entity, entities, position));
+        collisions.push(...this.checkForCollisionsWithEntity(entity, entities, position));
       }
 
       const velocity = em.getComponent(entity, "Velocity");
@@ -50,6 +49,14 @@ export class PhysicsSystem extends System {
         velocity.y += 9.81 * gravityFactor.value * dt;
       }
     }
+
+    const checkedPairs = new Set();
+    collisions.forEach(([a, b]) => {
+      const pairKey = `${a}-${b}`;
+      if (checkedPairs.has(pairKey)) return;
+      this.handleCollisionResponse(a, b);
+      checkedPairs.add(pairKey);
+    });
   }
 
   checkForCollisionsWithEntity(currentEntity, allEntities, posA) {
@@ -71,13 +78,13 @@ export class PhysicsSystem extends System {
   }
 
   /**
-   *
    * @param {number} entityA
-   * @param {import("../components/collision.js").Collision} collisionA
    * @param {number} entityB
-   * @param {import("../components/collision.js").Collision} collisionB
    */
-  handleCollisionResponse(entityA, collisionA, entityB, collisionB) {
+  handleCollisionResponse(entityA, entityB) {
+    const collisionA = this.entityManager.getComponent(entityA, "Collision");
+    const collisionB = this.entityManager.getComponent(entityB, "Collision");
+
     const responsesA = collisionA.getResponses();
     for (const response of responsesA) {
       switch (response) {
