@@ -16,6 +16,7 @@ export class PhysicsSystem extends System {
   }
 
   update(dt) {
+    console.log("Start");
     const em = this.entityManager;
     const entities = em.getEntitiesWithComponents(...PhysicsSystem.requiredComponents);
     const collisions = [];
@@ -51,7 +52,9 @@ export class PhysicsSystem extends System {
     }
 
     const checkedPairs = new Set();
-    collisions.forEach(([a, b]) => {
+    collisions.forEach((pair) => {
+      pair.sort();
+      const [a, b] = pair;
       const pairKey = `${a}-${b}`;
       if (checkedPairs.has(pairKey)) return;
       this.handleCollisionResponse(a, b);
@@ -72,6 +75,7 @@ export class PhysicsSystem extends System {
       const posB = em.getComponent(entity, "Position");
 
       if (!AABBCollisionCheck(posA, sizeA, posB, sizeB)) continue;
+      // this.handleCollisionResponse(currentEntity, entity);
       collisions.push([currentEntity, entity]);
     }
     return collisions;
@@ -101,10 +105,10 @@ export class PhysicsSystem extends System {
           this.slide(entityA, collisionA, entityB, collisionB);
           break;
         case "Push_Self":
-          this.push(entityA, collisionA, entityB, collisionB);
+          this.push(entityA, entityB);
           break;
         case "Push_Other":
-          this.push(entityB, collisionB, entityA, collisionA);
+          this.push(entityB, entityA);
           break;
         case "Damage_Self":
           this.damage(entityA, this.entityManager.getComponent(entityA, "Damage"));
@@ -137,10 +141,10 @@ export class PhysicsSystem extends System {
           this.slide(entityB, collisionB, entityA, collisionA);
           break;
         case "Push_Self":
-          this.push(entityB, collisionB, entityA, collisionA);
+          this.push(entityB, entityA);
           break;
         case "Push_Other":
-          this.push(entityA, collisionA, entityB, collisionB);
+          this.push(entityA, entityB);
           break;
         case "Damage_Self":
           this.damage(entityB, this.entityManager.getComponent(entityB, "Damage"));
@@ -171,14 +175,14 @@ export class PhysicsSystem extends System {
     const posB = em.getComponent(entityB, "Position");
 
     // Calculate the normal vector pointing from B to A
-    const normal = posA.clone().subtract(posB).normalize();
+    const normal = posB.clone().subtract(posA.x, posA.y).normalize();
 
     // Calculate the magnitude of the projection of A's velocity onto the normal vector
     const velocityA = em.getComponent(entityA, "Velocity");
     const velProj = velocityA.dot(normal);
-
+    
     if (velProj <= 0) return; // If the two velocities are moving away from each other, return early
-
+    
     // Calculate the impulse to apply
     const bounceA = em.getComponent(entityA, "Bounciness")?.value ?? 0;
     const bounceB = em.getComponent(entityB, "Bounciness")?.value ?? 0;
@@ -195,6 +199,34 @@ export class PhysicsSystem extends System {
     const velocityB = em.getComponent(entityB, "Velocity");
     velocityB.x += impulse * normal.x * massA;
     velocityB.y += impulse * normal.y * massA;
+
+    const sizeA = em.getComponent(entityA, "Size");
+    const sizeB = em.getComponent(entityB, "Size");
+
+    // Separate the entities along the collision normal
+    const overlap = this.calculateOverlapDistance(posA, sizeA, posB, sizeB);
+    const separationDistance = overlap * 0.5;
+    posA.x += separationDistance * normal.x;
+    posA.y += separationDistance * normal.y;
+    posB.x -= separationDistance * normal.x;
+    posB.y -= separationDistance * normal.y;
+  }
+
+  calculateOverlapDistance(posA, sizeA, posB, sizeB) {
+    // Calculate the distance between the centers of the two AABBs
+    const dx = posA.x + sizeA.x / 2 - (posB.x + sizeB.x / 2);
+    const dy = posA.y + sizeA.y / 2 - (posB.y + sizeB.y / 2);
+
+    // Calculate the minimum and maximum distances between the centers of the two AABBs
+    const minDx = (sizeA.x + sizeB.x) / 2;
+    const minDy = (sizeA.y + sizeB.y) / 2;
+
+    // Calculate the overlap distance in each axis (if any)
+    const overlapX = Math.max(0, minDx - Math.abs(dx));
+    const overlapY = Math.max(0, minDy - Math.abs(dy));
+
+    // Return the minimum overlap distance between the two axes
+    return Math.min(overlapX, overlapY);
   }
 
   /**
