@@ -11,7 +11,6 @@ import { GravityFactor } from "./components/gravity-factor.js";
 import { Friction } from "./components/friction.js";
 import { Collision, CollisionResponseFlags } from "./components/collision.js";
 import { InputKeys } from "./input/input-keys.js";
-import { PhysicsSystem } from "./systems/physics-system.js";
 import { RenderSystem } from "./systems/render-system.js";
 import { InputSystem } from "./systems/input-system.js";
 
@@ -36,22 +35,14 @@ export class World {
     this.systemManager = game.systemManager;
     this.inputManager = game.inputManager;
     this.viewport = game.viewport;
-    this.#bindInput();
-    this.#registerSystems();
+    this.inputManager.bind(InputKeys.Arrow_Left, "move-left");
+    this.inputManager.bind(InputKeys.Arrow_Right, "move-right");
+    this.registerSystem(new InputSystem(this.entityManager, this.inputManager));
+    // this.registerSystem(new PhysicsSystem(this.entityManager));
+    this.registerSystem(new RenderSystem(this.entityManager, this.viewport));
 
     this.#createTestEntity(50, 50);
     this.#createTestEntity(450, -100);
-  }
-
-  #registerSystems() {
-    this.systemManager.registerSystem(new InputSystem(this.entityManager, this.inputManager));
-    this.systemManager.registerSystem(new PhysicsSystem(this.entityManager));
-    this.systemManager.registerSystem(new RenderSystem(this.entityManager, this.viewport));
-  }
-
-  #bindInput() {
-    this.inputManager.bind(InputKeys.Arrow_Left, "move-left");
-    this.inputManager.bind(InputKeys.Arrow_Right, "move-right");
   }
 
   #createTestEntity(posX, speedX) {
