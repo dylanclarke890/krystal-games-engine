@@ -1,13 +1,14 @@
-import { PQueue, PriorityLevel } from "../utils/priority-queue.js";
-import { Guard } from "../utils/guard.js";
+import { PQueue, PriorityLevel } from "../utils/priority-queue";
+import { Guard } from "../utils/guard";
+import { Enum } from "../utils/enum";
+
+type Listener = (data?: any) => void;
 
 export class EventSystem {
-  /** @type {Map<Enum, PQueue>} */
-  #subscribers;
-  /** @type {EventSystem|undefined} */
-  #parent;
+  #subscribers: Map<Enum, PQueue<Listener>>;
+  #parent: EventSystem | undefined;
 
-  constructor(parent = null) {
+  constructor(parent?: EventSystem) {
     this.#subscribers = new Map();
     if (parent) {
       Guard.isInstanceOf({ parent }, EventSystem);
@@ -18,29 +19,24 @@ export class EventSystem {
   /**
    * Get the parent EventSystem.
    */
-  get parent() {
+  get parent(): EventSystem | undefined {
     return this.#parent;
   }
 
   /**
    * Subscribe to an event.
-   * @param {Enum} event
-   * @param {(data:any) => void} listener
-   * @param {number|PriorityLevel} priority
    */
-  on(event, listener, priority = PriorityLevel.None) {
+  on(event: Enum, listener: Listener, priority: number | PriorityLevel = PriorityLevel.None) {
     if (!this.#subscribers.has(event)) this.#subscribers.set(event, new PQueue());
     this.#subscribers
-      .get(event)
+      .get(event)!
       .add(listener, priority instanceof PriorityLevel ? priority.valueOf() : priority);
   }
 
   /**
    * Unsubscribe from an event.
-   * @param {Enum} event
-   * @param {(data:any) => void} listener
    */
-  off(event, listener) {
+  off(event: Enum, listener: Listener) {
     const queue = this.#subscribers.get(event);
     if (!queue) return;
     return queue.remove(listener);
@@ -48,10 +44,8 @@ export class EventSystem {
 
   /**
    * Dispatch an event to subscribers.
-   * @param {Enum} event
-   * @param {any} data
    */
-  dispatch(event, data) {
+  dispatch(event: Enum, data?: any) {
     const queue = this.#subscribers.get(event);
     if (queue) queue.forEach((listener) => listener(data));
     if (this.#parent) this.#parent.dispatch(event, data);
