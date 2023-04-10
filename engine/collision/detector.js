@@ -1,6 +1,6 @@
 import { EntityManager } from "../entities/entity-manager.js";
 import { Guard } from "../utils/guard.js";
-import { PairedSet } from "./paired-set.js";
+import { PairedSet } from "../utils/paired-set.js";
 
 export class CollisionDetector {
   /** @type {EntityManager} */
