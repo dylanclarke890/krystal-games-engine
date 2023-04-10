@@ -1,14 +1,10 @@
 export class Enum {
-  /** @type {string[]} */
-  static enumKeys;
-  /** @type {Enum[]} */
-  static enumValues;
+  static enumKeys: string[];
+  static enumValues: Enum[];
 
   static freeze() {
-    /** @type {string[]} */
-    const enumKeys = [];
-    /** @type {Enum[]} */
-    const enumValues = [];
+    const enumKeys: string[] = [];
+    const enumValues: Enum[] = [];
     // Traverse the enum entries
     for (const [key, value] of Object.entries(this)) {
       if (!(value instanceof this)) continue;
@@ -27,16 +23,12 @@ export class Enum {
     return this.enumValues[Symbol.iterator]();
   }
 
-  /**
-   * @param {string} str
-   * @returns {Enum|undefined}
-   */
-  static from(str) {
+  static from(str: string): Enum | undefined {
     const index = this.enumKeys.indexOf(str);
     return index >= 0 ? this.enumValues[index] : undefined;
   }
 
-  static toString() {
+  static toString(): string {
     const entries = Object.entries(this)
       .filter(([, value]) => value instanceof this)
       .map(([key, value]) => `${key}: ${value.enumOrdinal}`)
@@ -45,18 +37,15 @@ export class Enum {
     return `${this.name}: {${entries}}`;
   }
 
-  /** @type {string} */
-  enumKey;
-  /** @type {number} */
-  enumOrdinal;
-  /** @type {number|any} */
-  #value;
+  enumKey: string | undefined;
+  enumOrdinal: number | undefined;
+  #value: number | any;
 
   /**
    * @param {number|any} [value] Optional value to use instead of the enum's index.
    * Recommended to be a number for consistency but can technically be anything.
    */
-  constructor(value) {
+  constructor(value: number | undefined) {
     this.#value = value;
   }
 
