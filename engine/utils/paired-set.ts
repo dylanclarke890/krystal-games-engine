@@ -2,10 +2,8 @@
  * A data structure that you can add pairs of numbers to without worrying about duplicates.
  */
 export class PairedSet {
-  /** @type {Set<[number, number]} */
-  #set;
-  /** @type {Map<string, boolean>} */
-  #entries;
+  #set: Set<Pair>;
+  #entries: Map<string, boolean>;
 
   constructor() {
     this.#set = new Set();
@@ -16,8 +14,7 @@ export class PairedSet {
     return this.#set.size;
   }
 
-  /** @param {[number, number]} pair */
-  add(pair) {
+  add(pair: Pair) {
     this.#sort(pair);
     const key = `${pair[0]}-${pair[1]}`;
     if (this.#entries.has(key)) return;
@@ -27,9 +24,8 @@ export class PairedSet {
 
   /**
    * Exposes the underlying set for iteration.
-   * @param {(value: T, value2: T, set: Set<T>) => void} callbackfn
    */
-  forEach(callbackfn) {
+  forEach(callbackfn: (value: Pair, value2: Pair, set: Set<Pair>) => void) {
     this.#set.forEach(callbackfn);
   }
 
@@ -42,7 +38,7 @@ export class PairedSet {
     this.#entries.clear();
   }
 
-  #sort(pair) {
+  #sort(pair: Pair) {
     if (pair[0] > pair[1]) {
       const tmp = pair[0];
       pair[0] = pair[1];
@@ -50,3 +46,5 @@ export class PairedSet {
     }
   }
 }
+
+type Pair = [number, number];
