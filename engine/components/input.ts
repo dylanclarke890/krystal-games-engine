@@ -1,11 +1,10 @@
 export class Input {
-  /** @type {string, Function} */
-  bindings;
+  bindings: Map<string, Function>;
 
   /**
    * @param {Map<string, Function>} bindings
    */
-  constructor(bindings) {
+  constructor(bindings: Map<string, Function>) {
     this.bindings = bindings;
   }
 
@@ -13,7 +12,7 @@ export class Input {
    * @param {string} name
    * @param {Function} action
    */
-  bind(name, action) {
+  bind(name: string, action: Function) {
     this.bindings.set(name, action);
   }
 }
