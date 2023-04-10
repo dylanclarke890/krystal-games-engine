@@ -1,24 +1,16 @@
 export class Position {
-  /** @type {number} */
-  x;
-  /** @type {number} */
-  y;
+  x: number;
+  y: number;
 
-  /**
-   * @param {number} x
-   * @param {number} y
-   */
-  constructor(x, y) {
+  constructor(x?: number, y?: number) {
     this.x = x || 0;
     this.y = y || 0;
   }
 
   /**
    * Calculates the distance between the current position and another position.
-   * @param {Position} otherPosition
-   * @returns {number}
    */
-  distanceTo(otherPosition) {
+  distanceTo(otherPosition: Position): number {
     const dx = this.x - otherPosition.x;
     const dy = this.y - otherPosition.y;
     return Math.sqrt(dx * dx + dy * dy);
@@ -27,20 +19,14 @@ export class Position {
   /**
    * Calculates the squared distance between the current position and another position, which can be faster
    * than calculating the actual distance if you only need to compare distances.
-   * @param {Position} otherPosition
-   * @returns {number}
    */
-  distanceToSquared(otherPosition) {
+  distanceToSquared(otherPosition: Position): number {
     const dx = this.x - otherPosition.x;
     const dy = this.y - otherPosition.y;
     return dx * dx + dy * dy;
   }
 
-  /**
-   * @param {number} x
-   * @param {number} y
-   */
-  set(x, y) {
+  set(x: number, y: number): this {
     this.x = x;
     this.y = y;
     return this;
@@ -51,26 +37,20 @@ export class Position {
    * @param {number} angle The angle in radians.
    * @param {number} distance The distance from the origin.
    */
-  setToPolar(angle, distance) {
+  setToPolar(angle: number, distance: number): this {
     this.x = Math.cos(angle) * distance;
     this.y = Math.sin(angle) * distance;
     return this;
   }
 
-  /**
-   * @param {number} dx
-   * @param {number} dy
-   */
-  move(dx, dy) {
-    this.add(dx, dy);
+  move(dx: number, dy: number): this {
+    return this.add(dx, dy);
   }
 
   /**
    * Adds the specified x and y values to the current position.
-   * @param {number} x
-   * @param {number} y
    */
-  add(x, y) {
+  add(x: number, y: number): this {
     this.x += x;
     this.y += y;
     return this;
@@ -78,10 +58,8 @@ export class Position {
 
   /**
    * Subtracts the specified x and y values from the current position.
-   * @param {number} x
-   * @param {number} y
    */
-  subtract(x, y) {
+  subtract(x: number, y: number): this {
     this.x -= x;
     this.y -= y;
     return this;
@@ -89,9 +67,8 @@ export class Position {
 
   /**
    * Multiplies the current position by the specified factor.
-   * @param {number} factor
    */
-  multiply(factor) {
+  multiply(factor: number): this {
     this.x *= factor;
     this.y *= factor;
     return this;
@@ -99,9 +76,8 @@ export class Position {
 
   /**
    * Divides the current position by the specified divisor.
-   * @param {number} divisor
    */
-  divide(divisor) {
+  divide(divisor: number): this {
     this.x /= divisor;
     this.y /= divisor;
     return this;
@@ -109,28 +85,22 @@ export class Position {
 
   /**
    * Returns the dot product of the current position and the specified position.
-   * @param {Position} otherPosition
-   * @returns {number}
    */
-  dot(otherPosition) {
+  dot(otherPosition: Position): number {
     return this.x * otherPosition.x + this.y * otherPosition.y;
   }
 
   /**
    * Returns the cross product of the current position and the specified position.
-   * @param {Position} otherPosition
-   * @returns {number}
    */
-  cross(otherPosition) {
+  cross(otherPosition: Position): number {
     return this.x * otherPosition.y - this.y * otherPosition.x;
   }
 
   /**
    * Calculates the angle (in radians) between the current position and another position.
-   * @param {Position} otherPosition
-   * @returns {number}
    */
-  angleTo(otherPosition) {
+  angleTo(otherPosition: Position): number {
     const dx = otherPosition.x - this.x;
     const dy = otherPosition.y - this.y;
     return Math.atan2(dy, dx);
@@ -138,17 +108,15 @@ export class Position {
 
   /**
    * Calculates the angle (in radians) between the current position and another position, relative to the x-axis.
-   * @param {Position} otherPosition
-   * @returns {number}
    */
-  angleBetween(otherPosition) {
+  angleBetween(otherPosition: Position): number {
     return Math.atan2(otherPosition.y - this.y, otherPosition.x - this.x);
   }
 
   /**
    * Rounds the current position's x and y values to the nearest integer.
    */
-  round() {
+  round(): this {
     this.x = Math.round(this.x);
     this.y = Math.round(this.y);
     return this;
@@ -157,7 +125,7 @@ export class Position {
   /**
    * Rounds the current position's x and y values down to the nearest integer.
    */
-  floor() {
+  floor(): this {
     this.x = Math.floor(this.x);
     this.y = Math.floor(this.y);
     return this;
@@ -166,7 +134,7 @@ export class Position {
   /**
    * Rounds the current position's x and y values up to the nearest integer.
    */
-  ceil() {
+  ceil(): this {
     this.x = Math.ceil(this.x);
     this.y = Math.ceil(this.y);
     return this;
@@ -174,12 +142,8 @@ export class Position {
 
   /**
    * Clamps the current position's x and y values to a specified range.
-   * @param {number} minX
-   * @param {number} minY
-   * @param {number} maxX
-   * @param {number} maxY
    */
-  clamp(minX, minY, maxX, maxY) {
+  clamp(minX: number, minY: number, maxX: number, maxY: number): this {
     this.x = Math.max(minX, Math.min(this.x, maxX));
     this.y = Math.max(minY, Math.min(this.y, maxY));
     return this;
@@ -188,10 +152,8 @@ export class Position {
   /**
    * Linearly interpolates between the current position and another position by the specified amount t
    * (a value between 0 and 1).
-   * @param {Position} otherPosition
-   * @param {number} t
    */
-  lerp(otherPosition, t) {
+  lerp(otherPosition: Position, t: number): this {
     this.x = this.x + (otherPosition.x - this.x) * t;
     this.y = this.y + (otherPosition.y - this.y) * t;
     return this;
@@ -200,11 +162,8 @@ export class Position {
   /**
    * Sets the current position to a linear interpolation between two other positions, based on an alpha value
    * between 0 and 1.
-   * @param {Position} vector1
-   * @param {Position} vector2
-   * @param {number} alpha
    */
-  lerpVectors(vector1, vector2, alpha) {
+  lerpVectors(vector1: Position, vector2: Position, alpha: number): this {
     this.x = vector1.x + (vector2.x - vector1.x) * alpha;
     this.y = vector1.y + (vector2.y - vector1.y) * alpha;
     return this;
@@ -213,7 +172,7 @@ export class Position {
   /**
    * Normalizes the current position to a unit vector.
    */
-  normalize() {
+  normalize(): this {
     const length = Math.sqrt(this.x * this.x + this.y * this.y);
     if (length > 0) this.divide(length);
     return this;
@@ -221,18 +180,15 @@ export class Position {
 
   /**
    * Returns true if the current position is equal to another position component.
-   * @param {Position} otherPosition
-   * @returns {boolean}
    */
-  equals(otherPosition) {
+  equals(otherPosition: Position): boolean {
     return this.x === otherPosition.x && this.y === otherPosition.y;
   }
 
   /**
    * Returns a new position component with the same x and y values as the current position.
-   * @returns {Position}
    */
-  clone() {
+  clone(): Position {
     return new Position(this.x, this.y);
   }
 }
