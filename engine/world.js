@@ -14,6 +14,8 @@ import { InputKeys } from "./input/input-keys.js";
 import { RenderSystem } from "./systems/render-system.js";
 import { InputSystem } from "./systems/input-system.js";
 import { PhysicSystem } from "./systems/physic-system.js";
+import { CollisionDetector } from "./collision/detector.js";
+import { CollisionResolver } from "./collision/resolver.js";
 
 export class World {
   /** @type {import("./events/event-system.js").EventSystem} */
@@ -39,11 +41,13 @@ export class World {
     this.inputManager.bind(InputKeys.Arrow_Left, "move-left");
     this.inputManager.bind(InputKeys.Arrow_Right, "move-right");
     this.registerSystem(new InputSystem(this.entityManager, this.inputManager));
-    this.registerSystem(new PhysicSystem(this.entityManager));
+    const detector = new CollisionDetector(this.entityManager);
+    const resolver = new CollisionResolver();
+    this.registerSystem(new PhysicSystem(this.entityManager, detector, resolver));
     this.registerSystem(new RenderSystem(this.entityManager, this.viewport));
 
-    this.#createTestEntity(50, 10);
-    this.#createTestEntity(450, -10);
+    this.#createTestEntity(50, 50);
+    this.#createTestEntity(450, -100);
   }
 
   #createTestEntity(posX, speedX) {
