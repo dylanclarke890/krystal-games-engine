@@ -1,16 +1,12 @@
-import { Assert } from "../utils/assert.js";
-import { Guard } from "../utils/guard.js";
-import { arrayFromInterval } from "../utils/interval.js";
+import { Assert } from "../utils/assert";
+import { Guard } from "../utils/guard";
+import { arrayFromInterval } from "../utils/interval";
 
 export class Animation {
-  /** @type {number[]} */
-  sequence;
-  /** @type {number} */
-  frameDuration;
-  /** @type {number} */
-  loopCount;
-  /** @type {boolean} */
-  stop;
+  sequence: number[];
+  frameDuration: number;
+  loopCount: number;
+  stop: boolean;
 
   /**
    * @param {number[]|string} sequence - The sequence in which to display frames.
@@ -19,9 +15,11 @@ export class Animation {
    * be displayed (optional, defaults to 1).
    * @param {boolean} stop - Will stop on the last frame if true.
    */
-  constructor(sequence, frameDuration, stop) {
+  constructor(sequence: number[] | string, frameDuration: number, stop: boolean) {
     Guard.againstNull({ sequence });
-    this.sequence = Assert.isType(sequence, "string") ? arrayFromInterval(sequence) : sequence;
+    this.sequence = Assert.isType(sequence, "string")
+      ? arrayFromInterval(sequence as string)
+      : (sequence as number[]);
     this.frameDuration = frameDuration ?? 1;
     this.stop = !!stop;
 
