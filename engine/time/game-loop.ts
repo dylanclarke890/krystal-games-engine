@@ -1,27 +1,26 @@
-import { Guard } from "../utils/guard.js";
-import { EventSystem } from "../events/event-system.js";
-import { GameEvents } from "../events/events.js";
-import { Timer } from "./timer.js";
+import { Guard } from "../utils/guard";
+import { EventSystem } from "../events/event-system";
+import { GameEvents } from "../events/events";
+import { Timer } from "./timer";
 
 export class GameLoop {
-  /** @type {number} */
-  #lastFrame;
-  /** @type {EventSystem} */
-  eventSystem;
-  /** @type {Timer} */
-  clock;
-  /** @type {number} */
-  fpsInterval;
-  /** @type {number} */
-  targetFps;
+  #lastFrame: number;
+  eventSystem: EventSystem;
+  clock: Timer;
+  fpsInterval: number;
+  targetFps: number;
+  #rafId: number;
+  stopped: boolean;
 
-  constructor(eventSystem, targetFps = 60) {
+  constructor(eventSystem: EventSystem, targetFps = 60) {
     Guard.againstNull({ eventSystem }).isInstanceOf(EventSystem);
     this.eventSystem = eventSystem;
     this.clock = new Timer();
     this.targetFps = targetFps;
     this.fpsInterval = 1000 / targetFps;
     this.#lastFrame = -1;
+    this.#rafId = -1;
+    this.stopped = false;
   }
 
   start() {
@@ -30,9 +29,9 @@ export class GameLoop {
     this.main(performance.now());
   }
 
-  main(timestamp) {
-    if (this.stopped) return cancelAnimationFrame(this.rafId);
-    this.rafId = requestAnimationFrame((t) => this.main(t));
+  main(timestamp: number) {
+    if (this.stopped) return cancelAnimationFrame(this.#rafId);
+    this.#rafId = requestAnimationFrame((t) => this.main(t));
 
     Timer.step();
     const elapsed = timestamp - this.#lastFrame;
@@ -42,8 +41,8 @@ export class GameLoop {
     this.eventSystem.dispatch(GameEvents.Loop_NextFrame, this.clock.tick());
   }
 
-  stop(unloadAssets) {
+  stop(unloadAssets: boolean) {
     this.stopped = true;
-    this.eventSystem.dispatch(GameEvents.Loop_Stop, !!unloadAssets);
+    this.eventSystem.dispatch(GameEvents.Loop_Stop, unloadAssets);
   }
 }
