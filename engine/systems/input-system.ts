@@ -1,16 +1,17 @@
-import { InputManager } from "../input/input-manager.js";
-import { Guard } from "../utils/guard.js";
-import { SystemTypes } from "./system-types.js";
-import { System } from "./system.js";
+import { InputManager } from "../input/input-manager";
+import { Guard } from "../utils/guard";
+import { SystemTypes } from "./system-types";
+import { System } from "./system";
+import { EntityManager } from "../entities/entity-manager";
+import { Input } from "../components/input";
 
 export class InputSystem extends System {
   static requiredComponents = ["Input"];
   static systemType = SystemTypes.Input;
 
-  /** @type {InputManager} */
-  inputManager;
+  inputManager: InputManager;
 
-  constructor(entityManager, inputManager) {
+  constructor(entityManager: EntityManager, inputManager: InputManager) {
     super(entityManager);
     Guard.againstNull({ inputManager }).isInstanceOf(InputManager);
     this.inputManager = inputManager;
@@ -21,9 +22,8 @@ export class InputSystem extends System {
       ...InputSystem.requiredComponents
     );
     for (const entity of entities) {
-      /** @type {{bindings: Map}} */
-      const inputComponent = this.entityManager.getComponent(entity, "Input");
-      for (const [action, fn] of inputComponent.bindings) {
+      const input = this.entityManager.getComponent(entity, "Input");
+      for (const [action, fn] of (input as Input).bindings) {
         if (this.inputManager.released(action)) fn();
       }
     }
