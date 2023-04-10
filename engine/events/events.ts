@@ -1,4 +1,4 @@
-import { Enum } from "../utils/enum.js";
+import { Enum } from "../utils/enum";
 
 export class GameEvents extends Enum {
   //#region System

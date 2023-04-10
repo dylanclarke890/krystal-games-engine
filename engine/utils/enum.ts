@@ -42,10 +42,10 @@ export class Enum {
   #value: number | any;
 
   /**
-   * @param {number|any} [value] Optional value to use instead of the enum's index.
+   * @param value Optional value to use instead of the enum's index.
    * Recommended to be a number for consistency but can technically be anything.
    */
-  constructor(value: number | undefined) {
+  constructor(value?: number) {
     this.#value = value;
   }
 
