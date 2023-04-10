@@ -1,21 +1,18 @@
-import { Viewport } from "../graphics/viewport.js";
-import { Timer } from "../time/timer.js";
-import { Guard } from "../utils/guard.js";
-import { SystemTypes } from "./system-types.js";
-import { System } from "./system.js";
+import { Viewport } from "../graphics/viewport";
+import { Timer } from "../time/timer";
+import { Guard } from "../utils/guard";
+import { SystemTypes } from "./system-types";
+import { System } from "./system";
+import { EntityManager } from "../entities/entity-manager";
 
 export class RenderSystem extends System {
   static requiredComponents = ["Sprite", "Position"];
   static systemType = SystemTypes.Graphics;
 
-  viewport;
-  timer;
+  viewport: Viewport;
+  timer: Timer;
 
-  /**
-   * @param {import("../entities/entity-manager.js").EntityManager} entityManager
-   * @param {Viewport} viewport
-   */
-  constructor(entityManager, viewport) {
+  constructor(entityManager: EntityManager, viewport: Viewport) {
     super(entityManager);
     Guard.againstNull({ viewport }).isInstanceOf(Viewport);
     this.viewport = viewport;
@@ -31,7 +28,7 @@ export class RenderSystem extends System {
     const delta = this.timer.delta();
     for (let i = 0; i < entities.length; i++) {
       const entityId = entities[i];
-      const sprite = this.entityManager.getComponent(entityId, "Sprite");
+      const sprite = this.entityManager.getComponent(entityId, "Sprite")!;
       const animation = this.entityManager.getComponent(entityId, "Animation");
 
       // Update current animation frame of sprite
@@ -49,7 +46,7 @@ export class RenderSystem extends System {
       const sourceX = currentColumn * width;
       const sourceY = currentRow * height;
 
-      const pos = this.entityManager.getComponent(entityId, "Position");
+      const pos = this.entityManager.getComponent(entityId, "Position")!;
       this.viewport.ctx.drawImage(
         image,
         sourceX,

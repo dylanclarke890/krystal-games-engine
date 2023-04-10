@@ -44,7 +44,7 @@ export class Viewport {
     this.ctx = canvas.getContext("2d")!;
   }
 
-  clear(color: string) {
+  clear(color?: string) {
     if (color) {
       this.ctx.fillStyle = color;
       this.ctx.fillRect(0, 0, this.width, this.height);
