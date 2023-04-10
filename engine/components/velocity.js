@@ -22,6 +22,17 @@ export class Velocity {
   }
 
   /**
+   * Adds the specified x and y values to the current velocity.
+   * @param {number} x
+   * @param {number} y
+   */
+  add(x, y) {
+    this.x += x;
+    this.y += y;
+    return this;
+  }
+
+  /**
    * @param {number} x
    * @param {number} y
    */
