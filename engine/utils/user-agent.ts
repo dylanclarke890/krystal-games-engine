@@ -18,8 +18,7 @@ export class UserAgent {
     Object.assign(this, settings);
   }
 
-  /** @type {UserAgent} */
-  static #cached;
+  static #cached: UserAgent;
 
   static get instance() {
     if (!this.#cached) {
@@ -39,7 +38,7 @@ export class UserAgent {
           winPhone,
           iOS,
           mobile: iOS || android || winPhone || /mobile/i.test(navigator.userAgent),
-          touchDevice: "ontouchstart" in window || window.navigator.msMaxTouchPoints,
+          touchDevice: "ontouchstart" in window || window.navigator.maxTouchPoints,
         },
         noCache: /\?nocache/.test(document.location.href),
         pixelRatio,
