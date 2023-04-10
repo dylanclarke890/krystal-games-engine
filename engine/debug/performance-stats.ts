@@ -1,17 +1,31 @@
 class PanelColorScheme {
-  constructor(bg, fg) {
+  bg: Color;
+  fg: Color;
+
+  constructor(bg: Color, fg: Color) {
     this.bg = bg;
     this.fg = fg;
   }
 }
 
 class Color {
-  constructor(r, g, b) {
+  r: number;
+  g: number;
+  b: number;
+
+  constructor(r: number, g: number, b: number) {
     this.r = r;
     this.g = g;
     this.b = b;
   }
 }
+
+type PerformanceStatsOptions = {
+  width?: number;
+  height?: number;
+  containerElementStyles?: any;
+  target?: HTMLElement;
+};
 
 export class PerformanceStats {
   static colorSchemes = {
@@ -24,17 +38,17 @@ export class PerformanceStats {
   #containerHeight = 48;
   #containerWidth = 96;
   #currentPanelIndex = 0;
-  #DOMElements = {};
+  #DOMElements: { [x: string]: any } = {};
   #firstUpdate = true;
   #maxPanels = 2;
   #panelHeight = 32;
   #panelWidth = 92;
-  #target = null;
+  #target?: HTMLElement;
 
   framesThisSec = 0;
+  now = performance.now();
   last = this.now;
   lastFrame = this.now;
-  now = performance.now();
   maxFps = 0;
   minFps = 1000;
   maxMs = 0;
@@ -42,7 +56,7 @@ export class PerformanceStats {
   maxMem = 0;
   minMem = 1000;
 
-  constructor({ width, height, containerElementStyles, target } = {}) {
+  constructor({ width, height, containerElementStyles, target }: PerformanceStatsOptions = {}) {
     this.#containerElementStyles = containerElementStyles;
     this.#containerHeight = height ?? 48;
     this.#containerWidth = width ?? 96;
@@ -71,7 +85,7 @@ export class PerformanceStats {
     this.#createPanel("fps", true);
     this.#createPanel("ms", false);
     try {
-      if (window.performance && performance.memory.totalJSHeapSize) {
+      if ((performance as any).memory.totalJSHeapSize) {
         this.#createPanel("mem", false);
         this.#maxPanels = 3;
       }
@@ -91,11 +105,13 @@ export class PerformanceStats {
     this.lastFrame = this.now;
   }
 
-  #assignStyles(element, styles) {
-    for (const styleName in styles) element.style[styleName] = styles[styleName];
+  #assignStyles(element: any, styles: { [x: string]: any }) {
+    for (const styleName in styles) {
+      element.style[styleName] = styles[styleName];
+    }
   }
 
-  #drawPanelData(data, minVal, colorScheme) {
+  #drawPanelData(data: number[], minVal: number, colorScheme: PanelColorScheme) {
     const width = this.#panelWidth;
     const height = this.#panelHeight;
 
@@ -123,7 +139,7 @@ export class PerformanceStats {
     }
   }
 
-  #panelContainer(panelType, display, target) {
+  #panelContainer(panelType: PanelType, display: string, target: HTMLElement) {
     const div = document.createElement("div");
     const { r, g, b } = PerformanceStats.colorSchemes[panelType].bg;
     this.#assignStyles(div, {
@@ -137,7 +153,7 @@ export class PerformanceStats {
     return div;
   }
 
-  #panelText(panelType, target) {
+  #panelText(panelType: PanelType, target: HTMLElement) {
     const div = document.createElement("div");
     const { r, g, b } = PerformanceStats.colorSchemes[panelType].fg;
     const current = document.createElement("strong");
@@ -153,14 +169,14 @@ export class PerformanceStats {
     return { current, range };
   }
 
-  #panelCanvas({ r, g, b }, target) {
+  #panelCanvas({ r, g, b }: Color, target: HTMLElement) {
     const canv = document.createElement("canvas");
     canv.width = this.#panelWidth;
     canv.height = this.#panelHeight;
     this.#assignStyles(canv, { display: "block", marginLeft: "3px" });
     target.appendChild(canv);
 
-    const ctx = canv.getContext("2d");
+    const ctx = canv.getContext("2d")!;
     ctx.fillStyle = `rgb(${r},${g},${b})`;
     ctx.fillRect(0, 0, canv.width, canv.height);
     const data = ctx.getImageData(0, 0, canv.width, canv.height);
@@ -168,7 +184,7 @@ export class PerformanceStats {
     return [ctx, data];
   }
 
-  #createPanel(name, isFirst) {
+  #createPanel(name: PanelType, isFirst: boolean) {
     const display = isFirst ? "block" : "none";
     const div = this.#panelContainer(name, display, this.#DOMElements.parent);
     this.#DOMElements[name] = {};
@@ -251,7 +267,7 @@ export class PerformanceStats {
     if (this.#maxPanels !== 3) return;
 
     // Calculating size of memory used by the heap.
-    const memValue = Math.round(performance.memory.usedJSHeapSize * 9.54e-7);
+    const memValue = Math.round((performance as any).memory.usedJSHeapSize * 9.54e-7);
     this.minMem = Math.min(this.minMem, memValue);
     this.maxMem = Math.max(this.maxMem, memValue);
     this.#drawPanelData(
@@ -264,3 +280,5 @@ export class PerformanceStats {
     mem.ctx.putImageData(mem.data, 0, 0);
   }
 }
+
+type PanelType = "mem" | "ms" | "fps";
