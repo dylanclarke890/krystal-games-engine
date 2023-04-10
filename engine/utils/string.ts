@@ -48,7 +48,7 @@ export function formatAsJSON(
 }
 
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-export function uniqueId(prefix = null) {
+export function uniqueId(prefix?: string) {
   const id = Array.from({ length: 10 }, () => CHARS[Math.floor(Math.random() * CHARS.length)]).join(
     ""
   );

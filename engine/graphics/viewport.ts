@@ -1,18 +1,12 @@
-import { uniqueId } from "../utils/string.js";
+import { uniqueId } from "../utils/string";
 
 export class Viewport {
-  /** @type {string} */
-  canvasId;
-  /** @type {number} */
-  width;
-  /** @type {number} */
-  height;
-  /** @type {HTMLElement} */
-  parent;
-  /** @type {HTMLCanvasElement} */
-  canvas;
-  /** @type {CanvasRenderingContext2D} */
-  ctx;
+  canvasId: string;
+  width: number;
+  height: number;
+  parent: HTMLElement;
+  canvas!: HTMLCanvasElement;
+  ctx!: CanvasRenderingContext2D;
 
   /**
    * @param {number} width
@@ -20,8 +14,13 @@ export class Viewport {
    * @param {string} canvasId
    * @param {HTMLElement} parent
    */
-  constructor(width, height, canvasId = null, parent = document.body) {
-    this.canvasId = canvasId;
+  constructor(
+    width: number,
+    height: number,
+    canvasId?: string,
+    parent: HTMLElement = document.body
+  ) {
+    this.canvasId = canvasId ?? uniqueId("kg-canvas-");
     this.width = width;
     this.height = height;
     this.parent = parent ?? document.body;
@@ -29,20 +28,19 @@ export class Viewport {
   }
 
   createCanvas() {
-    let canvas = document.querySelector(this.canvasId);
+    let canvas = document.querySelector(this.canvasId) as HTMLCanvasElement;
     if (!canvas) {
       canvas = document.createElement("canvas");
       this.parent.appendChild(canvas);
-      canvas.id = this.canvasId ?? uniqueId("kg-canvas-");
-      this.canvasId = canvas.id;
+      canvas.id = this.canvasId;
     }
     canvas.width = this.width;
     canvas.height = this.height;
     this.canvas = canvas;
-    this.ctx = canvas.getContext("2d");
+    this.ctx = canvas.getContext("2d")!;
   }
 
-  clear(color) {
+  clear(color: string) {
     if (color) {
       this.ctx.fillStyle = color;
       this.ctx.fillRect(0, 0, this.width, this.height);
@@ -51,12 +49,12 @@ export class Viewport {
     }
   }
 
-  drawRect(x, y, width, height, color) {
+  drawRect(x: number, y: number, width: number, height: number, color: string) {
     this.ctx.fillStyle = color;
     this.ctx.fillRect(x, y, width, height);
   }
 
-  drawText(text, x, y, font, color) {
+  drawText(text: string, x: number, y: number, font: string, color: string) {
     this.ctx.fillStyle = color;
     this.ctx.font = font;
     this.ctx.fillText(text, x, y);
