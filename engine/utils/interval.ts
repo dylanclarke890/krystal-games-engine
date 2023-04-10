@@ -1,18 +1,22 @@
 import { safeParseInt } from "./number.js";
 
-function setErrorAndType(res, error) {
+type ParseResult = {
+  success: boolean;
+  error?: string;
+  from: number;
+  to: number;
+  includeEnd: boolean;
+  includeStart: boolean;
+  reverse: boolean;
+};
+
+function setErrorAndType(res: ParseResult, error: string): ParseResult {
   res.success = false;
   res.error = error;
   return res;
 }
 
-/**
- *
- * @param {string} interval
- * @returns {{ from: number, to: number, includeStart: boolean,
- * includeEnd: boolean, reverse: boolean, success: boolean, error: string }}
- */
-function getIntervalInfo(interval) {
+function getIntervalInfo(interval: string): ParseResult {
   interval = interval.trim();
   const first = interval[0];
   const last = interval[interval.length - 1];
@@ -61,7 +65,7 @@ function getIntervalInfo(interval) {
  * @param {*} interval
  * @returns
  */
-export function arrayFromInterval(interval) {
+export function arrayFromInterval(interval: string): number[] {
   const { success, error, from, to, includeEnd, includeStart, reverse } = getIntervalInfo(interval);
   if (!success) {
     console.warn(error);
