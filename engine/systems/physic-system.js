@@ -51,6 +51,6 @@ export class PhysicSystem extends System {
     }
 
     const collided = this.collisionDetector.detect(collidables);
-    if (collided.length) console.log(collided);
+    this.collisionResolver.resolve(collided);
   }
 }
