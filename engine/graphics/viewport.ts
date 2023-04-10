@@ -7,6 +7,8 @@ export class Viewport {
   parent: HTMLElement;
   canvas!: HTMLCanvasElement;
   ctx!: CanvasRenderingContext2D;
+  realWidth: number;
+  scale: number;
 
   /**
    * @param {number} width
@@ -23,6 +25,8 @@ export class Viewport {
     this.canvasId = canvasId ?? uniqueId("kg-canvas-");
     this.width = width;
     this.height = height;
+    this.scale = 1;
+    this.realWidth = this.width;
     this.parent = parent ?? document.body;
     this.createCanvas();
   }

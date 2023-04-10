@@ -1,34 +1,24 @@
-import { EventSystem } from "../events/event-system.js";
-import { Viewport } from "../graphics/viewport.js";
-import { Guard } from "../utils/guard.js";
-import { UserAgent } from "../utils/user-agent.js";
-import { InputKeys, keyboardMap } from "./input-keys.js";
+import { EventSystem } from "../events/event-system";
+import { Viewport } from "../graphics/viewport";
+import { Guard } from "../utils/guard";
+import { UserAgent } from "../utils/user-agent";
+import { InputKeys, keyboardMap } from "./input-keys";
 
 export class InputManager {
   viewport;
 
-  /** @type {Map<InputKeys, string>} */
-  #bindings;
-  /** @type {Map<string, boolean>} */
-  #pressed;
-  /** @type {Map<string, boolean>} */
-  #delayedActions;
-  /** @type {Map<string, boolean>} */
-  #locks;
-  /** @type {Map<string, boolean>} */
-  #actions;
+  #bindings: Map<InputKeys, string>;
+  #pressed: Map<string, boolean>;
+  #actions: Map<string, boolean>;
+  #locks: Map<string, boolean>;
+  #delayedActions: Map<string, boolean>;
   #using;
 
-  /** @type {{x:number, y:number}} */
-  mouse;
-  /** @type {number} */
-  accel;
+  mouse!: { x: number; y: number };
+  accel!: DeviceMotionEventAcceleration;
+  eventSystem: EventSystem;
 
-  /**
-   * @param {EventSystem} eventSystem
-   * @param {Viewport} viewport
-   */
-  constructor(eventSystem, viewport) {
+  constructor(eventSystem: EventSystem, viewport: Viewport) {
     Guard.againstNull({ eventSystem }).isInstanceOf(EventSystem);
     Guard.againstNull({ viewport }).isInstanceOf(Viewport);
     this.eventSystem = eventSystem;
@@ -75,10 +65,10 @@ export class InputManager {
     canvas.addEventListener("touchmove", (e) => this.#onMouseMove(e), false);
 
     // MS
-    canvas.addEventListener("MSPointerDown", (e) => this.#onTouchStart(e), false);
-    canvas.addEventListener("MSPointerUp", (e) => this.#onTouchEnd(e), false);
-    canvas.addEventListener("MSPointerMove", (e) => this.#onMouseMove(e), false);
-    canvas.style.msTouchAction = "none";
+    canvas.addEventListener("MSPointerDown", (e) => this.#onTouchStart(e as TouchEvent), false);
+    canvas.addEventListener("MSPointerUp", (e) => this.#onTouchEnd(e as TouchEvent), false);
+    canvas.addEventListener("MSPointerMove", (e) => this.#onMouseMove(e as TouchEvent), false);
+    canvas.style.touchAction = "none";
   }
 
   #initializeKeyboardEvents() {
@@ -92,11 +82,11 @@ export class InputManager {
   #initializeAccelerometer() {
     if (this.#using.accelerometer) return;
     this.#using.accelerometer = true;
-    this.accel = 0;
+    this.accel = { x: 0, y: 0, z: 0 };
     window.addEventListener("devicemotion", (e) => this.onDeviceMotion(e), false);
   }
 
-  #initInputTypeEvents(key) {
+  #initInputTypeEvents(key: InputKeys) {
     switch (key) {
       case InputKeys.Mouse_BtnOne:
       case InputKeys.Mouse_BtnTwo:
@@ -126,7 +116,7 @@ export class InputManager {
    * @param {InputKeys} key
    * @param {string} action
    */
-  bind(key, action) {
+  bind(key: InputKeys, action: string) {
     if (this.#bindings.has(key))
       console.warn(`${key} already bound to action ${this.#bindings.get(key)}`);
     this.#bindings.set(key, action);
@@ -135,9 +125,8 @@ export class InputManager {
 
   /**
    * Unbind an action from a key.
-   * @param {InputKeys} key
    */
-  unbind(key) {
+  unbind(key: InputKeys) {
     const action = this.#bindings.get(key);
     if (!action) return;
     this.#delayedActions.set(action, true);
@@ -157,25 +146,22 @@ export class InputManager {
 
   /**
    * Returns a boolean value indicating whether the input action began being pressed this frame.
-   * @param {string} action The string representing the input action to check.
    */
-  pressed(action) {
+  pressed(action: string) {
     return !!this.#pressed.get(action);
   }
 
   /**
    * Returns a boolean value indicating whether the input action is currently in a state of being pressed.
-   * @param {string} action The string representing the input action to check.
    */
-  state(action) {
+  state(action: string) {
     return !!this.#actions.get(action);
   }
 
   /**
    * Returns a boolean value indicating whether the input action was released in the last frame.
-   * @param {string} action The string representing the input action to check.
    */
-  released(action) {
+  released(action: string) {
     return !!this.#delayedActions.get(action);
   }
 
@@ -205,34 +191,29 @@ export class InputManager {
 
   //#region Events
 
-  /**
-   * @param {Event} event
-   * @returns {boolean}
-   */
-  #targetIsInputOrText(event) {
+  #targetIsInputOrText(event: any): boolean {
     const { tagName } = event.target;
     return tagName === "INPUT" || tagName === "TEXTAREA";
   }
 
   /**
-   * @param {Event} e
-   * @param {[boolean]} orPropagate Defaults to true
+   * @param orPropagate Defaults to true
    */
-  #youShallNotDefault(e, orPropagate) {
+  #youShallNotDefault(e: Event, orPropagate?: boolean) {
     e.preventDefault();
     if (orPropagate ?? true === true) e.stopPropagation();
   }
 
   /** @param {KeyboardEvent} e */
-  #getKeyboardAction(e) {
+  #getKeyboardAction(e: KeyboardEvent) {
     if (this.#targetIsInputOrText(e)) return null;
-    const key = keyboardMap[e.key.toLowerCase()];
+    const key = keyboardMap[e.key.toLowerCase() as keyof typeof keyboardMap];
     if (!key) return null;
     return this.#bindings.get(key);
   }
 
   /** @param {KeyboardEvent} e */
-  #onKeyDown(e) {
+  #onKeyDown(e: KeyboardEvent) {
     const action = this.#getKeyboardAction(e);
     if (!action) return;
 
@@ -245,7 +226,7 @@ export class InputManager {
   }
 
   /** @param {KeyboardEvent} e */
-  #onKeyUp(e) {
+  #onKeyUp(e: KeyboardEvent) {
     const action = this.#getKeyboardAction(e);
     if (!action) return;
 
@@ -254,7 +235,7 @@ export class InputManager {
   }
 
   /** @param {WheelEvent} e */
-  #onMouseWheel(e) {
+  #onMouseWheel(e: WheelEvent) {
     const scrollAmount = Math.sign(e.deltaY);
     const key = scrollAmount > 0 ? InputKeys.Mouse_WheelDown : InputKeys.Mouse_WheelUp;
     const action = this.#bindings.get(key);
@@ -267,7 +248,7 @@ export class InputManager {
   }
 
   /** @param {TouchEvent|MouseEvent} e */
-  #onMouseMove(e) {
+  #onMouseMove(e: TouchEvent | MouseEvent) {
     const viewport = this.viewport;
     const internalWidth = viewport.canvas.offsetWidth || viewport.realWidth;
     const scale = viewport.scale * (internalWidth / viewport.realWidth);
@@ -278,22 +259,25 @@ export class InputManager {
     this.mouse.y = (clientY - pos.top) / scale;
   }
 
-  /** @param {MouseEvent} e */
-  #getMouseAction(e) {
-    if (this.#targetIsInputOrText(e)) return null;
+  #getMouseAction(e: MouseEvent) {
+    if (this.#targetIsInputOrText(e)) return undefined;
+    let key;
     switch (e.button) {
       case 0:
       case 1:
-        return InputKeys.Mouse_BtnOne;
+        key = InputKeys.Mouse_BtnOne;
+        break;
       case 2:
-        return InputKeys.Mouse_BtnTwo;
+        key = InputKeys.Mouse_BtnTwo;
+        break;
       default:
-        return null;
+        break;
     }
+    if (!key) return undefined;
+    return this.#bindings.get(key);
   }
 
-  /** @param {MouseEvent} e */
-  #onMouseDown(e) {
+  #onMouseDown(e: MouseEvent) {
     this.#onMouseMove(e);
 
     const action = this.#getMouseAction(e);
@@ -303,17 +287,15 @@ export class InputManager {
     this.#youShallNotDefault(e);
   }
 
-  /** @param {MouseEvent} e */
-  #onMouseUp(e) {
+  #onMouseUp(e: MouseEvent) {
     const action = this.#getMouseAction(e);
     if (!action) return;
     this.#delayedActions.set(action, true);
     this.#youShallNotDefault(e);
   }
 
-  /** @param {TouchEvent} e */
-  #onTouchStart(e) {
-    if (this.#targetIsInputOrText(e)) return null;
+  #onTouchStart(e: TouchEvent) {
+    if (this.#targetIsInputOrText(e)) return;
     // Focus window element for mouse clicks. Prevents issues when running the game in an iframe.
     if (UserAgent.instance.device.mobile) window.focus();
     this.#onMouseMove(e);
@@ -325,23 +307,20 @@ export class InputManager {
     this.#youShallNotDefault(e);
   }
 
-  /** @param {TouchEvent} e */
-  #onTouchEnd(e) {
-    if (this.#targetIsInputOrText(e)) return null;
+  #onTouchEnd(e: TouchEvent) {
+    if (this.#targetIsInputOrText(e)) return;
     const action = this.#bindings.get(InputKeys.Touch_End);
     if (!action) return;
     this.#delayedActions.set(action, true);
     this.#youShallNotDefault(e);
   }
 
-  /** @param {MouseEvent} e */
-  #onContextMenu(e) {
+  #onContextMenu(e: MouseEvent) {
     if (this.#bindings.has(InputKeys.Context_Menu)) this.#youShallNotDefault(e);
   }
 
-  /** @param {DeviceMotionEvent} e */
-  onDeviceMotion(e) {
-    this.accel = e.accelerationIncludingGravity;
+  onDeviceMotion(e: DeviceMotionEvent) {
+    this.accel = e.accelerationIncludingGravity!;
   }
 
   //#endregion Events
