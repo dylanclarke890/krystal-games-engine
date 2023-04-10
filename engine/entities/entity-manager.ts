@@ -35,7 +35,22 @@ type ComponentMap = {
   Velocity: Velocity;
 };
 
-type ComponentType = keyof ComponentMap;
+type ComponentType =
+  | "Acceleration"
+  | "AI"
+  | "Animation"
+  | "Bounciness"
+  | "Collision"
+  | "Damage"
+  | "Friction"
+  | "GravityFactor"
+  | "Health"
+  | "Input"
+  | "Offset"
+  | "Position"
+  | "Size"
+  | "Sprite"
+  | "Velocity";
 
 export class EntityManager {
   eventSystem: EventSystem;

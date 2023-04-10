@@ -1,20 +1,16 @@
-import { EntityManager } from "../entities/entity-manager.js";
-import { EventSystem } from "../events/event-system.js";
-import { GameEvents } from "../events/events.js";
-import { Guard } from "../utils/guard.js";
-import { SystemTypes } from "./system-types.js";
-import { System } from "./system.js";
+import { EntityManager } from "../entities/entity-manager";
+import { EventSystem } from "../events/event-system";
+import { GameEvents } from "../events/events";
+import { Guard } from "../utils/guard";
+import { SystemTypes } from "./system-types";
+import { System } from "./system";
 
 export class SystemManager {
-  /** @type {EventSystem} */
-  eventSystem;
-  /** @type {EntityManager} */
-  entityManager;
-  /** @type {Set<System>} */
-  systems;
+  eventSystem: EventSystem;
+  entityManager: EntityManager;
+  systems: Set<System>;
 
-  /** @type {boolean} */
-  #throwIfMissing;
+  #throwIfMissing: boolean;
 
   /**
    *
@@ -22,7 +18,7 @@ export class SystemManager {
    * @param {EntityManager} entityManager
    * @param {boolean} throwIfMissing
    */
-  constructor(eventSystem, entityManager, throwIfMissing) {
+  constructor(eventSystem: EventSystem, entityManager: EntityManager, throwIfMissing: boolean) {
     Guard.againstNull({ eventSystem }).isInstanceOf(EventSystem);
     Guard.againstNull({ entityManager }).isInstanceOf(EntityManager);
     this.eventSystem = eventSystem;
@@ -40,7 +36,7 @@ export class SystemManager {
 
   #beforeStart() {
     this.systems.forEach((system) => {
-      const required = system.constructor.requiredComponents;
+      const required = (system.constructor as any).requiredComponents;
       const result = this.#ensureRequiredComponentsArePresent(required);
       if (!result.success) console.warn(result.message);
     });
@@ -50,7 +46,10 @@ export class SystemManager {
    * @param {string[]} requiredComponents
    * @returns {{success: boolean, message: string?}}
    */
-  #ensureRequiredComponentsArePresent(requiredComponents) {
+  #ensureRequiredComponentsArePresent(requiredComponents: string[]): {
+    success: boolean;
+    message: string | null;
+  } {
     Guard.againstNull({ requiredComponents });
     for (const componentType of requiredComponents) {
       if (this.entityManager.hasComponentType(componentType)) continue;
