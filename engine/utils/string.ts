@@ -1,9 +1,13 @@
-export function formatAsJSON(json, opts = {}) {
-  const push = (m) => "\\" + p.push(m) + "\\",
-    pop = (_m, i) => p[i - 1],
-    tabs = (count) => Array.from({ length: count + 1 }).join(opts.indentWithTabs ? "\t" : "  ");
+export function formatAsJSON(
+  json: string,
+  opts: { indentWithTabs: boolean } = { indentWithTabs: false }
+): string {
+  const push = (m: string) => "\\" + p.push(m) + "\\",
+    pop = (_m: any, i: number) => p[i - 1],
+    tabs = (count: number) =>
+      Array.from({ length: count + 1 }).join(opts.indentWithTabs ? "\t" : "  ");
 
-  const p = [];
+  const p: string[] = [];
   let out = "",
     indent = 0;
 
@@ -52,9 +56,9 @@ export function uniqueId(prefix = null) {
 }
 
 /**
- * @param {string} str hyphenated-string
- * @returns {string} camelCased string
+ * @param str hyphenated-string
+ * @returns camelCased string
  */
-export function hyphenToCamelCase(str) {
+export function hyphenToCamelCase(str: string): string {
   return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase()).replace("-", "");
 }
