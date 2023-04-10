@@ -1,24 +1,22 @@
-import { CollisionDetector } from "../collision/detector.js";
-import { CollisionResolver } from "../collision/resolver.js";
-import { Guard } from "../utils/guard.js";
-import { SystemTypes } from "./system-types.js";
-import { System } from "./system.js";
+import { CollisionDetector } from "../collision/detector";
+import { CollisionResolver } from "../collision/resolver";
+import { Guard } from "../utils/guard";
+import { SystemTypes } from "./system-types";
+import { System } from "./system";
+import { EntityManager } from "../entities/entity-manager";
 
 export class PhysicSystem extends System {
   static requiredComponents = ["Position", "Velocity"];
   static systemType = SystemTypes.Physics;
 
-  /** @type {CollisionDetector} */
-  collisionDetector;
-  /** @type {CollisionResolver} */
-  collisionResolver;
+  collisionDetector: CollisionDetector;
+  collisionResolver: CollisionResolver;
 
-  /**
-   * @param {import("../entities/entity-manager.js").EntityManager} entityManager
-   * @param {CollisionDetector} collisionDetector
-   * @param {CollisionResolver} collisionResolver
-   */
-  constructor(entityManager, collisionDetector, collisionResolver) {
+  constructor(
+    entityManager: EntityManager,
+    collisionDetector: CollisionDetector,
+    collisionResolver: CollisionResolver
+  ) {
     super(entityManager);
     Guard.againstNull({ collisionDetector }).isInstanceOf(CollisionDetector);
     Guard.againstNull({ collisionResolver }).isInstanceOf(CollisionResolver);
@@ -26,16 +24,20 @@ export class PhysicSystem extends System {
     this.collisionResolver = collisionResolver;
   }
 
-  update(dt) {
+  update(dt: number) {
     const em = this.entityManager;
     const entities = em.getEntitiesWithComponents(...PhysicSystem.requiredComponents);
 
     /** @type {[number, import("../components/position.js").Position, import("../components/collision.js").Collision][]} */
-    const collidables = [];
+    const collidables: [
+      number,
+      import("../components/position.js").Position,
+      import("../components/collision.js").Collision
+    ][] = [];
     for (let i = 0; i < entities.length; i++) {
       const entity = entities[i];
-      const position = em.getComponent(entity, "Position");
-      const velocity = em.getComponent(entity, "Velocity");
+      const position = em.getComponent(entity, "Position")!;
+      const velocity = em.getComponent(entity, "Velocity")!;
       const acceleration = em.getComponent(entity, "Acceleration");
 
       if (acceleration) {
