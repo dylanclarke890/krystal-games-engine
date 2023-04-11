@@ -5,6 +5,7 @@ import { arrayFromInterval } from "../utils/interval";
 export class Animation {
   sequence: number[];
   frameDuration: number;
+  frame: number;
   loopCount: number;
   stop: boolean;
 
@@ -23,6 +24,7 @@ export class Animation {
     this.frameDuration = frameDuration ?? 1;
     this.stop = !!stop;
 
+    this.frame = 0;
     this.loopCount = 0;
   }
 }
