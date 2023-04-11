@@ -5,7 +5,7 @@ import { UserAgent } from "../utils/user-agent.js";
 import { InputKeys, keyboardMap } from "./input-keys.js";
 
 export class InputManager {
-  viewport;
+  viewport: Viewport;
 
   #bindings: Map<InputKeys, string>;
   #pressed: Map<string, boolean>;
@@ -118,14 +118,12 @@ export class InputManager {
    */
   bind(key: InputKeys, action: string) {
     if (this.#bindings.has(key))
-      console.warn(`${key} already bound to action ${this.#bindings.get(key)}`);
+      console.warn(`${key} was already bound to action ${this.#bindings.get(key)}`);
     this.#bindings.set(key, action);
     this.#initInputTypeEvents(key);
   }
 
-  /**
-   * Unbind an action from a key.
-   */
+  /** Unbind an action from a key. */
   unbind(key: InputKeys) {
     const action = this.#bindings.get(key);
     if (!action) return;
@@ -133,9 +131,7 @@ export class InputManager {
     this.#bindings.delete(key);
   }
 
-  /**
-   * Unbind all actions.
-   */
+  /** Unbind all actions. */
   unbindAll() {
     this.#bindings.clear();
     this.#actions.clear();
@@ -144,38 +140,28 @@ export class InputManager {
     this.#delayedActions.clear();
   }
 
-  /**
-   * Returns a boolean value indicating whether the input action began being pressed this frame.
-   */
+  /** Returns a boolean value indicating whether the input action began being pressed this frame. */
   pressed(action: string) {
     return !!this.#pressed.get(action);
   }
 
-  /**
-   * Returns a boolean value indicating whether the input action is currently in a state of being pressed.
-   */
-  state(action: string) {
+  /** Returns a boolean value indicating whether the input action is currently held down. */
+  held(action: string) {
     return !!this.#actions.get(action);
   }
 
-  /**
-   * Returns a boolean value indicating whether the input action was released in the last frame.
-   */
+  /** Returns a boolean value indicating whether the input action was released in the last frame. */
   released(action: string) {
     return !!this.#delayedActions.get(action);
   }
 
   /**
    * Clears any inputs that were pressed in the previous frame and updates the state of the inputs.
-   *
-   * This method should be called at the start of each game frame, before any input processing is done.
-   *
+   * Should be called at the start of each game frame, before any input processing is done.
    * Any inputs that were released in the previous frame will still be stored in the delayedActions map and can be
    * checked using `released()`.
-   *
    * After calling this method, `pressed()` will return false for all inputs that were pressed in the previous
    * frame.
-   *
    * Any inputs that are still held down will remain in the pressed state and can be checked using `state()`.
    */
   clearPressed() {
@@ -196,15 +182,12 @@ export class InputManager {
     return tagName === "INPUT" || tagName === "TEXTAREA";
   }
 
-  /**
-   * @param orPropagate Defaults to true
-   */
+  /** @param orPropagate Defaults to true */
   #youShallNotDefault(e: Event, orPropagate?: boolean) {
     e.preventDefault();
     if (orPropagate ?? true === true) e.stopPropagation();
   }
 
-  /** @param {KeyboardEvent} e */
   #getKeyboardAction(e: KeyboardEvent) {
     if (this.#targetIsInputOrText(e)) return null;
     const key = keyboardMap[e.key.toLowerCase() as keyof typeof keyboardMap];
@@ -212,7 +195,6 @@ export class InputManager {
     return this.#bindings.get(key);
   }
 
-  /** @param {KeyboardEvent} e */
   #onKeyDown(e: KeyboardEvent) {
     const action = this.#getKeyboardAction(e);
     if (!action) return;
@@ -225,7 +207,6 @@ export class InputManager {
     this.#youShallNotDefault(e, false);
   }
 
-  /** @param {KeyboardEvent} e */
   #onKeyUp(e: KeyboardEvent) {
     const action = this.#getKeyboardAction(e);
     if (!action) return;
@@ -234,7 +215,6 @@ export class InputManager {
     this.#youShallNotDefault(e, false);
   }
 
-  /** @param {WheelEvent} e */
   #onMouseWheel(e: WheelEvent) {
     const scrollAmount = Math.sign(e.deltaY);
     const key = scrollAmount > 0 ? InputKeys.Mouse_WheelDown : InputKeys.Mouse_WheelUp;
@@ -247,7 +227,6 @@ export class InputManager {
     this.#youShallNotDefault(e);
   }
 
-  /** @param {TouchEvent|MouseEvent} e */
   #onMouseMove(e: TouchEvent | MouseEvent) {
     const viewport = this.viewport;
     const internalWidth = viewport.canvas.offsetWidth || viewport.realWidth;
