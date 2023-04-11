@@ -36,7 +36,7 @@ export class SystemManager {
 
   #beforeStart() {
     this.systems.forEach((system) => {
-      const required = (system.constructor as any).requiredComponents;
+      const required = (<typeof System>system.constructor).requiredComponents;
       const result = this.#ensureRequiredComponentsArePresent(required);
       if (!result.success) console.warn(result.message);
     });
