@@ -3,11 +3,11 @@
  */
 export class PairedSet {
   #set: Set<Pair>;
-  #entries: Map<string, boolean>;
+  #entries: Set<string>;
 
   constructor() {
     this.#set = new Set();
-    this.#entries = new Map();
+    this.#entries = new Set();
   }
 
   get length() {
@@ -18,7 +18,7 @@ export class PairedSet {
     this.#sort(pair);
     const key = `${pair[0]}-${pair[1]}`;
     if (this.#entries.has(key)) return;
-    this.#entries.set(key, true);
+    this.#entries.add(key);
     this.#set.add(pair);
   }
 
