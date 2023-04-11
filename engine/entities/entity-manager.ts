@@ -35,22 +35,7 @@ type ComponentMap = {
   Velocity: Velocity;
 };
 
-type ComponentType =
-  | "Acceleration"
-  | "AI"
-  | "Animation"
-  | "Bounciness"
-  | "Collision"
-  | "Damage"
-  | "Friction"
-  | "GravityFactor"
-  | "Health"
-  | "Input"
-  | "Offset"
-  | "Position"
-  | "Size"
-  | "Sprite"
-  | "Velocity";
+type ComponentType = keyof ComponentMap;
 
 export class EntityManager {
   eventSystem: EventSystem;
@@ -107,11 +92,11 @@ export class EntityManager {
    * @param componentType the name of the component.
    * @returns the component type, if found.
    */
-  getComponent(
+  getComponent<T extends ComponentType>(
     entity: number,
-    componentType: ComponentType
-  ): ComponentMap[ComponentType] | undefined {
-    return this.components.get(entity + componentType);
+    componentType: T
+  ): ComponentMap[T] | undefined {
+    return this.components.get(entity + componentType) as ComponentMap[T] | undefined;
   }
 
   /**
@@ -142,7 +127,7 @@ export class EntityManager {
    * Get all entities that have a set of components.
    * @param {ComponentType[]} componentTypes
    */
-  getEntitiesWithComponents(...componentTypes: ComponentType[]) {
+  getEntitiesWithComponents<T extends ComponentType>(...componentTypes: T[]) {
     const entities = [];
     for (const entity of this.entities) {
       if (componentTypes.every((componentType) => this.hasComponent(entity, componentType))) {
