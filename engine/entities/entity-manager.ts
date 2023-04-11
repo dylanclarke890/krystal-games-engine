@@ -17,7 +17,8 @@ import { EventSystem } from "../events/event-system";
 import { GameEvents } from "../events/events";
 import { Guard } from "../utils/guard";
 
-type ComponentMap = {
+export type ComponentType = keyof ComponentMap;
+export type ComponentMap = {
   Acceleration: Acceleration;
   AI: AI;
   Animation: Animation;
@@ -34,8 +35,6 @@ type ComponentMap = {
   Sprite: Sprite;
   Velocity: Velocity;
 };
-
-type ComponentType = keyof ComponentMap;
 
 export class EntityManager {
   eventSystem: EventSystem;

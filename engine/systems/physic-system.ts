@@ -2,11 +2,11 @@ import { CollisionDetector } from "../collision/detector";
 import { CollisionResolver } from "../collision/resolver";
 import { Guard } from "../utils/guard";
 import { SystemTypes } from "./system-types";
-import { System } from "./system";
+import { RequiredComponent, System } from "./system";
 import { EntityManager } from "../entities/entity-manager";
 
 export class PhysicSystem extends System {
-  static requiredComponents = ["Position", "Velocity"];
+  static requiredComponents: RequiredComponent[] = ["Position", "Velocity"];
   static systemType = SystemTypes.Physics;
 
   collisionDetector: CollisionDetector;
