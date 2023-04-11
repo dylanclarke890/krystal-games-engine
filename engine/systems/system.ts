@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-import { ComponentMap, EntityManager } from "../entities/entity-manager";
-import { Guard } from "../utils/guard";
-import { SystemTypes } from "./system-types";
+import { ComponentMap, EntityManager } from "../entities/entity-manager.js";
+import { Guard } from "../utils/guard.js";
+import { SystemTypes } from "./system-types.js";
 
 export type RequiredComponent = keyof ComponentMap & string;
 

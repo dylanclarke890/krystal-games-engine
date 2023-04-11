@@ -1,4 +1,4 @@
-import { Enum } from "../utils/enum";
+import { Enum } from "../utils/enum.js";
 
 export class InputKeys extends Enum {
   //#region Mouse

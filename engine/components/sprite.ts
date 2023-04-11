@@ -1,4 +1,4 @@
-import { Guard } from "../utils/guard";
+import { Guard } from "../utils/guard.js";
 
 export class Sprite {
   image: HTMLImageElement;

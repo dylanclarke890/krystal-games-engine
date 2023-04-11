@@ -1,7 +1,7 @@
-import { Guard } from "../utils/guard";
-import { EventSystem } from "../events/event-system";
-import { GameEvents } from "../events/events";
-import { Timer } from "./timer";
+import { Guard } from "../utils/guard.js";
+import { EventSystem } from "../events/event-system.js";
+import { GameEvents } from "../events/events.js";
+import { Timer } from "./timer.js";
 
 export class GameLoop {
   #lastFrame: number;

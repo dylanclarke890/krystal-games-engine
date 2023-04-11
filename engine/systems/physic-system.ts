@@ -1,11 +1,11 @@
-import { CollisionDetector } from "../collision/detector";
-import { CollisionResolver } from "../collision/resolver";
-import { Guard } from "../utils/guard";
-import { SystemTypes } from "./system-types";
-import { RequiredComponent, System } from "./system";
-import { EntityManager } from "../entities/entity-manager";
-import { Collision } from "../components/collision";
-import { Position } from "../components/position";
+import { CollisionDetector } from "../collision/detector.js";
+import { CollisionResolver } from "../collision/resolver.js";
+import { Guard } from "../utils/guard.js";
+import { SystemTypes } from "./system-types.js";
+import { RequiredComponent, System } from "./system.js";
+import { EntityManager } from "../entities/entity-manager.js";
+import { Collision } from "../components/collision.js";
+import { Position } from "../components/position.js";
 
 export class PhysicSystem extends System {
   static requiredComponents: RequiredComponent[] = ["Position", "Velocity"];

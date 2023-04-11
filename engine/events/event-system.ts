@@ -1,6 +1,6 @@
-import { PQueue, PriorityLevel } from "../utils/priority-queue";
-import { Guard } from "../utils/guard";
-import { Enum } from "../utils/enum";
+import { PQueue, PriorityLevel } from "../utils/priority-queue.js";
+import { Guard } from "../utils/guard.js";
+import { Enum } from "../utils/enum.js";
 
 type Listener = (data?: any) => void;
 

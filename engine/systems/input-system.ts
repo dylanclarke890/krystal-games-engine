@@ -1,8 +1,8 @@
-import { InputManager } from "../input/input-manager";
-import { Guard } from "../utils/guard";
-import { SystemTypes } from "./system-types";
-import { RequiredComponent, System } from "./system";
-import { EntityManager } from "../entities/entity-manager";
+import { InputManager } from "../input/input-manager.js";
+import { Guard } from "../utils/guard.js";
+import { SystemTypes } from "./system-types.js";
+import { RequiredComponent, System } from "./system.js";
+import { EntityManager } from "../entities/entity-manager.js";
 
 export class InputSystem extends System {
   static requiredComponents: RequiredComponent[] = ["Input"];

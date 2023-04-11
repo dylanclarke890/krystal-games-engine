@@ -1,4 +1,4 @@
-import { uniqueId } from "../utils/string";
+import { uniqueId } from "../utils/string.js";
 
 export class Viewport {
   canvasId: string;

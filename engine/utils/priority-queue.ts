@@ -1,4 +1,4 @@
-import { Enum } from "./enum";
+import { Enum } from "./enum.js";
 
 export class PriorityLevel extends Enum {
   /**

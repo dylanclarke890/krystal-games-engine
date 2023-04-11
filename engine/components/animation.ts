@@ -1,6 +1,6 @@
-import { Assert } from "../utils/assert";
-import { Guard } from "../utils/guard";
-import { arrayFromInterval } from "../utils/interval";
+import { Assert } from "../utils/assert.js";
+import { Guard } from "../utils/guard.js";
+import { arrayFromInterval } from "../utils/interval.js";
 
 export class Animation {
   sequence: number[];

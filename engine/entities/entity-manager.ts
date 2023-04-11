@@ -1,21 +1,21 @@
-import { Acceleration } from "../components/acceleration";
-import { AI } from "../components/ai";
-import { Animation } from "../components/animation";
+import { Acceleration } from "../components/acceleration.js";
+import { AI } from "../components/ai.js";
+import { Animation } from "../components/animation.js";
 import { Bounciness } from "../components/bounciness.js";
-import { Collision } from "../components/collision";
-import { Damage } from "../components/damage";
-import { Friction } from "../components/friction";
-import { GravityFactor } from "../components/gravity-factor";
-import { Health } from "../components/health";
-import { Input } from "../components/input";
-import { Offset } from "../components/offset";
-import { Position } from "../components/position";
-import { Size } from "../components/size";
-import { Sprite } from "../components/sprite";
+import { Collision } from "../components/collision.js";
+import { Damage } from "../components/damage.js";
+import { Friction } from "../components/friction.js";
+import { GravityFactor } from "../components/gravity-factor.js";
+import { Health } from "../components/health.js";
+import { Input } from "../components/input.js";
+import { Offset } from "../components/offset.js";
+import { Position } from "../components/position.js";
+import { Size } from "../components/size.js";
+import { Sprite } from "../components/sprite.js";
 import { Velocity } from "../components/velocity.js";
-import { EventSystem } from "../events/event-system";
-import { GameEvents } from "../events/events";
-import { Guard } from "../utils/guard";
+import { EventSystem } from "../events/event-system.js";
+import { GameEvents } from "../events/events.js";
+import { Guard } from "../utils/guard.js";
 
 export type ComponentType = keyof ComponentMap;
 export type ComponentMap = {

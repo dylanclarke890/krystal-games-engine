@@ -1,4 +1,4 @@
-import { constrain } from "../utils/number";
+import { constrain } from "../utils/number.js";
 
 export class Bounciness {
   value: number;

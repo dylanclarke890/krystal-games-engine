@@ -1,9 +1,9 @@
-import { EntityManager } from "../entities/entity-manager";
-import { EventSystem } from "../events/event-system";
-import { GameEvents } from "../events/events";
-import { Guard } from "../utils/guard";
-import { SystemTypes } from "./system-types";
-import { RequiredComponent, System } from "./system";
+import { EntityManager } from "../entities/entity-manager.js";
+import { EventSystem } from "../events/event-system.js";
+import { GameEvents } from "../events/events.js";
+import { Guard } from "../utils/guard.js";
+import { SystemTypes } from "./system-types.js";
+import { RequiredComponent, System } from "./system.js";
 
 export class SystemManager {
   eventSystem: EventSystem;

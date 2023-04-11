@@ -1,4 +1,4 @@
-import { PairedSet } from "../utils/paired-set";
+import { PairedSet } from "../utils/paired-set.js";
 
 export class CollisionResolver {
   resolve(collided: PairedSet) {

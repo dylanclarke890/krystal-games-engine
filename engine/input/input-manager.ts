@@ -1,8 +1,8 @@
-import { EventSystem } from "../events/event-system";
-import { Viewport } from "../graphics/viewport";
-import { Guard } from "../utils/guard";
-import { UserAgent } from "../utils/user-agent";
-import { InputKeys, keyboardMap } from "./input-keys";
+import { EventSystem } from "../events/event-system.js";
+import { Viewport } from "../graphics/viewport.js";
+import { Guard } from "../utils/guard.js";
+import { UserAgent } from "../utils/user-agent.js";
+import { InputKeys, keyboardMap } from "./input-keys.js";
 
 export class InputManager {
   viewport;

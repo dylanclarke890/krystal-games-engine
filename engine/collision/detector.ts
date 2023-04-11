@@ -1,9 +1,9 @@
-import { Collision } from "../components/collision";
+import { Collision } from "../components/collision.js";
 import { Position } from "../components/position.js";
 import { Size } from "../components/size.js";
-import { EntityManager } from "../entities/entity-manager";
-import { Guard } from "../utils/guard";
-import { PairedSet } from "../utils/paired-set";
+import { EntityManager } from "../entities/entity-manager.js";
+import { Guard } from "../utils/guard.js";
+import { PairedSet } from "../utils/paired-set.js";
 
 export class CollisionDetector {
   entityManager: EntityManager;
