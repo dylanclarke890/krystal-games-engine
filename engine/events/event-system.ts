@@ -2,10 +2,10 @@ import { PQueue, PriorityLevel } from "../utils/priority-queue.js";
 import { Guard } from "../utils/guard.js";
 import { Enum } from "../utils/enum.js";
 
-type Listener = (data?: any) => void;
+type Listener<T> = (data: T) => void;
 
 export class EventSystem {
-  #subscribers: Map<Enum, PQueue<Listener>>;
+  #subscribers: Map<Enum, PQueue<Listener<any>>>;
   #parent: EventSystem | undefined;
 
   constructor(parent?: EventSystem) {
@@ -26,7 +26,7 @@ export class EventSystem {
   /**
    * Subscribe to an event.
    */
-  on(event: Enum, listener: Listener, priority: number | PriorityLevel = PriorityLevel.None) {
+  on<T>(event: Enum, listener: Listener<T>, priority: number | PriorityLevel = PriorityLevel.None) {
     if (!this.#subscribers.has(event)) this.#subscribers.set(event, new PQueue());
     this.#subscribers
       .get(event)!
@@ -36,7 +36,7 @@ export class EventSystem {
   /**
    * Unsubscribe from an event.
    */
-  off(event: Enum, listener: Listener) {
+  off<T>(event: Enum, listener: Listener<T>) {
     const queue = this.#subscribers.get(event);
     if (!queue) return;
     return queue.remove(listener);
@@ -45,7 +45,7 @@ export class EventSystem {
   /**
    * Dispatch an event to subscribers.
    */
-  dispatch(event: Enum, data?: any) {
+  dispatch<T>(event: Enum, data?: T) {
     const queue = this.#subscribers.get(event);
     if (queue) queue.forEach((listener) => listener(data));
     if (this.#parent) this.#parent.dispatch(event, data);

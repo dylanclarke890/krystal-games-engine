@@ -31,7 +31,7 @@ export class SystemManager {
 
   #bindEvents() {
     this.eventSystem.on(GameEvents.Loop_BeforeStart, () => this.#beforeStart());
-    this.eventSystem.on(GameEvents.Loop_NextFrame, (dt) => this.update(dt));
+    this.eventSystem.on(GameEvents.Loop_NextFrame, (dt: number) => this.update(dt));
   }
 
   #beforeStart() {
