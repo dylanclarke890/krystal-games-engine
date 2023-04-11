@@ -1,8 +1,10 @@
+type Pair<T> = [T, T];
+
 /**
- * A data structure that you can add pairs of numbers to without worrying about duplicates.
+ * A data structure that you can add pairs of primitives to without worrying about duplicates.
  */
-export class PairedSet {
-  #set: Set<Pair>;
+export class PairedSet<T extends number | string | boolean> {
+  #set: Set<Pair<T>>;
   #entries: Set<string>;
 
   constructor() {
@@ -14,7 +16,7 @@ export class PairedSet {
     return this.#set.size;
   }
 
-  add(pair: Pair) {
+  add(pair: Pair<T>) {
     this.#sort(pair);
     const key = `${pair[0]}-${pair[1]}`;
     if (this.#entries.has(key)) return;
@@ -25,7 +27,7 @@ export class PairedSet {
   /**
    * Exposes the underlying set for iteration.
    */
-  forEach(callbackfn: (value: Pair, value2: Pair, set: Set<Pair>) => void) {
+  forEach(callbackfn: (value: Pair<T>, value2: Pair<T>, set: Set<Pair<T>>) => void) {
     this.#set.forEach(callbackfn);
   }
 
@@ -38,7 +40,7 @@ export class PairedSet {
     this.#entries.clear();
   }
 
-  #sort(pair: Pair) {
+  #sort(pair: Pair<T>) {
     if (pair[0] > pair[1]) {
       const tmp = pair[0];
       pair[0] = pair[1];
@@ -46,5 +48,3 @@ export class PairedSet {
     }
   }
 }
-
-type Pair = [number, number];
