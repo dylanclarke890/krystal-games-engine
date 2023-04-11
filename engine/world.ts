@@ -16,30 +16,39 @@ import { InputSystem } from "./systems/input-system.js";
 import { PhysicSystem } from "./systems/physic-system.js";
 import { CollisionDetector } from "./collision/detector.js";
 import { CollisionResolver } from "./collision/resolver.js";
+import { EventSystem } from "./events/event-system.js";
+import { SystemManager } from "./systems/system-manager.js";
+import { EntityManager } from "./entities/entity-manager.js";
+import { InputManager } from "./input/input-manager.js";
+import { Viewport } from "./graphics/viewport.js";
+import { System } from "./systems/system.js";
+import { ComponentType } from "./entities/entity-manager.js";
+import { ComponentMap } from "./entities/entity-manager.js";
 
 export class World {
-  /** @type {import("./events/event-system.js").EventSystem} */
-  eventSystem;
-  /** @type {import("./entities/entity-manager.js").EntityManager} */
-  entityManager;
-  /** @type {import("./systems/system-manager.js").SystemManager} */
-  systemManager;
-  /** @type {Game} */
-  game;
+  eventSystem: EventSystem;
+  entityManager: EntityManager;
+  inputManager: InputManager;
+  systemManager: SystemManager;
+  game: Game;
+  viewport: Viewport;
 
   /**
    * @param {Game} game
    */
-  constructor(game) {
+  constructor(game: Game) {
     Guard.againstNull({ game }).isInstanceOf(Game);
 
     this.game = game;
     this.entityManager = game.entityManager;
     this.systemManager = game.systemManager;
     this.inputManager = game.inputManager;
+    this.eventSystem = game.eventSystem;
     this.viewport = game.viewport;
+
     this.inputManager.bind(InputKeys.Arrow_Left, "move-left");
     this.inputManager.bind(InputKeys.Arrow_Right, "move-right");
+
     this.registerSystem(new InputSystem(this.entityManager, this.inputManager));
     const detector = new CollisionDetector(this.entityManager);
     const resolver = new CollisionResolver();
@@ -50,7 +59,7 @@ export class World {
     this.#createTestEntity(450, -100);
   }
 
-  #createTestEntity(posX, speedX) {
+  #createTestEntity(posX: number, speedX: number) {
     const em = this.entityManager;
     const id = em.createEntity();
     em.addComponent(id, new Position(posX, 50));
@@ -58,7 +67,7 @@ export class World {
 
     em.addComponent(id, new Velocity(speedX, 0));
 
-    em.addComponent(id, new Bounciness(1, 1, 5, 5));
+    em.addComponent(id, new Bounciness(1));
     em.addComponent(id, new GravityFactor(0));
     em.addComponent(id, new Friction(1, 1));
 
@@ -78,23 +87,23 @@ export class World {
     return this.entityManager.createEntity();
   }
 
-  addComponent(entityId, component) {
+  addComponent(entityId: number, component: ComponentMap[ComponentType]) {
     return this.entityManager.addComponent(entityId, component);
   }
 
-  removeComponent(entityId, componentType) {
+  removeComponent(entityId: number, componentType: ComponentType) {
     return this.entityManager.removeComponent(entityId, componentType);
   }
 
-  destroyEntity(entityId) {
+  destroyEntity(entityId: number) {
     return this.entityManager.destroyEntity(entityId);
   }
 
-  registerSystem(system) {
+  registerSystem(system: System) {
     return this.systemManager.registerSystem(system);
   }
 
-  unregisterSystem(system) {
+  unregisterSystem(system: System) {
     return this.systemManager.unregisterSystem(system);
   }
 }
