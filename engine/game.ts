@@ -8,27 +8,20 @@ import { InputManager } from "./input/input-manager.js";
 import { settings } from "./config.js";
 
 export class Game {
-  /** @type {Viewport} */
-  viewport;
-  /** @type {EventSystem} */
-  eventSystem;
-  /** @type {EntityManager} */
-  entityManager;
-  /** @type {SystemManager} */
-  systemManager;
-  /** @type {InputManager} */
-  inputManager;
-  /** @type {GameLoop} */
-  loop;
-  /** @type {World} */
-  world;
+  viewport: Viewport;
+  eventSystem: EventSystem;
+  entityManager: EntityManager;
+  systemManager: SystemManager;
+  inputManager: InputManager;
+  loop: GameLoop;
+  world: World;
 
   /**
    * @param {string?} canvasId Id of the canvas, if known.
    * @param {number} width Width of the canvas.
    * @param {number} height Height of the canvas.
    */
-  constructor(canvasId, width, height) {
+  constructor(canvasId: string | undefined, width: number, height: number) {
     this.viewport = new Viewport(width, height, canvasId);
     this.eventSystem = new EventSystem();
     this.entityManager = new EntityManager(this.eventSystem);

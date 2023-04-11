@@ -41,8 +41,8 @@ export class GameLoop {
     this.eventSystem.dispatch(GameEvents.Loop_NextFrame, this.clock.tick());
   }
 
-  stop(unloadAssets: boolean) {
+  stop(unloadAssets?: boolean) {
     this.stopped = true;
-    this.eventSystem.dispatch(GameEvents.Loop_Stop, unloadAssets);
+    this.eventSystem.dispatch(GameEvents.Loop_Stop, !!unloadAssets);
   }
 }
