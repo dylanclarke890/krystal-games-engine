@@ -1,12 +1,11 @@
 import { InputManager } from "../input/input-manager";
 import { Guard } from "../utils/guard";
 import { SystemTypes } from "./system-types";
-import { System } from "./system";
+import { RequiredComponent, System } from "./system";
 import { EntityManager } from "../entities/entity-manager";
-import { Input } from "../components/input";
 
 export class InputSystem extends System {
-  static requiredComponents = ["Input"];
+  static requiredComponents: RequiredComponent[] = ["Input"];
   static systemType = SystemTypes.Input;
 
   inputManager: InputManager;
@@ -22,8 +21,8 @@ export class InputSystem extends System {
       ...InputSystem.requiredComponents
     );
     for (const entity of entities) {
-      const input = this.entityManager.getComponent(entity, "Input");
-      for (const [action, fn] of (input as Input).bindings) {
+      const input = this.entityManager.getComponent(entity, "Input")!;
+      for (const [action, fn] of input.bindings) {
         if (this.inputManager.released(action)) fn();
       }
     }

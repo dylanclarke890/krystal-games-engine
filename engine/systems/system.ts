@@ -8,7 +8,6 @@ export type RequiredComponent = keyof ComponentMap & string;
 export class System {
   static requiredComponents: RequiredComponent[];
   static systemType: SystemTypes;
-
   entityManager: EntityManager;
 
   constructor(entityManager: EntityManager) {

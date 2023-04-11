@@ -2,11 +2,11 @@ import { Viewport } from "../graphics/viewport";
 import { Timer } from "../time/timer";
 import { Guard } from "../utils/guard";
 import { SystemTypes } from "./system-types";
-import { System } from "./system";
+import { RequiredComponent, System } from "./system";
 import { EntityManager } from "../entities/entity-manager";
 
 export class RenderSystem extends System {
-  static requiredComponents = ["Sprite", "Position"];
+  static requiredComponents: RequiredComponent[] = ["Sprite", "Position"];
   static systemType = SystemTypes.Graphics;
 
   viewport: Viewport;

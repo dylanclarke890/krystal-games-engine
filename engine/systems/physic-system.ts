@@ -4,6 +4,8 @@ import { Guard } from "../utils/guard";
 import { SystemTypes } from "./system-types";
 import { RequiredComponent, System } from "./system";
 import { EntityManager } from "../entities/entity-manager";
+import { Collision } from "../components/collision";
+import { Position } from "../components/position";
 
 export class PhysicSystem extends System {
   static requiredComponents: RequiredComponent[] = ["Position", "Velocity"];
@@ -28,12 +30,7 @@ export class PhysicSystem extends System {
     const em = this.entityManager;
     const entities = em.getEntitiesWithComponents(...PhysicSystem.requiredComponents);
 
-    /** @type {[number, import("../components/position.js").Position, import("../components/collision.js").Collision][]} */
-    const collidables: [
-      number,
-      import("../components/position.js").Position,
-      import("../components/collision.js").Collision
-    ][] = [];
+    const collidables: [number, Position, Collision][] = [];
     for (let i = 0; i < entities.length; i++) {
       const entity = entities[i];
       const position = em.getComponent(entity, "Position")!;

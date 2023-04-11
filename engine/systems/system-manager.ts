@@ -3,7 +3,7 @@ import { EventSystem } from "../events/event-system";
 import { GameEvents } from "../events/events";
 import { Guard } from "../utils/guard";
 import { SystemTypes } from "./system-types";
-import { System } from "./system";
+import { RequiredComponent, System } from "./system";
 
 export class SystemManager {
   eventSystem: EventSystem;
@@ -46,7 +46,7 @@ export class SystemManager {
    * @param {string[]} requiredComponents
    * @returns {{success: boolean, message: string?}}
    */
-  #ensureRequiredComponentsArePresent(requiredComponents: string[]): {
+  #ensureRequiredComponentsArePresent(requiredComponents: RequiredComponent[]): {
     success: boolean;
     message: string | null;
   } {
@@ -61,17 +61,19 @@ export class SystemManager {
     return { success: true, message: "" };
   }
 
-  registerSystem(system) {
+  registerSystem(system: System) {
     Guard.againstNull({ system }).isInstanceOf(System);
-    Guard.againstNull({ systemType: system.constructor.systemType }).isInstanceOf(SystemTypes);
+    Guard.againstNull({ systemType: (<typeof System>system.constructor).systemType }).isInstanceOf(
+      SystemTypes
+    );
     this.systems.add(system);
   }
 
-  unregisterSystem(system) {
+  unregisterSystem(system: System) {
     this.systems.delete(system);
   }
 
-  update(dt) {
+  update(dt: number) {
     for (const system of this.systems) system.update(dt);
   }
 }
