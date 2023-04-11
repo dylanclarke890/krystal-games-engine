@@ -7,7 +7,7 @@ import { PairedSet } from "../utils/paired-set.js";
 
 export class CollisionDetector {
   entityManager: EntityManager;
-  pairedSet: PairedSet;
+  pairedSet: PairedSet<number>;
 
   constructor(entityManager: EntityManager) {
     Guard.againstNull({ entityManager }).isInstanceOf(EntityManager);
@@ -18,7 +18,7 @@ export class CollisionDetector {
   /**
    * @returns An array of entity pairs that have collided.
    */
-  detect(collidables: [number, Position, Collision][]): PairedSet {
+  detect(collidables: [number, Position, Collision][]): PairedSet<number> {
     const em = this.entityManager;
     this.pairedSet.clear();
 
