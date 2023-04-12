@@ -12,19 +12,15 @@ export const CollisionResponseFlags = {
   Destroy_Other: 1024,
 };
 
-const ReverseCollisionResponseFlags: { [x: string]: string } = {
-  1: "Ignore",
-  2: "Repel",
-  4: "Bounce",
-  8: "Stick",
-  16: "Slide",
-  32: "Push_Self",
-  64: "Push_Other",
-  126: "Damage_Self",
-  256: "Damage_Other",
-  512: "Destroy_Self",
-  1024: "Destroy_Other",
-};
+const LAST_RESPONSE_VALUE = CollisionResponseFlags.Destroy_Other;
+
+type ReverseFlagsKey = keyof typeof CollisionResponseFlags;
+const ReverseCollisionFlags = new Map<number, ReverseFlagsKey>(
+  Object.entries(CollisionResponseFlags).map(([k, v]) => [
+    v,
+    k as keyof typeof CollisionResponseFlags,
+  ])
+);
 
 export class Collision {
   responseFlags: number;
@@ -33,37 +29,28 @@ export class Collision {
     this.responseFlags = responseFlags ?? 0;
   }
 
-  /**
-   * Add a response to the component.
-   */
+  /** Add a response to the component. */
   addResponse(response: keyof typeof CollisionResponseFlags) {
     this.responseFlags |= CollisionResponseFlags[response];
   }
 
-  /**
-   * Remove a response from the component.
-   */
+  /** Remove a response from the component. */
   removeResponse(response: keyof typeof CollisionResponseFlags) {
     this.responseFlags &= ~CollisionResponseFlags[response];
   }
 
-  /**
-   * Check if the component has a particular response.
-   */
+  /** Check if the component has a particular response. */
   hasResponse(response: keyof typeof CollisionResponseFlags): boolean {
     return !!(this.responseFlags & CollisionResponseFlags[response]);
   }
 
-  /**
-   * Get a list of responses currently set.
-   */
+  /** Get a list of responses currently set. */
   getResponses(): string[] {
     const responses: string[] = [];
     let flag = 1;
-    while (flag <= this.responseFlags) {
+    while (flag <= this.responseFlags && flag <= LAST_RESPONSE_VALUE) {
       if (flag & this.responseFlags) {
-        const key = flag.toString();
-        responses.push(ReverseCollisionResponseFlags[key]);
+        responses.push(ReverseCollisionFlags.get(flag)!);
       }
       flag <<= 1;
     }
