@@ -61,26 +61,26 @@ export class World {
 
   #createTestEntity(posX: number, speedX: number) {
     const em = this.entityManager;
-    const id = em.createEntity();
-    em.addComponent(id, new Position(posX, 50));
-    em.addComponent(id, new Size(32, 32));
+    const entity = em.createEntity();
+    em.addComponent(entity, new Position(posX, 50));
+    em.addComponent(entity, new Size(32, 32));
 
-    em.addComponent(id, new Velocity(speedX, 0));
+    em.addComponent(entity, new Velocity(speedX, 0));
 
-    em.addComponent(id, new Bounciness(1));
-    em.addComponent(id, new GravityFactor(0));
-    em.addComponent(id, new Friction(1, 1));
+    em.addComponent(entity, new Bounciness(1));
+    em.addComponent(entity, new GravityFactor(0));
+    em.addComponent(entity, new Friction(1, 1));
 
-    em.addComponent(id, new Sprite("test-data/assets/multi-square.png", 32, 32));
+    em.addComponent(entity, new Sprite("test-data/assets/multi-square.png", 32, 32));
     const rnd = Math.random();
     const sequence = rnd > 0.5 ? "[0,3]" : "[3, 0]";
-    em.addComponent(id, new Animation(sequence, rnd, false));
+    em.addComponent(entity, new Animation(sequence, rnd, false));
     const bindings = new Map([
       ["move-left", () => console.log("Moving left!")],
       ["move-right", () => console.log("Moving right!")],
     ]);
-    em.addComponent(id, new Input(bindings));
-    em.addComponent(id, new Collision(CollisionResponseFlags.Push_Other));
+    em.addComponent(entity, new Input(bindings));
+    em.addComponent(entity, new Collision(CollisionResponseFlags.Push_Other));
   }
 
   createEntity() {
