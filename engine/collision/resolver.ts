@@ -1,3 +1,4 @@
+import { Bounciness } from "../components/bounciness.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Guard } from "../utils/guard.js";
 import { PairedSet } from "../utils/paired-set.js";
@@ -6,6 +7,10 @@ const sides = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 };
 
 export class CollisionResolver {
   entityManager: EntityManager;
+
+  static defaultComponents = {
+    bounce: new Bounciness(1),
+  };
 
   constructor(entityManager: EntityManager) {
     Guard.againstNull({ entityManager }).isInstanceOf(EntityManager);
@@ -17,7 +22,7 @@ export class CollisionResolver {
     const em = this.entityManager;
     collided.forEach((v) => {
       const [a, b] = v;
-      // Get components - should all be present to get to this point, no need to check nulls
+      // Get components
       const posA = em.getComponent(a, "Position")!;
       const posB = em.getComponent(b, "Position")!;
       const velA = em.getComponent(a, "Velocity")!;
@@ -26,6 +31,10 @@ export class CollisionResolver {
       const sizeB = em.getComponent(b, "Size")!;
       // const collisionA = em.getComponent(a, "Collision")!;
       // const collisionB = em.getComponent(b, "Collision")!;
+
+      const bDefault = CollisionResolver.defaultComponents.bounce;
+      const bounceA = em.getComponent(a, "Bounciness") ?? bDefault;
+      const bounceB = em.getComponent(b, "Bounciness") ?? bDefault;
 
       // Get midpoints
       const aMidX = posA.x + sizeA.halfX;
@@ -48,8 +57,9 @@ export class CollisionResolver {
       switch (side) {
         case sides.LEFT:
           {
-            velA.x = -velA.x;
-            velB.x = -velB.x;
+            const vRel = velA.x - velB.x;
+            velA.x = -vRel * bounceA.value + velA.x;
+            velB.x = vRel * bounceB.value + velB.x;
 
             const overlap = posA.x + sizeA.x - posB.x;
             posA.x -= overlap;
@@ -58,8 +68,9 @@ export class CollisionResolver {
           break;
         case sides.RIGHT:
           {
-            velA.x = -velA.x;
-            velB.x = -velB.x;
+            const vRel = velA.x - velB.x;
+            velA.x = -vRel * bounceA.value + velA.x;
+            velB.x = vRel * bounceB.value + velB.x;
 
             const overlap = posB.x + sizeB.x - posA.x;
             posA.x += overlap;
@@ -68,8 +79,9 @@ export class CollisionResolver {
           break;
         case sides.TOP:
           {
-            velA.y = -velA.y;
-            velB.y = -velB.y;
+            const vRel = velA.y - velB.y;
+            velA.y = -vRel * bounceA.value + velA.y;
+            velB.y = vRel * bounceB.value + velB.y;
 
             const overlap = posA.y + sizeA.y - posB.y;
             posA.y -= overlap;
@@ -78,8 +90,9 @@ export class CollisionResolver {
           break;
         case sides.BOTTOM:
           {
-            velA.y = -velA.y;
-            velB.y = -velB.y;
+            const vRel = velA.y - velB.y;
+            velA.y = -vRel * bounceA.value + velA.y;
+            velB.y = vRel * bounceB.value + velB.y;
 
             const overlap = posB.y + sizeB.y - posA.y;
             posA.y += overlap;
