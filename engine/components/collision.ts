@@ -11,15 +11,11 @@ export const CollisionResponseFlags = {
   Destroy_Self: 512,
   Destroy_Other: 1024,
 };
+type FlagsKey = keyof typeof CollisionResponseFlags;
 
 const LAST_RESPONSE_VALUE = CollisionResponseFlags.Destroy_Other;
-
-type ReverseFlagsKey = keyof typeof CollisionResponseFlags;
-const ReverseCollisionFlags = new Map<number, ReverseFlagsKey>(
-  Object.entries(CollisionResponseFlags).map(([k, v]) => [
-    v,
-    k as keyof typeof CollisionResponseFlags,
-  ])
+const ReverseCollisionFlags = new Map<number, FlagsKey>(
+  Object.entries(CollisionResponseFlags).map(([k, v]) => [v, k as FlagsKey])
 );
 
 export class Collision {
@@ -30,17 +26,17 @@ export class Collision {
   }
 
   /** Add a response to the component. */
-  addResponse(response: keyof typeof CollisionResponseFlags) {
+  addResponse(response: FlagsKey) {
     this.responseFlags |= CollisionResponseFlags[response];
   }
 
   /** Remove a response from the component. */
-  removeResponse(response: keyof typeof CollisionResponseFlags) {
+  removeResponse(response: FlagsKey) {
     this.responseFlags &= ~CollisionResponseFlags[response];
   }
 
   /** Check if the component has a particular response. */
-  hasResponse(response: keyof typeof CollisionResponseFlags): boolean {
+  hasResponse(response: FlagsKey): boolean {
     return !!(this.responseFlags & CollisionResponseFlags[response]);
   }
 
