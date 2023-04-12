@@ -1,18 +1,13 @@
-export class Input {
-  bindings: Map<string, Function>;
+type Action = () => void;
 
-  /**
-   * @param {Map<string, Function>} bindings
-   */
-  constructor(bindings: Map<string, Function>) {
+export class Input {
+  bindings: Map<string, Action>;
+
+  constructor(bindings: Map<string, Action>) {
     this.bindings = bindings;
   }
 
-  /**
-   * @param {string} name
-   * @param {Function} action
-   */
-  bind(name: string, action: Function) {
+  bind(name: string, action: Action) {
     this.bindings.set(name, action);
   }
 }
