@@ -1,14 +1,53 @@
+import { EntityManager } from "../entities/entity-manager.js";
+import { Guard } from "../utils/guard.js";
 import { PairedSet } from "../utils/paired-set.js";
 
 const STICKY_THRESHOLD = 0.004;
 
 export class CollisionResolver {
-  resolve(collided: PairedSet<number>) {
-    if (!collided.length) return;
-    console.log(collided);
+  entityManager: EntityManager;
+
+  constructor(entityManager: EntityManager) {
+    Guard.againstNull({ entityManager }).isInstanceOf(EntityManager);
+    this.entityManager = entityManager;
   }
 
-  resolveElastic(player:any, entity:any) {
+  resolve(collided: PairedSet<number>) {
+    if (!collided.length) return;
+    const em = this.entityManager;
+    collided.forEach((v) => {
+      const [a, b] = v;
+      // Get components - should all be present to get to this point, no need to check nulls
+      const posA = em.getComponent(a, "Position")!;
+      const posB = em.getComponent(b, "Position")!;
+      const velA = em.getComponent(a, "Velocity")!;
+      const velB = em.getComponent(b, "Velocity")!;
+      const sizeA = em.getComponent(a, "Size")!;
+      const sizeB = em.getComponent(b, "Size")!;
+      // const collisionA = em.getComponent(a, "Collision")!;
+      // const collisionB = em.getComponent(b, "Collision")!;
+
+      // Get midpoints
+      const aMidX = posA.x + sizeA.halfX;
+      const aMidY = posA.y + sizeA.halfY;
+      const bMidX = posB.x + sizeB.halfX;
+      const bMidY = posB.y + sizeB.halfY;
+
+      // Find side of entry based on the normalized sides
+      const dx = (aMidX - bMidX) / (sizeA.halfX + sizeB.halfX);
+      const dy = (aMidY - bMidY) / (sizeA.halfY + sizeB.halfY);
+      // Calculate the absolute differences in the x and y coordinates
+      const absDX = Math.abs(dx);
+      const absDY = Math.abs(dy);
+
+      const sides = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 };
+      let side: typeof sides[keyof typeof sides];
+      if (absDX > absDY) side = dx > 0 ? sides.RIGHT : sides.LEFT;
+      else side = dy > 0 ? sides.BOTTOM : sides.TOP;
+    });
+  }
+
+  resolveElastic(player: any, entity: any) {
     // Find the mid points of the entity and player
     var pMidX = player.getMidX();
     var pMidY = player.getMidY();
