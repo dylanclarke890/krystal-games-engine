@@ -2,7 +2,7 @@ import { EntityManager } from "../entities/entity-manager.js";
 import { Guard } from "../utils/guard.js";
 import { PairedSet } from "../utils/paired-set.js";
 
-const STICKY_THRESHOLD = 0.004;
+const sides = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 };
 
 export class CollisionResolver {
   entityManager: EntityManager;
@@ -40,14 +40,60 @@ export class CollisionResolver {
       const absDX = Math.abs(dx);
       const absDY = Math.abs(dy);
 
-      const sides = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 };
+      /** The side of A that was collided with. */
       let side: typeof sides[keyof typeof sides];
       if (absDX > absDY) side = dx > 0 ? sides.RIGHT : sides.LEFT;
       else side = dy > 0 ? sides.BOTTOM : sides.TOP;
+
+      switch (side) {
+        case sides.LEFT:
+          {
+            velA.x = -velA.x;
+            velB.x = -velB.x;
+
+            const overlap = posA.x + sizeA.x - posB.x;
+            posA.x -= overlap;
+            posB.x += overlap;
+          }
+          break;
+        case sides.RIGHT:
+          {
+            velA.x = -velA.x;
+            velB.x = -velB.x;
+
+            const overlap = posB.x + sizeB.x - posA.x;
+            posA.x += overlap;
+            posB.x -= overlap;
+          }
+          break;
+        case sides.TOP:
+          {
+            velA.y = -velA.y;
+            velB.y = -velB.y;
+
+            const overlap = posA.y + sizeA.y - posB.y;
+            posA.y -= overlap;
+            posB.y += overlap;
+          }
+          break;
+        case sides.BOTTOM:
+          {
+            velA.y = -velA.y;
+            velB.y = -velB.y;
+
+            const overlap = posB.y + sizeB.y - posA.y;
+            posA.y += overlap;
+            posB.y -= overlap;
+          }
+          break;
+        default:
+          break;
+      }
     });
   }
 
   resolveElastic(player: any, entity: any) {
+    const STICKY_THRESHOLD = 0.004;
     // Find the mid points of the entity and player
     var pMidX = player.getMidX();
     var pMidY = player.getMidY();
