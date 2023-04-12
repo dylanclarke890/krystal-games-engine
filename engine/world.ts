@@ -33,9 +33,6 @@ export class World {
   game: Game;
   viewport: Viewport;
 
-  /**
-   * @param {Game} game
-   */
   constructor(game: Game) {
     Guard.againstNull({ game }).isInstanceOf(Game);
 
@@ -46,14 +43,19 @@ export class World {
     this.eventSystem = game.eventSystem;
     this.viewport = game.viewport;
 
+    this.#setup();
+  }
+
+  #setup() {
     this.inputManager.bind(InputKeys.Arrow_Left, "move-left");
     this.inputManager.bind(InputKeys.Arrow_Right, "move-right");
 
-    this.registerSystem(new InputSystem(this.entityManager, this.inputManager));
-    const detector = new CollisionDetector(this.entityManager);
-    const resolver = new CollisionResolver();
-    this.registerSystem(new PhysicSystem(this.entityManager, detector, resolver));
-    this.registerSystem(new RenderSystem(this.entityManager, this.viewport));
+    const em = this.entityManager;
+    this.registerSystem(new InputSystem(em, this.inputManager));
+    const detector = new CollisionDetector(em);
+    const resolver = new CollisionResolver(em);
+    this.registerSystem(new PhysicSystem(em, detector, resolver));
+    this.registerSystem(new RenderSystem(em, this.viewport));
 
     this.#createTestEntity(50, 50);
     this.#createTestEntity(450, -100);
