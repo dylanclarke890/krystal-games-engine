@@ -1,24 +1,54 @@
-export class Assert {
-  static isType(val: any, type: DataType) {
-    return typeof val === type;
+type Primitive = number | string | undefined | bigint | boolean;
+type TypeOf = "number" | "string" | "boolean" | "object" | "function" | 
+
+typeof "" === "boolean"
+class Assert {
+  static areEqual(expected: Primitive, actual: Primitive, message = "Values are not equal") {
+    if (expected !== actual) {
+      throw new AssertionError(message);
+    }
   }
 
-  static isInstanceOf(val: any, type: any) {
-    return val instanceof type;
+  static isTrue(value: boolean, message = "Value is not true"): asserts value is true {
+    if (value !== true) {
+      throw new AssertionError(message);
+    }
   }
 
-  static isEqual(a: any, b: any, strict?: boolean) {
-    strict ??= true; // true unless explicitly set
-    return strict ? a === b : a == b;
+  static isFalse(value: boolean, message = "Value is not false"): asserts value is false {
+    if (value !== false) {
+      throw new AssertionError(message);
+    }
+  }
+
+  static isNull(value: null | unknown, message = "Value is not null"): asserts value is null {
+    if (value !== null) {
+      throw new AssertionError(message);
+    }
+  }
+
+  static isNotNull(value: string, message = "Value is null") {
+    if (value === null) {
+      throw new AssertionError(message);
+    }
+  }
+
+  static isUndefined(value: string, message = "Value is not undefined") {
+    if (value !== undefined) {
+      throw new AssertionError(message);
+    }
+  }
+
+  static isNotUndefined(value: string, message = "Value is undefined") {
+    if (value === undefined) {
+      throw new AssertionError(message);
+    }
   }
 }
 
-type DataType =
-  | "bigint"
-  | "boolean"
-  | "function"
-  | "number"
-  | "object"
-  | "string"
-  | "symbol"
-  | "undefined";
+class AssertionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "AssertionError";
+  }
+}
