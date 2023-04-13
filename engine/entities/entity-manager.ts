@@ -1,31 +1,16 @@
-import * as Components from "../components/index.js";
 import { EventSystem } from "../events/event-system.js";
 import { GameEvents } from "../events/events.js";
 import { Assert } from "../utils/assert.js";
 
-export type ComponentType = keyof ComponentMap;
-export type ComponentMap = {
-  Acceleration: Components.Acceleration;
-  AI: Components.AI;
-  Animation: Components.Animation;
-  Bounciness: Components.Bounciness;
-  Collision: Components.Collision;
-  Damage: Components.Damage;
-  Friction: Components.Friction;
-  GravityFactor: Components.GravityFactor;
-  Health: Components.Health;
-  Input: Components.Input;
-  Offset: Components.Offset;
-  Position: Components.Position;
-  Size: Components.Size;
-  Sprite: Components.Sprite;
-  Velocity: Components.Velocity;
-};
+export type ComponentType = keyof typeof import("../components/index.js");
+export type Component<T extends ComponentType> = InstanceType<
+  typeof import("../components/index.js")[T]
+>;
 
 export class EntityManager {
   eventSystem: EventSystem;
   entities: Set<number>;
-  components: Map<string, ComponentMap[ComponentType]>;
+  components: Map<string, Component<ComponentType>>;
   entityMasks: Map<number, Set<ComponentType>>;
   nextEntityId: number;
 
@@ -50,9 +35,9 @@ export class EntityManager {
   /**
    * Add a component to an entity.
    * @param {number} entity entity identifier
-   * @param {ComponentMap[ComponentType]} component component to add
+   * @param {Component} component component to add
    */
-  addComponent(entity: number, component: ComponentMap[ComponentType]) {
+  addComponent(entity: number, component: Component<ComponentType>) {
     const componentType = component.constructor.name as ComponentType;
     this.components.set(entity + componentType, component);
     if (!this.entityMasks.has(entity)) {
@@ -80,8 +65,8 @@ export class EntityManager {
   getComponent<T extends ComponentType>(
     entity: number,
     componentType: T
-  ): ComponentMap[T] | undefined {
-    return this.components.get(entity + componentType) as ComponentMap[T] | undefined;
+  ): Component<T> | undefined {
+    return this.components.get(entity + componentType) as Component<T> | undefined;
   }
 
   /**
@@ -97,7 +82,6 @@ export class EntityManager {
 
   /**
    * Check if any entity has the specified component type.
-   * @param {ComponentType} componentType
    */
   hasComponentType(componentType: ComponentType) {
     for (const key of this.components.keys()) {
