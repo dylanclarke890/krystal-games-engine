@@ -33,6 +33,7 @@ export class Assert {
     other: T,
     message?: string
   ): asserts value is T {
+    this.defined(name, value);
     if (!(value instanceof other))
       throw new AssertionError(message ?? `${name} is not an instanceof ${other?.name}`);
   }

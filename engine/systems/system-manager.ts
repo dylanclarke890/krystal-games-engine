@@ -2,10 +2,8 @@ import { EntityManager } from "../entities/entity-manager.js";
 import { EventSystem } from "../events/event-system.js";
 import { GameEvents } from "../events/events.js";
 import { Assert } from "../utils/assert.js";
-import { Guard } from "../utils/guard.js";
-import { Result } from "../utils/types.js";
 import { SystemTypes } from "./system-types.js";
-import { RequiredComponent, System } from "./system.js";
+import { System } from "./system.js";
 
 export class SystemManager {
   eventSystem: EventSystem;
@@ -38,36 +36,30 @@ export class SystemManager {
   }
 
   #beforeStart() {
-    this.systems.forEach((system) => {
-      const required = (<typeof System>system.constructor).requiredComponents;
-      const result = this.#validateSystem((<typeof System>system.constructor).name, required);
-      if (!result.success) console.warn(result.message);
-    });
+    this.systems.forEach((system) => this.#validateSystem(system));
   }
 
-  #validateSystem(name: string, requiredComponents: RequiredComponent[]): Result {
-    Assert.defined(`${name} requiredComponents`, requiredComponents);
+  #validateSystem(system: System): void {
+    const name = (<typeof System>system.constructor).name;
+    const required = (<typeof System>system.constructor).requiredComponents;
+    const type = (<typeof System>system.constructor).systemType;
 
-    for (const componentType of requiredComponents) {
+    Assert.defined(`${name} requiredComponents`, required);
+    Assert.instanceOf(`${name} systemType`, type, SystemTypes);
+
+    for (const componentType of required) {
       if (this.entityManager.hasComponentType(componentType)) {
         continue;
       }
       const message = `Missing required component type: ${componentType}`;
-
       if (this.#throwIfMissing) {
         throw new Error(message);
-      }
-
-      return { success: false, message };
+      } else console.warn(message);
     }
-    return { success: true };
   }
 
   registerSystem(system: System) {
-    Guard.againstNull({ system }).isInstanceOf(System);
-    Guard.againstNull({ systemType: (<typeof System>system.constructor).systemType }).isInstanceOf(
-      SystemTypes
-    );
+    Assert.defined("System", system);
     this.systems.add(system);
   }
 
