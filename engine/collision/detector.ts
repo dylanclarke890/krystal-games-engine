@@ -2,7 +2,7 @@ import { Collision } from "../components/collision.js";
 import { Position } from "../components/position.js";
 import { Size } from "../components/size.js";
 import { EntityManager } from "../entities/entity-manager.js";
-import { Guard } from "../utils/guard.js";
+import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";
 
 export class CollisionDetector {
@@ -10,7 +10,7 @@ export class CollisionDetector {
   pairedSet: PairedSet<number>;
 
   constructor(entityManager: EntityManager) {
-    Guard.againstNull({ entityManager }).isInstanceOf(EntityManager);
+    Assert.instanceOf("entityManager", entityManager, EntityManager);
     this.entityManager = entityManager;
     this.pairedSet = new PairedSet();
   }

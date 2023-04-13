@@ -1,4 +1,3 @@
-import { Guard } from "./utils/guard.js";
 import { Game } from "./game.js";
 import { Sprite } from "./components/sprite.js";
 import { Size } from "./components/size.js";
@@ -24,6 +23,7 @@ import { Viewport } from "./graphics/viewport.js";
 import { System } from "./systems/system.js";
 import { ComponentType } from "./entities/entity-manager.js";
 import { ComponentMap } from "./entities/entity-manager.js";
+import { Assert } from "./utils/assert.js";
 
 export class World {
   eventSystem: EventSystem;
@@ -34,15 +34,13 @@ export class World {
   viewport: Viewport;
 
   constructor(game: Game) {
-    Guard.againstNull({ game }).isInstanceOf(Game);
-
+    Assert.instanceOf("Game class", game, Game);
     this.game = game;
     this.entityManager = game.entityManager;
     this.systemManager = game.systemManager;
     this.inputManager = game.inputManager;
     this.eventSystem = game.eventSystem;
     this.viewport = game.viewport;
-
     this.#setup();
   }
 

@@ -1,7 +1,9 @@
 import { EntityManager } from "../entities/entity-manager.js";
 import { EventSystem } from "../events/event-system.js";
 import { GameEvents } from "../events/events.js";
+import { Assert } from "../utils/assert.js";
 import { Guard } from "../utils/guard.js";
+import { Result } from "../utils/types.js";
 import { SystemTypes } from "./system-types.js";
 import { RequiredComponent, System } from "./system.js";
 
@@ -18,9 +20,10 @@ export class SystemManager {
    * @param {EntityManager} entityManager
    * @param {boolean} throwIfMissing
    */
-  constructor(eventSystem: EventSystem, entityManager: EntityManager, throwIfMissing: boolean) {
-    Guard.againstNull({ eventSystem }).isInstanceOf(EventSystem);
-    Guard.againstNull({ entityManager }).isInstanceOf(EntityManager);
+  constructor(eventSystem: EventSystem, entityManager: EntityManager, throwIfMissing?: boolean) {
+    Assert.instanceOf("eventSystem", eventSystem, EventSystem);
+    Assert.instanceOf("entityManager", entityManager, EntityManager);
+
     this.eventSystem = eventSystem;
     this.entityManager = entityManager;
     this.#throwIfMissing = !!throwIfMissing;
@@ -37,28 +40,27 @@ export class SystemManager {
   #beforeStart() {
     this.systems.forEach((system) => {
       const required = (<typeof System>system.constructor).requiredComponents;
-      const result = this.#ensureRequiredComponentsArePresent(required);
+      const result = this.#validateSystem((<typeof System>system.constructor).name, required);
       if (!result.success) console.warn(result.message);
     });
   }
 
-  /**
-   * @param {string[]} requiredComponents
-   * @returns {{success: boolean, message: string?}}
-   */
-  #ensureRequiredComponentsArePresent(requiredComponents: RequiredComponent[]): {
-    success: boolean;
-    message: string | null;
-  } {
-    Guard.againstNull({ requiredComponents });
-    for (const componentType of requiredComponents) {
-      if (this.entityManager.hasComponentType(componentType)) continue;
+  #validateSystem(name: string, requiredComponents: RequiredComponent[]): Result {
+    Assert.defined(`${name} requiredComponents`, requiredComponents);
 
-      const msg = `Missing required component type: ${componentType}`;
-      if (this.#throwIfMissing) throw new Error(msg);
-      else return { success: true, message: msg };
+    for (const componentType of requiredComponents) {
+      if (this.entityManager.hasComponentType(componentType)) {
+        continue;
+      }
+      const message = `Missing required component type: ${componentType}`;
+
+      if (this.#throwIfMissing) {
+        throw new Error(message);
+      }
+
+      return { success: false, message };
     }
-    return { success: true, message: "" };
+    return { success: true };
   }
 
   registerSystem(system: System) {

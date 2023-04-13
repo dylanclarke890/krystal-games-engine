@@ -1,4 +1,4 @@
-import { Guard } from "../utils/guard.js";
+import { Assert } from "../utils/assert.js";
 import { EventSystem } from "../events/event-system.js";
 import { GameEvents } from "../events/events.js";
 import { Timer } from "./timer.js";
@@ -13,7 +13,7 @@ export class GameLoop {
   stopped: boolean;
 
   constructor(eventSystem: EventSystem, targetFps = 60) {
-    Guard.againstNull({ eventSystem }).isInstanceOf(EventSystem);
+    Assert.instanceOf("eventSystem", eventSystem, EventSystem);
     this.eventSystem = eventSystem;
     this.clock = new Timer();
     this.targetFps = targetFps;

@@ -1,4 +1,4 @@
-import { Guard } from "../utils/guard.js";
+import { Assert } from "../utils/assert.js";
 import { arrayFromInterval } from "../utils/interval.js";
 
 export class Animation {
@@ -15,8 +15,8 @@ export class Animation {
    * be displayed (optional, defaults to 1).
    * @param {boolean} stop - Will stop on the last frame if true.
    */
-  constructor(sequence: number[] | string, frameDuration: number, stop: boolean) {
-    Guard.againstNull({ sequence });
+  constructor(sequence: number[] | string | undefined, frameDuration: number, stop: boolean) {
+    Assert.defined("sequence", sequence);
     this.sequence = typeof sequence === "string" ? arrayFromInterval(sequence) : sequence;
     this.frameDuration = frameDuration ?? 1;
     this.stop = !!stop;

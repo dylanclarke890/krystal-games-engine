@@ -1,6 +1,6 @@
 import { Bounciness } from "../components/bounciness.js";
 import { EntityManager } from "../entities/entity-manager.js";
-import { Guard } from "../utils/guard.js";
+import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";
 
 const sides = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 };
@@ -13,7 +13,7 @@ export class CollisionResolver {
   };
 
   constructor(entityManager: EntityManager) {
-    Guard.againstNull({ entityManager }).isInstanceOf(EntityManager);
+    Assert.instanceOf("entityManager", entityManager, EntityManager);
     this.entityManager = entityManager;
   }
 

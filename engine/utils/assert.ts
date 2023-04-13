@@ -1,4 +1,4 @@
-class Assert {
+export class Assert {
   static #defaultTypeError(value: string, type: string): string {
     return `${value} was not of type '${type}'.`;
   }
@@ -27,7 +27,7 @@ class Assert {
       throw new AssertionError(message ?? `${name} was not defined.`);
   }
 
-  static instance<T extends Function>(
+  static instanceOf<T extends Function>(
     name: string,
     value: unknown,
     other: T,
