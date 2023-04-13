@@ -1,4 +1,4 @@
-import { Bounciness } from "../components/bounciness.js";
+import { Bounciness } from "../components/index.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";

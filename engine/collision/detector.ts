@@ -1,6 +1,4 @@
-import { Collision } from "../components/collision.js";
-import { Position } from "../components/position.js";
-import { Size } from "../components/size.js";
+import { Collision, Position, Size } from "../components/index.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";

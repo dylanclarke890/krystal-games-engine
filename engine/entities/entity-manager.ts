@@ -1,39 +1,25 @@
-import { Acceleration } from "../components/acceleration.js";
-import { AI } from "../components/ai.js";
-import { Animation } from "../components/animation.js";
-import { Bounciness } from "../components/bounciness.js";
-import { Collision } from "../components/collision.js";
-import { Damage } from "../components/damage.js";
-import { Friction } from "../components/friction.js";
-import { GravityFactor } from "../components/gravity-factor.js";
-import { Health } from "../components/health.js";
-import { Input } from "../components/input.js";
-import { Offset } from "../components/offset.js";
-import { Position } from "../components/position.js";
-import { Size } from "../components/size.js";
-import { Sprite } from "../components/sprite.js";
-import { Velocity } from "../components/velocity.js";
+import * as Components from "../components/index.js";
 import { EventSystem } from "../events/event-system.js";
 import { GameEvents } from "../events/events.js";
 import { Assert } from "../utils/assert.js";
 
 export type ComponentType = keyof ComponentMap;
 export type ComponentMap = {
-  Acceleration: Acceleration;
-  AI: AI;
-  Animation: Animation;
-  Bounciness: Bounciness;
-  Collision: Collision;
-  Damage: Damage;
-  Friction: Friction;
-  GravityFactor: GravityFactor;
-  Health: Health;
-  Input: Input;
-  Offset: Offset;
-  Position: Position;
-  Size: Size;
-  Sprite: Sprite;
-  Velocity: Velocity;
+  Acceleration: Components.Acceleration;
+  AI: Components.AI;
+  Animation: Components.Animation;
+  Bounciness: Components.Bounciness;
+  Collision: Components.Collision;
+  Damage: Components.Damage;
+  Friction: Components.Friction;
+  GravityFactor: Components.GravityFactor;
+  Health: Components.Health;
+  Input: Components.Input;
+  Offset: Components.Offset;
+  Position: Components.Position;
+  Size: Components.Size;
+  Sprite: Components.Sprite;
+  Velocity: Components.Velocity;
 };
 
 export class EntityManager {

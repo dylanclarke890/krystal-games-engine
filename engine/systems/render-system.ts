@@ -3,8 +3,7 @@ import { Timer } from "../time/timer.js";
 import { SystemTypes } from "./system-types.js";
 import { RequiredComponent, System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
-import { Sprite } from "../components/sprite.js";
-import { Position } from "../components/position.js";
+import { Sprite, Position } from "../components/index.js";
 import { Assert } from "../utils/assert.js";
 
 export class RenderSystem extends System {

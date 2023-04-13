@@ -3,8 +3,7 @@ import { CollisionResolver } from "../collision/resolver.js";
 import { SystemTypes } from "./system-types.js";
 import { RequiredComponent, System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
-import { Collision } from "../components/collision.js";
-import { Position } from "../components/position.js";
+import { Collision, Position } from "../components/index.js";
 import { Assert } from "../utils/assert.js";
 
 export class PhysicSystem extends System {
