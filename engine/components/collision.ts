@@ -53,3 +53,25 @@ export class Collision {
     return responses;
   }
 }
+
+type CollisionSettings = {
+  viewportCollision?: { left?: boolean; right?: boolean; top?: boolean; bottom?: boolean };
+};
+
+// type CollisionTypes = {}
+
+export class Collide {
+  entityCollisionFlags: number;
+
+  constructor(settings?: CollisionSettings) {
+    this.entityCollisionFlags = 0;
+    if (settings) {
+      this.#assignSettings(settings);
+    }
+  }
+
+  #assignSettings(settings: CollisionSettings) {
+    if (settings.viewportCollision) {
+    }
+  }
+}
