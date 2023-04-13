@@ -27,12 +27,12 @@ export class Assert {
       throw new AssertionError(message ?? `${name} was not defined.`);
   }
 
-  static instanceOf<T extends Function>(
+  static instanceOf<T extends abstract new (...args: any) => any>(
     name: string,
     value: unknown,
     other: T,
     message?: string
-  ): asserts value is T {
+  ): asserts value is InstanceType<T> {
     this.defined(name, value);
     if (!(value instanceof other))
       throw new AssertionError(message ?? `${name} is not an instanceof ${other?.name}`);
