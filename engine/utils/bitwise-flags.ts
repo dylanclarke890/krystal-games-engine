@@ -1,19 +1,21 @@
-export class BitwiseFlags {
+type FlagsObject = Record<string, number>;
+
+export class BitwiseFlags<TFlags extends FlagsObject> {
   flags: number;
 
   constructor() {
     this.flags = 0;
   }
 
-  addFlag(flag: number) {
+  addFlag<TKey extends keyof TFlags>(flag: TFlags[TKey]) {
     this.flags |= flag;
   }
 
-  removeFlag(flag: number) {
+  removeFlag<TKey extends keyof TFlags>(flag: TFlags[TKey]) {
     this.flags &= ~flag;
   }
 
-  hasFlag(flag: number) {
+  hasFlag<TKey extends keyof TFlags>(flag: TFlags[TKey]) {
     return (this.flags & flag) === flag;
   }
 }
