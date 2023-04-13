@@ -1,8 +1,8 @@
 import { InputManager } from "../input/input-manager.js";
-import { Guard } from "../utils/guard.js";
 import { SystemTypes } from "./system-types.js";
 import { RequiredComponent, System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
+import { Assert } from "../utils/assert.js";
 
 export class InputSystem extends System {
   static requiredComponents: RequiredComponent[] = ["Input"];
@@ -12,7 +12,7 @@ export class InputSystem extends System {
 
   constructor(entityManager: EntityManager, inputManager: InputManager) {
     super(entityManager);
-    Guard.againstNull({ inputManager }).isInstanceOf(InputManager);
+    Assert.instanceOf("inputManager", inputManager, InputManager);
     this.inputManager = inputManager;
   }
 

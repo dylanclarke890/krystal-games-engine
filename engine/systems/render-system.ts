@@ -1,11 +1,11 @@
 import { Viewport } from "../graphics/viewport.js";
 import { Timer } from "../time/timer.js";
-import { Guard } from "../utils/guard.js";
 import { SystemTypes } from "./system-types.js";
 import { RequiredComponent, System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Sprite } from "../components/sprite.js";
 import { Position } from "../components/position.js";
+import { Assert } from "../utils/assert.js";
 
 export class RenderSystem extends System {
   static requiredComponents: RequiredComponent[] = ["Sprite", "Position"];
@@ -16,7 +16,7 @@ export class RenderSystem extends System {
 
   constructor(entityManager: EntityManager, viewport: Viewport) {
     super(entityManager);
-    Guard.againstNull({ viewport }).isInstanceOf(Viewport);
+    Assert.instanceOf("viewport", viewport, Viewport);
     this.viewport = viewport;
     this.timer = new Timer();
   }

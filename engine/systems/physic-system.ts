@@ -1,11 +1,11 @@
 import { CollisionDetector } from "../collision/detector.js";
 import { CollisionResolver } from "../collision/resolver.js";
-import { Guard } from "../utils/guard.js";
 import { SystemTypes } from "./system-types.js";
 import { RequiredComponent, System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Collision } from "../components/collision.js";
 import { Position } from "../components/position.js";
+import { Assert } from "../utils/assert.js";
 
 export class PhysicSystem extends System {
   static requiredComponents: RequiredComponent[] = ["Position", "Velocity"];
@@ -20,8 +20,8 @@ export class PhysicSystem extends System {
     collisionResolver: CollisionResolver
   ) {
     super(entityManager);
-    Guard.againstNull({ collisionDetector }).isInstanceOf(CollisionDetector);
-    Guard.againstNull({ collisionResolver }).isInstanceOf(CollisionResolver);
+    Assert.instanceOf("collisionDetector", collisionDetector, CollisionDetector);
+    Assert.instanceOf("collisionResolver", collisionResolver, CollisionResolver);
     this.collisionDetector = collisionDetector;
     this.collisionResolver = collisionResolver;
   }
