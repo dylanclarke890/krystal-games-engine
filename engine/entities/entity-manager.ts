@@ -15,7 +15,7 @@ import { Sprite } from "../components/sprite.js";
 import { Velocity } from "../components/velocity.js";
 import { EventSystem } from "../events/event-system.js";
 import { GameEvents } from "../events/events.js";
-import { Guard } from "../utils/guard.js";
+import { Assert } from "../utils/assert.js";
 
 export type ComponentType = keyof ComponentMap;
 export type ComponentMap = {
@@ -44,7 +44,7 @@ export class EntityManager {
   nextEntityId: number;
 
   constructor(eventSystem: EventSystem) {
-    Guard.againstNull({ eventSystem }).isInstanceOf(EventSystem);
+    Assert.instanceOf("eventSystem", eventSystem, EventSystem);
     this.eventSystem = eventSystem;
     this.entities = new Set();
     this.components = new Map();

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { ComponentMap, EntityManager } from "../entities/entity-manager.js";
-import { Guard } from "../utils/guard.js";
+import { Assert } from "../utils/assert.js";
 import { SystemTypes } from "./system-types.js";
 
 export type RequiredComponent = keyof ComponentMap & string;
@@ -11,7 +11,7 @@ export class System {
   entityManager: EntityManager;
 
   constructor(entityManager: EntityManager) {
-    Guard.againstNull({ entityManager }).isInstanceOf(EntityManager);
+    Assert.instanceOf("entityManager", entityManager, EntityManager);
     this.entityManager = entityManager;
   }
 

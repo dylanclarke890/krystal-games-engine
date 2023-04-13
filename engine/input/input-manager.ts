@@ -1,6 +1,6 @@
 import { EventSystem } from "../events/event-system.js";
 import { Viewport } from "../graphics/viewport.js";
-import { Guard } from "../utils/guard.js";
+import { Assert } from "../utils/assert.js";
 import { UserAgent } from "../utils/user-agent.js";
 import { InputKeys, keyboardMap } from "./input-keys.js";
 
@@ -19,8 +19,8 @@ export class InputManager {
   eventSystem: EventSystem;
 
   constructor(eventSystem: EventSystem, viewport: Viewport) {
-    Guard.againstNull({ eventSystem }).isInstanceOf(EventSystem);
-    Guard.againstNull({ viewport }).isInstanceOf(Viewport);
+    Assert.instanceOf("eventSystem", eventSystem, EventSystem);
+    Assert.instanceOf("viewport", viewport, Viewport);
     this.eventSystem = eventSystem;
     this.viewport = viewport;
 

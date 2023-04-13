@@ -1,6 +1,6 @@
 import { PQueue, PriorityLevel } from "../utils/priority-queue.js";
-import { Guard } from "../utils/guard.js";
 import { Enum } from "../utils/enum.js";
+import { Assert } from "../utils/assert.js";
 
 type Listener<T> = (data: T) => void;
 
@@ -11,7 +11,7 @@ export class EventSystem {
   constructor(parent?: EventSystem) {
     this.#subscribers = new Map();
     if (parent) {
-      Guard.isInstanceOf({ parent }, EventSystem);
+      Assert.instanceOf("parent", parent, EventSystem);
       this.#parent = parent;
     }
   }

@@ -1,5 +1,3 @@
-import { Guard } from "../utils/guard.js";
-
 export class Sprite {
   image: HTMLImageElement;
   width: number;
@@ -12,7 +10,6 @@ export class Sprite {
    * @param height - The height of a single sprite frame.
    */
   constructor(path: string, width: number, height: number) {
-    Guard.againstNull({ path });
     this.image = new Image();
     this.image.addEventListener("load", () => {
       this.columns = Math.floor(this.image.width / width);
