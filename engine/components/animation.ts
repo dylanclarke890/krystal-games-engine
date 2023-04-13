@@ -1,4 +1,3 @@
-import { Assert } from "../utils/assert.js";
 import { Guard } from "../utils/guard.js";
 import { arrayFromInterval } from "../utils/interval.js";
 
@@ -18,9 +17,7 @@ export class Animation {
    */
   constructor(sequence: number[] | string, frameDuration: number, stop: boolean) {
     Guard.againstNull({ sequence });
-    this.sequence = Assert.isType(sequence, "string")
-      ? arrayFromInterval(sequence as string)
-      : (sequence as number[]);
+    this.sequence = typeof sequence === "string" ? arrayFromInterval(sequence) : sequence;
     this.frameDuration = frameDuration ?? 1;
     this.stop = !!stop;
 
