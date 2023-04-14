@@ -1,6 +1,4 @@
-type FlagsObject = Record<string, number>;
-
-export class BitwiseFlags<TFlags extends FlagsObject> {
+export class BitwiseFlags<TFlags extends Record<string, number>> {
   flags: number;
 
   constructor() {

@@ -1,3 +1,5 @@
+import { BitwiseFlags } from "../utils/bitwise-flags.js";
+
 export const CollisionResponseFlags = {
   Ignore: 1,
   Repel: 2,
@@ -54,24 +56,39 @@ export class Collision {
   }
 }
 
+const ViewportCollision = {
+  left: 1,
+  top: 2,
+  right: 4,
+  bottom: 8,
+} as const;
+
+const EntityCollision = {
+  stick: 1,
+  wall: 2,
+} as const;
+
 type CollisionSettings = {
   viewportCollision?: { left?: boolean; right?: boolean; top?: boolean; bottom?: boolean };
 };
 
-// type CollisionTypes = {}
-
 export class Collide {
-  entityCollisionFlags: number;
+  viewportCollision: BitwiseFlags<typeof ViewportCollision>;
+  entityCollisionFlags: BitwiseFlags<typeof EntityCollision>;
 
   constructor(settings?: CollisionSettings) {
-    this.entityCollisionFlags = 0;
+    this.viewportCollision = new BitwiseFlags();
+    this.entityCollisionFlags = new BitwiseFlags();
     if (settings) {
       this.#assignSettings(settings);
     }
   }
 
   #assignSettings(settings: CollisionSettings) {
-    if (settings.viewportCollision) {
-    }
+    const vpc = settings.viewportCollision;
+    if (vpc?.left) this.viewportCollision.addFlag(ViewportCollision.left);
+    if (vpc?.top) this.viewportCollision.addFlag(ViewportCollision.top);
+    if (vpc?.right) this.viewportCollision.addFlag(ViewportCollision.right);
+    if (vpc?.bottom) this.viewportCollision.addFlag(ViewportCollision.bottom);
   }
 }
