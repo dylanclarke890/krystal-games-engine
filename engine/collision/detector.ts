@@ -37,10 +37,10 @@ export class CollisionDetector {
     let add = false;
     const res = { left: false, right: false, top: false, bottom: false };
 
-    if (collision.hasViewportCollisionType("VP_LEFT")) {
+    if (collision.hasViewportCollisionType("LEFT")) {
       res.left = pos.x < 0;
     }
-    if (collision.hasViewportCollisionType("VP_RIGHT")) {
+    if (collision.hasViewportCollisionType("RIGHT")) {
       res.right = pos.x + size.x > this.viewport.width;
     }
     if (add) {
