@@ -34,6 +34,10 @@ export class PairedSet<T extends number | string | boolean> {
     this.#set.forEach(callbackfn);
   }
 
+  [Symbol.iterator]() {
+    return this.#set[Symbol.iterator]();
+  }
+
   entries() {
     return this.#set.keys();
   }

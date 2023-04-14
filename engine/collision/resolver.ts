@@ -23,9 +23,6 @@ export class CollisionResolver {
 
   resolve(collided: DetectionResult) {
     const em = this.entityManager;
-    if (collided.entityCollisions.length) {
-      console.log(collided.entityCollisions);
-    }
     collided.viewportCollisions.forEach((v) => {
       const [entity, viewportCollisions] = v;
       const pos = em.getComponent(entity, "Position")!;
