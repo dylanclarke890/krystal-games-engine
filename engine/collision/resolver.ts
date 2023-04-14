@@ -27,17 +27,34 @@ export class CollisionResolver {
       const [entity, viewportCollisions] = v;
       const pos = em.getComponent(entity, "Position")!;
       const size = em.getComponent(entity, "Size")!;
+      const vel = em.getComponent(entity, "Velocity")!;
+      const collision = em.getComponent(entity, "Collision")!;
+      const bounceEnabled = collision.hasEntityCollisionType("BOUNCE");
+      const defaultBounce = CollisionResolver.defaultComponents.bounce;
+      const bounce = em.getComponent(entity, "Bounciness") ?? defaultBounce;
       if (viewportCollisions.left) {
         pos.x = 0;
+        if (bounceEnabled) {
+          vel.x = -vel.x * bounce.value;
+        }
       }
       if (viewportCollisions.right) {
         pos.x = this.viewport.width - size.x;
+        if (bounceEnabled) {
+          vel.x = -vel.x * bounce.value;
+        }
       }
       if (viewportCollisions.top) {
         pos.y = 0;
+        if (bounceEnabled) {
+          vel.y = -vel.y * bounce.value;
+        }
       }
       if (viewportCollisions.bottom) {
         pos.y = this.viewport.height - size.y;
+        if (bounceEnabled) {
+          vel.y = -vel.y * bounce.value;
+        }
       }
     });
     collided.entityCollisions.forEach((v) => {
