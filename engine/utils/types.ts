@@ -6,7 +6,8 @@ export type Component<T extends ComponentType> = InstanceType<
 >;
 
 export type Side = "left" | "right" | "top" | "bottom";
+export type ViewportCollision = [number, { [K in Side]?: boolean }];
 export type DetectionResult = {
   entityCollisions: PairedSet<number>;
-  viewportCollisions: [number, { [K in Side]?: boolean }][];
+  viewportCollisions: ViewportCollision[];
 };

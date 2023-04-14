@@ -16,4 +16,8 @@ export class BitwiseFlags<TFlags extends Record<string, number>> {
   hasFlag<TKey extends keyof TFlags>(flag: TFlags[TKey]) {
     return (this.flags & flag) === flag;
   }
+
+  hasFlagSet() {
+    return this.flags !== 0;
+  }
 }
