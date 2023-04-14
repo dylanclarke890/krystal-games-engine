@@ -28,12 +28,13 @@ export class Collision {
 }
 
 const CollisionTypes = {
-  VP_LEFT: 1,
-  VP_TOP: 2,
-  VP_RIGHT: 4,
-  VP_BOTTOM: 8,
-  E_STICK: 16,
-  E_BOUNCE: 32,
+  IGNORE: 1,
+  VP_LEFT: 2,
+  VP_TOP: 4,
+  VP_RIGHT: 8,
+  VP_BOTTOM: 16,
+  E_STICK: 32,
+  E_BOUNCE: 64,
 } as const;
 
 type ViewportCollisionSettings = {

@@ -19,10 +19,10 @@ export class CollisionDetector {
     this.pairedSet.clear();
 
     for (let i = 0; i < collidables.length; i++) {
-      const [a, posA] = collidables[i];
+      const [a, posA, collisionA] = collidables[i];
       const sizeA = em.getComponent(a, "Size")!;
       for (let j = 0; j < collidables.length; j++) {
-        const [b, posB] = collidables[j];
+        const [b, posB, collisionB] = collidables[j];
         if (a === b) continue;
         const sizeB = em.getComponent(b, "Size")!;
         if (this.AABBCollisionCheck(posA, sizeA, posB, sizeB)) {
