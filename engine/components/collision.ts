@@ -20,6 +20,10 @@ export class Collision {
     if (vpc?.top) this.collisionFlags.addFlag(CollisionTypes.VP_TOP);
     if (vpc?.right) this.collisionFlags.addFlag(CollisionTypes.VP_RIGHT);
     if (vpc?.bottom) this.collisionFlags.addFlag(CollisionTypes.VP_BOTTOM);
+
+    const ec = settings.entityCollision;
+    if (ec?.bounce) this.collisionFlags.addFlag(CollisionTypes.E_BOUNCE);
+    if (ec?.stick) this.collisionFlags.addFlag(CollisionTypes.E_STICK);
   }
 }
 
@@ -29,7 +33,7 @@ const CollisionTypes = {
   VP_RIGHT: 4,
   VP_BOTTOM: 8,
   E_STICK: 16,
-  E_WALL: 32,
+  E_BOUNCE: 32,
 } as const;
 
 type ViewportCollisionSettings = {
@@ -41,7 +45,7 @@ type ViewportCollisionSettings = {
 
 type EntityCollisionSettings = {
   stick: 16;
-  wall: 32;
+  bounce: 32;
 };
 
 type CollisionSettings = {

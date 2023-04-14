@@ -61,7 +61,7 @@ export class World {
     ]);
     const collisionSettings = {
       viewportCollision: { left: true, right: true },
-      entityCollision: { wall: true },
+      entityCollision: { bounce: true },
     };
 
     em.addComponent(entity, new Components.Position(posX, 50));
