@@ -69,7 +69,12 @@ const EntityCollision = {
 } as const;
 
 type CollisionSettings = {
-  viewportCollision?: { left?: boolean; right?: boolean; top?: boolean; bottom?: boolean };
+  viewportCollision?: {
+    [P in keyof typeof ViewportCollision]?: boolean;
+  };
+  entityCollision?: {
+    [P in keyof typeof EntityCollision]?: boolean;
+  };
 };
 
 export class Collide {
