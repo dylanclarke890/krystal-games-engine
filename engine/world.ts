@@ -1,6 +1,5 @@
 import { Game } from "./game.js";
 import * as Components from "./components/index.js";
-import { CollisionResponseFlags } from "./components/collision.js";
 import { InputKeys } from "./input/input-keys.js";
 import { RenderSystem } from "./systems/render-system.js";
 import { InputSystem } from "./systems/input-system.js";
@@ -53,25 +52,28 @@ export class World {
   #createTestEntity(posX: number, speedX: number) {
     const em = this.entityManager;
     const entity = em.createEntity();
-    em.addComponent(entity, new Components.Position(posX, 50));
-    em.addComponent(entity, new Components.Size(32, 32));
 
-    em.addComponent(entity, new Components.Velocity(speedX, 0));
-
-    em.addComponent(entity, new Components.Bounciness(1));
-    em.addComponent(entity, new Components.GravityFactor(0));
-    em.addComponent(entity, new Components.Friction(1, 1));
-
-    em.addComponent(entity, new Components.Sprite("test-data/assets/multi-square.png", 32, 32));
     const rnd = Math.random();
     const sequence = rnd > 0.5 ? "[0,3]" : "[3, 0]";
-    em.addComponent(entity, new Components.Animation(sequence, rnd, false));
     const bindings = new Map([
       ["move-left", () => console.log("Moving left!")],
       ["move-right", () => console.log("Moving right!")],
     ]);
-    em.addComponent(entity, new Components.Input(bindings));
-    em.addComponent(entity, new Components.Collision(CollisionResponseFlags.Push_Other));
+    const collisionSettings = {
+      viewportCollision: { left: true, right: true },
+      entityCollision: { wall: true },
+    };
+
+    em.addComponent(entity, new Components.Position(posX, 50));
+    em.addComponent(entity, new Components.Size(32, 32));
+    em.addComponent(entity, new Components.Velocity(speedX, 0));
+    em.addComponent(entity, new Components.Bounciness(1)); // TODO - unused
+    em.addComponent(entity, new Components.GravityFactor(0)); // TODO - unused
+    em.addComponent(entity, new Components.Friction(1, 1)); // TODO - unused
+    em.addComponent(entity, new Components.Sprite("test-data/assets/multi-square.png", 32, 32));
+    em.addComponent(entity, new Components.Animation(sequence, rnd, false));
+    em.addComponent(entity, new Components.Input(bindings)); // TODO - can't affect other components currently
+    em.addComponent(entity, new Components.Collision(collisionSettings));
   }
 
   createEntity() {

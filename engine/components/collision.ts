@@ -10,6 +10,10 @@ export class Collision {
     }
   }
 
+  hasCollisionType(type: keyof typeof CollisionTypes): boolean {
+    return this.collisionFlags.hasFlag(CollisionTypes[type]);
+  }
+
   #assignSettings(settings: CollisionSettings) {
     const vpc = settings.viewportCollision;
     if (vpc?.left) this.collisionFlags.addFlag(CollisionTypes.VP_LEFT);
