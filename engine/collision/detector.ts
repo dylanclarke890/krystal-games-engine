@@ -2,6 +2,7 @@ import { Collision, Position, Size } from "../components/index.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";
+import { DetectionResult } from "../utils/types.js";
 
 export class CollisionDetector {
   entityManager: EntityManager;
@@ -13,10 +14,7 @@ export class CollisionDetector {
     this.pairedSet = new PairedSet();
   }
 
-  /**
-   * @returns An array of entity pairs that have collided.
-   */
-  detect(collidables: [number, Position, Collision][]): PairedSet<number> {
+  detect(collidables: [number, Position, Collision][]): DetectionResult {
     const em = this.entityManager;
     this.pairedSet.clear();
 
@@ -33,7 +31,7 @@ export class CollisionDetector {
       }
     }
 
-    return this.pairedSet;
+    return { entityCollisions: this.pairedSet, viewportCollisions: [] };
   }
 
   /**

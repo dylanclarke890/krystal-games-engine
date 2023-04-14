@@ -1,7 +1,7 @@
 import { Bounciness } from "../components/index.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
-import { PairedSet } from "../utils/paired-set.js";
+import { DetectionResult } from "../utils/types.js";
 
 const sides = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 };
 
@@ -17,10 +17,9 @@ export class CollisionResolver {
     this.entityManager = entityManager;
   }
 
-  resolve(collided: PairedSet<number>) {
-    if (!collided.length) return;
+  resolve(collided: DetectionResult) {
     const em = this.entityManager;
-    collided.forEach((v) => {
+    collided.entityCollisions.forEach((v) => {
       const [a, b] = v;
       // Get components
       const posA = em.getComponent(a, "Position")!;
