@@ -28,10 +28,12 @@ export class CollisionResolver {
       const pos = em.getComponent(entity, "Position")!;
       const size = em.getComponent(entity, "Size")!;
       const vel = em.getComponent(entity, "Velocity")!;
+
       const collision = em.getComponent(entity, "Collision")!;
       const bounceEnabled = collision.hasEntityCollisionType("BOUNCE");
       const defaultBounce = CollisionResolver.defaultComponents.bounce;
       const bounce = em.getComponent(entity, "Bounciness") ?? defaultBounce;
+
       if (viewportCollisions.left) {
         pos.x = 0;
         if (bounceEnabled) {

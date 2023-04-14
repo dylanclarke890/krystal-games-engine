@@ -68,7 +68,7 @@ export class World {
     em.addComponent(entity, new Components.Position(posX, 50));
     em.addComponent(entity, new Components.Size(32, 32));
     em.addComponent(entity, new Components.Velocity(speedX, 0));
-    em.addComponent(entity, new Components.Bounciness(1)); // TODO - unused
+    em.addComponent(entity, new Components.Bounciness(1));
     em.addComponent(entity, new Components.GravityFactor(0)); // TODO - unused
     em.addComponent(entity, new Components.Friction(1, 1)); // TODO - unused
     em.addComponent(entity, new Components.Sprite("test-data/assets/multi-square.png", 32, 32));
