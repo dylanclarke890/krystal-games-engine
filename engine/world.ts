@@ -40,7 +40,7 @@ export class World {
 
     const em = this.entityManager;
     this.registerSystem(new InputSystem(em, this.inputManager));
-    const detector = new CollisionDetector(em);
+    const detector = new CollisionDetector(em, this.viewport);
     const resolver = new CollisionResolver(em);
     this.registerSystem(new PhysicSystem(em, detector, resolver));
     this.registerSystem(new RenderSystem(em, this.viewport));
