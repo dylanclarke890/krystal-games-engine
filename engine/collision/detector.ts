@@ -36,23 +36,19 @@ export class CollisionDetector {
     const res = { left: false, right: false, top: false, bottom: false };
 
     if (collision.hasViewportCollisionType("LEFT")) {
-      res.left = pos.x < 0;
-      add = true;
+      add ||= res.left = pos.x < 0;
     }
 
     if (collision.hasViewportCollisionType("RIGHT")) {
-      res.right = pos.x + size.x > this.viewport.width;
-      add = true;
+      add ||= res.right = pos.x + size.x > this.viewport.width;
     }
 
     if (collision.hasViewportCollisionType("TOP")) {
-      res.top = pos.y < 0;
-      add = true;
+      add ||= res.top = pos.y < 0;
     }
 
     if (collision.hasViewportCollisionType("BOTTOM")) {
-      res.bottom = pos.y + size.y > this.viewport.height;
-      add = true;
+      add ||= res.bottom = pos.y + size.y > this.viewport.height;
     }
 
     if (add) {
@@ -63,7 +59,7 @@ export class CollisionDetector {
   detect(collidables: Collidable[]): DetectionResult {
     const em = this.entityManager;
     this.pairedSet.clear();
-    this.viewportCollisions = [];
+    this.viewportCollisions.length = 0;
 
     for (let i = 0; i < collidables.length; i++) {
       const [a, posA, collisionA] = collidables[i];

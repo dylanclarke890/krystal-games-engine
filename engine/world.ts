@@ -39,12 +39,13 @@ export class World {
     this.inputManager.bind(InputKeys.Arrow_Right, "move-right");
 
     const em = this.entityManager;
-    this.registerSystem(new InputSystem(em, this.inputManager));
-    const detector = new CollisionDetector(em, this.viewport);
-    const resolver = new CollisionResolver(em);
-    this.registerSystem(new PhysicSystem(em, detector, resolver));
-    this.registerSystem(new RenderSystem(em, this.viewport));
+    const vp = this.viewport;
+    const detector = new CollisionDetector(em, vp);
+    const resolver = new CollisionResolver(em, vp);
 
+    this.registerSystem(new InputSystem(em, this.inputManager));
+    this.registerSystem(new PhysicSystem(em, detector, resolver));
+    this.registerSystem(new RenderSystem(em, vp));
     this.#createTestEntity(50, 50);
     this.#createTestEntity(450, -100);
   }

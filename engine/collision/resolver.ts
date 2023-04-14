@@ -1,5 +1,6 @@
 import { Bounciness } from "../components/index.js";
 import { EntityManager } from "../entities/entity-manager.js";
+import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { DetectionResult } from "../utils/types.js";
 
@@ -7,18 +8,41 @@ const sides = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 };
 
 export class CollisionResolver {
   entityManager: EntityManager;
+  viewport: Viewport;
 
   static defaultComponents = {
     bounce: new Bounciness(1),
   };
 
-  constructor(entityManager: EntityManager) {
+  constructor(entityManager: EntityManager, viewport: Viewport) {
     Assert.instanceOf("entityManager", entityManager, EntityManager);
+    Assert.instanceOf("viewport", viewport, Viewport);
     this.entityManager = entityManager;
+    this.viewport = viewport;
   }
 
   resolve(collided: DetectionResult) {
     const em = this.entityManager;
+    if (collided.entityCollisions.length) {
+      console.log(collided.entityCollisions);
+    }
+    collided.viewportCollisions.forEach((v) => {
+      const [entity, viewportCollisions] = v;
+      const pos = em.getComponent(entity, "Position")!;
+      const size = em.getComponent(entity, "Size")!;
+      if (viewportCollisions.left) {
+        pos.x = 0;
+      }
+      if (viewportCollisions.right) {
+        pos.x = this.viewport.width - size.x;
+      }
+      if (viewportCollisions.top) {
+        pos.y = 0;
+      }
+      if (viewportCollisions.bottom) {
+        pos.y = this.viewport.height - size.y;
+      }
+    });
     collided.entityCollisions.forEach((v) => {
       const [a, b] = v;
       // Get components
