@@ -4,7 +4,7 @@ import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { DetectionResult } from "../utils/types.js";
 
-const sides = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 };
+const sides = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 } as const;
 
 export class CollisionResolver {
   entityManager: EntityManager;
@@ -73,50 +73,57 @@ export class CollisionResolver {
       let side: typeof sides[keyof typeof sides];
       if (absDX > absDY) side = dx > 0 ? sides.RIGHT : sides.LEFT;
       else side = dy > 0 ? sides.BOTTOM : sides.TOP;
-
       switch (side) {
         case sides.LEFT:
           {
+            const overlap = posA.x + sizeA.x - posB.x;
+            if (overlap < 0) break;
+
+            posA.x -= overlap;
+            posB.x += overlap;
+
             const vRel = velA.x - velB.x;
             velA.x = -vRel * bounceA.value + velA.x;
             velB.x = vRel * bounceB.value + velB.x;
-
-            const overlap = posA.x + sizeA.x - posB.x;
-            posA.x -= overlap;
-            posB.x += overlap;
           }
           break;
         case sides.RIGHT:
           {
+            const overlap = posB.x + sizeB.x - posA.x;
+            if (overlap < 0) break;
+
+            posA.x += overlap;
+            posB.x -= overlap;
+
             const vRel = velA.x - velB.x;
             velA.x = -vRel * bounceA.value + velA.x;
             velB.x = vRel * bounceB.value + velB.x;
-
-            const overlap = posB.x + sizeB.x - posA.x;
-            posA.x += overlap;
-            posB.x -= overlap;
           }
           break;
         case sides.TOP:
           {
+            const overlap = posA.y + sizeA.y - posB.y;
+            if (overlap < 0) break;
+
+            posA.y -= overlap;
+            posB.y += overlap;
+
             const vRel = velA.y - velB.y;
             velA.y = -vRel * bounceA.value + velA.y;
             velB.y = vRel * bounceB.value + velB.y;
-
-            const overlap = posA.y + sizeA.y - posB.y;
-            posA.y -= overlap;
-            posB.y += overlap;
           }
           break;
         case sides.BOTTOM:
           {
+            const overlap = posB.y + sizeB.y - posA.y;
+            if (overlap < 0) break;
+
+            posA.y += overlap;
+            posB.y -= overlap;
+
             const vRel = velA.y - velB.y;
             velA.y = -vRel * bounceA.value + velA.y;
             velB.y = vRel * bounceB.value + velB.y;
-
-            const overlap = posB.y + sizeB.y - posA.y;
-            posA.y += overlap;
-            posB.y -= overlap;
           }
           break;
         default:
