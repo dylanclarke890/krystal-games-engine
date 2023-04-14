@@ -1,3 +1,4 @@
+import { Position, Collision } from "../components/index.js";
 import { PairedSet } from "./paired-set.js";
 
 export type ComponentType = keyof typeof import("../components/index.js") & string;
@@ -6,6 +7,8 @@ export type Component<T extends ComponentType> = InstanceType<
 >;
 
 export type Side = "left" | "right" | "top" | "bottom";
+export type Collidable = [number, Position, Collision];
+
 export type ViewportCollision = [number, { [K in Side]?: boolean }];
 export type DetectionResult = {
   entityCollisions: PairedSet<number>;

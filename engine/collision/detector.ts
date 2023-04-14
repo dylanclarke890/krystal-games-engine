@@ -3,9 +3,7 @@ import { EntityManager } from "../entities/entity-manager.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";
-import { DetectionResult, ViewportCollision } from "../utils/types.js";
-
-type Collidable = [number, Position, Collision];
+import { DetectionResult, ViewportCollision, Collidable } from "../utils/types.js";
 
 export class CollisionDetector {
   entityManager: EntityManager;
@@ -22,7 +20,7 @@ export class CollisionDetector {
     this.viewportCollisions = [];
   }
 
-  detectEntityCollision(a: number, posA: Position, sizeA: Size, collidables: Collidable[]) {
+  detectEntityCollision(a: number, posA: Position, sizeA: Size, collidables: Collidable[]): void {
     for (let j = 0; j < collidables.length; j++) {
       const [b, posB, collisionB] = collidables[j];
       if (a === b || collisionB.hasEntityCollisionType("IGNORE")) continue;
@@ -33,7 +31,7 @@ export class CollisionDetector {
     }
   }
 
-  detectViewportCollision(a: number, pos: Position, size: Size, collision: Collision) {
+  detectViewportCollision(a: number, pos: Position, size: Size, collision: Collision): void {
     let add = false;
     const res = { left: false, right: false, top: false, bottom: false };
 
@@ -41,22 +39,22 @@ export class CollisionDetector {
       res.left = pos.x < 0;
       add = true;
     }
-    
+
     if (collision.hasViewportCollisionType("RIGHT")) {
       res.right = pos.x + size.x > this.viewport.width;
       add = true;
     }
-    
+
     if (collision.hasViewportCollisionType("TOP")) {
       res.top = pos.y < 0;
       add = true;
     }
-    
+
     if (collision.hasViewportCollisionType("BOTTOM")) {
       res.bottom = pos.y + size.y > this.viewport.height;
       add = true;
     }
-    
+
     if (add) {
       this.viewportCollisions.push([a, res]);
     }

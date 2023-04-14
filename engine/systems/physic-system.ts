@@ -3,9 +3,8 @@ import { CollisionResolver } from "../collision/resolver.js";
 import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
-import { Collision, Position } from "../components/index.js";
 import { Assert } from "../utils/assert.js";
-import { ComponentType } from "../utils/types.js";
+import { Collidable, ComponentType } from "../utils/types.js";
 
 export class PhysicSystem extends System {
   static requiredComponents: ComponentType[] = ["Position", "Velocity"];
@@ -30,7 +29,7 @@ export class PhysicSystem extends System {
     const em = this.entityManager;
     const entities = em.getEntitiesWithComponents(...PhysicSystem.requiredComponents);
 
-    const collidables: [number, Position, Collision][] = [];
+    const collidables: Collidable[] = [];
     for (let i = 0; i < entities.length; i++) {
       const entity = entities[i];
       const position = em.getComponent(entity, "Position")!;
