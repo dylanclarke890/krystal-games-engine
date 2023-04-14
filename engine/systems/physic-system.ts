@@ -1,13 +1,14 @@
 import { CollisionDetector } from "../collision/detector.js";
 import { CollisionResolver } from "../collision/resolver.js";
 import { SystemTypes } from "./system-types.js";
-import { RequiredComponent, System } from "./system.js";
+import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Collision, Position } from "../components/index.js";
 import { Assert } from "../utils/assert.js";
+import { ComponentType } from "../utils/types.js";
 
 export class PhysicSystem extends System {
-  static requiredComponents: RequiredComponent[] = ["Position", "Velocity"];
+  static requiredComponents: ComponentType[] = ["Position", "Velocity"];
   static systemType = SystemTypes.Physics;
 
   collisionDetector: CollisionDetector;

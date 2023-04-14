@@ -1,12 +1,11 @@
 /* eslint-disable no-unused-vars */
-import { ComponentMap, EntityManager } from "../entities/entity-manager.js";
+import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
+import { ComponentType } from "../utils/types.js";
 import { SystemTypes } from "./system-types.js";
 
-export type RequiredComponent = keyof ComponentMap & string;
-
 export class System {
-  static requiredComponents: RequiredComponent[];
+  static requiredComponents: ComponentType[];
   static systemType: SystemTypes;
   entityManager: EntityManager;
 

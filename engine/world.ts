@@ -13,8 +13,7 @@ import { EntityManager } from "./entities/entity-manager.js";
 import { InputManager } from "./input/input-manager.js";
 import { Viewport } from "./graphics/viewport.js";
 import { System } from "./systems/system.js";
-import { ComponentType } from "./entities/entity-manager.js";
-import { ComponentMap } from "./entities/entity-manager.js";
+import { Component, ComponentType } from "./utils/types.js";
 import { Assert } from "./utils/assert.js";
 
 export class World {
@@ -79,7 +78,7 @@ export class World {
     return this.entityManager.createEntity();
   }
 
-  addComponent(entityId: number, component: ComponentMap[ComponentType]) {
+  addComponent(entityId: number, component: Component<ComponentType>) {
     return this.entityManager.addComponent(entityId, component);
   }
 

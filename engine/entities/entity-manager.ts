@@ -1,11 +1,7 @@
 import { EventSystem } from "../events/event-system.js";
 import { GameEvents } from "../events/events.js";
 import { Assert } from "../utils/assert.js";
-
-export type ComponentType = keyof typeof import("../components/index.js");
-export type Component<T extends ComponentType> = InstanceType<
-  typeof import("../components/index.js")[T]
->;
+import { Component, ComponentType } from "../utils/types.js";
 
 export class EntityManager {
   eventSystem: EventSystem;
@@ -80,9 +76,7 @@ export class EntityManager {
     return this.entityMasks.get(entity)!.has(componentType);
   }
 
-  /**
-   * Check if any entity has the specified component type.
-   */
+  /** Check if any entity has the specified component type. */
   hasComponentType(componentType: ComponentType) {
     for (const key of this.components.keys()) {
       if (key.endsWith(componentType)) {
@@ -92,10 +86,7 @@ export class EntityManager {
     return false;
   }
 
-  /**
-   * Get all entities that have a set of components.
-   * @param {ComponentType[]} componentTypes
-   */
+  /** Get all entities that have a set of components. */
   getEntitiesWithComponents<T extends ComponentType>(...componentTypes: T[]) {
     const entities = [];
     for (const entity of this.entities) {
@@ -106,10 +97,7 @@ export class EntityManager {
     return entities;
   }
 
-  /**
-   * Destroy an entity and remove all of its components.
-   * @param {number} entity
-   */
+  /** Destroy an entity and remove all of its components. */
   destroyEntity(entity: number) {
     const masks = this.entityMasks.get(entity);
     if (!masks) return;

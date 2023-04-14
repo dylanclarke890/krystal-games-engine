@@ -1,11 +1,12 @@
 import { InputManager } from "../input/input-manager.js";
 import { SystemTypes } from "./system-types.js";
-import { RequiredComponent, System } from "./system.js";
+import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
+import { ComponentType } from "../utils/types.js";
 
 export class InputSystem extends System {
-  static requiredComponents: RequiredComponent[] = ["Input"];
+  static requiredComponents: ComponentType[] = ["Input"];
   static systemType = SystemTypes.Input;
 
   inputManager: InputManager;
