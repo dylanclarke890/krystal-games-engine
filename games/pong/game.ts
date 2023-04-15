@@ -46,21 +46,21 @@ export class TestGame extends Game {
         {
           held: (id: number, em: EntityManager) => {
             const vel = em.getComponent(id, "Velocity")!;
-            vel.y = -50;
+            vel.y = -150;
           },
           released,
         },
       ],
-      [
-        "down",
-        {
-          held: (id: number, em: EntityManager) => {
-            const vel = em.getComponent(id, "Velocity")!;
-            vel.y = 50;
+        [
+          "down",
+          {
+            held: (id: number, em: EntityManager) => {
+              const vel = em.getComponent(id, "Velocity")!;
+              vel.y = 150;
+            },
+            released,
           },
-          released,
-        },
-      ],
+        ],
     ]);
     em.addComponent(id, new Components.Input(inputBindings));
   }
@@ -72,7 +72,7 @@ export class TestGame extends Game {
     const size = new Components.Size(50, 150);
     em.addComponent(
       id,
-      new Components.Position(this.viewport.width - 50, this.viewport.height / 2 - size.halfY)
+      new Components.Position(this.viewport.width - 100, this.viewport.height / 2 - size.halfY)
     );
     em.addComponent(id, size);
     const collisionSettings = {
@@ -97,7 +97,7 @@ export class TestGame extends Game {
         this.viewport.height / 2 - size.halfY
       )
     );
-    em.addComponent(id, new Components.Velocity(50, 0));
+    em.addComponent(id, new Components.Velocity(150, 0));
     em.addComponent(id, new Components.Sprite("games/pong/ball.png", size.x, size.y));
     const collisionSettings = {
       viewportCollision: { TOP: true, BOTTOM: true },

@@ -68,12 +68,14 @@ export class CollisionResolver {
       const velB = em.getComponent(b, "Velocity")!;
       const sizeA = em.getComponent(a, "Size")!;
       const sizeB = em.getComponent(b, "Size")!;
-      // const collisionA = em.getComponent(a, "Collision")!;
-      // const collisionB = em.getComponent(b, "Collision")!;
+      const collisionA = em.getComponent(a, "Collision")!;
+      const collisionB = em.getComponent(b, "Collision")!;
 
       const bDefault = CollisionResolver.defaultComponents.bounce;
       const bounceA = em.getComponent(a, "Bounciness") ?? bDefault;
       const bounceB = em.getComponent(b, "Bounciness") ?? bDefault;
+      const aHasBounceFlag = collisionA.hasEntityCollisionType("BOUNCE");
+      const bHasBounceFlag = collisionB.hasEntityCollisionType("BOUNCE");
 
       // Get midpoints
       const aMidX = posA.x + sizeA.halfX;
@@ -98,12 +100,19 @@ export class CollisionResolver {
             const overlap = posA.x + sizeA.x - posB.x;
             if (overlap < 0) break;
 
-            posA.x -= overlap;
-            posB.x += overlap;
-
-            const vRel = velA.x - velB.x;
-            velA.x = -vRel * bounceA.value + velA.x;
-            velB.x = vRel * bounceB.value + velB.x;
+            if (aHasBounceFlag && bHasBounceFlag) {
+              posA.x -= overlap;
+              posB.x += overlap;
+              const vRel = velA.x - velB.x;
+              velA.x = -vRel * bounceA.value + velA.x;
+              velB.x = vRel * bounceB.value + velB.x;
+            } else if (aHasBounceFlag) {
+              posA.x -= overlap * 2;
+              velA.x *= -bounceA.value;
+            } else {
+              posB.x += overlap * 2;
+              velB.x *= -bounceB.value;
+            }
           }
           break;
         case sides.RIGHT:
@@ -111,12 +120,19 @@ export class CollisionResolver {
             const overlap = posB.x + sizeB.x - posA.x;
             if (overlap < 0) break;
 
-            posA.x += overlap;
-            posB.x -= overlap;
-
-            const vRel = velA.x - velB.x;
-            velA.x = -vRel * bounceA.value + velA.x;
-            velB.x = vRel * bounceB.value + velB.x;
+            if (aHasBounceFlag && bHasBounceFlag) {
+              posA.x += overlap;
+              posB.x -= overlap;
+              const vRel = velA.x - velB.x;
+              velA.x = -vRel * bounceA.value + velA.x;
+              velB.x = vRel * bounceB.value + velB.x;
+            } else if (aHasBounceFlag) {
+              posA.x += overlap * 2;
+              velA.x *= -bounceA.value;
+            } else {
+              posB.x -= overlap * 2;
+              velB.x *= -bounceB.value;
+            }
           }
           break;
         case sides.TOP:
@@ -124,12 +140,19 @@ export class CollisionResolver {
             const overlap = posA.y + sizeA.y - posB.y;
             if (overlap < 0) break;
 
-            posA.y -= overlap;
-            posB.y += overlap;
-
-            const vRel = velA.y - velB.y;
-            velA.y = -vRel * bounceA.value + velA.y;
-            velB.y = vRel * bounceB.value + velB.y;
+            if (aHasBounceFlag && bHasBounceFlag) {
+              posA.y -= overlap;
+              posB.y += overlap;
+              const vRel = velA.y - velB.y;
+              velA.y = -vRel * bounceA.value + velA.y;
+              velB.y = vRel * bounceB.value + velB.y;
+            } else if (aHasBounceFlag) {
+              posA.y -= overlap * 2;
+              velA.y *= -bounceA.value;
+            } else {
+              posB.y += overlap * 2;
+              velB.y *= -bounceB.value;
+            }
           }
           break;
         case sides.BOTTOM:
@@ -137,12 +160,19 @@ export class CollisionResolver {
             const overlap = posB.y + sizeB.y - posA.y;
             if (overlap < 0) break;
 
-            posA.y += overlap;
-            posB.y -= overlap;
-
-            const vRel = velA.y - velB.y;
-            velA.y = -vRel * bounceA.value + velA.y;
-            velB.y = vRel * bounceB.value + velB.y;
+            if (aHasBounceFlag && bHasBounceFlag) {
+              posA.y += overlap;
+              posB.y -= overlap;
+              const vRel = velA.y - velB.y;
+              velA.y = -vRel * bounceA.value + velA.y;
+              velB.y = vRel * bounceB.value + velB.y;
+            } else if (aHasBounceFlag) {
+              posA.y += overlap * 2;
+              velA.y *= -bounceA.value;
+            } else {
+              posB.y -= overlap * 2;
+              velB.y *= -bounceB.value;
+            }
           }
           break;
         default:
