@@ -61,8 +61,8 @@ export class World {
       ["move-right", () => console.log("Moving right!")],
     ]);
     const collisionSettings = {
-      viewportCollision: { left: true, right: true },
-      entityCollision: { bounce: true },
+      viewportCollision: { LEFT: true, RIGHT: true },
+      entityCollision: { BOUNCE: true },
     };
 
     em.addComponent(entity, new Components.Position(posX, 50));

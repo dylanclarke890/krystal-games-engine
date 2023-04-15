@@ -23,15 +23,19 @@ export class Collision {
 
   #assignSettings(settings: CollisionSettings) {
     const vpc = settings.viewportCollision;
-    if (vpc?.left) this.viewportFlags.addFlag(ViewportCollisionTypes.LEFT);
-    if (vpc?.top) this.viewportFlags.addFlag(ViewportCollisionTypes.TOP);
-    if (vpc?.right) this.viewportFlags.addFlag(ViewportCollisionTypes.RIGHT);
-    if (vpc?.bottom) this.viewportFlags.addFlag(ViewportCollisionTypes.BOTTOM);
+    if (vpc && !vpc.IGNORE) {
+      if (vpc.LEFT) this.viewportFlags.addFlag(ViewportCollisionTypes.LEFT);
+      if (vpc.TOP) this.viewportFlags.addFlag(ViewportCollisionTypes.TOP);
+      if (vpc.RIGHT) this.viewportFlags.addFlag(ViewportCollisionTypes.RIGHT);
+      if (vpc.BOTTOM) this.viewportFlags.addFlag(ViewportCollisionTypes.BOTTOM);
+    }
     if (!this.viewportFlags.hasFlagSet()) this.viewportFlags.addFlag(ViewportCollisionTypes.IGNORE);
 
     const ec = settings.entityCollision;
-    if (ec?.bounce) this.entityFlags.addFlag(EntityCollisionTypes.BOUNCE);
-    if (ec?.stick) this.entityFlags.addFlag(EntityCollisionTypes.STICK);
+    if (ec && !ec.IGNORE) {
+      if (ec.BOUNCE) this.entityFlags.addFlag(EntityCollisionTypes.BOUNCE);
+      if (ec.STICK) this.entityFlags.addFlag(EntityCollisionTypes.STICK);
+    }
     if (!this.entityFlags.hasFlagSet()) this.entityFlags.addFlag(EntityCollisionTypes.IGNORE);
   }
 }
@@ -50,23 +54,11 @@ const EntityCollisionTypes = {
   BOUNCE: 4,
 } as const;
 
-type ViewportCollisionSettings = {
-  left: 1;
-  top: 2;
-  right: 4;
-  bottom: 8;
-};
-
-type EntityCollisionSettings = {
-  stick: 2;
-  bounce: 4;
-};
-
 type CollisionSettings = {
   viewportCollision?: {
-    [P in keyof ViewportCollisionSettings]?: boolean;
+    [P in keyof typeof ViewportCollisionTypes]?: boolean;
   };
   entityCollision?: {
-    [P in keyof EntityCollisionSettings]?: boolean;
+    [P in keyof typeof EntityCollisionTypes]?: boolean;
   };
 };
