@@ -1,6 +1,8 @@
 import { Game } from "../../engine/game.js";
 import * as Components from "../../engine/components/index.js";
 import { InputBindings } from "../../engine/utils/types.js";
+import { InputKeys } from "../../engine/input/input-keys.js";
+import { EntityManager } from "../../engine/entities/entity-manager.js";
 
 export class TestGame extends Game {
   player!: number;
@@ -8,6 +10,8 @@ export class TestGame extends Game {
 
   constructor() {
     super("canvas1", 500, 500);
+    this.inputManager.bind(InputKeys.Arrow_Up, "up");
+    this.inputManager.bind(InputKeys.Arrow_Down, "down");
     this.#createPlayer();
     this.#createOpponent();
     this.#createBall();
@@ -25,40 +29,36 @@ export class TestGame extends Game {
     em.addComponent(id, new Components.Velocity(0, 0));
     em.addComponent(id, new Components.Acceleration(0, 0));
     em.addComponent(id, new Components.Sprite("games/pong/paddle.png", size.x, size.y));
+
     const collisionSettings = {
       viewportCollision: { TOP: true, BOTTOM: true },
       entityCollision: { WALL: true },
     };
     em.addComponent(id, new Components.Collision(collisionSettings));
+
+    const released = (id: number, em: EntityManager) => {
+      const vel = em.getComponent(id, "Velocity")!;
+      vel.y = 0;
+    };
     const inputBindings = new Map<string, InputBindings>([
       [
         "up",
         {
-          held: (id, em, dt) => {
-            const accel = em.getComponent(id, "Acceleration")!;
-            accel.y += 10 * dt;
-          },
-          released: (id, em) => {
-            const accel = em.getComponent(id, "Acceleration")!;
+          held: (id: number, em: EntityManager) => {
             const vel = em.getComponent(id, "Velocity")!;
-            accel.y = 0;
-            vel.y = 0;
+            vel.y = -50;
           },
+          released,
         },
       ],
       [
         "down",
         {
-          held: (id, em, dt) => {
-            const accel = em.getComponent(id, "Acceleration");
-            if (accel) accel.y -= 10 * dt;
-          },
-          released: (id, em) => {
-            const accel = em.getComponent(id, "Acceleration")!;
+          held: (id: number, em: EntityManager) => {
             const vel = em.getComponent(id, "Velocity")!;
-            accel.y = 0;
-            vel.y = 0;
+            vel.y = 50;
           },
+          released,
         },
       ],
     ]);

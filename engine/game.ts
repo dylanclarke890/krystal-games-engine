@@ -11,7 +11,6 @@ import { CollisionResolver } from "./collision/resolver.js";
 import { InputSystem } from "./systems/input-system.js";
 import { PhysicSystem } from "./systems/physic-system.js";
 import { RenderSystem } from "./systems/render-system.js";
-import { InputKeys } from "./input/input-keys.js";
 import { System } from "./systems/system.js";
 
 export class Game {
@@ -58,9 +57,6 @@ export class Game {
   // #endregion
 
   setup() {
-    this.inputManager.bind(InputKeys.Arrow_Left, "move-left");
-    this.inputManager.bind(InputKeys.Arrow_Right, "move-right");
-
     const em = this.entityManager;
     const vp = this.viewport;
     const detector = new CollisionDetector(em, vp);
