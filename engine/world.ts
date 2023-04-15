@@ -12,7 +12,7 @@ import { EntityManager } from "./entities/entity-manager.js";
 import { InputManager } from "./input/input-manager.js";
 import { Viewport } from "./graphics/viewport.js";
 import { System } from "./systems/system.js";
-import { Component, ComponentType } from "./utils/types.js";
+import { Component, ComponentType, InputBindings } from "./utils/types.js";
 import { Assert } from "./utils/assert.js";
 
 export class World {
@@ -56,9 +56,9 @@ export class World {
 
     const rnd = Math.random();
     const sequence = rnd > 0.5 ? "[0,3]" : "[3, 0]";
-    const bindings = new Map([
-      ["move-left", () => console.log("Moving left!")],
-      ["move-right", () => console.log("Moving right!")],
+    const bindings = new Map<string, InputBindings>([
+      ["move-left", { held: (entity) => console.log(`${entity} moved left.`) }],
+      ["move-right", { held: () => {} }],
     ]);
     const collisionSettings = {
       viewportCollision: { LEFT: true, RIGHT: true },

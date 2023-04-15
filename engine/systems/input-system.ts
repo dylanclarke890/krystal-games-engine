@@ -17,14 +17,16 @@ export class InputSystem extends System {
     this.inputManager = inputManager;
   }
 
-  update() {
-    const entities = this.entityManager.getEntitiesWithComponents(
-      ...InputSystem.requiredComponents
-    );
+  update(dt: number) {
+    const em = this.entityManager;
+    const entities = em.getEntitiesWithComponents(...InputSystem.requiredComponents);
     for (const entity of entities) {
-      const input = this.entityManager.getComponent(entity, "Input")!;
-      for (const [action, fn] of input.bindings) {
-        if (this.inputManager.released(action)) fn();
+      const input = em.getComponent(entity, "Input")!;
+      for (const [action, { pressed, held, released }] of input.actions) {
+        const state = this.inputManager.state(action);
+        if (state.pressed && pressed) pressed(entity, em, dt);
+        if (state.held && held) held(entity, em, dt);
+        if (state.released && released) released(entity, em, dt);
       }
     }
     this.inputManager.clearPressed();

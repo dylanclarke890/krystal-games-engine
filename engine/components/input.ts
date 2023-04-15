@@ -1,13 +1,13 @@
-type Action = () => void;
+import { InputBindings } from "../utils/types.js";
 
 export class Input {
-  bindings: Map<string, Action>;
+  actions: Map<string, InputBindings>;
 
-  constructor(bindings: Map<string, Action>) {
-    this.bindings = bindings;
+  constructor(bindings: Map<string, InputBindings>) {
+    this.actions = bindings;
   }
 
-  bind(name: string, action: Action) {
-    this.bindings.set(name, action);
+  bind(name: string, action: InputBindings) {
+    this.actions.set(name, action);
   }
 }

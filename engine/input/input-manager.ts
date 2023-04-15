@@ -1,6 +1,7 @@
 import { EventSystem } from "../events/event-system.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
+import { InputBindingType } from "../utils/types.js";
 import { UserAgent } from "../utils/user-agent.js";
 import { InputKeys, keyboardMap } from "./input-keys.js";
 
@@ -153,6 +154,15 @@ export class InputManager {
   /** Returns a boolean value indicating whether the input action was released in the last frame. */
   released(action: string) {
     return !!this.#delayedActions.get(action);
+  }
+
+  /** Returns the current state of the action (pressed, held, released). */
+  state(action: string): { [K in InputBindingType]?: boolean } {
+    return {
+      pressed: !!this.#pressed.get(action),
+      held: !!this.#actions.get(action),
+      released: !!this.#delayedActions.get(action),
+    };
   }
 
   /**

@@ -1,4 +1,5 @@
 import { Position, Collision } from "../components/index.js";
+import { EntityManager } from "../entities/entity-manager.js";
 import { PairedSet } from "./paired-set.js";
 
 export type ComponentType = keyof typeof import("../components/index.js") & string;
@@ -14,3 +15,7 @@ export type DetectionResult = {
   entityCollisions: PairedSet<number>;
   viewportCollisions: ViewportCollision[];
 };
+
+export type InputBindingFn = (entityId: number, entityManager: EntityManager, dt: number) => void;
+export type InputBindingType = "held" | "pressed" | "released";
+export type InputBindings = { [K in InputBindingType]?: InputBindingFn };
