@@ -13,11 +13,11 @@ export class Collision {
     }
   }
 
-  hasViewportCollisionType(type: keyof typeof ViewportCollisionTypes): boolean {
+  hasViewportCollisionType(type: Key<typeof ViewportCollisionTypes>): boolean {
     return this.viewportFlags.hasFlag(ViewportCollisionTypes[type]);
   }
 
-  hasEntityCollisionType(type: keyof typeof EntityCollisionTypes): boolean {
+  hasEntityCollisionType(type: Key<typeof EntityCollisionTypes>): boolean {
     return this.entityFlags.hasFlag(EntityCollisionTypes[type]);
   }
 
