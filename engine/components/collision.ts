@@ -1,4 +1,10 @@
 import { BitwiseFlags } from "../utils/bitwise-flags.js";
+import {
+  CollisionSettings,
+  EntityCollisionTypes,
+  ViewportCollisionTypes,
+  Key,
+} from "../utils/types.js";
 
 export class Collision {
   viewportFlags: BitwiseFlags<typeof ViewportCollisionTypes>;
@@ -41,28 +47,3 @@ export class Collision {
     if (!this.entityFlags.hasFlagSet()) this.entityFlags.addFlag(EntityCollisionTypes.IGNORE);
   }
 }
-
-const ViewportCollisionTypes = {
-  IGNORE: 1,
-  LEFT: 2,
-  TOP: 4,
-  RIGHT: 8,
-  BOTTOM: 16,
-} as const;
-
-const EntityCollisionTypes = {
-  IGNORE: 1,
-  STICK: 2,
-  BOUNCE: 4,
-} as const;
-
-type Key<T> = keyof T;
-
-type CollisionSettings = {
-  viewportCollision?: {
-    [P in Key<typeof ViewportCollisionTypes>]?: boolean;
-  };
-  entityCollision?: {
-    [P in Key<typeof EntityCollisionTypes>]?: boolean;
-  };
-};

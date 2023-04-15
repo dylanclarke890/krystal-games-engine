@@ -51,7 +51,7 @@ export class SystemManager {
       if (this.entityManager.hasComponentType(componentType)) {
         continue;
       }
-      const message = `Missing required component type: ${componentType}`;
+      const message = `Missing required component type: '${componentType}'`;
       if (this.#throwIfMissing) {
         throw new Error(message);
       } else console.warn(message);
