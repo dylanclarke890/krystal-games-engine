@@ -34,10 +34,15 @@ export class PhysicSystem extends System {
       const entity = entities[i];
       const position = em.getComponent(entity, "Position")!;
       const velocity = em.getComponent(entity, "Velocity")!;
-      const acceleration = em.getComponent(entity, "Acceleration");
 
+      const acceleration = em.getComponent(entity, "Acceleration");
       if (acceleration) {
         velocity.add(acceleration.x * dt, acceleration.y * dt);
+      }
+
+      const friction = em.getComponent(entity, "Friction");
+      if (friction) {
+        velocity.sub(friction.x * dt, friction.y * dt);
       }
 
       position.add(velocity.x * dt, velocity.y * dt);

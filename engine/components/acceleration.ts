@@ -6,4 +6,16 @@ export class Acceleration {
     this.x = x;
     this.y = y;
   }
+
+  add(x: number, y: number): this {
+    this.x += x;
+    this.y += y;
+    return this;
+  }
+
+  sub(x: number, y: number): this {
+    this.x -= x;
+    this.y -= y;
+    return this;
+  }
 }

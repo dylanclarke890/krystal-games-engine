@@ -11,12 +11,15 @@ export class Velocity {
     this.maxY = maxY;
   }
 
-  /**
-   * Adds the specified x and y values to the current velocity.
-   */
   add(x: number, y: number): this {
     this.x += x;
     this.y += y;
+    return this;
+  }
+
+  sub(x: number, y: number): this {
+    this.x -= x;
+    this.y -= y;
     return this;
   }
 
@@ -26,10 +29,7 @@ export class Velocity {
     return this;
   }
 
-  /**
-   * Returns the dot product of the current velocity and the specified velocity.
-   * @param {Velocity} otherVelocity
-   */
+  /** Dot product. */
   dot(otherVelocity: Velocity): number {
     return this.x * otherVelocity.x + this.y * otherVelocity.y;
   }
