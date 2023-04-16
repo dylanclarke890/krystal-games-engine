@@ -1,3 +1,4 @@
+import { Bounciness } from "../components/bounciness.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
@@ -12,6 +13,10 @@ import {
 const SIDES = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 } as const;
 type Side = typeof SIDES[Key<typeof SIDES>];
 type ResolverComponents = "Position" | "Velocity" | "Size" | "Collision" | "Bounciness";
+
+const defaultComponents = {
+  bounce: new Bounciness(1),
+};
 
 export class CollisionResolver {
   entityManager: EntityManager;
@@ -43,6 +48,8 @@ export class CollisionResolver {
       "Collision",
       "Bounciness"
     ) as DefinedExcept<ComponentMap<ResolverComponents>, "Bounciness">;
+    if (!a.Bounciness) a.Bounciness = defaultComponents.bounce;
+
     const b = em.getComponents(
       entityB,
       "Position",
@@ -51,6 +58,7 @@ export class CollisionResolver {
       "Collision",
       "Bounciness"
     ) as DefinedExcept<ComponentMap<ResolverComponents>, "Bounciness">;
+    if (!b.Bounciness) b.Bounciness = defaultComponents.bounce;
 
     const side = this.#findSideOfCollision(a, b);
     switch (side) {
