@@ -5,9 +5,13 @@ import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
 import { Collidable, ComponentMap, ComponentType, DefinedExcept } from "../utils/types.js";
+import { Mass } from "../components/mass.js";
 
 type RequiredComponents = "Position" | "Velocity";
-type OptionalComponents = "Acceleration" | "Friction" | "Collision" | "GravityFactor";
+type OptionalComponents = "Acceleration" | "Friction" | "Collision" | "GravityFactor" | "Mass";
+const defaultComponents = {
+  mass: new Mass(1),
+};
 
 export class PhysicSystem extends System {
   static requiredComponents: ComponentType[] = ["Position", "Velocity"];
@@ -42,8 +46,12 @@ export class PhysicSystem extends System {
         "Acceleration",
         "Friction",
         "Collision",
-        "GravityFactor"
+        "GravityFactor",
+        "Mass"
       ) as DefinedExcept<ComponentMap<RequiredComponents | OptionalComponents>, OptionalComponents>;
+      if (!entity.Mass) {
+        entity.Mass = defaultComponents.mass;
+      }
 
       if (entity.Acceleration) {
         entity.Velocity.add(entity.Acceleration.x * dt, entity.Acceleration.y * dt);
