@@ -2,6 +2,22 @@ import { Position, Collision } from "../components/index.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { PairedSet } from "./paired-set.js";
 
+export type Defined<TObj> = {
+  [P in keyof TObj]-?: NonNullable<TObj[P]>;
+};
+
+export type DefinedExcept<TObj, TExcept extends keyof TObj> = {
+  [P in keyof TObj]-?: P extends TExcept ? never : NonNullable<TObj[P]>;
+} & { [P in TExcept]?: TObj[P] | undefined };
+
+export type DefinedExcept<TObj, TExcept extends keyof TObj> = {
+  [P in keyof TObj]-?: P extends TExcept ? never : NonNullable<TObj[P]>;
+} & { [P in TExcept]?: TObj[P] | undefined };
+
+type Ma = ComponentMap<"AI" | "Acceleration" | "Bounciness">;
+type DefiniteMA3 = DefinedExcept<Ma, "AI">;
+const a: DefiniteMA3 = { AI: undefined };
+
 export type Key<T> = keyof T;
 export type ComponentType = Key<typeof import("../components/index.js")> & string;
 export type Component<T extends ComponentType> = InstanceType<
