@@ -7,6 +7,9 @@ export type ComponentType = Key<typeof import("../components/index.js")> & strin
 export type Component<T extends ComponentType> = InstanceType<
   typeof import("../components/index.js")[T]
 >;
+export type ComponentMap<T extends ComponentType> = {
+  [K in T]?: Component<K>;
+};
 
 export type Side = "left" | "right" | "top" | "bottom";
 export type Collidable = [number, Position, Collision];

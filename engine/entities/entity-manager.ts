@@ -1,7 +1,7 @@
 import { EventSystem } from "../events/event-system.js";
 import { GameEvents } from "../events/events.js";
 import { Assert } from "../utils/assert.js";
-import { Component, ComponentType } from "../utils/types.js";
+import { Component, ComponentMap, ComponentType } from "../utils/types.js";
 
 export class EntityManager {
   eventSystem: EventSystem;
@@ -63,6 +63,14 @@ export class EntityManager {
     componentType: T
   ): Component<T> | undefined {
     return this.components.get(entity + componentType) as Component<T> | undefined;
+  }
+
+  getComponents<T extends ComponentType>(entity: number, ...componentTypes: T[]) {
+    const components: ComponentMap<T> = {};
+    componentTypes.forEach(
+      (ct) => (components[ct] = this.components.get(entity + ct) as Component<T> | undefined)
+    );
+    return components;
   }
 
   /**
