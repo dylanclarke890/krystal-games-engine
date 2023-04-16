@@ -27,6 +27,7 @@ export const ViewportCollisionTypes = {
   TOP: 4,
   RIGHT: 8,
   BOTTOM: 16,
+  ALL: 32,
 } as const;
 
 export const EntityCollisionTypes = {
