@@ -55,8 +55,6 @@ export class DefaultCollisionStrategy extends BaseStrategy implements ICollision
     const bDefault = { value: 1 };
     const bounceA = em.getComponent(a, "Bounciness") ?? bDefault;
     const bounceB = em.getComponent(b, "Bounciness") ?? bDefault;
-    const aHasBounceFlag = collisionA.hasEntityCollisionType("BOUNCE");
-    const bHasBounceFlag = collisionB.hasEntityCollisionType("BOUNCE");
 
     const side = this.findSide(posA, sizeA, posB, sizeB);
     switch (side) {
@@ -65,18 +63,26 @@ export class DefaultCollisionStrategy extends BaseStrategy implements ICollision
           const overlap = posA.x + sizeA.x - posB.x;
           if (overlap < 0) break;
 
-          if (aHasBounceFlag && bHasBounceFlag) {
-            posA.x -= overlap;
-            posB.x += overlap;
-            const vRel = velA.x - velB.x;
-            velA.x = -vRel * bounceA.value + velA.x;
-            velB.x = vRel * bounceB.value + velB.x;
-          } else if (aHasBounceFlag) {
-            posA.x -= overlap * 2;
-            velA.x *= -bounceA.value;
-          } else {
-            posB.x += overlap * 2;
-            velB.x *= -bounceB.value;
+          if (collisionA.hasEntityCollisionType("BOUNCE")) {
+            if (collisionB.hasEntityCollisionType("BOUNCE")) {
+              posA.x -= overlap;
+              posB.x += overlap;
+              const vRel = velA.x - velB.x;
+              velA.x = -vRel * bounceA.value + velA.x;
+              velB.x = vRel * bounceB.value + velB.x;
+            }
+
+            if (collisionB.hasEntityCollisionType("WALL")) {
+              posA.x -= overlap * 2;
+              velA.x *= -bounceA.value;
+            }
+          }
+
+          if (collisionA.hasEntityCollisionType("WALL")) {
+            if (collisionB.hasEntityCollisionType("BOUNCE")) {
+              posB.x += overlap * 2;
+              velB.x *= -bounceB.value;
+            }
           }
         }
         break;
@@ -85,18 +91,26 @@ export class DefaultCollisionStrategy extends BaseStrategy implements ICollision
           const overlap = posB.x + sizeB.x - posA.x;
           if (overlap < 0) break;
 
-          if (aHasBounceFlag && bHasBounceFlag) {
-            posA.x += overlap;
-            posB.x -= overlap;
-            const vRel = velA.x - velB.x;
-            velA.x = -vRel * bounceA.value + velA.x;
-            velB.x = vRel * bounceB.value + velB.x;
-          } else if (aHasBounceFlag) {
-            posA.x += overlap * 2;
-            velA.x *= -bounceA.value;
-          } else {
-            posB.x -= overlap * 2;
-            velB.x *= -bounceB.value;
+          if (collisionA.hasEntityCollisionType("BOUNCE")) {
+            if (collisionB.hasEntityCollisionType("BOUNCE")) {
+              posA.x += overlap;
+              posB.x -= overlap;
+              const vRel = velA.x - velB.x;
+              velA.x = -vRel * bounceA.value + velA.x;
+              velB.x = vRel * bounceB.value + velB.x;
+            }
+
+            if (collisionB.hasEntityCollisionType("WALL")) {
+              posA.x += overlap * 2;
+              velA.x *= -bounceA.value;
+            }
+          }
+
+          if (collisionA.hasEntityCollisionType("WALL")) {
+            if (collisionB.hasEntityCollisionType("BOUNCE")) {
+              posB.x -= overlap * 2;
+              velB.x *= -bounceB.value;
+            }
           }
         }
         break;
@@ -105,18 +119,26 @@ export class DefaultCollisionStrategy extends BaseStrategy implements ICollision
           const overlap = posA.y + sizeA.y - posB.y;
           if (overlap < 0) break;
 
-          if (aHasBounceFlag && bHasBounceFlag) {
-            posA.y -= overlap;
-            posB.y += overlap;
-            const vRel = velA.y - velB.y;
-            velA.y = -vRel * bounceA.value + velA.y;
-            velB.y = vRel * bounceB.value + velB.y;
-          } else if (aHasBounceFlag) {
-            posA.y -= overlap * 2;
-            velA.y *= -bounceA.value;
-          } else {
-            posB.y += overlap * 2;
-            velB.y *= -bounceB.value;
+          if (collisionA.hasEntityCollisionType("BOUNCE")) {
+            if (collisionB.hasEntityCollisionType("BOUNCE")) {
+              posA.y -= overlap;
+              posB.y += overlap;
+              const vRel = velA.y - velB.y;
+              velA.y = -vRel * bounceA.value + velA.y;
+              velB.y = vRel * bounceB.value + velB.y;
+            }
+
+            if (collisionB.hasEntityCollisionType("WALL")) {
+              posA.y -= overlap * 2;
+              velA.y *= -bounceA.value;
+            }
+          }
+
+          if (collisionA.hasEntityCollisionType("WALL")) {
+            if (collisionB.hasEntityCollisionType("BOUNCE")) {
+              posB.y += overlap * 2;
+              velB.y *= -bounceB.value;
+            }
           }
         }
         break;
@@ -125,18 +147,26 @@ export class DefaultCollisionStrategy extends BaseStrategy implements ICollision
           const overlap = posB.y + sizeB.y - posA.y;
           if (overlap < 0) break;
 
-          if (aHasBounceFlag && bHasBounceFlag) {
-            posA.y += overlap;
-            posB.y -= overlap;
-            const vRel = velA.y - velB.y;
-            velA.y = -vRel * bounceA.value + velA.y;
-            velB.y = vRel * bounceB.value + velB.y;
-          } else if (aHasBounceFlag) {
-            posA.y += overlap * 2;
-            velA.y *= -bounceA.value;
-          } else {
-            posB.y -= overlap * 2;
-            velB.y *= -bounceB.value;
+          if (collisionA.hasEntityCollisionType("BOUNCE")) {
+            if (collisionB.hasEntityCollisionType("BOUNCE")) {
+              posA.y += overlap;
+              posB.y -= overlap;
+              const vRel = velA.y - velB.y;
+              velA.y = -vRel * bounceA.value + velA.y;
+              velB.y = vRel * bounceB.value + velB.y;
+            }
+
+            if (collisionB.hasEntityCollisionType("WALL")) {
+              posA.y += overlap * 2;
+              velA.y *= -bounceA.value;
+            }
+          }
+
+          if (collisionA.hasEntityCollisionType("WALL")) {
+            if (collisionB.hasEntityCollisionType("BOUNCE")) {
+              posB.y -= overlap * 2;
+              velB.y *= -bounceB.value;
+            }
           }
         }
         break;
