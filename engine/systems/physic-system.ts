@@ -49,20 +49,23 @@ export class PhysicSystem extends System {
         "GravityFactor",
         "Mass"
       ) as DefinedExcept<ComponentMap<RequiredComponents | OptionalComponents>, OptionalComponents>;
+
       if (!entity.Mass) {
         entity.Mass = defaultComponents.mass;
       }
+      const mass = entity.Mass.value;
 
       if (entity.Acceleration) {
-        entity.Velocity.add(entity.Acceleration.x * dt, entity.Acceleration.y * dt);
+        const accel = entity.Acceleration;
+        entity.Velocity.add((accel.x / mass) * dt, (accel.y / mass) * dt);
       }
 
       if (entity.Friction) {
-        entity.Velocity.sub(entity.Friction.x * dt, entity.Friction.y * dt);
+        entity.Velocity.sub(entity.Friction.x * mass * dt, entity.Friction.y * mass * dt);
       }
 
       if (entity.GravityFactor) {
-        entity.Velocity.add(0, entity.GravityFactor.value * dt);
+        entity.Velocity.add(0, entity.GravityFactor.value * mass * dt);
       }
 
       entity.Position.add(entity.Velocity.x * dt, entity.Velocity.y * dt);
