@@ -201,37 +201,41 @@ export class CollisionResolver {
   #resolveViewportCollisions(collisions: ViewportCollision[]) {
     const em = this.entityManager;
     collisions.forEach((v) => {
-      const [entity, viewportCollisions] = v;
-      const pos = em.getComponent(entity, "Position")!;
-      const size = em.getComponent(entity, "Size")!;
-      const vel = em.getComponent(entity, "Velocity")!;
+      const [id, viewportCollisions] = v;
+      const entity = em.getComponents(
+        id,
+        "Position",
+        "Velocity",
+        "Size",
+        "Collision",
+        "Bounciness"
+      ) as DefinedExcept<ComponentMap<ResolverComponents>, "Bounciness">;
 
-      const collision = em.getComponent(entity, "Collision")!;
-      const bounceEnabled = collision.hasEntityCollisionType("BOUNCE");
-      const bounce = em.getComponent(entity, "Bounciness") ?? { value: 1 };
+      if (!entity.Bounciness) entity.Bounciness = defaultComponents.bounce;
+      const bounceEnabled = entity.Collision.hasEntityCollisionType("BOUNCE");
 
       if (viewportCollisions.left) {
-        pos.x = 0;
+        entity.Position.x = 0;
         if (bounceEnabled) {
-          vel.x = -vel.x * bounce.value;
+          entity.Velocity.x = -entity.Velocity.x * entity.Bounciness.value;
         }
       }
       if (viewportCollisions.right) {
-        pos.x = this.viewport.width - size.x;
+        entity.Position.x = this.viewport.width - entity.Size.x;
         if (bounceEnabled) {
-          vel.x = -vel.x * bounce.value;
+          entity.Velocity.x = -entity.Velocity.x * entity.Bounciness.value;
         }
       }
       if (viewportCollisions.top) {
-        pos.y = 0;
+        entity.Position.y = 0;
         if (bounceEnabled) {
-          vel.y = -vel.y * bounce.value;
+          entity.Velocity.y = -entity.Velocity.y * entity.Bounciness.value;
         }
       }
       if (viewportCollisions.bottom) {
-        pos.y = this.viewport.height - size.y;
+        entity.Position.y = this.viewport.height - entity.Size.y;
         if (bounceEnabled) {
-          vel.y = -vel.y * bounce.value;
+          entity.Velocity.y = -entity.Velocity.y * entity.Bounciness.value;
         }
       }
     });
