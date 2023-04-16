@@ -32,7 +32,7 @@ export const ViewportCollisionTypes = {
 
 export const EntityCollisionTypes = {
   IGNORE: 1,
-  WALL: 2,
+  RIGID: 2,
   BOUNCE: 4,
   STICK: 8,
 } as const;

@@ -43,7 +43,7 @@ export class CollisionResolver {
     const bounceA = em.getComponent(a, "Bounciness") ?? bDefault;
     const bounceB = em.getComponent(b, "Bounciness") ?? bDefault;
 
-    const side = this.#findSide(posA, sizeA, posB, sizeB);
+    const side = this.#findSideOfCollision(posA, sizeA, posB, sizeB);
     switch (side) {
       case SIDES.LEFT:
         {
@@ -59,13 +59,13 @@ export class CollisionResolver {
               velB.x = vRel * bounceB.value + velB.x;
             }
 
-            if (collisionB.hasEntityCollisionType("WALL")) {
+            if (collisionB.hasEntityCollisionType("RIGID")) {
               posA.x -= overlap * 2;
               velA.x *= -bounceA.value;
             }
           }
 
-          if (collisionA.hasEntityCollisionType("WALL")) {
+          if (collisionA.hasEntityCollisionType("RIGID")) {
             if (collisionB.hasEntityCollisionType("BOUNCE")) {
               posB.x += overlap * 2;
               velB.x *= -bounceB.value;
@@ -87,13 +87,13 @@ export class CollisionResolver {
               velB.x = vRel * bounceB.value + velB.x;
             }
 
-            if (collisionB.hasEntityCollisionType("WALL")) {
+            if (collisionB.hasEntityCollisionType("RIGID")) {
               posA.x += overlap * 2;
               velA.x *= -bounceA.value;
             }
           }
 
-          if (collisionA.hasEntityCollisionType("WALL")) {
+          if (collisionA.hasEntityCollisionType("RIGID")) {
             if (collisionB.hasEntityCollisionType("BOUNCE")) {
               posB.x -= overlap * 2;
               velB.x *= -bounceB.value;
@@ -115,13 +115,13 @@ export class CollisionResolver {
               velB.y = vRel * bounceB.value + velB.y;
             }
 
-            if (collisionB.hasEntityCollisionType("WALL")) {
+            if (collisionB.hasEntityCollisionType("RIGID")) {
               posA.y -= overlap * 2;
               velA.y *= -bounceA.value;
             }
           }
 
-          if (collisionA.hasEntityCollisionType("WALL")) {
+          if (collisionA.hasEntityCollisionType("RIGID")) {
             if (collisionB.hasEntityCollisionType("BOUNCE")) {
               posB.y += overlap * 2;
               velB.y *= -bounceB.value;
@@ -143,13 +143,13 @@ export class CollisionResolver {
               velB.y = vRel * bounceB.value + velB.y;
             }
 
-            if (collisionB.hasEntityCollisionType("WALL")) {
+            if (collisionB.hasEntityCollisionType("RIGID")) {
               posA.y += overlap * 2;
               velA.y *= -bounceA.value;
             }
           }
 
-          if (collisionA.hasEntityCollisionType("WALL")) {
+          if (collisionA.hasEntityCollisionType("RIGID")) {
             if (collisionB.hasEntityCollisionType("BOUNCE")) {
               posB.y -= overlap * 2;
               velB.y *= -bounceB.value;
@@ -162,7 +162,7 @@ export class CollisionResolver {
     }
   }
 
-  #findSide(posA: Position, sizeA: Size, posB: Position, sizeB: Size): Side {
+  #findSideOfCollision(posA: Position, sizeA: Size, posB: Position, sizeB: Size): Side {
     // Get midpoints
     const aMidX = posA.x + sizeA.halfX;
     const aMidY = posA.y + sizeA.halfY;

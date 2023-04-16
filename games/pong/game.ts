@@ -32,7 +32,7 @@ export class TestGame extends Game {
 
     const collisionSettings = {
       viewportCollision: { TOP: true, BOTTOM: true },
-      entityCollision: { WALL: true },
+      entityCollision: { RIGID: true },
     };
     em.addComponent(id, new Components.Collision(collisionSettings));
 
@@ -77,7 +77,7 @@ export class TestGame extends Game {
     em.addComponent(id, size);
     const collisionSettings = {
       viewportCollision: { TOP: true, BOTTOM: true },
-      entityCollision: { WALL: true },
+      entityCollision: { RIGID: true },
     };
     em.addComponent(id, new Components.Collision(collisionSettings));
     em.addComponent(id, new Components.Velocity(0, 0));
