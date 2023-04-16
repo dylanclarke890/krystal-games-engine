@@ -10,6 +10,7 @@ export { Health } from "./health.js";
 export { Input } from "./input.js";
 export { Offset } from "./offset.js";
 export { Position } from "./position.js";
+export { Mass } from "./mass.js";
 export { Size } from "./size.js";
 export { Sprite } from "./sprite.js";
 export { Velocity } from "./velocity.js";
