@@ -4,7 +4,10 @@ import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
-import { Collidable, ComponentType } from "../utils/types.js";
+import { Collidable, ComponentMap, ComponentType, DefinedExcept } from "../utils/types.js";
+
+type RequiredComponents = "Position" | "Velocity";
+type OptionalComponents = "Acceleration" | "Friction" | "Collision" | "GravityFactor";
 
 export class PhysicSystem extends System {
   static requiredComponents: ComponentType[] = ["Position", "Velocity"];
@@ -31,25 +34,33 @@ export class PhysicSystem extends System {
 
     const collidables: Collidable[] = [];
     for (let i = 0; i < entities.length; i++) {
-      const entity = entities[i];
-      const position = em.getComponent(entity, "Position")!;
-      const velocity = em.getComponent(entity, "Velocity")!;
+      const id = entities[i];
+      const entity = em.getComponents(
+        id,
+        "Position",
+        "Velocity",
+        "Acceleration",
+        "Friction",
+        "Collision",
+        "GravityFactor"
+      ) as DefinedExcept<ComponentMap<RequiredComponents | OptionalComponents>, OptionalComponents>;
 
-      const acceleration = em.getComponent(entity, "Acceleration");
-      if (acceleration) {
-        velocity.add(acceleration.x * dt, acceleration.y * dt);
+      if (entity.Acceleration) {
+        entity.Velocity.add(entity.Acceleration.x * dt, entity.Acceleration.y * dt);
       }
 
-      const friction = em.getComponent(entity, "Friction");
-      if (friction) {
-        velocity.sub(friction.x * dt, friction.y * dt);
+      if (entity.Friction) {
+        entity.Velocity.sub(entity.Friction.x * dt, entity.Friction.y * dt);
       }
 
-      position.add(velocity.x * dt, velocity.y * dt);
+      if (entity.GravityFactor) {
+        entity.Velocity.add(0, entity.GravityFactor.value * dt);
+      }
 
-      const collision = em.getComponent(entity, "Collision");
-      if (collision) {
-        collidables.push([entity, position, collision]);
+      entity.Position.add(entity.Velocity.x * dt, entity.Velocity.y * dt);
+
+      if (entity.Collision) {
+        collidables.push([id, entity.Position, entity.Collision]);
       }
     }
 
