@@ -1,9 +1,14 @@
+import { Position, Size } from "../components/index.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
+import { Key } from "../utils/types.js";
 
 interface ICollisionStrategy {
   resolve(a: number, b: number): void;
 }
+
+const SIDES = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 } as const;
+type Side = typeof SIDES[Key<typeof SIDES>];
 
 class BaseStrategy {
   entityManager: EntityManager;
@@ -12,9 +17,26 @@ class BaseStrategy {
     Assert.instanceOf("entityManager", entityManager, EntityManager);
     this.entityManager = entityManager;
   }
-}
 
-const sides = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 } as const;
+  findSide(posA: Position, sizeA: Size, posB: Position, sizeB: Size): Side {
+    // Get midpoints
+    const aMidX = posA.x + sizeA.halfX;
+    const aMidY = posA.y + sizeA.halfY;
+    const bMidX = posB.x + sizeB.halfX;
+    const bMidY = posB.y + sizeB.halfY;
+
+    // Find side of entry based on the normalized sides
+    const dx = (aMidX - bMidX) / (sizeA.halfX + sizeB.halfX);
+    const dy = (aMidY - bMidY) / (sizeA.halfY + sizeB.halfY);
+    const absDX = Math.abs(dx);
+    const absDY = Math.abs(dy);
+
+    if (absDX > absDY) {
+      return dx > 0 ? SIDES.RIGHT : SIDES.LEFT;
+    }
+    return dy > 0 ? SIDES.BOTTOM : SIDES.TOP;
+  }
+}
 
 export class DefaultCollisionStrategy extends BaseStrategy implements ICollisionStrategy {
   resolve(a: number, b: number): void {
@@ -36,25 +58,9 @@ export class DefaultCollisionStrategy extends BaseStrategy implements ICollision
     const aHasBounceFlag = collisionA.hasEntityCollisionType("BOUNCE");
     const bHasBounceFlag = collisionB.hasEntityCollisionType("BOUNCE");
 
-    // Get midpoints
-    const aMidX = posA.x + sizeA.halfX;
-    const aMidY = posA.y + sizeA.halfY;
-    const bMidX = posB.x + sizeB.halfX;
-    const bMidY = posB.y + sizeB.halfY;
-
-    // Find side of entry based on the normalized sides
-    const dx = (aMidX - bMidX) / (sizeA.halfX + sizeB.halfX);
-    const dy = (aMidY - bMidY) / (sizeA.halfY + sizeB.halfY);
-    // Calculate the absolute differences in the x and y coordinates
-    const absDX = Math.abs(dx);
-    const absDY = Math.abs(dy);
-
-    /** The side of A that was collided with. */
-    let side: typeof sides[keyof typeof sides];
-    if (absDX > absDY) side = dx > 0 ? sides.RIGHT : sides.LEFT;
-    else side = dy > 0 ? sides.BOTTOM : sides.TOP;
+    const side = this.findSide(posA, sizeA, posB, sizeB);
     switch (side) {
-      case sides.LEFT:
+      case SIDES.LEFT:
         {
           const overlap = posA.x + sizeA.x - posB.x;
           if (overlap < 0) break;
@@ -74,7 +80,7 @@ export class DefaultCollisionStrategy extends BaseStrategy implements ICollision
           }
         }
         break;
-      case sides.RIGHT:
+      case SIDES.RIGHT:
         {
           const overlap = posB.x + sizeB.x - posA.x;
           if (overlap < 0) break;
@@ -94,7 +100,7 @@ export class DefaultCollisionStrategy extends BaseStrategy implements ICollision
           }
         }
         break;
-      case sides.TOP:
+      case SIDES.TOP:
         {
           const overlap = posA.y + sizeA.y - posB.y;
           if (overlap < 0) break;
@@ -114,7 +120,7 @@ export class DefaultCollisionStrategy extends BaseStrategy implements ICollision
           }
         }
         break;
-      case sides.BOTTOM:
+      case SIDES.BOTTOM:
         {
           const overlap = posB.y + sizeB.y - posA.y;
           if (overlap < 0) break;
