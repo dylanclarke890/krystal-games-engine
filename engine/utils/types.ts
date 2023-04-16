@@ -2,19 +2,15 @@ import { Position, Collision } from "../components/index.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { PairedSet } from "./paired-set.js";
 
-export type Defined<TObj> = {
-  [P in keyof TObj]-?: NonNullable<TObj[P]>;
-};
-
-export type DefinedExcept1<TObj, TExcept extends keyof TObj> = {
-  [P in keyof TObj]-?: P extends TExcept ? never : NonNullable<TObj[P]>;
-} & { [P in TExcept]?: TObj[P] | undefined };
-
-export type DefinedExcept<TObj, TExcept extends keyof TObj> = {
-  [P in keyof Pick<TObj, Exclude<keyof TObj, TExcept>>]-?: NonNullable<TObj[P]>;
-} & { [P in TExcept]?: TObj[P] | undefined };
-
 export type Key<T> = keyof T;
+
+export type Defined<TObj> = {
+  [P in Key<TObj>]-?: NonNullable<TObj[P]>;
+};
+export type DefinedExcept<TObj, TExcept extends keyof TObj> = {
+  [P in Key<Pick<TObj, Exclude<Key<TObj>, TExcept>>>]-?: NonNullable<TObj[P]>;
+} & { [P in TExcept]?: TObj[P] | undefined };
+
 export type ComponentType = Key<typeof import("../components/index.js")> & string;
 export type Component<T extends ComponentType> = InstanceType<
   typeof import("../components/index.js")[T]
