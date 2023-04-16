@@ -1,4 +1,5 @@
 import { Bounciness } from "../components/bounciness.js";
+import { Mass } from "../components/mass.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
@@ -12,10 +13,12 @@ import {
 
 const SIDES = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 } as const;
 type Side = typeof SIDES[Key<typeof SIDES>];
-type ResolverComponents = "Position" | "Velocity" | "Size" | "Collision" | "Bounciness";
+type RequiredComponents = "Position" | "Velocity" | "Size" | "Collision";
+type OptionalComponents = "Bounciness" | "Mass";
 
 const defaultComponents = {
   bounce: new Bounciness(1),
+  mass: new Mass(1),
 };
 
 export class CollisionResolver {
@@ -46,9 +49,11 @@ export class CollisionResolver {
       "Velocity",
       "Size",
       "Collision",
-      "Bounciness"
-    ) as DefinedExcept<ComponentMap<ResolverComponents>, "Bounciness">;
+      "Bounciness",
+      "Mass"
+    ) as DefinedExcept<ComponentMap<RequiredComponents | OptionalComponents>, OptionalComponents>;
     if (!a.Bounciness) a.Bounciness = defaultComponents.bounce;
+    if (!a.Mass) a.Mass = defaultComponents.mass;
 
     const b = em.getComponents(
       entityB,
@@ -57,8 +62,9 @@ export class CollisionResolver {
       "Size",
       "Collision",
       "Bounciness"
-    ) as DefinedExcept<ComponentMap<ResolverComponents>, "Bounciness">;
+    ) as DefinedExcept<ComponentMap<RequiredComponents | OptionalComponents>, OptionalComponents>;
     if (!b.Bounciness) b.Bounciness = defaultComponents.bounce;
+    if (!b.Mass) b.Mass = defaultComponents.mass;
 
     const side = this.#findSideOfCollision(a, b);
     switch (side) {
@@ -69,23 +75,26 @@ export class CollisionResolver {
 
           if (a.Collision.hasEntityCollisionType("BOUNCE")) {
             if (b.Collision.hasEntityCollisionType("BOUNCE")) {
+              const vRel = a.Velocity.x - b.Velocity.x;
+              const impulse = ((2 * b.Mass.value) / (a.Mass.value + b.Mass.value)) * vRel;
+              a.Velocity.x -= impulse * a.Bounciness.value;
+              b.Velocity.x += impulse * b.Bounciness.value;
               a.Position.x -= overlap;
               b.Position.x += overlap;
-              const vRel = a.Velocity.x - b.Velocity.x;
-              a.Velocity.x = -vRel * a.Bounciness.value + a.Velocity.x;
-              b.Velocity.x = vRel * b.Bounciness.value + b.Velocity.x;
             }
 
             if (b.Collision.hasEntityCollisionType("RIGID")) {
+              const impulse = (2 * b.Mass.value * a.Velocity.x) / (a.Mass.value + b.Mass.value);
+              a.Velocity.x = -impulse * a.Bounciness.value;
               a.Position.x -= overlap * 2;
-              a.Velocity.x *= -a.Bounciness.value;
             }
           }
 
           if (a.Collision.hasEntityCollisionType("RIGID")) {
             if (b.Collision.hasEntityCollisionType("BOUNCE")) {
+              const impulse = (2 * a.Mass.value * b.Velocity.x) / (a.Mass.value + b.Mass.value);
+              b.Velocity.x = impulse * b.Bounciness.value;
               b.Position.x += overlap * 2;
-              b.Velocity.x *= -b.Bounciness.value;
             }
           }
         }
@@ -209,7 +218,7 @@ export class CollisionResolver {
         "Size",
         "Collision",
         "Bounciness"
-      ) as DefinedExcept<ComponentMap<ResolverComponents>, "Bounciness">;
+      ) as DefinedExcept<ComponentMap<RequiredComponents | OptionalComponents>, OptionalComponents>;
 
       if (!entity.Bounciness) entity.Bounciness = defaultComponents.bounce;
       const bounceEnabled = entity.Collision.hasEntityCollisionType("BOUNCE");
