@@ -1,4 +1,5 @@
 import { Bounciness } from "../components/bounciness.js";
+import { Mass } from "../components/mass.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
@@ -12,10 +13,16 @@ import {
 
 const SIDES = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 } as const;
 type Side = typeof SIDES[Key<typeof SIDES>];
-type ResolverComponents = "Position" | "Velocity" | "Size" | "Collision" | "Bounciness";
+type RequiredComponents = "Position" | "Velocity" | "Size" | "Collision";
+type OptionalComponents = "Bounciness" | "Mass";
+type ResolverComponents = DefinedExcept<
+  ComponentMap<RequiredComponents | OptionalComponents>,
+  OptionalComponents
+>;
 
 const defaultComponents = {
   bounce: new Bounciness(1),
+  mass: new Mass(1),
 };
 
 export class CollisionResolver {
@@ -46,9 +53,11 @@ export class CollisionResolver {
       "Velocity",
       "Size",
       "Collision",
-      "Bounciness"
-    ) as DefinedExcept<ComponentMap<ResolverComponents>, "Bounciness">;
+      "Bounciness",
+      "Mass"
+    ) as ResolverComponents;
     if (!a.Bounciness) a.Bounciness = defaultComponents.bounce;
+    if (!a.Mass) a.Mass = defaultComponents.mass;
 
     const b = em.getComponents(
       entityB,
@@ -56,9 +65,11 @@ export class CollisionResolver {
       "Velocity",
       "Size",
       "Collision",
-      "Bounciness"
-    ) as DefinedExcept<ComponentMap<ResolverComponents>, "Bounciness">;
+      "Bounciness",
+      "Mass"
+    ) as ResolverComponents;
     if (!b.Bounciness) b.Bounciness = defaultComponents.bounce;
+    if (!b.Mass) b.Mass = defaultComponents.mass;
 
     const side = this.#findSideOfCollision(a, b);
     switch (side) {
@@ -209,8 +220,9 @@ export class CollisionResolver {
         "Velocity",
         "Size",
         "Collision",
-        "Bounciness"
-      ) as DefinedExcept<ComponentMap<ResolverComponents>, "Bounciness">;
+        "Bounciness",
+        "Mass"
+      ) as ResolverComponents;
 
       if (!entity.Bounciness) entity.Bounciness = defaultComponents.bounce;
       const bounceEnabled = entity.Collision.hasEntityCollisionType("BOUNCE");
