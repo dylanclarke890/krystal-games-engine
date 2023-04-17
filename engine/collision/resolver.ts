@@ -76,15 +76,11 @@ export class CollisionResolver {
 
     if (totalBounciness === 1) {
       this.#resolvePerfectlyElastic(a, b, side);
-      return;
-    }
-
-    if (totalBounciness === 0) {
+    } else if (totalBounciness === 0) {
       this.#resolvePerfectlyInelastic(a, b, side);
-      return;
+    } else {
+      this.#resolveInelastic(a, b, side);
     }
-
-    this.#resolveInelastic(a, b, side);
   }
 
   #findSideOfCollision(a: ResolverComponents, b: ResolverComponents): Side {
@@ -120,15 +116,11 @@ export class CollisionResolver {
               const relativeVelocity = a.Velocity.x - b.Velocity.x;
               a.Velocity.x = -relativeVelocity * a.Bounciness!.value + a.Velocity.x;
               b.Velocity.x = relativeVelocity * b.Bounciness!.value + b.Velocity.x;
-            }
-
-            if (b.Collision.hasEntityCollisionType("RIGID")) {
+            } else if (b.Collision.hasEntityCollisionType("RIGID")) {
               a.Position.x -= overlap * 2;
               a.Velocity.x *= -a.Bounciness!.value;
             }
-          }
-
-          if (a.Collision.hasEntityCollisionType("RIGID")) {
+          } else if (a.Collision.hasEntityCollisionType("RIGID")) {
             if (b.Collision.hasEntityCollisionType("BOUNCE")) {
               b.Position.x += overlap * 2;
               b.Velocity.x *= -b.Bounciness!.value;
@@ -149,15 +141,11 @@ export class CollisionResolver {
               const relativeVelocity = a.Velocity.x - b.Velocity.x;
               a.Velocity.x = -relativeVelocity * a.Bounciness!.value + a.Velocity.x;
               b.Velocity.x = relativeVelocity * b.Bounciness!.value + b.Velocity.x;
-            }
-
-            if (b.Collision.hasEntityCollisionType("RIGID")) {
+            } else if (b.Collision.hasEntityCollisionType("RIGID")) {
               a.Position.x += overlap * 2;
               a.Velocity.x *= -a.Bounciness!.value;
             }
-          }
-
-          if (a.Collision.hasEntityCollisionType("RIGID")) {
+          } else if (a.Collision.hasEntityCollisionType("RIGID")) {
             if (b.Collision.hasEntityCollisionType("BOUNCE")) {
               b.Position.x -= overlap * 2;
               b.Velocity.x *= -b.Bounciness!.value;
@@ -178,15 +166,11 @@ export class CollisionResolver {
               const relativeVelocity = a.Velocity.y - b.Velocity.y;
               a.Velocity.y = -relativeVelocity * a.Bounciness!.value + a.Velocity.y;
               b.Velocity.y = relativeVelocity * b.Bounciness!.value + b.Velocity.y;
-            }
-
-            if (b.Collision.hasEntityCollisionType("RIGID")) {
+            } else if (b.Collision.hasEntityCollisionType("RIGID")) {
               a.Position.y -= overlap * 2;
               a.Velocity.y *= -a.Bounciness!.value;
             }
-          }
-
-          if (a.Collision.hasEntityCollisionType("RIGID")) {
+          } else if (a.Collision.hasEntityCollisionType("RIGID")) {
             if (b.Collision.hasEntityCollisionType("BOUNCE")) {
               b.Position.y += overlap * 2;
               b.Velocity.y *= -b.Bounciness!.value;
@@ -207,15 +191,11 @@ export class CollisionResolver {
               const relativeVelocity = a.Velocity.y - b.Velocity.y;
               a.Velocity.y = -relativeVelocity * a.Bounciness!.value + a.Velocity.y;
               b.Velocity.y = relativeVelocity * b.Bounciness!.value + b.Velocity.y;
-            }
-
-            if (b.Collision.hasEntityCollisionType("RIGID")) {
+            } else if (b.Collision.hasEntityCollisionType("RIGID")) {
               a.Position.y += overlap * 2;
               a.Velocity.y *= -a.Bounciness!.value;
             }
-          }
-
-          if (a.Collision.hasEntityCollisionType("RIGID")) {
+          } else if (a.Collision.hasEntityCollisionType("RIGID")) {
             if (b.Collision.hasEntityCollisionType("BOUNCE")) {
               b.Position.y -= overlap * 2;
               b.Velocity.y *= -b.Bounciness!.value;
