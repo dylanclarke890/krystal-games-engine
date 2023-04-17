@@ -72,12 +72,18 @@ export class CollisionResolver {
     if (!b.Mass) b.Mass = defaultComponents.mass;
 
     const side = this.#findSideOfCollision(a, b);
+
+    const totalBounciness = a.Bounciness.value * b.Bounciness.value;
+    if (totalBounciness === 1) {
+      this.#resolvePerfectlyElastic(a, b);
+      return;
+    }
+
     switch (side) {
       case SIDES.LEFT:
         {
           const overlap = a.Position.x + a.Size.x - b.Position.x;
           if (overlap < 0) break;
-
           if (a.Collision.hasEntityCollisionType("BOUNCE")) {
             if (b.Collision.hasEntityCollisionType("BOUNCE")) {
               a.Position.x -= overlap;
@@ -111,8 +117,11 @@ export class CollisionResolver {
               a.Position.x += overlap;
               b.Position.x -= overlap;
               const vRel = a.Velocity.x - b.Velocity.x;
-              a.Velocity.x = -vRel * a.Bounciness.value + a.Velocity.x;
-              b.Velocity.x = vRel * b.Bounciness.value + b.Velocity.x;
+              const impulse =
+                ((1 + a.Bounciness.value * b.Bounciness.value) * vRel) /
+                (1 / a.Mass.value + 1 / b.Mass.value);
+              a.Velocity.x = impulse / a.Mass.value;
+              b.Velocity.x = impulse / b.Mass.value;
             }
 
             if (b.Collision.hasEntityCollisionType("RIGID")) {
@@ -189,6 +198,8 @@ export class CollisionResolver {
         break;
     }
   }
+
+  #resolvePerfectlyElastic(a: ComponentMap<any>, b: ComponentMap<any>): void {}
 
   #findSideOfCollision(a: ComponentMap<any>, b: ComponentMap<any>): Side {
     // Get midpoints
