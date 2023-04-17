@@ -64,7 +64,7 @@ export class CollisionResolver {
     switch (side) {
       case SIDES.LEFT:
         {
-          const overlap = a.Position.x + a.Size.x - a.Position.x;
+          const overlap = a.Position.x + a.Size.x - b.Position.x;
           if (overlap < 0) break;
 
           if (a.Collision.hasEntityCollisionType("BOUNCE")) {
