@@ -131,6 +131,38 @@ export class CollisionResolver {
         }
         break;
       case SIDES.TOP:
+        {
+          const overlap = a.Position.y + a.Size.y - b.Position.y;
+          if (overlap < 0) break;
+
+          if (a.Collision.hasEntityCollisionType("BOUNCE")) {
+            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
+              a.Position.y -= overlap;
+              b.Position.y += overlap;
+
+              const vRel = a.Velocity.y - b.Velocity.y;
+              const impulse = ((2 * b.Mass.value) / (a.Mass.value + b.Mass.value)) * vRel;
+
+              a.Velocity.y -= impulse * a.Bounciness.value;
+              b.Velocity.y += impulse * b.Bounciness.value;
+            }
+
+            if (b.Collision.hasEntityCollisionType("RIGID")) {
+              a.Position.y -= overlap * 2;
+              const impulse = (2 * b.Mass.value * a.Velocity.y) / (a.Mass.value + b.Mass.value);
+              a.Velocity.y = -impulse * a.Bounciness.value;
+            }
+          }
+
+          if (a.Collision.hasEntityCollisionType("RIGID")) {
+            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
+              b.Position.y += overlap * 2;
+              const impulse = (2 * a.Mass.value * b.Velocity.y) / (a.Mass.value + b.Mass.value);
+              b.Velocity.y = impulse * b.Bounciness.value;
+            }
+          }
+        }
+        break;
       case SIDES.BOTTOM:
         {
           const overlap = b.Position.y + b.Size.y - a.Position.y;
