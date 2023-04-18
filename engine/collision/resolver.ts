@@ -102,6 +102,17 @@ export class CollisionResolver {
     return dy > 0 ? SIDES.BOTTOM : SIDES.TOP;
   }
 
+  #calculateElasticImpulses(vA: number, vB: number, mA: number, mB: number): [number, number] {
+    const relativeVelocity = vA - vB;
+    const totalMass = mA + mB;
+    const impulse = (2 * mA * mB * relativeVelocity) / totalMass;
+
+    vA -= impulse * (mB / totalMass);
+    vB += impulse * (mA / totalMass);
+
+    return [vA, vB];
+  }
+
   #resolvePerfectlyElastic(a: ResolverComponents, b: ResolverComponents, side: Side): void {
     switch (side) {
       case SIDES.LEFT:
@@ -113,13 +124,15 @@ export class CollisionResolver {
               a.Position.x -= overlap;
               b.Position.x += overlap;
 
-              const relativeVelocity = a.Velocity.x - b.Velocity.x;
-              const impulse =
-                (2 * a.Mass!.value * b.Mass!.value * relativeVelocity) /
-                (a.Mass!.value + b.Mass!.value);
+              const [impulseA, impulseB] = this.#calculateElasticImpulses(
+                a.Velocity.x,
+                b.Velocity.x,
+                a.Mass!.value,
+                b.Mass!.value
+              );
 
-              a.Velocity.x -= impulse * (b.Mass!.value / (a.Mass!.value + b.Mass!.value));
-              b.Velocity.x += impulse * (a.Mass!.value / (a.Mass!.value + b.Mass!.value));
+              a.Velocity.x -= impulseA;
+              b.Velocity.x += impulseB;
             } else if (b.Collision.hasEntityCollisionType("RIGID")) {
               a.Position.x -= overlap * 2;
               a.Velocity.x *= -a.Bounciness!.value;
@@ -142,13 +155,15 @@ export class CollisionResolver {
               a.Position.x += overlap;
               b.Position.x -= overlap;
 
-              const relativeVelocity = a.Velocity.x - b.Velocity.x;
-              const impulse =
-                (2 * b.Mass!.value * a.Mass!.value * relativeVelocity) /
-                (b.Mass!.value + a.Mass!.value);
+              const [impulseA, impulseB] = this.#calculateElasticImpulses(
+                a.Velocity.x,
+                b.Velocity.x,
+                b.Mass!.value,
+                a.Mass!.value
+              );
 
-              a.Velocity.x += impulse * (b.Mass!.value / (a.Mass!.value + b.Mass!.value));
-              b.Velocity.x -= impulse * (a.Mass!.value / (a.Mass!.value + b.Mass!.value));
+              a.Velocity.x += impulseA;
+              b.Velocity.x -= impulseB;
             } else if (b.Collision.hasEntityCollisionType("RIGID")) {
               a.Position.x += overlap * 2;
               a.Velocity.x *= -a.Bounciness!.value;
@@ -171,13 +186,15 @@ export class CollisionResolver {
               a.Position.y -= overlap;
               b.Position.y += overlap;
 
-              const relativeVelocity = a.Velocity.y - b.Velocity.y;
-              const impulse =
-                (2 * b.Mass!.value * a.Mass!.value * relativeVelocity) /
-                (b.Mass!.value + a.Mass!.value);
+              const [impulseA, impulseB] = this.#calculateElasticImpulses(
+                a.Velocity.y,
+                b.Velocity.y,
+                b.Mass!.value,
+                a.Mass!.value
+              );
 
-              a.Velocity.y += impulse * (b.Mass!.value / (a.Mass!.value + b.Mass!.value));
-              b.Velocity.y -= impulse * (a.Mass!.value / (a.Mass!.value + b.Mass!.value));
+              a.Velocity.y += impulseA;
+              b.Velocity.y -= impulseB;
             } else if (b.Collision.hasEntityCollisionType("RIGID")) {
               a.Position.y -= overlap * 2;
               a.Velocity.y *= -a.Bounciness!.value;
@@ -200,13 +217,15 @@ export class CollisionResolver {
               a.Position.y += overlap;
               b.Position.y -= overlap;
 
-              const relativeVelocity = a.Velocity.y - b.Velocity.y;
-              const impulse =
-                (2 * b.Mass!.value * a.Mass!.value * relativeVelocity) /
-                (b.Mass!.value + a.Mass!.value);
+              const [impulseA, impulseB] = this.#calculateElasticImpulses(
+                a.Velocity.y,
+                b.Velocity.y,
+                b.Mass!.value,
+                a.Mass!.value
+              );
 
-              a.Velocity.y -= impulse * (b.Mass!.value / (a.Mass!.value + b.Mass!.value));
-              b.Velocity.y += impulse * (a.Mass!.value / (a.Mass!.value + b.Mass!.value));
+              a.Velocity.y -= impulseA;
+              b.Velocity.y += impulseB;
             } else if (b.Collision.hasEntityCollisionType("RIGID")) {
               a.Position.y += overlap * 2;
               a.Velocity.y *= -a.Bounciness!.value;
