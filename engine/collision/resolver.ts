@@ -102,15 +102,23 @@ export class CollisionResolver {
     return dy > 0 ? SIDES.BOTTOM : SIDES.TOP;
   }
 
-  #calculateElasticImpulses(vA: number, vB: number, mA: number, mB: number): [number, number] {
+  #calcElasticImpulses(vA: number, vB: number, mA: number, mB: number): [number, number] {
     if (mA === mB) {
-      // perfectly elastic, return the opposite speeds
       return [vB, vA];
     }
+    const totalMass = mA + mB;
+    const velA = ((mA - mB) / totalMass) * vB;
+    const velB = ((2 * mA) / totalMass) * vA;
+    return [velA, velB];
+    // vA' = (mA - mB)/(mA + mB) * vA
+    // vB' = (2 * mA)/(mA + mB) * vA
+  }
+
+  #calculateElasticImpulses(vA: number, vB: number, mA: number, mB: number): [number, number] {
     const relativeVelocity = vA - vB;
     const totalMass = mA + mB;
     const impulse = (2 * mA * mB * relativeVelocity) / totalMass;
-    
+
     vA -= impulse * (mB / totalMass);
     vB += impulse * (mA / totalMass);
 
@@ -128,7 +136,7 @@ export class CollisionResolver {
               a.Position.x -= overlap;
               b.Position.x += overlap;
 
-              const [velA, velB] = this.#calculateElasticImpulses(
+              const [velA, velB] = this.#calcElasticImpulses(
                 a.Velocity.x,
                 b.Velocity.x,
                 a.Mass!.value,
@@ -159,7 +167,7 @@ export class CollisionResolver {
               a.Position.x += overlap;
               b.Position.x -= overlap;
 
-              const [velA, velB] = this.#calculateElasticImpulses(
+              const [velA, velB] = this.#calcElasticImpulses(
                 a.Velocity.x,
                 b.Velocity.x,
                 b.Mass!.value,
