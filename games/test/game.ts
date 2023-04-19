@@ -14,10 +14,10 @@ import { CollisionSettings } from "../../engine/utils/types.js";
 export class TestGame extends Game {
   constructor() {
     super("canvas1", 500, 500);
-    this.#buildEntity(50, 80, 2);
-    this.#buildEntity(250, -20, 1);
-    this.#buildEntity(150, 40, 3);
-    this.#buildEntity(400, 90, 1);
+    this.#buildEntity(50, 50, 2);
+    this.#buildEntity(250, -50, 1);
+    // this.#buildEntity(150, 40, 3);
+    // this.#buildEntity(400, 90, 1);
     this.start();
   }
 
