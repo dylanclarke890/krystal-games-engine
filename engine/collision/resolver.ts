@@ -381,7 +381,6 @@ export class CollisionResolver {
     }
   }
 
-  // TODO: we're bouncing, do we need to apply impulse here? (probably)
   #resolveViewportCollisions(collisions: ViewportCollision[]): void {
     const em = this.entityManager;
     collisions.forEach((v) => {
