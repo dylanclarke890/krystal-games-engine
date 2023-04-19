@@ -136,12 +136,12 @@ export class CollisionResolver {
               b.Velocity.x = velB;
             } else if (b.Collision.hasEntityCollisionType("RIGID")) {
               a.Position.x -= overlap * 2;
-              a.Velocity.x *= -a.Bounciness!.value;
+              a.Velocity.x *= -a.Velocity.x;
             }
           } else if (a.Collision.hasEntityCollisionType("RIGID")) {
             if (b.Collision.hasEntityCollisionType("BOUNCE")) {
               b.Position.x += overlap * 2;
-              b.Velocity.x *= -b.Bounciness!.value;
+              b.Velocity.x *= -b.Velocity.x;
             }
           }
         }
@@ -167,12 +167,12 @@ export class CollisionResolver {
               b.Velocity.x = velB;
             } else if (b.Collision.hasEntityCollisionType("RIGID")) {
               a.Position.x += overlap * 2;
-              a.Velocity.x *= -a.Bounciness!.value;
+              a.Velocity.x *= -a.Velocity.x;
             }
           } else if (a.Collision.hasEntityCollisionType("RIGID")) {
             if (b.Collision.hasEntityCollisionType("BOUNCE")) {
               b.Position.x -= overlap * 2;
-              b.Velocity.x *= -b.Bounciness!.value;
+              b.Velocity.x *= -b.Velocity.x;
             }
           }
         }
@@ -198,12 +198,12 @@ export class CollisionResolver {
               b.Velocity.y -= velB;
             } else if (b.Collision.hasEntityCollisionType("RIGID")) {
               a.Position.y -= overlap * 2;
-              a.Velocity.y *= -a.Bounciness!.value;
+              a.Velocity.y *= -a.Velocity.y;
             }
           } else if (a.Collision.hasEntityCollisionType("RIGID")) {
             if (b.Collision.hasEntityCollisionType("BOUNCE")) {
               b.Position.y += overlap * 2;
-              b.Velocity.y *= -b.Bounciness!.value;
+              b.Velocity.y *= -b.Velocity.y;
             }
           }
         }
@@ -229,12 +229,12 @@ export class CollisionResolver {
               b.Velocity.y += velB;
             } else if (b.Collision.hasEntityCollisionType("RIGID")) {
               a.Position.y += overlap * 2;
-              a.Velocity.y *= -a.Bounciness!.value;
+              a.Velocity.y *= -a.Velocity.y;
             }
           } else if (a.Collision.hasEntityCollisionType("RIGID")) {
             if (b.Collision.hasEntityCollisionType("BOUNCE")) {
               b.Position.y -= overlap * 2;
-              b.Velocity.y *= -b.Bounciness!.value;
+              b.Velocity.y *= -b.Velocity.y;
             }
           }
         }
