@@ -107,8 +107,9 @@ export class CollisionResolver {
       return [vB, vA]; // Can just swap velocities if masses are equal
     }
     // Calculate new velocities using conversation of momentum equation:
-    const velA = ((mA - mB) * vA + 2 * mB * vB) / (mA + mB);
-    const velB = (2 * mA * vA + (mB - mA) * vB) / (mA + mB);
+    const totalMass = mA + mB;
+    const velA = ((mA - mB) * vA + 2 * mB * vB) / totalMass;
+    const velB = (2 * mA * vA + (mB - mA) * vB) / totalMass;
 
     return [velA, velB];
   }
