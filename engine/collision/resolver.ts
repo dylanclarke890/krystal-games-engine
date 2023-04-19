@@ -102,7 +102,7 @@ export class CollisionResolver {
     return dy > 0 ? SIDES.BOTTOM : SIDES.TOP;
   }
 
-  #calculateElasticImpulses(vA: number, vB: number, mA: number, mB: number): [number, number] {
+  #calculateImpulsesForElastic(vA: number, vB: number, mA: number, mB: number): [number, number] {
     if (mA === mB) {
       return [vB, vA]; // Can just swap velocities if masses are equal
     }
@@ -126,7 +126,7 @@ export class CollisionResolver {
               a.Position.x -= overlap;
               b.Position.x += overlap;
 
-              const [velA, velB] = this.#calculateElasticImpulses(
+              const [velA, velB] = this.#calculateImpulsesForElastic(
                 a.Velocity.x,
                 b.Velocity.x,
                 a.Mass!.value,
@@ -157,7 +157,7 @@ export class CollisionResolver {
               a.Position.x += overlap;
               b.Position.x -= overlap;
 
-              const [velA, velB] = this.#calculateElasticImpulses(
+              const [velA, velB] = this.#calculateImpulsesForElastic(
                 a.Velocity.x,
                 b.Velocity.x,
                 b.Mass!.value,
@@ -188,7 +188,7 @@ export class CollisionResolver {
               a.Position.y -= overlap;
               b.Position.y += overlap;
 
-              const [velA, velB] = this.#calculateElasticImpulses(
+              const [velA, velB] = this.#calculateImpulsesForElastic(
                 a.Velocity.y,
                 b.Velocity.y,
                 a.Mass!.value,
@@ -219,7 +219,7 @@ export class CollisionResolver {
               a.Position.y += overlap;
               b.Position.y -= overlap;
 
-              const [velA, velB] = this.#calculateElasticImpulses(
+              const [velA, velB] = this.#calculateImpulsesForElastic(
                 a.Velocity.y,
                 b.Velocity.y,
                 b.Mass!.value,
