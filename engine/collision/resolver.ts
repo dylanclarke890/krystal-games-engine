@@ -145,7 +145,7 @@ export class CollisionResolver {
             }
           }
         }
-        break;
+        return;
       case SIDES.RIGHT:
         {
           const overlap = b.Position.x + b.Size.x - a.Position.x;
@@ -176,7 +176,7 @@ export class CollisionResolver {
             }
           }
         }
-        break;
+        return;
       case SIDES.TOP:
         {
           const overlap = a.Position.y + a.Size.y - b.Position.y;
@@ -207,7 +207,7 @@ export class CollisionResolver {
             }
           }
         }
-        break;
+        return;
       case SIDES.BOTTOM:
         {
           const overlap = b.Position.y + b.Size.y - a.Position.y;
@@ -238,9 +238,9 @@ export class CollisionResolver {
             }
           }
         }
-        break;
+        return;
       default:
-        break;
+        return;
     }
   }
 
