@@ -102,15 +102,7 @@ export class CollisionResolver {
     return dy > 0 ? SIDES.BOTTOM : SIDES.TOP;
   }
 
-  #calculateImpulsesForElastic(
-    vAi: number,
-    vBi: number,
-    mA: number,
-    mB: number,
-    side: Side
-  ): [number, number] {
-    debugger;
-    console.log(side);
+  #calculateImpulsesForElastic(vAi: number, vBi: number, mA: number, mB: number): [number, number] {
     if (mA === mB) {
       return [vBi, vAi]; // Can just swap velocities if masses are equal
     }
@@ -119,6 +111,10 @@ export class CollisionResolver {
     const totalMass = mA + mB;
     const vAf = ((mA - mB) * vAi + 2 * mB * vBi) / totalMass;
     const vBf = (2 * mA * vAi + (mB - mA) * vBi) / totalMass;
+
+    if (vAi + vAf !== vBi + vBf) {
+      console.log(Math.abs(vAi + vAf) - Math.abs(vBi + vBf));
+    }
 
     return [vAf, vBf];
   }
@@ -138,8 +134,7 @@ export class CollisionResolver {
                 a.Velocity.x,
                 b.Velocity.x,
                 a.Mass!.value,
-                b.Mass!.value,
-                side
+                b.Mass!.value
               );
 
               a.Velocity.x = velA;
@@ -170,8 +165,7 @@ export class CollisionResolver {
                 a.Velocity.x,
                 b.Velocity.x,
                 a.Mass!.value,
-                b.Mass!.value,
-                side
+                b.Mass!.value
               );
 
               a.Velocity.x = velA;
@@ -202,8 +196,7 @@ export class CollisionResolver {
                 a.Velocity.y,
                 b.Velocity.y,
                 a.Mass!.value,
-                b.Mass!.value,
-                side
+                b.Mass!.value
               );
 
               a.Velocity.y = velA;
@@ -234,8 +227,7 @@ export class CollisionResolver {
                 a.Velocity.y,
                 b.Velocity.y,
                 a.Mass!.value,
-                b.Mass!.value,
-                side
+                b.Mass!.value
               );
 
               a.Velocity.y = velA;

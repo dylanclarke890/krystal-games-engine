@@ -35,8 +35,7 @@ export class PhysicSystem extends System {
   update(dt: number) {
     const em = this.entityManager;
     const entities = em.getEntitiesWithComponents(...PhysicSystem.requiredComponents);
-    
-    const total = { x: 0, y: 0 };
+
     const collidables: Collidable[] = [];
     for (let i = 0; i < entities.length; i++) {
       const id = entities[i];
@@ -65,9 +64,6 @@ export class PhysicSystem extends System {
         entity.Velocity.sub(entity.Friction.x * mass * dt, entity.Friction.y * mass * dt);
       }
 
-      total.x += Math.abs(entity.Velocity.x);
-      total.y += Math.abs(entity.Velocity.y);
-
       if (entity.GravityFactor) {
         entity.Velocity.add(0, entity.GravityFactor.value * mass * dt);
       }
@@ -79,7 +75,6 @@ export class PhysicSystem extends System {
       }
     }
 
-    console.log(total.x + total.y);
     const collided = this.collisionDetector.detect(collidables);
     this.collisionResolver.resolve(collided);
   }
