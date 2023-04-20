@@ -102,17 +102,17 @@ export class CollisionResolver {
     return dy > 0 ? SIDES.BOTTOM : SIDES.TOP;
   }
 
-  #calculateImpulsesForElastic(vA: number, vB: number, mA: number, mB: number): [number, number] {
+  #calculateImpulsesForElastic(vAi: number, vBi: number, mA: number, mB: number): [number, number] {
     if (mA === mB) {
-      return [vB, vA]; // Can just swap velocities if masses are equal
+      return [vBi, vAi]; // Can just swap velocities if masses are equal
     }
 
     // Calculate new velocities using conservation of momentum equation:
     const totalMass = mA + mB;
-    const velA = ((mA - mB) * vA + 2 * mB * vB) / totalMass;
-    const velB = (2 * mA * vA + (mB - mA) * vB) / totalMass;
+    const vAf = ((mA - mB) * vAi + 2 * mB * vBi) / totalMass;
+    const vBf = (2 * mA * vAi + (mB - mA) * vBi) / totalMass;
 
-    return [velA, velB];
+    return [vAf, vBf];
   }
 
   #resolvePerfectlyElastic(a: ResolverComponents, b: ResolverComponents, side: Side): void {
