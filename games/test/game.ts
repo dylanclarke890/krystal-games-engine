@@ -14,18 +14,19 @@ import { CollisionSettings } from "../../engine/utils/types.js";
 export class TestGame extends Game {
   constructor() {
     super("canvas1", 500, 500);
-    this.#buildEntity(50, 50, 2);
-    this.#buildEntity(250, -50, 1);
-    this.#buildEntity(150, 40, 3);
-    this.#buildEntity(400, 90, 1);
+    this.#buildEntity(50, 70, 50, 2);
+    this.#buildEntity(250, -40, -50, 1);
+    this.#buildEntity(150, 40, 80, 3);
+    this.#buildEntity(50, 40, 80, 3);
+    this.#buildEntity(400, 70, -30, 1);
     this.start();
   }
 
-  #buildEntity(posX: number, velX: number, massX: number) {
+  #buildEntity(posX: number, velX: number, velY: number, massX: number) {
     const em = this.entityManager;
     const id = em.createEntity();
     em.addComponent(id, new Position(posX, 225));
-    em.addComponent(id, new Velocity(velX, 0));
+    em.addComponent(id, new Velocity(velX, velY));
     em.addComponent(id, new Size(50, 50));
     em.addComponent(id, new Sprite("games/test/paddle.png", 50, 50));
     em.addComponent(id, new Bounciness(1));
@@ -33,7 +34,7 @@ export class TestGame extends Game {
     em.addComponent(id, new Mass(massX));
     const collisionSettings: CollisionSettings = {
       entityCollision: { BOUNCE: true },
-      viewportCollision: { LEFT: true, RIGHT: true },
+      viewportCollision: { LEFT: true, RIGHT: true, TOP: true, BOTTOM: true },
     };
     em.addComponent(id, new Collision(collisionSettings));
   }

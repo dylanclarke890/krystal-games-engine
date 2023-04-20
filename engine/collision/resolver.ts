@@ -137,12 +137,12 @@ export class CollisionResolver {
               b.Velocity.x = velB;
             } else if (b.Collision.hasEntityCollisionType("RIGID")) {
               a.Position.x -= overlap * 2;
-              a.Velocity.x *= -a.Velocity.x;
+              a.Velocity.x = -a.Velocity.x;
             }
           } else if (a.Collision.hasEntityCollisionType("RIGID")) {
             if (b.Collision.hasEntityCollisionType("BOUNCE")) {
               b.Position.x += overlap * 2;
-              b.Velocity.x *= -b.Velocity.x;
+              b.Velocity.x = -b.Velocity.x;
             }
           }
         }
@@ -168,12 +168,12 @@ export class CollisionResolver {
               b.Velocity.x = velB;
             } else if (b.Collision.hasEntityCollisionType("RIGID")) {
               a.Position.x += overlap * 2;
-              a.Velocity.x *= -a.Velocity.x;
+              a.Velocity.x = -a.Velocity.x;
             }
           } else if (a.Collision.hasEntityCollisionType("RIGID")) {
             if (b.Collision.hasEntityCollisionType("BOUNCE")) {
               b.Position.x -= overlap * 2;
-              b.Velocity.x *= -b.Velocity.x;
+              b.Velocity.x = -b.Velocity.x;
             }
           }
         }
@@ -195,16 +195,16 @@ export class CollisionResolver {
                 b.Mass!.value
               );
 
-              a.Velocity.y += velA;
-              b.Velocity.y -= velB;
+              a.Velocity.y = velA;
+              b.Velocity.y = velB;
             } else if (b.Collision.hasEntityCollisionType("RIGID")) {
               a.Position.y -= overlap * 2;
-              a.Velocity.y *= -a.Velocity.y;
+              a.Velocity.y = -a.Velocity.y;
             }
           } else if (a.Collision.hasEntityCollisionType("RIGID")) {
             if (b.Collision.hasEntityCollisionType("BOUNCE")) {
               b.Position.y += overlap * 2;
-              b.Velocity.y *= -b.Velocity.y;
+              b.Velocity.y = -b.Velocity.y;
             }
           }
         }
@@ -226,16 +226,16 @@ export class CollisionResolver {
                 a.Mass!.value
               );
 
-              a.Velocity.y -= velA;
-              b.Velocity.y += velB;
+              a.Velocity.y = velA;
+              b.Velocity.y = velB;
             } else if (b.Collision.hasEntityCollisionType("RIGID")) {
               a.Position.y += overlap * 2;
-              a.Velocity.y *= -a.Velocity.y;
+              a.Velocity.y = -a.Velocity.y;
             }
           } else if (a.Collision.hasEntityCollisionType("RIGID")) {
             if (b.Collision.hasEntityCollisionType("BOUNCE")) {
               b.Position.y -= overlap * 2;
-              b.Velocity.y *= -b.Velocity.y;
+              b.Velocity.y = -b.Velocity.y;
             }
           }
         }
@@ -264,118 +264,13 @@ export class CollisionResolver {
   #resolveInelastic(a: ResolverComponents, b: ResolverComponents, side: Side): void {
     switch (side) {
       case SIDES.LEFT:
-        {
-          const overlap = a.Position.x + a.Size.x - b.Position.x;
-          if (overlap < 0) break;
-          if (a.Collision.hasEntityCollisionType("BOUNCE")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              a.Position.x -= overlap;
-              b.Position.x += overlap;
-              const vRel = a.Velocity.x - b.Velocity.x;
-              a.Velocity.x = -vRel * a.Bounciness!.value + a.Velocity.x;
-              b.Velocity.x = vRel * b.Bounciness!.value + b.Velocity.x;
-            }
-
-            if (b.Collision.hasEntityCollisionType("RIGID")) {
-              a.Position.x -= overlap * 2;
-              a.Velocity.x *= -a.Bounciness!.value;
-            }
-          }
-
-          if (a.Collision.hasEntityCollisionType("RIGID")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              b.Position.x += overlap * 2;
-              b.Velocity.x *= -b.Bounciness!.value;
-            }
-          }
-        }
+        console.log(a, b);
         break;
       case SIDES.RIGHT:
-        {
-          const overlap = b.Position.x + b.Size.x - a.Position.x;
-          if (overlap < 0) break;
-
-          if (a.Collision.hasEntityCollisionType("BOUNCE")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              a.Position.x += overlap;
-              b.Position.x -= overlap;
-              const vRel = a.Velocity.x - b.Velocity.x;
-              const impulse =
-                ((1 + a.Bounciness!.value * b.Bounciness!.value) * vRel) /
-                (1 / a.Mass!.value + 1 / b.Mass!.value);
-              a.Velocity.x = impulse / a.Mass!.value;
-              b.Velocity.x = impulse / b.Mass!.value;
-            }
-
-            if (b.Collision.hasEntityCollisionType("RIGID")) {
-              a.Position.x += overlap * 2;
-              a.Velocity.x *= -a.Bounciness!.value;
-            }
-          }
-
-          if (a.Collision.hasEntityCollisionType("RIGID")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              b.Position.x -= overlap * 2;
-              b.Velocity.x *= -b.Bounciness!.value;
-            }
-          }
-        }
         break;
       case SIDES.TOP:
-        {
-          const overlap = a.Position.y + a.Size.y - b.Position.y;
-          if (overlap < 0) break;
-
-          if (a.Collision.hasEntityCollisionType("BOUNCE")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              a.Position.y -= overlap;
-              b.Position.y += overlap;
-              const vRel = a.Velocity.y - b.Velocity.y;
-              a.Velocity.y = -vRel * a.Bounciness!.value + a.Velocity.y;
-              b.Velocity.y = vRel * b.Bounciness!.value + b.Velocity.y;
-            }
-
-            if (b.Collision.hasEntityCollisionType("RIGID")) {
-              a.Position.y -= overlap * 2;
-              a.Velocity.y *= -a.Bounciness!.value;
-            }
-          }
-
-          if (a.Collision.hasEntityCollisionType("RIGID")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              b.Position.y += overlap * 2;
-              b.Velocity.y *= -b.Bounciness!.value;
-            }
-          }
-        }
         break;
       case SIDES.BOTTOM:
-        {
-          const overlap = b.Position.y + b.Size.y - a.Position.y;
-          if (overlap < 0) break;
-
-          if (a.Collision.hasEntityCollisionType("BOUNCE")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              a.Position.y += overlap;
-              b.Position.y -= overlap;
-              const vRel = a.Velocity.y - b.Velocity.y;
-              a.Velocity.y = -vRel * a.Bounciness!.value + a.Velocity.y;
-              b.Velocity.y = vRel * b.Bounciness!.value + b.Velocity.y;
-            }
-
-            if (b.Collision.hasEntityCollisionType("RIGID")) {
-              a.Position.y += overlap * 2;
-              a.Velocity.y *= -a.Bounciness!.value;
-            }
-          }
-
-          if (a.Collision.hasEntityCollisionType("RIGID")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              b.Position.y -= overlap * 2;
-              b.Velocity.y *= -b.Bounciness!.value;
-            }
-          }
-        }
         break;
       default:
         break;
