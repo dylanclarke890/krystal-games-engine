@@ -1,27 +1,45 @@
 import { getNewVelocitiesForPerfectlyInelastic } from "../../../engine/collision/2d";
 
 describe("getNewVelocitiesForPerfectlyInelastic", () => {
-  it("calculates the new velocities correctly for equal masses", () => {
-    const vAi = 2;
-    const vBi = -1;
-    const mA = 2;
-    const mB = 2;
+  it("equal masses", () => {
+    const vAiX = 20;
+    const vAiY = 30;
+    const vBiX = -10;
+    const vBiY = -40;
+    const mA = 14;
+    const mB = 14;
 
-    const [newVelA, newVelB] = getNewVelocitiesForPerfectlyInelastic(vAi, vBi, mA, mB);
+    const [newVelA, newVelB] = getNewVelocitiesForPerfectlyInelastic(
+      vAiX,
+      vAiY,
+      vBiX,
+      vBiY,
+      mA,
+      mB
+    );
 
-    expect(newVelA).toBe(-0.5);
-    expect(newVelB).toBe(-0.5);
+    expect(newVelA).toBe(5);
+    expect(newVelB).toBe(-5);
   });
 
-  it("calculates the new velocities correctly for different masses", () => {
-    const vAi = 5;
-    const vBi = -2;
-    const mA = 3;
-    const mB = 1;
+  it("different masses", () => {
+    const vAiX = 40;
+    const vAiY = 20;
+    const vBiX = -10;
+    const vBiY = -30;
+    const mA = 8;
+    const mB = 12;
 
-    const [newVelA, newVelB] = getNewVelocitiesForPerfectlyInelastic(vAi, vBi, mA, mB);
+    const [newVelX, newVelY] = getNewVelocitiesForPerfectlyInelastic(
+      vAiX,
+      vAiY,
+      vBiX,
+      vBiY,
+      mA,
+      mB
+    );
 
-    expect(newVelA).toBeCloseTo(-1);
-    expect(newVelB).toBeCloseTo(-1);
+    expect(newVelX).toBe(10);
+    expect(newVelY).toBe(-10);
   });
 });

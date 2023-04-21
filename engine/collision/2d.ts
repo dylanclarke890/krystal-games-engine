@@ -1,14 +1,15 @@
 export function getNewVelocitiesForPerfectlyInelastic(
-  vAi: number,
-  vBi: number,
+  vAiX: number,
+  vAiY: number,
+  vBiX: number,
+  vBiY: number,
   mA: number,
   mB: number
 ): [number, number] {
-  const fA = mA * vAi;
-  const fB = mB * vBi;
   const totalMass = mA + mB;
 
-  const newVel = (fA + fB) / totalMass;
+  const vfX = (mA * vAiX + mB * vBiX) / totalMass;
+  const vfY = (mA * vAiY + mB * vBiY) / totalMass;
 
-  return [newVel, newVel];
+  return [vfX, vfY];
 }
