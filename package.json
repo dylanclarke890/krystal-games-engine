@@ -1,0 +1,26 @@
+{
+  "name": "krystal-games-engine",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/games/pong/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "npx jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dylanclarke890/canvas-game-engine.git"
+  },
+  "author": "Dylan <DylanClarke890@gmail.com> (http://github.com/DylanClarke890/javascript-utils)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dylanclarke890/canvas-game-engine/issues"
+  },
+  "homepage": "https://github.com/dylanclarke890/canvas-game-engine#readme",
+  "devDependencies": {
+    "@types/jest": "^29.5.1",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.4"
+  }
+}
