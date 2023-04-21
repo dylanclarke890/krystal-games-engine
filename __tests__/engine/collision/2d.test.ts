@@ -1,6 +1,6 @@
 import { perfectInelastic } from "../../../engine/collision/2d";
 
-describe("getNewVelocitiesForPerfectlyInelastic", () => {
+describe("perfectInelastic", () => {
   test("equal masses", () => {
     const vAiX = 20;
     const vAiY = 30;
