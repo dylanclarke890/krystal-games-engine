@@ -250,6 +250,7 @@ export class CollisionResolver {
   }
 
   #resolvePerfectlyInelastic(a: ResolverComponents, b: ResolverComponents, side: Side): void {
+    // m1 v1i + m2 v2i = ( m1 + m2) vf
     switch (side) {
       case SIDES.LEFT:
         console.log(a, b);

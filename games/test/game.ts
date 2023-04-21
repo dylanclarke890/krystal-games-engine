@@ -16,7 +16,7 @@ export class TestGame extends Game {
     super("canvas1", 500, 500);
     this.#buildEntity(200, 50, 50, 2);
     this.#buildEntity(100, -50, -50, 2);
-    this.#buildEntity(50, 50, 50, 3);
+    this.#buildEntity(50, 50, -50, 3);
     this.#buildEntity(250, 50, 50, 5);
     this.#buildEntity(350, 50, 50, 4);
     this.start();
