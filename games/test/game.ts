@@ -26,11 +26,11 @@ export class TestGame extends Game {
     em.addComponent(id, new Velocity(velX, velY));
     em.addComponent(id, new Size(50, 50));
     em.addComponent(id, new Sprite("games/test/paddle.png", 50, 50));
-    em.addComponent(id, new Bounciness(1));
+    em.addComponent(id, new Bounciness(0));
     em.addComponent(id, new Input(new Map()));
     em.addComponent(id, new Mass(massX));
     const collisionSettings: CollisionSettings = {
-      entityCollision: { RIGID: true },
+      entityCollision: { BOUNCE: true },
       viewportCollision: { LEFT: true, RIGHT: true, TOP: true, BOTTOM: true },
     };
     em.addComponent(id, new Collision(collisionSettings));

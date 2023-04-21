@@ -119,6 +119,19 @@ export class CollisionResolver {
     return [vAf, vBf];
   }
 
+  #calcPerfectlyInelasticImpulses(
+    vAi: number,
+    vBi: number,
+    mA: number,
+    mB: number
+  ): [number, number] {
+    const fA = mA * vAi;
+    const fB = mB * vBi;
+    const totalMass = mA + mB;
+    const impulse = (fA + fB) / totalMass;
+    return [impulse, impulse];
+  }
+
   #resolvePerfectlyElastic(a: ResolverComponents, b: ResolverComponents, side: Side): void {
     switch (side) {
       case SIDES.LEFT:
@@ -253,10 +266,67 @@ export class CollisionResolver {
     // m1 v1i + m2 v2i = ( m1 + m2) vf
     switch (side) {
       case SIDES.LEFT:
-        console.log(a, b);
-        break;
+        {
+          const overlap = a.Position.x + a.Size.x - b.Position.x;
+          if (overlap < 0) return;
+
+          if (a.Collision.hasEntityCollisionType("BOUNCE")) {
+            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
+              a.Position.x -= overlap;
+              b.Position.x += overlap;
+
+              const [velA, velB] = this.#calcPerfectlyInelasticImpulses(
+                a.Velocity.x,
+                b.Velocity.x,
+                a.Mass!.value,
+                b.Mass!.value
+              );
+
+              a.Velocity.x = velA;
+              b.Velocity.x = velB;
+            } else if (b.Collision.hasEntityCollisionType("RIGID")) {
+              a.Position.x -= overlap * 2;
+              a.Velocity.x = -a.Velocity.x;
+            }
+          } else if (a.Collision.hasEntityCollisionType("RIGID")) {
+            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
+              b.Position.x += overlap * 2;
+              b.Velocity.x = -b.Velocity.x;
+            }
+          }
+        }
+        return;
       case SIDES.RIGHT:
-        break;
+        {
+          const overlap = b.Position.x + b.Size.x - a.Position.x;
+          if (overlap < 0) return;
+
+          if (a.Collision.hasEntityCollisionType("BOUNCE")) {
+            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
+              a.Position.x -= overlap;
+              b.Position.x += overlap;
+
+              const [velA, velB] = this.#calcPerfectlyInelasticImpulses(
+                a.Velocity.x,
+                b.Velocity.x,
+                a.Mass!.value,
+                b.Mass!.value
+              );
+
+              a.Velocity.x = velA;
+              b.Velocity.x = velB;
+            } else if (b.Collision.hasEntityCollisionType("RIGID")) {
+              a.Position.x -= overlap * 2;
+              a.Velocity.x = -a.Velocity.x;
+            }
+          } else if (a.Collision.hasEntityCollisionType("RIGID")) {
+            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
+              b.Position.x += overlap * 2;
+              b.Velocity.x = -b.Velocity.x;
+            }
+          }
+        }
+        return;
       case SIDES.TOP:
         break;
       case SIDES.BOTTOM:
