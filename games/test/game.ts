@@ -14,11 +14,8 @@ import { CollisionSettings } from "../../engine/utils/types.js";
 export class TestGame extends Game {
   constructor() {
     super("canvas1", 500, 500);
-    this.#buildEntity(200, 50, 50, 2);
-    this.#buildEntity(100, -50, -50, 2);
-    this.#buildEntity(50, 50, -50, 3);
-    this.#buildEntity(250, 50, 50, 5);
-    this.#buildEntity(350, 50, 50, 4);
+    this.#buildEntity(200, 50, 0, 2);
+    this.#buildEntity(300, 0, 0, 2);
     this.start();
   }
 
@@ -33,7 +30,7 @@ export class TestGame extends Game {
     em.addComponent(id, new Input(new Map()));
     em.addComponent(id, new Mass(massX));
     const collisionSettings: CollisionSettings = {
-      entityCollision: { BOUNCE: true },
+      entityCollision: { RIGID: true },
       viewportCollision: { LEFT: true, RIGHT: true, TOP: true, BOTTOM: true },
     };
     em.addComponent(id, new Collision(collisionSettings));
