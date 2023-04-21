@@ -1,4 +1,4 @@
-import { getNewVelocitiesForPerfectlyInelastic } from "../../../engine/collision/1d.js";
+import { getNewVelocitiesForPerfectlyInelastic } from "../../../engine/collision/2d";
 
 describe("getNewVelocitiesForPerfectlyInelastic", () => {
   it("calculates the new velocities correctly for equal masses", () => {
