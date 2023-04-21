@@ -2,26 +2,26 @@ import { getNewVelocitiesForPerfectlyInelastic } from "../../../engine/collision
 
 describe("getNewVelocitiesForPerfectlyInelastic", () => {
   it("calculates the new velocities correctly for equal masses", () => {
-    const vAi = 2;
-    const vBi = -1;
+    const vAi = 100;
+    const vBi = -50;
     const mA = 2;
     const mB = 2;
 
     const [newVelA, newVelB] = getNewVelocitiesForPerfectlyInelastic(vAi, vBi, mA, mB);
 
-    expect(newVelA).toBe(-0.5);
-    expect(newVelB).toBe(-0.5);
+    expect(newVelA).toBe(25);
+    expect(newVelB).toBe(25);
   });
 
   it("calculates the new velocities correctly for different masses", () => {
-    const vAi = 5;
-    const vBi = -2;
-    const mA = 3;
-    const mB = 1;
+    const vAi = 20;
+    const vBi = -10;
+    const mA = 7;
+    const mB = 4;
 
     const [newVelA, newVelB] = getNewVelocitiesForPerfectlyInelastic(vAi, vBi, mA, mB);
 
-    expect(newVelA).toBeCloseTo(-1);
-    expect(newVelB).toBeCloseTo(-1);
+    expect(newVelA).toBeCloseTo(9.09);
+    expect(newVelB).toBeCloseTo(9.09);
   });
 });
