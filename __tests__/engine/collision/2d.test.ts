@@ -1,7 +1,7 @@
 import { perfectInelastic } from "../../../engine/collision/2d";
 
 describe("getNewVelocitiesForPerfectlyInelastic", () => {
-  it("equal masses", () => {
+  test("equal masses", () => {
     const vAiX = 20;
     const vAiY = 30;
     const vBiX = -10;
@@ -15,7 +15,7 @@ describe("getNewVelocitiesForPerfectlyInelastic", () => {
     expect(newVelB).toBe(-5);
   });
 
-  it("different masses", () => {
+  test("different masses", () => {
     const vAiX = 40;
     const vAiY = 20;
     const vBiX = -10;
