@@ -1,4 +1,4 @@
-import { getNewVelocitiesForPerfectlyInelastic } from "../../../engine/collision/1d";
+import { perfectInelastic } from "../../../engine/collision/1d";
 
 describe("getNewVelocitiesForPerfectlyInelastic", () => {
   it("calculates the new velocities correctly for equal masses", () => {
@@ -7,7 +7,7 @@ describe("getNewVelocitiesForPerfectlyInelastic", () => {
     const mA = 2;
     const mB = 2;
 
-    const [newVelA, newVelB] = getNewVelocitiesForPerfectlyInelastic(vAi, vBi, mA, mB);
+    const [newVelA, newVelB] = perfectInelastic(vAi, vBi, mA, mB);
 
     expect(newVelA).toBe(25);
     expect(newVelB).toBe(25);
@@ -19,7 +19,7 @@ describe("getNewVelocitiesForPerfectlyInelastic", () => {
     const mA = 7;
     const mB = 4;
 
-    const [newVelA, newVelB] = getNewVelocitiesForPerfectlyInelastic(vAi, vBi, mA, mB);
+    const [newVelA, newVelB] = perfectInelastic(vAi, vBi, mA, mB);
 
     expect(newVelA).toBeCloseTo(9.09);
     expect(newVelB).toBeCloseTo(9.09);

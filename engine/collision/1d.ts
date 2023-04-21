@@ -1,4 +1,4 @@
-export function getNewVelocitiesForElastic(
+export function perfectInelastic(
   vAi: number,
   vBi: number,
   mA: number,
