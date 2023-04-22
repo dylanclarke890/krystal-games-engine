@@ -1,9 +1,4 @@
-export function perfectInelastic(
-  vAi: number,
-  vBi: number,
-  mA: number,
-  mB: number
-): [number, number] {
+export function elastic(vAi: number, vBi: number, mA: number, mB: number): [number, number] {
   if (mA === mB) {
     return [vBi, vAi]; // Can just swap velocities if masses are equal
   }
@@ -16,7 +11,7 @@ export function perfectInelastic(
   return [vAf, vBf];
 }
 
-export function getNewVelocitiesForPerfectlyInelastic(
+export function perfectlyInelastic(
   vAi: number,
   vBi: number,
   mA: number,
