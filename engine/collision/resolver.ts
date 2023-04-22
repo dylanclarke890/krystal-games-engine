@@ -210,7 +210,6 @@ export class CollisionResolver {
   }
 
   #resolvePerfectlyInelastic(a: ResolverComponents, b: ResolverComponents, side: Side): void {
-    // m1 v1i + m2 v2i = ( m1 + m2) vf
     switch (side) {
       case SIDES.LEFT:
         {
@@ -303,7 +302,35 @@ export class CollisionResolver {
         }
         return;
       case SIDES.BOTTOM:
-        break;
+        {
+          const overlap = b.Position.y + b.Size.y - a.Position.y;
+          if (overlap < 0) return;
+
+          if (a.Collision.hasEntityCollisionType("BOUNCE")) {
+            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
+              a.Position.y -= overlap;
+              b.Position.y += overlap;
+
+              const [vAf, vBf] = perfectlyInelastic(
+                a.Velocity.y,
+                b.Velocity.y,
+                a.Mass!.value,
+                b.Mass!.value
+              );
+              a.Velocity.y = vAf;
+              b.Velocity.y = vBf;
+            } else if (b.Collision.hasEntityCollisionType("RIGID")) {
+              a.Position.y -= overlap * 2;
+              a.Velocity.y = -a.Velocity.y;
+            }
+          } else if (a.Collision.hasEntityCollisionType("RIGID")) {
+            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
+              b.Position.y += overlap * 2;
+              b.Velocity.y = -b.Velocity.y;
+            }
+          }
+        }
+        return;
       default:
         break;
     }
