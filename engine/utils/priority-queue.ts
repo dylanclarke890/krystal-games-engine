@@ -22,8 +22,7 @@ export class PQueue<T> {
   #list: PQueueItem<T>[];
   #comparator: CompareFn<T>;
 
-  static #defaultCompareFn: (a: PQueueItem<any>, b: PQueueItem<any>) => number = (a, b): number =>
-    b.priority - a.priority;
+  static #defaultCompareFn: CompareFn<any> = (a, b) => b.priority - a.priority;
 
   constructor(compareFn?: CompareFn<T>) {
     this.#comparator = compareFn || PQueue.#defaultCompareFn;
