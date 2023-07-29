@@ -6,44 +6,28 @@
 export class Timer {
   static #last = 0;
 
-  /**
-   * The maximum allowed time step in seconds.
-   */
+  /** The maximum allowed time step in seconds. */
   static maxStep: number = 0.05;
 
-  /**
-   * Global time in seconds.
-   */
+  /** Global time in seconds.*/
   static time: number = Number.MIN_VALUE;
 
-  /**
-   * Scaling factor for the time delta.
-   */
+  /** Scaling factor for the time delta. */
   static timeScale: number = 1;
 
-  /**
-   * The base time of the timer instance in seconds
-   */
+  /** The base time of the timer instance in seconds. */
   base: number = 0;
 
-  /**
-   * The last time the tick was called in seconds
-   */
+  /** The last time the tick was called in seconds. */
   last: number = 0;
 
-  /**
-   * The time when the timer was paused in seconds
-   */
+  /** The time when the timer was paused in seconds. */
   pausedAt: number = 0;
 
-  /**
-   * The target time in seconds
-   */
+  /** The target time in seconds. */
   target: number = 0;
 
-  /**
-   * Updates the global time.
-   */
+  /** Updates the global time. */
   static step() {
     const current = performance.now();
     const delta = (current - Timer.#last) / 1000;
@@ -70,9 +54,7 @@ export class Timer {
     this.reset();
   }
 
-  /**
-   * Resets the timer by setting its base time to the current global time.
-   */
+  /** Resets the timer by setting its base time to the current global time. */
   reset() {
     this.base = Timer.time;
     this.pausedAt = 0;
@@ -99,17 +81,13 @@ export class Timer {
     return d < 0 ? 0 : d;
   }
 
-  /**
-   * Pauses the timer by setting the pausedAt time to the current global time.
-   */
+  /** Pauses the timer by setting the pausedAt time to the current global time. */
   pause() {
     if (this.pausedAt) return;
     this.pausedAt = Timer.time;
   }
 
-  /**
-   * Unpauses the timer by updating the base time and clearing the pausedAt time.
-   */
+  /** Unpauses the timer by updating the base time and clearing the pausedAt time. */
   unpause() {
     if (!this.pausedAt) return;
     this.base += Timer.time - this.pausedAt;
