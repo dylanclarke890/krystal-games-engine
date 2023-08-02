@@ -10,17 +10,17 @@ type ParseResult = {
   reverse: boolean;
 };
 
-function setErrorAndType(res: ParseResult, error: string): ParseResult {
-  res.success = false;
-  res.error = error;
-  return res;
+function setErrorAndType(result: ParseResult, error: string): ParseResult {
+  result.success = false;
+  result.error = error;
+  return result;
 }
 
 function getIntervalInfo(interval: string): ParseResult {
   interval = interval.trim();
   const first = interval[0];
   const last = interval[interval.length - 1];
-  const res = {
+  const result: ParseResult = {
     from: 0,
     to: 0,
     includeStart: false,
@@ -30,39 +30,36 @@ function getIntervalInfo(interval: string): ParseResult {
     error: "",
   };
 
-  if (first === "(") res.includeStart = false;
-  else if (first === "[") res.includeStart = true;
-  else return setErrorAndType(res, "Invalid start character. Allowed characters are '(' and '['.");
+  if (first === "(") result.includeStart = false;
+  else if (first === "[") result.includeStart = true;
+  else return setErrorAndType(result, "Invalid start character. Allowed characters are '(' and '['.");
 
-  if (last === ")") res.includeEnd = false;
-  else if (last === "]") res.includeEnd = true;
-  else return setErrorAndType(res, "Invalid end character. Allowed characters are ')' and ']'.");
+  if (last === ")") result.includeEnd = false;
+  else if (last === "]") result.includeEnd = true;
+  else return setErrorAndType(result, "Invalid end character. Allowed characters are ')' and ']'.");
 
   const usesCommaDelimiter = interval.indexOf(",") !== -1;
   if (!usesCommaDelimiter && interval.indexOf("..") === -1)
-    return setErrorAndType(res, "Invalid delimeter. Allowed characters are ',' and '..'.");
+    return setErrorAndType(result, "Invalid delimeter. Allowed characters are ',' and '..'.");
 
-  const inner = interval.slice(1, interval.length - 1);
-  const fromToArray = inner.split(usesCommaDelimiter ? "," : "..");
+  const range = interval.slice(1, interval.length - 1);
+  const fromToArray = range.split(usesCommaDelimiter ? "," : "..");
 
   if (fromToArray.length !== 2)
-    return setErrorAndType(
-      res,
-      "Wrong number of arguments provided. Interval requires a from and to value."
-    );
+    return setErrorAndType(result, "Wrong number of arguments provided. Interval requires a from and to value.");
 
-  res.from = safeParseInt(fromToArray[0]);
-  res.to = safeParseInt(fromToArray[1]);
+  result.from = safeParseInt(fromToArray[0]);
+  result.to = safeParseInt(fromToArray[1]);
 
-  if (res.from > res.to) res.reverse = true;
+  if (result.from > result.to) result.reverse = true;
 
-  return res;
+  return result;
 }
 
 /**
  * Return a range of integers as specified in interval notation.
  * @see https://en.wikipedia.org/wiki/Interval_(mathematics)
- * @param {*} interval
+ * @param {string} interval
  * @returns
  */
 export function arrayFromInterval(interval: string): number[] {

@@ -50,27 +50,27 @@ export class PhysicSystem extends System {
         "Mass"
       ) as DefinedExcept<ComponentMap<RequiredComponents | OptionalComponents>, OptionalComponents>;
 
-      if (!entity.Mass) {
+      if (typeof entity.Mass === "undefined") {
         entity.Mass = defaultComponents.mass;
       }
       const mass = entity.Mass.value;
 
-      if (entity.Acceleration) {
+      if (typeof entity.Acceleration !== "undefined") {
         const accel = entity.Acceleration;
         entity.Velocity.add((accel.x / mass) * dt, (accel.y / mass) * dt);
       }
 
-      if (entity.Friction) {
+      if (typeof entity.Friction !== "undefined") {
         entity.Velocity.sub(entity.Friction.x * mass * dt, entity.Friction.y * mass * dt);
       }
 
-      if (entity.GravityFactor) {
+      if (typeof entity.GravityFactor !== "undefined") {
         entity.Velocity.add(0, entity.GravityFactor.value * mass * dt);
       }
 
       entity.Position.add(entity.Velocity.x * dt, entity.Velocity.y * dt);
 
-      if (entity.Collision) {
+      if (typeof entity.Collision !== "undefined") {
         collidables.push([id, entity.Position, entity.Collision]);
       }
     }

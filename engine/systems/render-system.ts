@@ -32,21 +32,17 @@ export class RenderSystem extends System {
 
   update() {
     this.viewport.clear();
-    const entities = this.entityManager.getEntitiesWithComponents(
-      ...RenderSystem.requiredComponents
-    );
+    const entities = this.entityManager.getEntitiesWithComponents(...RenderSystem.requiredComponents);
 
     const delta = this.timer.delta();
     for (let i = 0; i < entities.length; i++) {
       const entityId = entities[i];
-      const entity = this.entityManager.getComponents(
-        entityId,
-        "Position",
-        "Sprite",
-        "Animation"
-      ) as DefinedExcept<ComponentMap<RequiredComponents | OptionalComponents>, OptionalComponents>;
+      const entity = this.entityManager.getComponents(entityId, "Position", "Sprite", "Animation") as DefinedExcept<
+        ComponentMap<RequiredComponents | OptionalComponents>,
+        OptionalComponents
+      >;
 
-      if (!entity.Animation) {
+      if (typeof entity.Animation === "undefined") {
         this.drawSprite(entity.Sprite, entity.Position, 0, 0);
         continue;
       }

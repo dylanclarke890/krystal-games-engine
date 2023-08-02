@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
 import { ComponentType } from "../utils/types.js";
@@ -18,9 +17,7 @@ export class System {
     /* stub */
   }
 
-  /**
-   * @param _dt Delta time since last frame.
-   */
+  /** @param _dt Delta time since last frame. */
   update(_dt: number): void {
     throw new Error("Update method must be implemented.");
   }

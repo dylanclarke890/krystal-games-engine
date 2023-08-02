@@ -39,6 +39,8 @@ export class SystemManager {
     this.systems.forEach((system) => this.#validateSystem(system));
   }
 
+  // TODO: rethink this. Are entities likely to be registered/created after systems are that need some of the systems
+  // that weren't neccessary registered to begin with. On demand registration?
   #validateSystem(system: System): void {
     const name = (<typeof System>system.constructor).name;
     const required = (<typeof System>system.constructor).requiredComponents;

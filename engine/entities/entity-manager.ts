@@ -58,19 +58,15 @@ export class EntityManager {
    * @param componentType the name of the component.
    * @returns the component type, if found.
    */
-  getComponent<T extends ComponentType>(
-    entity: number,
-    componentType: T
-  ): Component<T> | undefined {
+  getComponent<T extends ComponentType>(entity: number, componentType: T): Component<T> | undefined {
     return this.components.get(entity + componentType) as Component<T> | undefined;
   }
 
   getComponents<T extends ComponentType>(entity: number, ...componentTypes: T[]) {
-    const components: ComponentMap<T> = {};
-    componentTypes.forEach(
-      (ct) => (components[ct] = this.components.get(entity + ct) as Component<T> | undefined)
-    );
-    return components;
+    return componentTypes.reduce((components, currentComponentType) => {
+      components[currentComponentType] = this.components.get(entity + currentComponentType) as Component<T> | undefined;
+      return components;
+    }, {} as ComponentMap<T>);
   }
 
   /**
@@ -78,10 +74,9 @@ export class EntityManager {
    * @param {ComponentType} componentType the name of the component.
    */
   hasComponent(entity: number, componentType: ComponentType) {
-    if (!this.entityMasks.has(entity)) {
-      return false;
-    }
-    return this.entityMasks.get(entity)!.has(componentType);
+    const mask = this.entityMasks.get(entity);
+    if (typeof mask === "undefined") return false;
+    return mask.has(componentType);
   }
 
   /** Check if any entity has the specified component type. */
@@ -108,7 +103,7 @@ export class EntityManager {
   /** Destroy an entity and remove all of its components. */
   destroyEntity(entity: number) {
     const masks = this.entityMasks.get(entity);
-    if (!masks) return;
+    if (typeof masks === "undefined") return;
     masks.forEach((componentType) => this.components.delete(entity + componentType));
     this.entityMasks.delete(entity);
     this.entities.delete(entity);

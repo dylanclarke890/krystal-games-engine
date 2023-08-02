@@ -6,8 +6,7 @@ export class Enum {
     const enumKeys: string[] = [];
     const enumValues: Enum[] = [];
     // Traverse the enum entries
-    for (const [key, value] of Object.entries(this)) {
-      if (!(value instanceof this)) continue;
+    for (const [key, value] of Object.entries(this).filter(([, value]) => value instanceof this)) {
       enumKeys.push(key);
       value.enumKey = key;
       value.enumOrdinal = enumValues.length;
@@ -54,6 +53,6 @@ export class Enum {
   }
 
   valueOf() {
-    return this.#value !== undefined ? this.#value : this.enumOrdinal;
+    return typeof this.#value === "undefined" ? this.enumOrdinal : this.#value;
   }
 }
