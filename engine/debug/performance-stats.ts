@@ -215,7 +215,7 @@ export class PerformanceStats {
         if (this.#maxPanels === 3) mem.div.style.display = "block";
         break;
       default:
-        throw Error("Panel index out of range.");
+        throw new Error("Panel index out of range.");
     }
   }
 
