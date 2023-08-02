@@ -16,35 +16,25 @@ export class EventSystem {
     }
   }
 
-  /**
-   * Get the parent EventSystem.
-   */
+  /** Get the parent EventSystem. */
   get parent(): EventSystem | undefined {
     return this.#parent;
   }
 
-  /**
-   * Subscribe to an event.
-   */
+  /** Subscribe to an event. */
   on<T>(event: Enum, listener: Listener<T>, priority: number | PriorityLevel = PriorityLevel.None) {
     if (!this.#subscribers.has(event)) this.#subscribers.set(event, new PQueue());
-    this.#subscribers
-      .get(event)!
-      .add(listener, priority instanceof PriorityLevel ? priority.valueOf() : priority);
+    this.#subscribers.get(event)!.add(listener, priority instanceof PriorityLevel ? priority.valueOf() : priority);
   }
 
-  /**
-   * Unsubscribe from an event.
-   */
+  /** Unsubscribe from an event. */
   off<T>(event: Enum, listener: Listener<T>) {
     const queue = this.#subscribers.get(event);
     if (!queue) return;
     return queue.remove(listener);
   }
 
-  /**
-   * Dispatch an event to subscribers.
-   */
+  /** Dispatch an event to subscribers. */
   dispatch<T>(event: Enum, data?: T) {
     const queue = this.#subscribers.get(event);
     if (queue) queue.forEach((listener) => listener(data));
