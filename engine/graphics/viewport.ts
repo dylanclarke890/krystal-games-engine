@@ -16,12 +16,7 @@ export class Viewport {
    * @param {string} canvasId
    * @param {HTMLElement} parent
    */
-  constructor(
-    width: number,
-    height: number,
-    canvasId?: string,
-    parent: HTMLElement = document.body
-  ) {
+  constructor(width: number, height: number, canvasId?: string, parent: HTMLElement = document.body) {
     this.canvasId = canvasId ?? uniqueId("kg-canvas-");
     this.width = width;
     this.height = height;
@@ -32,8 +27,8 @@ export class Viewport {
   }
 
   createCanvas() {
-    let canvas = document.querySelector(this.canvasId) as HTMLCanvasElement;
-    if (!canvas) {
+    let canvas = document.querySelector(this.canvasId) as HTMLCanvasElement | null;
+    if (typeof canvas === "undefined" || canvas === null) {
       canvas = document.createElement("canvas");
       this.parent.appendChild(canvas);
       canvas.id = this.canvasId;
@@ -45,11 +40,10 @@ export class Viewport {
   }
 
   clear(color?: string) {
-    if (color) {
+    if (typeof color === "undefined") this.ctx.clearRect(0, 0, this.width, this.height);
+    else {
       this.ctx.fillStyle = color;
       this.ctx.fillRect(0, 0, this.width, this.height);
-    } else {
-      this.ctx.clearRect(0, 0, this.width, this.height);
     }
   }
 
