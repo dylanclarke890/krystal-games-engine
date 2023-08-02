@@ -27,6 +27,8 @@ type PerformanceStatsOptions = {
   target?: HTMLElement;
 };
 
+type PanelType = "mem" | "ms" | "fps";
+
 export class PerformanceStats {
   static colorSchemes = {
     fps: new PanelColorScheme(new Color(16, 16, 48), new Color(0, 255, 255)),
@@ -197,8 +199,7 @@ export class PerformanceStats {
 
   #nextPanel() {
     const { fps, ms, mem } = this.#DOMElements;
-    this.#currentPanelIndex =
-      ++this.#currentPanelIndex === this.#maxPanels ? 0 : this.#currentPanelIndex;
+    this.#currentPanelIndex = ++this.#currentPanelIndex === this.#maxPanels ? 0 : this.#currentPanelIndex;
 
     fps.div.style.display = "none";
     ms.div.style.display = "none";
@@ -238,11 +239,7 @@ export class PerformanceStats {
     this.last = this.now;
     this.minMs = Math.min(this.minMs, msValue);
     this.maxMs = Math.max(this.maxMs, msValue);
-    this.#drawPanelData(
-      ms.data.data,
-      Math.min(30, 30 - (msValue / 200) * 30),
-      PerformanceStats.colorSchemes.ms
-    );
+    this.#drawPanelData(ms.data.data, Math.min(30, 30 - (msValue / 200) * 30), PerformanceStats.colorSchemes.ms);
     ms.text.current.textContent = `${msValue} MS `;
     ms.text.range.textContent = ` (${this.minMs}-${this.maxMs})`;
     ms.ctx.putImageData(ms.data, 0, 0);
@@ -253,11 +250,7 @@ export class PerformanceStats {
     const fpsValue = Math.round((this.framesThisSec * 1000) / (this.now - this.lastFrame));
     this.minFps = Math.min(this.minFps, fpsValue);
     this.maxFps = Math.max(this.maxFps, fpsValue);
-    this.#drawPanelData(
-      fps.data.data,
-      Math.min(30, 30 - (fpsValue / 100) * 30),
-      PerformanceStats.colorSchemes.fps
-    );
+    this.#drawPanelData(fps.data.data, Math.min(30, 30 - (fpsValue / 100) * 30), PerformanceStats.colorSchemes.fps);
     fps.text.current.textContent = `${fpsValue} FPS `;
     fps.text.range.textContent = ` (${this.minFps}-${this.maxFps})`;
     fps.ctx.putImageData(fps.data, 0, 0);
@@ -270,15 +263,9 @@ export class PerformanceStats {
     const memValue = Math.round((performance as any).memory.usedJSHeapSize * 9.54e-7);
     this.minMem = Math.min(this.minMem, memValue);
     this.maxMem = Math.max(this.maxMem, memValue);
-    this.#drawPanelData(
-      mem.data.data,
-      Math.min(30, 30 - memValue / 2),
-      PerformanceStats.colorSchemes.mem
-    );
+    this.#drawPanelData(mem.data.data, Math.min(30, 30 - memValue / 2), PerformanceStats.colorSchemes.mem);
     mem.text.current.textContent = `${memValue} MEM`;
     mem.text.range.textContent = ` (${this.minMem}-${this.maxMem})`;
     mem.ctx.putImageData(mem.data, 0, 0);
   }
 }
-
-type PanelType = "mem" | "ms" | "fps";
