@@ -171,8 +171,7 @@ export class InputKeys extends Enum {
   }
 }
 
-/** @type {{[x:string]: InputKeys}} */
-export const keyboardMap = {
+export const keyboardMap: { [x: string]: InputKeys } = {
   a: InputKeys.A,
   b: InputKeys.B,
   c: InputKeys.C,
@@ -245,9 +244,7 @@ export const keyboardMap = {
   "|": InputKeys.Pipe,
   "&": InputKeys.Ampersand,
   "'": InputKeys.Quote_Single,
-  // eslint-disable-next-line quotes
   '"': InputKeys.Quote_Double,
-
   capslock: InputKeys.Caps_Lock,
   scrollock: InputKeys.Scroll_Lock,
   numlock: InputKeys.Num_Lock,

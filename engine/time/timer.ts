@@ -42,7 +42,7 @@ export class Timer {
   constructor(seconds?: number) {
     this.base = Timer.time;
     this.last = Timer.time;
-    this.target = seconds || 0;
+    this.target = seconds ?? 0;
   }
 
   /**
@@ -81,14 +81,14 @@ export class Timer {
     return d < 0 ? 0 : d;
   }
 
-  /** Pauses the timer by setting the pausedAt time to the current global time. */
   pause() {
     if (this.pausedAt) return;
+    // Pauses the timer by setting the pausedAt time to the current global time.
     this.pausedAt = Timer.time;
   }
 
-  /** Unpauses the timer by updating the base time and clearing the pausedAt time. */
   unpause() {
+    // Unpauses the timer by updating the base time and clearing the pausedAt time.
     if (!this.pausedAt) return;
     this.base += Timer.time - this.pausedAt;
     this.pausedAt = 0;

@@ -118,8 +118,7 @@ export class InputManager {
    * @param {string} action
    */
   bind(key: InputKeys, action: string) {
-    if (this.#bindings.has(key))
-      console.warn(`${key} was already bound to action ${this.#bindings.get(key)}`);
+    if (this.#bindings.has(key)) console.warn(`${key} was already bound to action ${this.#bindings.get(key)}`);
     this.#bindings.set(key, action);
     this.#initInputTypeEvents(key);
   }
