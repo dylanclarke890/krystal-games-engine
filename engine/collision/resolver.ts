@@ -25,25 +25,21 @@ export class CollisionResolver {
   }
 
   resolve(collided: PairedSet<number>): void {
-    collided.forEach((v) => {
-      const [a, b] = v;
-      this.resolvePair(a, b);
-    });
-  }
-
-  resolvePair(entityA: number, entityB: number): void {
     const em = this.entityManager;
     const defaults = CollisionResolver.componentDefaults;
-    const a = em.getComponents(entityA, ...CollisionResolver.components) as ResolverComponents;
-    a.Bounciness ??= defaults.bounce;
-    a.Mass ??= defaults.mass;
 
-    const b = em.getComponents(entityB, ...CollisionResolver.components) as ResolverComponents;
-    b.Bounciness ??= defaults.bounce;
-    b.Mass ??= defaults.mass;
+    collided.forEach((pair) => {
+      const a = em.getComponents(pair[0], ...CollisionResolver.components) as ResolverComponents;
+      a.Bounciness ??= defaults.bounce;
+      a.Mass ??= defaults.mass;
 
-    // const side = this.#findSideOfCollision(a, b);
-    // const totalBounciness = a.Bounciness.value * b.Bounciness.value;
+      const b = em.getComponents(pair[1], ...CollisionResolver.components) as ResolverComponents;
+      b.Bounciness ??= defaults.bounce;
+      b.Mass ??= defaults.mass;
+
+      // const side = this.#findSideOfCollision(a, b);
+      // const totalBounciness = a.Bounciness.value * b.Bounciness.value;
+    });
   }
 
   findSideOfCollision(a: ResolverComponents, b: ResolverComponents): SideOfCollision {
