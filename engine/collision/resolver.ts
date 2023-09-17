@@ -3,23 +3,14 @@ import { Mass } from "../components/mass.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
-import {
-  ComponentMap,
-  DefinedExcept,
-  DetectionResult,
-  Key,
-  ViewportCollision,
-} from "../utils/types.js";
+import { ComponentMap, DetectionResult, ViewportCollision } from "../utils/types.js";
 import { elastic, perfectlyInelastic } from "./1d.js";
 
 const SIDES = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 } as const;
 type Side = (typeof SIDES)[Key<typeof SIDES>];
 type RequiredComponents = "Position" | "Velocity" | "Size" | "Collision";
 type OptionalComponents = "Bounciness" | "Mass";
-type ResolverComponents = DefinedExcept<
-  ComponentMap<RequiredComponents | OptionalComponents>,
-  OptionalComponents
->;
+type ResolverComponents = DefinedExcept<ComponentMap<RequiredComponents | OptionalComponents>, OptionalComponents>;
 
 const defaultComponents = {
   bounce: new Bounciness(1),
@@ -221,12 +212,7 @@ export class CollisionResolver {
               a.Position.x -= overlap;
               b.Position.x += overlap;
 
-              const [vAf, vBf] = perfectlyInelastic(
-                a.Velocity.x,
-                b.Velocity.x,
-                a.Mass!.value,
-                b.Mass!.value
-              );
+              const [vAf, vBf] = perfectlyInelastic(a.Velocity.x, b.Velocity.x, a.Mass!.value, b.Mass!.value);
               a.Velocity.x = vAf;
               b.Velocity.x = vBf;
             } else if (b.Collision.hasEntityCollisionType("RIGID")) {
@@ -251,12 +237,7 @@ export class CollisionResolver {
               a.Position.x -= overlap;
               b.Position.x += overlap;
 
-              const [vAf, vBf] = perfectlyInelastic(
-                a.Velocity.x,
-                b.Velocity.x,
-                a.Mass!.value,
-                b.Mass!.value
-              );
+              const [vAf, vBf] = perfectlyInelastic(a.Velocity.x, b.Velocity.x, a.Mass!.value, b.Mass!.value);
               a.Velocity.x = vAf;
               b.Velocity.x = vBf;
             } else if (b.Collision.hasEntityCollisionType("RIGID")) {
@@ -281,12 +262,7 @@ export class CollisionResolver {
               a.Position.y -= overlap;
               b.Position.y += overlap;
 
-              const [vAf, vBf] = perfectlyInelastic(
-                a.Velocity.y,
-                b.Velocity.y,
-                a.Mass!.value,
-                b.Mass!.value
-              );
+              const [vAf, vBf] = perfectlyInelastic(a.Velocity.y, b.Velocity.y, a.Mass!.value, b.Mass!.value);
               a.Velocity.y = vAf;
               b.Velocity.y = vBf;
             } else if (b.Collision.hasEntityCollisionType("RIGID")) {
@@ -311,12 +287,7 @@ export class CollisionResolver {
               a.Position.y -= overlap;
               b.Position.y += overlap;
 
-              const [vAf, vBf] = perfectlyInelastic(
-                a.Velocity.y,
-                b.Velocity.y,
-                a.Mass!.value,
-                b.Mass!.value
-              );
+              const [vAf, vBf] = perfectlyInelastic(a.Velocity.y, b.Velocity.y, a.Mass!.value, b.Mass!.value);
               a.Velocity.y = vAf;
               b.Velocity.y = vBf;
             } else if (b.Collision.hasEntityCollisionType("RIGID")) {

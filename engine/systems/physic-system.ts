@@ -4,7 +4,7 @@ import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
-import { Collidable, ComponentMap, ComponentType, DefinedExcept } from "../utils/types.js";
+import { Collidable, ComponentMap, ComponentType } from "../utils/types.js";
 import { Mass } from "../components/index.js";
 
 type RequiredComponents = "Position" | "Velocity";

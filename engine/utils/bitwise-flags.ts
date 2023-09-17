@@ -5,19 +5,23 @@ export class BitwiseFlags<TFlags extends Record<string, number>> {
     this.flags = 0;
   }
 
-  addFlag<TKey extends keyof TFlags>(flag: TFlags[TKey]) {
+  add<TKey extends keyof TFlags>(flag: TFlags[TKey]) {
     this.flags |= flag;
   }
 
-  removeFlag<TKey extends keyof TFlags>(flag: TFlags[TKey]) {
+  remove<TKey extends keyof TFlags>(flag: TFlags[TKey]) {
     this.flags &= ~flag;
   }
 
-  hasFlag<TKey extends keyof TFlags>(flag: TFlags[TKey]) {
+  has<TKey extends keyof TFlags>(flag: TFlags[TKey]) {
     return (this.flags & flag) === flag;
   }
 
-  hasFlagSet() {
+  clear() {
+    this.flags = 0;
+  }
+
+  isSet() {
     return this.flags !== 0;
   }
 }

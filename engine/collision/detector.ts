@@ -20,10 +20,34 @@ export class CollisionDetector {
     this.viewportCollisions = [];
   }
 
+  detect(collidables: Collidable[]): DetectionResult {
+    const em = this.entityManager;
+    this.pairedSet.clear();
+    this.viewportCollisions.length = 0;
+
+    for (let i = 0; i < collidables.length; i++) {
+      const [a, posA, collisionA] = collidables[i];
+      const sizeA = em.getComponent(a, "Size")!;
+
+      if (!collisionA.hasEntityCollisionType("IGNORE")) {
+        this.detectEntityCollision(a, posA, sizeA, collidables);
+      }
+
+      if (!collisionA.hasViewportCollisionType("IGNORE")) {
+        this.detectViewportCollision(a, posA, sizeA, collisionA);
+      }
+    }
+
+    return { entityCollisions: this.pairedSet, viewportCollisions: this.viewportCollisions };
+  }
+
   detectEntityCollision(a: number, posA: Position, sizeA: Size, collidables: Collidable[]): void {
     for (let j = 0; j < collidables.length; j++) {
       const [b, posB, collisionB] = collidables[j];
-      if (a === b || collisionB.hasEntityCollisionType("IGNORE")) continue;
+      if (a === b || collisionB.hasEntityCollisionType("IGNORE")) {
+        continue;
+      }
+
       const sizeB = this.entityManager.getComponent(b, "Size")!;
       if (this.AABBCollisionCheck(posA, sizeA, posB, sizeB)) {
         this.pairedSet.add([a, b]);
@@ -56,34 +80,12 @@ export class CollisionDetector {
     }
   }
 
-  detect(collidables: Collidable[]): DetectionResult {
-    const em = this.entityManager;
-    this.pairedSet.clear();
-    this.viewportCollisions.length = 0;
-
-    for (let i = 0; i < collidables.length; i++) {
-      const [a, posA, collisionA] = collidables[i];
-      const sizeA = em.getComponent(a, "Size")!;
-      if (!collisionA.hasEntityCollisionType("IGNORE")) {
-        this.detectEntityCollision(a, posA, sizeA, collidables);
-      }
-      if (!collisionA.hasViewportCollisionType("IGNORE")) {
-        this.detectViewportCollision(a, posA, sizeA, collisionA);
-      }
-    }
-
-    return { entityCollisions: this.pairedSet, viewportCollisions: this.viewportCollisions };
-  }
-
   /**
    * Aligned Axis Bounding Box check.
    */
   AABBCollisionCheck(posA: Position, sizeA: Size, posB: Position, sizeB: Size): boolean {
     return (
-      posA.x < posB.x + sizeB.x &&
-      posA.x + sizeA.x > posB.x &&
-      posA.y < posB.y + sizeB.y &&
-      posA.y + sizeA.y > posB.y
+      posA.x < posB.x + sizeB.x && posA.x + sizeA.x > posB.x && posA.y < posB.y + sizeB.y && posA.y + sizeA.y > posB.y
     );
   }
 }
