@@ -37,8 +37,6 @@ export class CollisionDetector {
         }
       }
     }
-
-    return { entityCollisions: this.entityCollisions };
   }
 
   /**

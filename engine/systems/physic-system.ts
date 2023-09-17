@@ -75,7 +75,7 @@ export class PhysicSystem extends System {
       }
     }
 
-    const collided = this.collisionDetector.detect(collidables);
-    this.collisionResolver.resolve(collided);
+    this.collisionDetector.detect(collidables);
+    this.collisionResolver.resolve(this.collisionDetector.entityCollisions);
   }
 }

@@ -53,6 +53,6 @@ export class Enum {
   }
 
   valueOf() {
-    return typeof this.#value === "undefined" ? this.enumOrdinal : this.#value;
+    return this.#value ?? this.enumOrdinal;
   }
 }

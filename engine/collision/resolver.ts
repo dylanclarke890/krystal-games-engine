@@ -3,20 +3,17 @@ import { Mass } from "../components/mass.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
-import { ComponentMap } from "../utils/types.js";
+import { PairedSet } from "../utils/paired-set.js";
+import { ComponentMap, ComponentType } from "../utils/types.js";
 
-const SIDES = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 } as const;
-type Side = (typeof SIDES)[Key<typeof SIDES>];
 type RequiredComponents = "Position" | "Velocity" | "Size" | "Collision";
 type OptionalComponents = "Bounciness" | "Mass";
 type ResolverComponents = DefinedExcept<ComponentMap<RequiredComponents | OptionalComponents>, OptionalComponents>;
 
-const defaultComponents = {
-  bounce: new Bounciness(1),
-  mass: new Mass(1),
-};
-
 export class CollisionResolver {
+  static components: ComponentType[] = ["Position", "Velocity", "Size", "Collision", "Bounciness", "Mass"];
+  static componentDefaults = { bounce: new Bounciness(1), mass: new Mass(1) };
+
   entityManager: EntityManager;
   viewport: Viewport;
 
@@ -27,8 +24,8 @@ export class CollisionResolver {
     this.viewport = viewport;
   }
 
-  resolve(collided): void {
-    collided.entityCollisions.forEach((v) => {
+  resolve(collided: PairedSet<number>): void {
+    collided.forEach((v) => {
       const [a, b] = v;
       this.resolvePair(a, b);
     });
@@ -36,36 +33,20 @@ export class CollisionResolver {
 
   resolvePair(entityA: number, entityB: number): void {
     const em = this.entityManager;
+    const defaults = CollisionResolver.componentDefaults;
+    const a = em.getComponents(entityA, ...CollisionResolver.components) as ResolverComponents;
+    a.Bounciness ??= defaults.bounce;
+    a.Mass ??= defaults.mass;
 
-    const a = em.getComponents(
-      entityA,
-      "Position",
-      "Velocity",
-      "Size",
-      "Collision",
-      "Bounciness",
-      "Mass"
-    ) as ResolverComponents;
-    if (!a.Bounciness) a.Bounciness = defaultComponents.bounce;
-    if (!a.Mass) a.Mass = defaultComponents.mass;
-
-    const b = em.getComponents(
-      entityB,
-      "Position",
-      "Velocity",
-      "Size",
-      "Collision",
-      "Bounciness",
-      "Mass"
-    ) as ResolverComponents;
-    if (!b.Bounciness) b.Bounciness = defaultComponents.bounce;
-    if (!b.Mass) b.Mass = defaultComponents.mass;
+    const b = em.getComponents(entityB, ...CollisionResolver.components) as ResolverComponents;
+    b.Bounciness ??= defaults.bounce;
+    b.Mass ??= defaults.mass;
 
     // const side = this.#findSideOfCollision(a, b);
     // const totalBounciness = a.Bounciness.value * b.Bounciness.value;
   }
 
-  findSideOfCollision(a: ResolverComponents, b: ResolverComponents): Side {
+  findSideOfCollision(a: ResolverComponents, b: ResolverComponents): SideOfCollision {
     // Get midpoints
     const aMidX = a.Position.x + a.Size.halfX;
     const aMidY = a.Position.y + a.Size.halfY;
@@ -79,43 +60,8 @@ export class CollisionResolver {
     const absDY = Math.abs(dy);
 
     if (absDX > absDY) {
-      return dx > 0 ? SIDES.RIGHT : SIDES.LEFT;
+      return dx > 0 ? "right" : "left";
     }
-    return dy > 0 ? SIDES.BOTTOM : SIDES.TOP;
-  }
-
-  resolveViewportCollisions(collisions): void {
-    const em = this.entityManager;
-    collisions.forEach((v) => {
-      const [id, viewportCollisions] = v;
-      const entity = em.getComponents(
-        id,
-        "Position",
-        "Velocity",
-        "Size",
-        "Collision",
-        "Bounciness",
-        "Mass"
-      ) as ResolverComponents;
-
-      if (!entity.Bounciness) entity.Bounciness = defaultComponents.bounce;
-
-      if (viewportCollisions.left) {
-        entity.Position.x = 0;
-        entity.Velocity.x = -entity.Velocity.x * entity.Bounciness.value;
-      }
-      if (viewportCollisions.right) {
-        entity.Position.x = this.viewport.width - entity.Size.x;
-        entity.Velocity.x = -entity.Velocity.x * entity.Bounciness.value;
-      }
-      if (viewportCollisions.top) {
-        entity.Position.y = 0;
-        entity.Velocity.y = -entity.Velocity.y * entity.Bounciness.value;
-      }
-      if (viewportCollisions.bottom) {
-        entity.Position.y = this.viewport.height - entity.Size.y;
-        entity.Velocity.y = -entity.Velocity.y * entity.Bounciness.value;
-      }
-    });
+    return dy > 0 ? "bottom" : "top";
   }
 }
