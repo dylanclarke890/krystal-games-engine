@@ -10,37 +10,25 @@ export class SystemManager {
   entityManager: EntityManager;
   systems: Set<System>;
 
-  #throwIfMissing: boolean;
-
   /**
    *
    * @param {EventSystem} eventSystem
    * @param {EntityManager} entityManager
-   * @param {boolean} throwIfMissing
    */
-  constructor(eventSystem: EventSystem, entityManager: EntityManager, throwIfMissing?: boolean) {
+  constructor(eventSystem: EventSystem, entityManager: EntityManager) {
     Assert.instanceOf("eventSystem", eventSystem, EventSystem);
     Assert.instanceOf("entityManager", entityManager, EntityManager);
 
     this.eventSystem = eventSystem;
     this.entityManager = entityManager;
-    this.#throwIfMissing = !!throwIfMissing;
 
     this.systems = new Set();
-    this.#bindEvents();
-  }
-
-  #bindEvents() {
-    this.eventSystem.on(GameEvents.Loop_BeforeStart, () => this.#beforeStart());
+    this.eventSystem.on(GameEvents.Loop_BeforeStart, () =>
+      this.systems.forEach((system) => this.#validateSystem(system))
+    );
     this.eventSystem.on(GameEvents.Loop_NextFrame, (dt: number) => this.update(dt));
   }
 
-  #beforeStart() {
-    this.systems.forEach((system) => this.#validateSystem(system));
-  }
-
-  // TODO: rethink this. Are entities likely to be registered/created after systems are that need some of the systems
-  // that weren't neccessary registered to begin with. On demand registration?
   #validateSystem(system: System): void {
     const name = (<typeof System>system.constructor).name;
     const required = (<typeof System>system.constructor).requiredComponents;
@@ -48,16 +36,6 @@ export class SystemManager {
 
     Assert.defined(`${name} requiredComponents`, required);
     Assert.instanceOf(`${name} systemType`, type, SystemTypes);
-
-    for (const componentType of required) {
-      if (this.entityManager.hasComponentType(componentType)) {
-        continue;
-      }
-      const message = `Missing required component type: '${componentType}'`;
-      if (this.#throwIfMissing) {
-        throw new Error(message);
-      } else console.warn(message);
-    }
   }
 
   registerSystem(system: System) {
@@ -66,6 +44,7 @@ export class SystemManager {
   }
 
   unregisterSystem(system: System) {
+    Assert.defined("System", system);
     this.systems.delete(system);
   }
 
