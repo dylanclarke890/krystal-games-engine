@@ -1,4 +1,4 @@
-export function elastic(vAi: number, vBi: number, mA: number, mB: number): [number, number] {
+export function elastic(vAi: number, vBi: number, mA: number, mB: number): Pair<number> {
   if (mA === mB) {
     return [vBi, vAi]; // Can just swap velocities if masses are equal
   }
@@ -11,12 +11,7 @@ export function elastic(vAi: number, vBi: number, mA: number, mB: number): [numb
   return [vAf, vBf];
 }
 
-export function perfectlyInelastic(
-  vAi: number,
-  vBi: number,
-  mA: number,
-  mB: number
-): [number, number] {
+export function perfectlyInelastic(vAi: number, vBi: number, mA: number, mB: number): Pair<number> {
   const fA = mA * vAi;
   const fB = mB * vBi;
   const totalMass = mA + mB;

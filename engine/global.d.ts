@@ -1,5 +1,7 @@
 declare type Key<T> = keyof T;
 
+declare type ValueOfObj<T> = T[Key<T>];
+
 declare type Defined<TObj> = {
   [P in Key<TObj>]-?: NonNullable<TObj[P]>;
 };
@@ -15,3 +17,5 @@ declare type MapObj<TObj, TValue, TOptional extends boolean> = TOptional extends
   : {
       [P in Key<TObj>]: TValue;
     };
+
+declare type Pair<T> = [T, T];

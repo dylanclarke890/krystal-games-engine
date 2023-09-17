@@ -5,7 +5,7 @@ export function perfectInelastic(
   vBiY: number,
   mA: number,
   mB: number
-): [number, number] {
+): Pair<number> {
   const totalMass = mA + mB;
 
   const vfX = (mA * vAiX + mB * vBiX) / totalMass;

@@ -3,8 +3,7 @@ import { Mass } from "../components/mass.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
-import { ComponentMap, DetectionResult, ViewportCollision } from "../utils/types.js";
-import { elastic, perfectlyInelastic } from "./1d.js";
+import { ComponentMap } from "../utils/types.js";
 
 const SIDES = { LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3 } as const;
 type Side = (typeof SIDES)[Key<typeof SIDES>];
@@ -28,8 +27,7 @@ export class CollisionResolver {
     this.viewport = viewport;
   }
 
-  resolve(collided: DetectionResult): void {
-    this.#resolveViewportCollisions(collided.viewportCollisions);
+  resolve(collided): void {
     collided.entityCollisions.forEach((v) => {
       const [a, b] = v;
       this.resolvePair(a, b);
@@ -63,19 +61,11 @@ export class CollisionResolver {
     if (!b.Bounciness) b.Bounciness = defaultComponents.bounce;
     if (!b.Mass) b.Mass = defaultComponents.mass;
 
-    const side = this.#findSideOfCollision(a, b);
-    const totalBounciness = a.Bounciness.value * b.Bounciness.value;
-
-    if (totalBounciness === 1) {
-      this.#resolvePerfectlyElastic(a, b, side);
-    } else if (totalBounciness === 0) {
-      this.#resolvePerfectlyInelastic(a, b, side);
-    } else {
-      this.#resolveInelastic(a, b, side);
-    }
+    // const side = this.#findSideOfCollision(a, b);
+    // const totalBounciness = a.Bounciness.value * b.Bounciness.value;
   }
 
-  #findSideOfCollision(a: ResolverComponents, b: ResolverComponents): Side {
+  findSideOfCollision(a: ResolverComponents, b: ResolverComponents): Side {
     // Get midpoints
     const aMidX = a.Position.x + a.Size.halfX;
     const aMidY = a.Position.y + a.Size.halfY;
@@ -94,236 +84,7 @@ export class CollisionResolver {
     return dy > 0 ? SIDES.BOTTOM : SIDES.TOP;
   }
 
-  #resolvePerfectlyElastic(a: ResolverComponents, b: ResolverComponents, side: Side): void {
-    switch (side) {
-      case SIDES.LEFT:
-        {
-          const overlap = a.Position.x + a.Size.x - b.Position.x;
-          if (overlap < 0) break;
-          if (a.Collision.hasEntityCollisionType("BOUNCE")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              a.Position.x -= overlap;
-              b.Position.x += overlap;
-
-              const [vAf, vBf] = elastic(a.Velocity.x, b.Velocity.x, a.Mass!.value, b.Mass!.value);
-              a.Velocity.x = vAf;
-              b.Velocity.x = vBf;
-            } else if (b.Collision.hasEntityCollisionType("RIGID")) {
-              a.Position.x -= overlap * 2;
-              a.Velocity.x = -a.Velocity.x;
-            }
-          } else if (a.Collision.hasEntityCollisionType("RIGID")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              b.Position.x += overlap * 2;
-              b.Velocity.x = -b.Velocity.x;
-            }
-          }
-        }
-        return;
-      case SIDES.RIGHT:
-        {
-          const overlap = b.Position.x + b.Size.x - a.Position.x;
-          if (overlap < 0) break;
-
-          if (a.Collision.hasEntityCollisionType("BOUNCE")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              a.Position.x += overlap;
-              b.Position.x -= overlap;
-
-              const [vAf, vBf] = elastic(a.Velocity.x, b.Velocity.x, a.Mass!.value, b.Mass!.value);
-              a.Velocity.x = vAf;
-              b.Velocity.x = vBf;
-            } else if (b.Collision.hasEntityCollisionType("RIGID")) {
-              a.Position.x += overlap * 2;
-              a.Velocity.x = -a.Velocity.x;
-            }
-          } else if (a.Collision.hasEntityCollisionType("RIGID")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              b.Position.x -= overlap * 2;
-              b.Velocity.x = -b.Velocity.x;
-            }
-          }
-        }
-        return;
-      case SIDES.TOP:
-        {
-          const overlap = a.Position.y + a.Size.y - b.Position.y;
-          if (overlap < 0) break;
-
-          if (a.Collision.hasEntityCollisionType("BOUNCE")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              a.Position.y -= overlap;
-              b.Position.y += overlap;
-
-              const [vAf, vBf] = elastic(a.Velocity.y, b.Velocity.y, a.Mass!.value, b.Mass!.value);
-              a.Velocity.y = vAf;
-              b.Velocity.y = vBf;
-            } else if (b.Collision.hasEntityCollisionType("RIGID")) {
-              a.Position.y -= overlap * 2;
-              a.Velocity.y = -a.Velocity.y;
-            }
-          } else if (a.Collision.hasEntityCollisionType("RIGID")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              b.Position.y += overlap * 2;
-              b.Velocity.y = -b.Velocity.y;
-            }
-          }
-        }
-        return;
-      case SIDES.BOTTOM:
-        {
-          const overlap = b.Position.y + b.Size.y - a.Position.y;
-          if (overlap < 0) break;
-
-          if (a.Collision.hasEntityCollisionType("BOUNCE")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              a.Position.y += overlap;
-              b.Position.y -= overlap;
-
-              const [vAf, vBf] = elastic(a.Velocity.y, b.Velocity.y, a.Mass!.value, b.Mass!.value);
-              a.Velocity.y = vAf;
-              b.Velocity.y = vBf;
-            } else if (b.Collision.hasEntityCollisionType("RIGID")) {
-              a.Position.y += overlap * 2;
-              a.Velocity.y = -a.Velocity.y;
-            }
-          } else if (a.Collision.hasEntityCollisionType("RIGID")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              b.Position.y -= overlap * 2;
-              b.Velocity.y = -b.Velocity.y;
-            }
-          }
-        }
-        return;
-      default:
-        return;
-    }
-  }
-
-  #resolvePerfectlyInelastic(a: ResolverComponents, b: ResolverComponents, side: Side): void {
-    switch (side) {
-      case SIDES.LEFT:
-        {
-          const overlap = a.Position.x + a.Size.x - b.Position.x;
-          if (overlap < 0) return;
-
-          if (a.Collision.hasEntityCollisionType("BOUNCE")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              a.Position.x -= overlap;
-              b.Position.x += overlap;
-
-              const [vAf, vBf] = perfectlyInelastic(a.Velocity.x, b.Velocity.x, a.Mass!.value, b.Mass!.value);
-              a.Velocity.x = vAf;
-              b.Velocity.x = vBf;
-            } else if (b.Collision.hasEntityCollisionType("RIGID")) {
-              a.Position.x -= overlap * 2;
-              a.Velocity.x = -a.Velocity.x;
-            }
-          } else if (a.Collision.hasEntityCollisionType("RIGID")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              b.Position.x += overlap * 2;
-              b.Velocity.x = -b.Velocity.x;
-            }
-          }
-        }
-        return;
-      case SIDES.RIGHT:
-        {
-          const overlap = b.Position.x + b.Size.x - a.Position.x;
-          if (overlap < 0) return;
-
-          if (a.Collision.hasEntityCollisionType("BOUNCE")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              a.Position.x -= overlap;
-              b.Position.x += overlap;
-
-              const [vAf, vBf] = perfectlyInelastic(a.Velocity.x, b.Velocity.x, a.Mass!.value, b.Mass!.value);
-              a.Velocity.x = vAf;
-              b.Velocity.x = vBf;
-            } else if (b.Collision.hasEntityCollisionType("RIGID")) {
-              a.Position.x -= overlap * 2;
-              a.Velocity.x = -a.Velocity.x;
-            }
-          } else if (a.Collision.hasEntityCollisionType("RIGID")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              b.Position.x += overlap * 2;
-              b.Velocity.x = -b.Velocity.x;
-            }
-          }
-        }
-        return;
-      case SIDES.TOP:
-        {
-          const overlap = a.Position.y + a.Size.y - b.Position.y;
-          if (overlap < 0) return;
-
-          if (a.Collision.hasEntityCollisionType("BOUNCE")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              a.Position.y -= overlap;
-              b.Position.y += overlap;
-
-              const [vAf, vBf] = perfectlyInelastic(a.Velocity.y, b.Velocity.y, a.Mass!.value, b.Mass!.value);
-              a.Velocity.y = vAf;
-              b.Velocity.y = vBf;
-            } else if (b.Collision.hasEntityCollisionType("RIGID")) {
-              a.Position.y -= overlap * 2;
-              a.Velocity.y = -a.Velocity.y;
-            }
-          } else if (a.Collision.hasEntityCollisionType("RIGID")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              b.Position.y += overlap * 2;
-              b.Velocity.y = -b.Velocity.y;
-            }
-          }
-        }
-        return;
-      case SIDES.BOTTOM:
-        {
-          const overlap = b.Position.y + b.Size.y - a.Position.y;
-          if (overlap < 0) return;
-
-          if (a.Collision.hasEntityCollisionType("BOUNCE")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              a.Position.y -= overlap;
-              b.Position.y += overlap;
-
-              const [vAf, vBf] = perfectlyInelastic(a.Velocity.y, b.Velocity.y, a.Mass!.value, b.Mass!.value);
-              a.Velocity.y = vAf;
-              b.Velocity.y = vBf;
-            } else if (b.Collision.hasEntityCollisionType("RIGID")) {
-              a.Position.y -= overlap * 2;
-              a.Velocity.y = -a.Velocity.y;
-            }
-          } else if (a.Collision.hasEntityCollisionType("RIGID")) {
-            if (b.Collision.hasEntityCollisionType("BOUNCE")) {
-              b.Position.y += overlap * 2;
-              b.Velocity.y = -b.Velocity.y;
-            }
-          }
-        }
-        return;
-      default:
-        break;
-    }
-  }
-
-  #resolveInelastic(a: ResolverComponents, b: ResolverComponents, side: Side): void {
-    switch (side) {
-      case SIDES.LEFT:
-        console.log(a, b);
-        break;
-      case SIDES.RIGHT:
-        break;
-      case SIDES.TOP:
-        break;
-      case SIDES.BOTTOM:
-        break;
-      default:
-        break;
-    }
-  }
-
-  #resolveViewportCollisions(collisions: ViewportCollision[]): void {
+  resolveViewportCollisions(collisions): void {
     const em = this.entityManager;
     collisions.forEach((v) => {
       const [id, viewportCollisions] = v;
@@ -338,31 +99,22 @@ export class CollisionResolver {
       ) as ResolverComponents;
 
       if (!entity.Bounciness) entity.Bounciness = defaultComponents.bounce;
-      const bounceEnabled = entity.Collision.hasEntityCollisionType("BOUNCE");
 
       if (viewportCollisions.left) {
         entity.Position.x = 0;
-        if (bounceEnabled) {
-          entity.Velocity.x = -entity.Velocity.x * entity.Bounciness.value;
-        }
+        entity.Velocity.x = -entity.Velocity.x * entity.Bounciness.value;
       }
       if (viewportCollisions.right) {
         entity.Position.x = this.viewport.width - entity.Size.x;
-        if (bounceEnabled) {
-          entity.Velocity.x = -entity.Velocity.x * entity.Bounciness.value;
-        }
+        entity.Velocity.x = -entity.Velocity.x * entity.Bounciness.value;
       }
       if (viewportCollisions.top) {
         entity.Position.y = 0;
-        if (bounceEnabled) {
-          entity.Velocity.y = -entity.Velocity.y * entity.Bounciness.value;
-        }
+        entity.Velocity.y = -entity.Velocity.y * entity.Bounciness.value;
       }
       if (viewportCollisions.bottom) {
         entity.Position.y = this.viewport.height - entity.Size.y;
-        if (bounceEnabled) {
-          entity.Velocity.y = -entity.Velocity.y * entity.Bounciness.value;
-        }
+        entity.Velocity.y = -entity.Velocity.y * entity.Bounciness.value;
       }
     });
   }
