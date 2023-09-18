@@ -1,5 +1,4 @@
-import { Position } from "../../engine/components/position.js";
-import { Size } from "../../engine/components/size.js";
+import { Position, Shape } from "../../engine/components/index.js";
 import { GameEvents } from "../../engine/events/events.js";
 import { Game } from "../../engine/game.js";
 import { InputKeys } from "../../engine/input/input-keys.js";
@@ -13,7 +12,6 @@ export class TestGame extends Game {
     super("canvas1", 500, 500);
     this.inputManager.bind(InputKeys.Mouse_BtnOne, "create");
     this.eventSystem.on(GameEvents.Loop_NextFrame, () => this.update());
-    this.eventSystem.on(GameEvents.Entity_Created, () => console.log("created"));
     this.start();
   }
 
@@ -24,7 +22,7 @@ export class TestGame extends Game {
     if (this.inputManager.held("create")) {
       const newEntity = em.createEntity();
       em.addComponent(newEntity, new Position(x, y));
-      em.addComponent(newEntity, new Size(2, 2));
+      em.addComponent(newEntity, new Shape("circle", "red", { radius: 2 }));
     }
   }
 }
