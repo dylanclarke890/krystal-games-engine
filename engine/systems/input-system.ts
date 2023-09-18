@@ -17,11 +17,16 @@ export class InputSystem extends System {
     this.inputManager = inputManager;
   }
 
-  update(dt: number) {
+  update(dt: number, entities: number[]) {
     const em = this.entityManager;
-    const entities = em.getEntitiesWithComponents(...InputSystem.requiredComponents);
+    this.inputManager.clearPressed();
+
     for (const entity of entities) {
-      const input = em.getComponent(entity, "Input")!;
+      const input = em.getComponent(entity, "Input");
+      if (typeof input === "undefined") {
+        continue;
+      }
+
       for (const [action, { pressed, held, released }] of input.actions) {
         const state = this.inputManager.state(action);
         if (state.pressed && typeof pressed === "function") pressed(entity, em, dt);
@@ -29,6 +34,5 @@ export class InputSystem extends System {
         if (state.released && typeof released === "function") released(entity, em, dt);
       }
     }
-    this.inputManager.clearPressed();
   }
 }

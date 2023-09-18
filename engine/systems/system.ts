@@ -17,8 +17,11 @@ export class System {
     /* stub */
   }
 
-  /** @param _dt Delta time since last frame. */
-  update(_dt: number): void {
+  /**
+   * @param _dt Delta time since last frame.
+   * @param _entities Entities for the system to update.
+   */
+  update(_dt: number, _entities: number[]): void {
     throw new Error("Update method must be implemented.");
   }
 }

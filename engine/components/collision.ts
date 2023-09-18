@@ -2,7 +2,7 @@ const CollisionLayer = { DEFAULT: 1, PLAYER: 2, ENEMY: 4 } as const;
 
 export class Collision {
   collisionLayer: ValueOfObj<typeof CollisionLayer>;
-  constructor(collisionLayer: Key<typeof CollisionLayer>) {
+  constructor(collisionLayer: Key<typeof CollisionLayer> = "DEFAULT") {
     this.collisionLayer = CollisionLayer[collisionLayer];
   }
 

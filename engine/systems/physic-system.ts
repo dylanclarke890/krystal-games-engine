@@ -4,17 +4,26 @@ import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
-import { Collidable, ComponentMap, ComponentType } from "../utils/types.js";
+import { Collidable, ComponentType, SystemComponents } from "../utils/types.js";
 import { Mass } from "../components/index.js";
 
-type RequiredComponents = "Position" | "Velocity";
-type OptionalComponents = "Acceleration" | "Friction" | "Collision" | "GravityFactor" | "Mass";
-const defaultComponents = {
-  mass: new Mass(1),
-};
+type PhysicSystemComponents = SystemComponents<
+  "Position" | "Velocity",
+  "Acceleration" | "Friction" | "Collision" | "GravityFactor" | "Mass"
+>;
 
 export class PhysicSystem extends System {
   static requiredComponents: ComponentType[] = ["Position", "Velocity"];
+  static components: ComponentType[] = [
+    ...this.requiredComponents,
+    "Acceleration",
+    "Friction",
+    "Collision",
+    "GravityFactor",
+    "Mass",
+  ];
+
+  static defaultComponents = { mass: new Mass(1) };
   static systemType = SystemTypes.Physics;
 
   collisionDetector: CollisionDetector;
@@ -32,27 +41,16 @@ export class PhysicSystem extends System {
     this.collisionResolver = collisionResolver;
   }
 
-  update(dt: number) {
+  update(dt: number, entities: number[]) {
     const em = this.entityManager;
-    const entities = em.getEntitiesWithComponents(...PhysicSystem.requiredComponents);
-
+    const defaults = PhysicSystem.defaultComponents;
     const collidables: Collidable[] = [];
-    for (let i = 0; i < entities.length; i++) {
-      const id = entities[i];
-      const entity = em.getComponents(
-        id,
-        "Position",
-        "Velocity",
-        "Acceleration",
-        "Friction",
-        "Collision",
-        "GravityFactor",
-        "Mass"
-      ) as DefinedExcept<ComponentMap<RequiredComponents | OptionalComponents>, OptionalComponents>;
 
-      if (typeof entity.Mass === "undefined") {
-        entity.Mass = defaultComponents.mass;
-      }
+    for (let i = 0; i < entities.length; i++) {
+      const entityId = entities[i];
+      const entity = em.getComponents(entityId, ...PhysicSystem.components) as PhysicSystemComponents;
+
+      entity.Mass ??= defaults.mass;
       const mass = entity.Mass.value;
 
       if (typeof entity.Acceleration !== "undefined") {
@@ -71,7 +69,7 @@ export class PhysicSystem extends System {
       entity.Position.add(entity.Velocity.x * dt, entity.Velocity.y * dt);
 
       if (typeof entity.Collision !== "undefined") {
-        collidables.push([id, entity.Position, entity.Collision]);
+        collidables.push([entityId, entity.Position, entity.Collision]);
       }
     }
 

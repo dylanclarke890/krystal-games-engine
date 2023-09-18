@@ -1,39 +1,31 @@
-import {
-  Bounciness,
-  Collision,
-  Input,
-  Mass,
-  Position,
-  Size,
-  Sprite,
-  Velocity,
-} from "../../engine/components/index.js";
+import { Position } from "../../engine/components/position.js";
+import { Size } from "../../engine/components/size.js";
+import { GameEvents } from "../../engine/events/events.js";
 import { Game } from "../../engine/game.js";
-import { CollisionSettings } from "../../engine/utils/types.js";
+import { InputKeys } from "../../engine/input/input-keys.js";
+
+// Create balls onmousedown that fall down the screen
+// They should bounce after hitting the bottom
+// They should collide off of each other
 
 export class TestGame extends Game {
   constructor() {
     super("canvas1", 500, 500);
-    this.#buildEntity(200, 50, 0, 2);
-    this.#buildEntity(300, 0, 0, 2);
+    this.inputManager.bind(InputKeys.Mouse_BtnOne, "create");
+    this.eventSystem.on(GameEvents.Loop_NextFrame, () => this.update());
+    this.eventSystem.on(GameEvents.Entity_Created, () => console.log("created"));
     this.start();
   }
 
-  #buildEntity(posX: number, velX: number, velY: number, massX: number) {
+  update() {
     const em = this.entityManager;
-    const id = em.createEntity();
-    em.addComponent(id, new Position(posX, 225));
-    em.addComponent(id, new Velocity(velX, velY));
-    em.addComponent(id, new Size(50, 50));
-    em.addComponent(id, new Sprite("games/test/paddle.png", 50, 50));
-    em.addComponent(id, new Bounciness(0));
-    em.addComponent(id, new Input(new Map()));
-    em.addComponent(id, new Mass(massX));
-    const collisionSettings: CollisionSettings = {
-      entityCollision: { BOUNCE: true },
-      viewportCollision: { LEFT: true, RIGHT: true, TOP: true, BOTTOM: true },
-    };
-    em.addComponent(id, new Collision(collisionSettings));
+    const { x, y } = this.inputManager.mouse;
+
+    if (this.inputManager.held("create")) {
+      const newEntity = em.createEntity();
+      em.addComponent(newEntity, new Position(x, y));
+      em.addComponent(newEntity, new Size(2, 2));
+    }
   }
 }
 

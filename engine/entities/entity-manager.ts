@@ -70,13 +70,13 @@ export class EntityManager {
   }
 
   /**
-   * Check if an entity has a specific component.
-   * @param {ComponentType} componentType the name of the component.
+   * Check if an entity has specific components.
+   * @param {ComponentType} componentTypes the names of the components.
    */
-  hasComponent(entity: number, componentType: ComponentType) {
+  hasComponents(entity: number, ...componentTypes: ComponentType[]) {
     const mask = this.entityMasks.get(entity);
     if (typeof mask === "undefined") return false;
-    return mask.has(componentType);
+    return componentTypes.every((componentType) => mask.has(componentType));
   }
 
   /** Check if any entity has the specified component type. */
@@ -93,7 +93,7 @@ export class EntityManager {
   getEntitiesWithComponents<T extends ComponentType>(...componentTypes: T[]) {
     const entities = [];
     for (const entity of this.entities) {
-      if (componentTypes.every((componentType) => this.hasComponent(entity, componentType))) {
+      if (this.hasComponents(entity, ...componentTypes)) {
         entities.push(entity);
       }
     }

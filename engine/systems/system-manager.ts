@@ -49,6 +49,23 @@ export class SystemManager {
   }
 
   update(dt: number) {
-    for (const system of this.systems) system.update(dt);
+    const buckets: { [x: string]: number[] } = {};
+
+    this.entityManager.entities.forEach((entity) => {
+      this.systems.forEach((system) => {
+        const components = (<typeof System>system.constructor).requiredComponents;
+        if (!this.entityManager.hasComponents(entity, ...components)) {
+          return;
+        }
+
+        const name = (<typeof System>system.constructor).name;
+        buckets[name] ??= [];
+        buckets[name].push(entity);
+      });
+    });
+
+    for (const system of this.systems) {
+      system.update(dt, buckets[system.constructor.name]);
+    }
   }
 }
