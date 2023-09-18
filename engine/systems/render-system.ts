@@ -2,14 +2,14 @@ import { Viewport } from "../graphics/viewport.js";
 import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
-import { Sprite, Position } from "../components/index.js";
+import { Sprite, Position, Shape } from "../components/index.js";
 import { Assert } from "../utils/assert.js";
 import { ComponentType, SystemComponents } from "../utils/types.js";
 
-type RenderSystemComponents = SystemComponents<"Position", "Animation" | "Sprite">;
+type RenderSystemComponents = SystemComponents<"Position", "Animation" | "Sprite" | "Shape">;
 export class RenderSystem extends System {
   static requiredComponents: ComponentType[] = ["Position"];
-  static components: ComponentType[] = [...this.requiredComponents, "Sprite", "Animation"];
+  static components: ComponentType[] = [...this.requiredComponents, "Sprite", "Animation", "Shape"];
   static systemType = SystemTypes.Graphics;
 
   viewport: Viewport;
@@ -20,18 +20,16 @@ export class RenderSystem extends System {
     this.viewport = viewport;
   }
 
-  drawSprite(sprite: Sprite, position: Position, sourceX: number, sourceY: number): void {
-    const { x, y } = position;
-    const { width, height, image } = sprite;
-    this.viewport.ctx.drawImage(image, sourceX, sourceY, width, height, x, y, width, height);
-  }
-
   update(dt: number, entities: number[]) {
     this.viewport.clear();
 
     for (let i = 0; i < entities.length; i++) {
       const entityId = entities[i];
       const entity = this.entityManager.getComponents(entityId, ...RenderSystem.components) as RenderSystemComponents;
+
+      if (typeof entity.Shape !== "undefined") {
+        this.drawShape(entity.Shape, entity.Position);
+      }
 
       if (typeof entity.Sprite !== "undefined") {
         if (typeof entity.Animation === "undefined") {
@@ -55,6 +53,33 @@ export class RenderSystem extends System {
         const sourceY = currentRow * height;
 
         this.drawSprite(entity.Sprite, entity.Position, sourceX, sourceY);
+      }
+    }
+  }
+
+  drawSprite(sprite: Sprite, position: Position, sourceX: number, sourceY: number): void {
+    const { x, y } = position;
+    const { width, height, image } = sprite;
+    this.viewport.ctx.drawImage(image, sourceX, sourceY, width, height, x, y, width, height);
+  }
+
+  drawShape(shape: Shape, position: Position) {
+    const { x, y } = position;
+    this.viewport.ctx.fillStyle = shape.color;
+
+    switch (shape.type) {
+      case "rectangle": {
+        this.viewport.ctx.fillRect(x, y, shape.width || 0, shape.height || 0);
+        break;
+      }
+      case "circle": {
+        this.viewport.ctx.beginPath();
+        this.viewport.ctx.arc(x, y, shape.radius || 0, 0, Math.PI * 2);
+        this.viewport.ctx.fill();
+        break;
+      }
+      default: {
+        throw new Error(`Unable to draw shape: shape type not recognised: ${shape.type}.`);
       }
     }
   }
