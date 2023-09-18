@@ -24,7 +24,7 @@ export class EntityManager {
     const entity = this.nextEntityId;
     this.entities.add(entity);
     this.nextEntityId++;
-    this.eventSystem.dispatch(GameEvents.Entity_Created, entity);
+    this.eventSystem.trigger(GameEvents.Entity_Created, entity);
     return entity;
   }
 
@@ -107,6 +107,6 @@ export class EntityManager {
     masks.forEach((componentType) => this.components.delete(entity + componentType));
     this.entityMasks.delete(entity);
     this.entities.delete(entity);
-    this.eventSystem.dispatch(GameEvents.Entity_Destroyed, entity);
+    this.eventSystem.trigger(GameEvents.Entity_Destroyed, entity);
   }
 }

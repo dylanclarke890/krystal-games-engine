@@ -1,4 +1,4 @@
-import { Position, Shape } from "../../engine/components/index.js";
+import { GravityFactor, Position, Shape, Velocity } from "../../engine/components/index.js";
 import { GameEvents } from "../../engine/events/events.js";
 import { Game } from "../../engine/game.js";
 import { InputKeys } from "../../engine/input/input-keys.js";
@@ -17,12 +17,15 @@ export class TestGame extends Game {
 
   update() {
     const em = this.entityManager;
-    const { x, y } = this.inputManager.mouse;
-
     if (this.inputManager.held("create")) {
+      const { x, y } = this.inputManager.mouse;
+      const color = `#${Math.floor(x)}${Math.floor(y)}`;
+
       const newEntity = em.createEntity();
       em.addComponent(newEntity, new Position(x, y));
-      em.addComponent(newEntity, new Shape("circle", "red", { radius: 2 }));
+      em.addComponent(newEntity, new Shape("circle", color, { radius: 6 }));
+      em.addComponent(newEntity, new Velocity(0, 10));
+      em.addComponent(newEntity, new GravityFactor());
     }
   }
 }

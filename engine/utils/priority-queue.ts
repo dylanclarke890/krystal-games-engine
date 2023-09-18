@@ -16,21 +16,21 @@ export class PriorityLevel extends Enum {
   }
 }
 
-type CompareFn<T> = (a: PQueueItem<T>, b: PQueueItem<T>) => number;
+type CompareFn<T> = (a: PriorityQueueItem<T>, b: PriorityQueueItem<T>) => number;
 
-export class PQueue<T> {
-  #list: PQueueItem<T>[];
+export class PriorityQueue<T> {
+  #list: PriorityQueueItem<T>[];
   #comparator: CompareFn<T>;
 
   static #defaultCompareFn: CompareFn<any> = (a, b) => b.priority - a.priority;
 
   constructor(compareFn?: CompareFn<T>) {
-    this.#comparator = compareFn || PQueue.#defaultCompareFn;
+    this.#comparator = compareFn || PriorityQueue.#defaultCompareFn;
     this.#list = [];
   }
 
   add(item: T, priority: number) {
-    this.#list.push(new PQueueItem(item, priority));
+    this.#list.push(new PriorityQueueItem(item, priority));
     this.#list.sort(this.#comparator);
   }
 
@@ -50,7 +50,7 @@ export class PQueue<T> {
   }
 }
 
-class PQueueItem<T> {
+class PriorityQueueItem<T> {
   item: T;
   priority: number;
 

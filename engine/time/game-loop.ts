@@ -25,7 +25,7 @@ export class GameLoop {
 
   start() {
     this.stopped = false;
-    this.eventSystem.dispatch(GameEvents.Loop_BeforeStart);
+    this.eventSystem.trigger(GameEvents.Loop_BeforeStart);
     this.main(performance.now());
   }
 
@@ -38,11 +38,11 @@ export class GameLoop {
     if (elapsed < this.fpsInterval) return;
     this.#lastFrame = timestamp - (elapsed % this.fpsInterval);
 
-    this.eventSystem.dispatch(GameEvents.Loop_NextFrame, this.clock.tick());
+    this.eventSystem.trigger(GameEvents.Loop_NextFrame, this.clock.tick());
   }
 
   stop(unloadAssets?: boolean) {
     this.stopped = true;
-    this.eventSystem.dispatch(GameEvents.Loop_Stop, !!unloadAssets);
+    this.eventSystem.trigger(GameEvents.Loop_Stop, !!unloadAssets);
   }
 }
