@@ -11,7 +11,6 @@ export class SystemManager {
   systems: Set<System>;
 
   /**
-   *
    * @param {EventSystem} eventSystem
    * @param {EntityManager} entityManager
    */
@@ -64,8 +63,8 @@ export class SystemManager {
       });
     });
 
-    for (const system of this.systems) {
-      system.update(dt, buckets[system.constructor.name]);
-    }
+    this.systems.forEach((system) => {
+      system.update(dt, buckets[system.constructor.name] ?? []);
+    });
   }
 }
