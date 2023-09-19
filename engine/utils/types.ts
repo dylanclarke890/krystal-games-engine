@@ -8,14 +8,22 @@ export type SystemComponents<TRequired extends ComponentType, TOptional extends 
   ComponentMap<TRequired | TOptional>,
   TOptional
 >;
-export type Collidable = [number, Position, Collision];
+
 export type InputBindingFn = (entityId: number, entityManager: EntityManager, dt: number) => void;
 export type InputBindingType = "held" | "pressed" | "released";
 export type InputBindings = { [K in InputBindingType]?: InputBindingFn };
+
+export type Collidable = [number, Position, Collision];
 export type CollisionLayer = "DEFAULT" | "PLAYER" | "ENEMY";
+
+type CollisionBehaviour = "NONE" | "BOUNCE";
+export type EntityCollisionBehaviour = CollisionBehaviour;
+export type ViewportCollisionBehaviour = CollisionBehaviour;
 export type EntityCollisionCallback = (entityA: number, entityB: number, side: SideOfCollision) => void;
 export type ViewportCollisionCallback = (entity: number, side: SideOfCollision) => void;
 export type CollisionSettings = {
   onEntityCollision?: EntityCollisionCallback;
   onViewportCollision?: ViewportCollisionCallback;
+  entityCollisionBehaviour?: EntityCollisionBehaviour;
+  viewportCollisionBehaviour?: ViewportCollisionBehaviour;
 };

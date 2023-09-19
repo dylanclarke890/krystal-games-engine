@@ -26,45 +26,35 @@ export class CollisionResolver {
     this.viewport = viewport;
   }
 
+  getComponentsForEntity(entityId: number): Defined<ResolverComponents> {
+    const entity = this.entityManager.getComponents(entityId, ...CollisionResolver.components) as ResolverComponents;
+    entity.Bounciness ??= CollisionResolver.componentDefaults.bounce;
+    entity.Mass ??= CollisionResolver.componentDefaults.mass;
+
+    return entity as Defined<ResolverComponents>;
+  }
+
   resolve(entityCollisions: PairedSet<number>, viewportCollisions: Set<number>): void {
-    const em = this.entityManager;
-    const defaults = CollisionResolver.componentDefaults;
-
     entityCollisions.forEach((pair) => {
-      const a = em.getComponents(pair[0], ...CollisionResolver.components) as ResolverComponents;
-      a.Bounciness ??= defaults.bounce;
-      a.Mass ??= defaults.mass;
-
-      const b = em.getComponents(pair[1], ...CollisionResolver.components) as ResolverComponents;
-      b.Bounciness ??= defaults.bounce;
-      b.Mass ??= defaults.mass;
-
+      const a = this.getComponentsForEntity(pair[0]);
+      const b = this.getComponentsForEntity(pair[1]);
       const side = this.#findSideOfEntityCollision(a, b);
-      if (side === "none") {
-        return;
-      }
 
       this.#resolveEntityCollision(a, b, side);
-
       a.Collision.onEntityCollisionCallbacks.forEach((func) => func(pair[0], pair[1], side));
       b.Collision.onEntityCollisionCallbacks.forEach((func) => func(pair[0], pair[1], side));
     });
 
     viewportCollisions.forEach((entityId) => {
-      const entity = em.getComponents(entityId, ...CollisionResolver.components) as ResolverComponents;
-
+      const entity = this.getComponentsForEntity(entityId);
       const side = this.#findSideOfViewportCollision(entity.Position, entity.Size);
-      if (side === "none") {
-        return;
-      }
 
       this.#resolveViewportCollision(entity, side);
-
       entity.Collision.onViewportCollisionCallbacks.forEach((func) => func(entityId, side));
     });
   }
 
-  #findSideOfEntityCollision(a: ResolverComponents, b: ResolverComponents): SideOfCollision {
+  #findSideOfEntityCollision(a: Defined<ResolverComponents>, b: Defined<ResolverComponents>): SideOfCollision {
     // Get midpoints
     const aMidX = a.Position.x + a.Size.halfX;
     const aMidY = a.Position.y + a.Size.halfY;
@@ -78,38 +68,78 @@ export class CollisionResolver {
     const absDY = Math.abs(dy);
 
     if (absDX > absDY) {
-      return dx > 0 ? "right" : "left";
+      return dx > 0 ? "RIGHT" : "LEFT";
     }
-    return dy > 0 ? "bottom" : "top";
+    return dy > 0 ? "BOTTOM" : "TOP";
   }
 
   #findSideOfViewportCollision(position: Position, size: Size): SideOfCollision {
     const { x, y } = position;
 
     if (x < 0) {
-      return "left";
+      return "LEFT";
     }
 
     if (x + size.x > this.viewport.width) {
-      return "right";
+      return "RIGHT";
     }
 
     if (y < 0) {
-      return "top";
+      return "TOP";
     }
 
     if (y + size.y > this.viewport.height) {
-      return "bottom";
+      return "BOTTOM";
     }
 
-    return "none";
+    return "NONE";
   }
 
-  #resolveEntityCollision(a: ResolverComponents, b: ResolverComponents, side: SideOfCollision): void {
-    console.log(a, b, side);
+  #resolveEntityCollision(a: Defined<ResolverComponents>, b: Defined<ResolverComponents>, side: SideOfCollision): void {
+    const collisionBehaviourA = a.Collision.entityCollisionBehaviour;
+    const collisionBehaviourB = b.Collision.entityCollisionBehaviour;
+
+    if (side === "NONE" || collisionBehaviourA === "NONE" || collisionBehaviourB === "NONE") {
+      return;
+    }
   }
 
-  #resolveViewportCollision(entity: ResolverComponents, side: SideOfCollision): void {
-    console.log(entity, side);
+  #resolveViewportCollision(entity: Defined<ResolverComponents>, side: SideOfCollision): void {
+    const viewportCollisionBehaviour = entity.Collision.viewportCollisionBehaviour;
+
+    if (side === "NONE" || viewportCollisionBehaviour === "NONE") {
+      return;
+    }
+
+    switch (viewportCollisionBehaviour) {
+      case "BOUNCE":
+        this.#resolveViewportBounce(entity, side);
+        break;
+      default:
+        break;
+    }
+  }
+
+  #resolveViewportBounce(entity: Defined<ResolverComponents>, side: SideOfCollision) {
+    switch (side) {
+      case "LEFT":
+        entity.Position.x = entity.Size.x;
+        entity.Velocity.x *= -entity.Bounciness.value;
+        break;
+      case "RIGHT":
+        entity.Position.x = this.viewport.width - entity.Size.x;
+        entity.Velocity.x *= -entity.Bounciness.value;
+        break;
+      case "TOP":
+        entity.Position.y = entity.Size.y;
+        entity.Velocity.y *= -entity.Bounciness.value;
+        break;
+      case "BOTTOM":
+        entity.Position.y = this.viewport.height - entity.Size.y;
+        entity.Velocity.y *= -entity.Bounciness.value;
+        break;
+      default:
+        return;
+    }
   }
 }

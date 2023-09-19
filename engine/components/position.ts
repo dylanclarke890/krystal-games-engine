@@ -26,9 +26,9 @@ export class Position {
     return dx * dx + dy * dy;
   }
 
-  set(x: number, y: number): this {
-    this.x = x;
-    this.y = y;
+  set(x?: number, y?: number): this {
+    this.x = x ?? this.x;
+    this.y = y ?? this.x;
     return this;
   }
 

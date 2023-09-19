@@ -1,31 +1,29 @@
-import { GravityFactor, Position, Shape, Velocity } from "../../engine/components/index.js";
+import { Collision, GravityFactor, Position, Shape, Size, Velocity } from "../../engine/components/index.js";
 import { GameEvents } from "../../engine/events/events.js";
 import { Game } from "../../engine/game.js";
-import { InputKeys } from "../../engine/input/input-keys.js";
-
-// Create balls onmousedown that fall down the screen
-// They should bounce after hitting the bottom
-// They should collide off of each other
+import { CollisionSettings } from "../../engine/utils/types.js";
 
 export class TestGame extends Game {
   constructor() {
     super("canvas1", 500, 500);
-    this.inputManager.bind(InputKeys.Mouse_BtnOne, "create");
     this.eventSystem.on(GameEvents.Loop_NextFrame, () => this.update());
     this.start();
   }
 
   update() {
     const em = this.entityManager;
-    if (this.inputManager.held("create")) {
-      const { x, y } = this.inputManager.mouse;
-      const color = `#${Math.floor(x)}${Math.floor(y)}`;
+    if (em.entities.size < 500) {
+      const color = "yellow";
 
       const newEntity = em.createEntity();
-      em.addComponent(newEntity, new Position(x, y));
+      em.addComponent(newEntity, new Position(50, 100));
       em.addComponent(newEntity, new Shape("circle", color, { radius: 3 }));
-      em.addComponent(newEntity, new Velocity(0, 10));
+      em.addComponent(newEntity, new Size(3, 3));
+      em.addComponent(newEntity, new Velocity(5, 10));
       em.addComponent(newEntity, new GravityFactor());
+
+      const collisionSettings: CollisionSettings = { viewportCollisionBehaviour: "BOUNCE" };
+      em.addComponent(newEntity, new Collision("DEFAULT", collisionSettings));
     }
 
     this.viewport.drawText(`${em.entities.size} objects`, 10, 20);
