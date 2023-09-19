@@ -1,9 +1,7 @@
-export class Friction {
-  x: number;
-  y: number;
+import { Vector2D } from "../utils/vector-2d.js";
 
-  constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
+export class Friction extends Vector2D {
+  constructor(x?: number, y?: number) {
+    super(x ?? 1, y ?? 1, 0, 1, 0, 1);
   }
 }

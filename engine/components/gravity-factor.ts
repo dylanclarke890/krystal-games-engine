@@ -1,7 +1,7 @@
-export class GravityFactor {
-  value: number;
+import { ScalarValue } from "../utils/scalar-value.js";
 
+export class GravityFactor extends ScalarValue {
   constructor(value?: number) {
-    this.value = value ?? 9.81;
+    super(value ?? 9.81);
   }
 }

@@ -1,17 +1,3 @@
-export class Size {
-  x: number;
-  y: number;
-  halfX!: number;
-  halfY!: number;
+import { Vector2D } from "../utils/vector-2d.js";
 
-  constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-    this.updateBounds();
-  }
-
-  updateBounds() {
-    this.halfX = this.x * 0.5;
-    this.halfY = this.y * 0.5;
-  }
-}
+export class Size extends Vector2D {}

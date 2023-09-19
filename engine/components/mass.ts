@@ -1,7 +1,3 @@
-export class Mass {
-  value: number;
+import { ScalarValue } from "../utils/scalar-value.js";
 
-  constructor(value: number) {
-    this.value = value;
-  }
-}
+export class Mass extends ScalarValue {}

@@ -1,7 +1,7 @@
-export class Damage {
-  value: number;
+import { ScalarValue } from "../utils/scalar-value.js";
 
+export class Damage extends ScalarValue {
   constructor(value: number) {
-    this.value = value;
+    super(value);
   }
 }

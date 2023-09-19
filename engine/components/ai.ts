@@ -1,3 +1,1 @@
-export class AI {
-  constructor() {}
-}
+export class AI {}

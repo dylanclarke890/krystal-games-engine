@@ -1,9 +1,3 @@
-export class Offset {
-  x: number;
-  y: number;
+import { Vector2D } from "../utils/vector-2d.js";
 
-  constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-  }
-}
+export class Offset extends Vector2D {}

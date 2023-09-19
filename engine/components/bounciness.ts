@@ -1,9 +1,7 @@
-import { constrain } from "../utils/number.js";
+import { ScalarValue } from "../utils/scalar-value.js";
 
-export class Bounciness {
-  value: number;
-
+export class Bounciness extends ScalarValue {
   constructor(value: number) {
-    this.value = constrain(value, 0, 1);
+    super(value, 0, 1);
   }
 }
