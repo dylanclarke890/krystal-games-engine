@@ -1,16 +1,20 @@
-const CollisionLayer = { DEFAULT: 1, PLAYER: 2, ENEMY: 4 } as const;
+import { CollisionLayer, CollisionSettings } from "../utils/types.js";
 
 export class Collision {
-  collisionLayer: ValueOfObj<typeof CollisionLayer>;
-  constructor(collisionLayer: Key<typeof CollisionLayer> = "DEFAULT") {
-    this.collisionLayer = CollisionLayer[collisionLayer];
-  }
+  collisionLayer: CollisionLayer;
+  onEntityCollisionCallbacks: Function[];
+  onViewportCollisionCallbacks: Function[];
 
-  onViewportCollision(func: Function) {
-    func();
-  }
+  constructor(collisionLayer: CollisionLayer = "DEFAULT", settings?: CollisionSettings) {
+    this.collisionLayer = collisionLayer;
+    this.onEntityCollisionCallbacks = [];
+    this.onViewportCollisionCallbacks = [];
 
-  onEntityCollision(func: Function) {
-    func();
+    if (typeof settings?.onEntityCollision === "function") {
+      this.onEntityCollisionCallbacks.push(settings.onEntityCollision);
+    }
+    if (typeof settings?.onViewportCollision === "function") {
+      this.onEntityCollisionCallbacks.push(settings.onViewportCollision);
+    }
   }
 }
