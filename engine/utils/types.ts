@@ -13,7 +13,9 @@ export type InputBindingFn = (entityId: number, entityManager: EntityManager, dt
 export type InputBindingType = "held" | "pressed" | "released";
 export type InputBindings = { [K in InputBindingType]?: InputBindingFn };
 export type CollisionLayer = "DEFAULT" | "PLAYER" | "ENEMY";
+export type EntityCollisionCallback = (entityA: number, entityB: number, side: SideOfCollision) => void;
+export type ViewportCollisionCallback = (entity: number, side: SideOfCollision) => void;
 export type CollisionSettings = {
-  onEntityCollision?: (entityA: number, entityB: number, side: SideOfCollision) => void;
-  onViewportCollision?: (entity: number, side: SideOfCollision) => void;
+  onEntityCollision?: EntityCollisionCallback;
+  onViewportCollision?: ViewportCollisionCallback;
 };

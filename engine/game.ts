@@ -1,16 +1,11 @@
 import { EventSystem } from "./events/event-system.js";
 import { EntityManager } from "./entities/entity-manager.js";
-import { SystemManager } from "./systems/system-manager.js";
 import { GameLoop } from "./time/game-loop.js";
 import { Viewport } from "./graphics/viewport.js";
 import { InputManager } from "./input/input-manager.js";
-import { Component, ComponentType } from "./utils/types.js";
 import { CollisionDetector } from "./collision/detector.js";
 import { CollisionResolver } from "./collision/resolver.js";
-import { InputSystem } from "./systems/input-system.js";
-import { PhysicSystem } from "./systems/physic-system.js";
-import { RenderSystem } from "./systems/render-system.js";
-import { System } from "./systems/system.js";
+import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "./systems/index.js";
 
 export class Game {
   viewport: Viewport;
@@ -35,7 +30,15 @@ export class Game {
     this.setup();
   }
 
-  // #region Start / Stop
+  setup() {
+    this.systemManager.registerSystem(new InputSystem(this.entityManager, this.inputManager));
+
+    const detector = new CollisionDetector(this.entityManager, this.viewport);
+    const resolver = new CollisionResolver(this.entityManager, this.viewport);
+    this.systemManager.registerSystem(new PhysicSystem(this.entityManager, detector, resolver));
+
+    this.systemManager.registerSystem(new RenderSystem(this.entityManager, this.viewport));
+  }
 
   start() {
     this.loop.start();
@@ -47,42 +50,5 @@ export class Game {
 
   stop() {
     this.loop.stop(); // TODO: unload resources
-  }
-
-  // #endregion
-
-  setup() {
-    const em = this.entityManager;
-    const vp = this.viewport;
-    const detector = new CollisionDetector(em, vp);
-    const resolver = new CollisionResolver(em, vp);
-
-    this.registerSystem(new InputSystem(em, this.inputManager));
-    this.registerSystem(new PhysicSystem(em, detector, resolver));
-    this.registerSystem(new RenderSystem(em, vp));
-  }
-
-  createEntity() {
-    return this.entityManager.createEntity();
-  }
-
-  addComponent(entityId: number, component: Component<ComponentType>) {
-    return this.entityManager.addComponent(entityId, component);
-  }
-
-  removeComponent(entityId: number, componentType: ComponentType) {
-    return this.entityManager.removeComponent(entityId, componentType);
-  }
-
-  destroyEntity(entityId: number) {
-    return this.entityManager.destroyEntity(entityId);
-  }
-
-  registerSystem(system: System) {
-    return this.systemManager.registerSystem(system);
-  }
-
-  unregisterSystem(system: System) {
-    return this.systemManager.unregisterSystem(system);
   }
 }

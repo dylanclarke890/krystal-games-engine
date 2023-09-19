@@ -20,6 +20,6 @@ declare type MapObj<TObj, TValue, TOptional extends boolean> = TOptional extends
 
 declare type Pair<T> = [T, T];
 
-declare type SideOfCollision = "left" | "right" | "top" | "bottom";
+declare type SideOfCollision = "left" | "right" | "top" | "bottom" | "none";
 
 declare type EventHandler<T> = (data: T) => void;

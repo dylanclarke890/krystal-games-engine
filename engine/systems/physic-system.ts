@@ -74,6 +74,7 @@ export class PhysicSystem extends System {
     }
 
     this.collisionDetector.detect(collidables);
-    this.collisionResolver.resolve(this.collisionDetector.entityCollisions);
+    const { entityCollisions, viewportCollisions } = this.collisionDetector;
+    this.collisionResolver.resolve(entityCollisions, viewportCollisions);
   }
 }

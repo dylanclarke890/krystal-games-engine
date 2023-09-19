@@ -1,5 +1,7 @@
 import { Bounciness } from "../components/bounciness.js";
 import { Mass } from "../components/mass.js";
+import { Position } from "../components/position.js";
+import { Size } from "../components/size.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
@@ -24,11 +26,11 @@ export class CollisionResolver {
     this.viewport = viewport;
   }
 
-  resolve(collided: PairedSet<number>): void {
+  resolve(entityCollisions: PairedSet<number>, viewportCollisions: Set<number>): void {
     const em = this.entityManager;
     const defaults = CollisionResolver.componentDefaults;
 
-    collided.forEach((pair) => {
+    entityCollisions.forEach((pair) => {
       const a = em.getComponents(pair[0], ...CollisionResolver.components) as ResolverComponents;
       a.Bounciness ??= defaults.bounce;
       a.Mass ??= defaults.mass;
@@ -37,12 +39,32 @@ export class CollisionResolver {
       b.Bounciness ??= defaults.bounce;
       b.Mass ??= defaults.mass;
 
-      // const side = this.#findSideOfCollision(a, b);
-      // const totalBounciness = a.Bounciness.value * b.Bounciness.value;
+      const side = this.#findSideOfEntityCollision(a, b);
+      if (side === "none") {
+        return;
+      }
+
+      this.#resolveEntityCollision(a, b, side);
+
+      a.Collision.onEntityCollisionCallbacks.forEach((func) => func(pair[0], pair[1], side));
+      b.Collision.onEntityCollisionCallbacks.forEach((func) => func(pair[0], pair[1], side));
+    });
+
+    viewportCollisions.forEach((entityId) => {
+      const entity = em.getComponents(entityId, ...CollisionResolver.components) as ResolverComponents;
+
+      const side = this.#findSideOfViewportCollision(entity.Position, entity.Size);
+      if (side === "none") {
+        return;
+      }
+
+      this.#resolveViewportCollision(entity, side);
+
+      entity.Collision.onViewportCollisionCallbacks.forEach((func) => func(entityId, side));
     });
   }
 
-  findSideOfCollision(a: ResolverComponents, b: ResolverComponents): SideOfCollision {
+  #findSideOfEntityCollision(a: ResolverComponents, b: ResolverComponents): SideOfCollision {
     // Get midpoints
     const aMidX = a.Position.x + a.Size.halfX;
     const aMidY = a.Position.y + a.Size.halfY;
@@ -59,5 +81,35 @@ export class CollisionResolver {
       return dx > 0 ? "right" : "left";
     }
     return dy > 0 ? "bottom" : "top";
+  }
+
+  #findSideOfViewportCollision(position: Position, size: Size): SideOfCollision {
+    const { x, y } = position;
+
+    if (x < 0) {
+      return "left";
+    }
+
+    if (x + size.x > this.viewport.width) {
+      return "right";
+    }
+
+    if (y < 0) {
+      return "top";
+    }
+
+    if (y + size.y > this.viewport.height) {
+      return "bottom";
+    }
+
+    return "none";
+  }
+
+  #resolveEntityCollision(a: ResolverComponents, b: ResolverComponents, side: SideOfCollision): void {
+    console.log(a, b, side);
+  }
+
+  #resolveViewportCollision(entity: ResolverComponents, side: SideOfCollision): void {
+    console.log(entity, side);
   }
 }

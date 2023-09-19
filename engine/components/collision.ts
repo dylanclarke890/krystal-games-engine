@@ -1,9 +1,14 @@
-import { CollisionLayer, CollisionSettings } from "../utils/types.js";
+import {
+  CollisionLayer,
+  CollisionSettings,
+  EntityCollisionCallback,
+  ViewportCollisionCallback,
+} from "../utils/types.js";
 
 export class Collision {
   collisionLayer: CollisionLayer;
-  onEntityCollisionCallbacks: Function[];
-  onViewportCollisionCallbacks: Function[];
+  onEntityCollisionCallbacks: EntityCollisionCallback[];
+  onViewportCollisionCallbacks: ViewportCollisionCallback[];
 
   constructor(collisionLayer: CollisionLayer = "DEFAULT", settings?: CollisionSettings) {
     this.collisionLayer = collisionLayer;
@@ -14,7 +19,7 @@ export class Collision {
       this.onEntityCollisionCallbacks.push(settings.onEntityCollision);
     }
     if (typeof settings?.onViewportCollision === "function") {
-      this.onEntityCollisionCallbacks.push(settings.onViewportCollision);
+      this.onViewportCollisionCallbacks.push(settings.onViewportCollision);
     }
   }
 }
