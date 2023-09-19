@@ -7,6 +7,7 @@ import { ComponentType } from "../utils/types.js";
 
 export class InputSystem extends System {
   static requiredComponents: ComponentType[] = ["Input"];
+  static components: ComponentType[] = [...this.requiredComponents];
   static systemType = SystemTypes.Input;
 
   inputManager: InputManager;
@@ -21,17 +22,17 @@ export class InputSystem extends System {
     const em = this.entityManager;
     this.inputManager.clearPressed();
 
-    for (const entity of entities) {
-      const input = em.getComponent(entity, "Input");
-      if (typeof input === "undefined") {
+    for (const id of entities) {
+      const entity = em.getComponents(id, InputSystem.components);
+      if (typeof entity.Input === "undefined") {
         continue;
       }
 
-      for (const [action, { pressed, held, released }] of input.actions) {
+      for (const [action, { pressed, held, released }] of entity.Input.actions) {
         const state = this.inputManager.state(action);
-        if (state.pressed && typeof pressed === "function") pressed(entity, em, dt);
-        if (state.held && typeof held === "function") held(entity, em, dt);
-        if (state.released && typeof released === "function") released(entity, em, dt);
+        if (state.pressed && typeof pressed === "function") pressed(id, em, dt);
+        if (state.held && typeof held === "function") held(id, em, dt);
+        if (state.released && typeof released === "function") released(id, em, dt);
       }
     }
   }

@@ -53,7 +53,7 @@ export class SystemManager {
     this.entityManager.entities.forEach((entity) => {
       this.systems.forEach((system) => {
         const components = (<typeof System>system.constructor).requiredComponents;
-        if (!this.entityManager.hasComponents(entity, ...components)) {
+        if (!this.entityManager.hasComponents(entity, components)) {
           return;
         }
 

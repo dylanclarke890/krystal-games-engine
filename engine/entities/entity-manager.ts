@@ -4,27 +4,35 @@ import { Assert } from "../utils/assert.js";
 import { Component, ComponentMap, ComponentType } from "../utils/types.js";
 
 export class EntityManager {
+  static #emptySet: Set<number> = new Set();
+
   eventSystem: EventSystem;
   entities: Set<number>;
-  components: Map<string, Component<ComponentType>>;
-  entityMasks: Map<number, Set<ComponentType>>;
-  nextEntityId: number;
+
+  #nextEntityId: number;
+  #entityMasks: Map<number, Set<string>>;
+  #componentTypeToEntities: Map<ComponentType, Set<number>>;
+  #components: Map<string, Component<ComponentType>>;
 
   constructor(eventSystem: EventSystem) {
     Assert.instanceOf("eventSystem", eventSystem, EventSystem);
     this.eventSystem = eventSystem;
+
     this.entities = new Set();
-    this.components = new Map();
-    this.entityMasks = new Map();
-    this.nextEntityId = 1;
+    this.#entityMasks = new Map();
+    this.#componentTypeToEntities = new Map();
+    this.#components = new Map();
+
+    this.#nextEntityId = 1;
   }
 
   /** Create a new entity */
   createEntity() {
-    const entity = this.nextEntityId;
+    const entity = this.#nextEntityId++;
+
     this.entities.add(entity);
-    this.nextEntityId++;
     this.eventSystem.trigger(GameEvents.Entity_Created, entity);
+
     return entity;
   }
 
@@ -35,11 +43,17 @@ export class EntityManager {
    */
   addComponent(entity: number, component: Component<ComponentType>) {
     const componentType = component.constructor.name as ComponentType;
-    this.components.set(entity + componentType, component);
-    if (!this.entityMasks.has(entity)) {
-      this.entityMasks.set(entity, new Set());
+    this.#components.set(entity + componentType, component);
+
+    if (!this.#componentTypeToEntities.has(componentType)) {
+      this.#componentTypeToEntities.set(componentType, new Set());
     }
-    this.entityMasks.get(entity)!.add(componentType);
+    this.#componentTypeToEntities.get(componentType)!.add(entity);
+
+    if (!this.#entityMasks.has(entity)) {
+      this.#entityMasks.set(entity, new Set());
+    }
+    this.#entityMasks.get(entity)!.add(componentType);
   }
 
   /**
@@ -48,23 +62,13 @@ export class EntityManager {
    * @param {ComponentType} componentType component to remove
    */
   removeComponent(entity: number, componentType: ComponentType) {
-    this.components.delete(entity + componentType);
-    this.entityMasks.get(entity)!.delete(componentType);
+    this.#components.delete(entity + componentType);
+    this.#entityMasks.get(entity)!.delete(componentType);
   }
 
-  /**
-   * Get a specific component from an entity.
-   * @param entity entity identifier
-   * @param componentType the name of the component.
-   * @returns the component type, if found.
-   */
-  getComponent<T extends ComponentType>(entity: number, componentType: T): Component<T> | undefined {
-    return this.components.get(entity + componentType) as Component<T> | undefined;
-  }
-
-  getComponents<T extends ComponentType>(entity: number, ...componentTypes: T[]) {
-    return componentTypes.reduce((components, currentComponentType) => {
-      components[currentComponentType] = this.components.get(entity + currentComponentType) as Component<T> | undefined;
+  getComponents<T extends ComponentType>(entity: number, componentTypes: T[]) {
+    return componentTypes.reduce((components, type) => {
+      components[type] = this.#components.get(entity + type) as Component<T> | undefined;
       return components;
     }, {} as ComponentMap<T>);
   }
@@ -73,8 +77,8 @@ export class EntityManager {
    * Check if an entity has specific components.
    * @param {ComponentType} componentTypes the names of the components.
    */
-  hasComponents(entity: number, ...componentTypes: ComponentType[]) {
-    const mask = this.entityMasks.get(entity);
+  hasComponents(entity: number, componentTypes: ComponentType[]) {
+    const mask = this.#entityMasks.get(entity);
     if (typeof mask === "undefined") {
       return false;
     }
@@ -83,33 +87,50 @@ export class EntityManager {
 
   /** Check if any entity has the specified component type. */
   hasComponentType(componentType: ComponentType) {
-    for (const key of this.components.keys()) {
-      if (key.endsWith(componentType)) {
-        return true;
-      }
-    }
-    return false;
+    return typeof this.#componentTypeToEntities.has(componentType);
   }
 
   /** Get all entities that have a set of components. */
-  getEntitiesWithComponents<T extends ComponentType>(...componentTypes: T[]) {
-    const entities = [];
-    for (const entity of this.entities) {
-      if (this.hasComponents(entity, ...componentTypes)) {
-        entities.push(entity);
-      }
+  getEntitiesWithComponents<T extends ComponentType>(componentTypes: T[]): Set<number> {
+    const entities = new Set<number>();
+    const firstComponentType = componentTypes[0];
+
+    if (!this.#componentTypeToEntities.has(firstComponentType)) {
+      return EntityManager.#emptySet;
     }
+
+    // Initialize entities with entities having the first component type.
+    const firstTypeEntities = this.#componentTypeToEntities.get(firstComponentType)!;
+    firstTypeEntities.forEach((entity) => entities.add(entity));
+
+    // Iterate through the other component types and retain only entities that have all specified component types.
+    for (let i = 1; i < componentTypes.length; i++) {
+      const componentType = componentTypes[i];
+      if (!this.#componentTypeToEntities.has(componentType)) {
+        return EntityManager.#emptySet;
+      }
+
+      const typeEntities = this.#componentTypeToEntities.get(componentType)!;
+
+      entities.forEach((entity) => {
+        if (!typeEntities.has(entity)) {
+          entities.delete(entity);
+        }
+      });
+    }
+
     return entities;
   }
 
   /** Destroy an entity and remove all of its components. */
   destroyEntity(entity: number) {
-    const masks = this.entityMasks.get(entity);
+    const masks = this.#entityMasks.get(entity);
     if (typeof masks === "undefined") {
       return;
     }
-    masks.forEach((componentType) => this.components.delete(entity + componentType));
-    this.entityMasks.delete(entity);
+
+    masks.forEach((componentType) => this.#components.delete(entity + componentType));
+    this.#entityMasks.delete(entity);
     this.entities.delete(entity);
     this.eventSystem.trigger(GameEvents.Entity_Destroyed, entity);
   }

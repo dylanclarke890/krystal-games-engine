@@ -48,7 +48,7 @@ export class PhysicSystem extends System {
 
     for (let i = 0; i < entities.length; i++) {
       const entityId = entities[i];
-      const entity = em.getComponents(entityId, ...PhysicSystem.components) as PhysicSystemComponents;
+      const entity = em.getComponents(entityId, PhysicSystem.components) as PhysicSystemComponents;
 
       entity.Mass ??= defaults.mass;
       const mass = entity.Mass.value;

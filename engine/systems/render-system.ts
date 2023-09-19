@@ -25,7 +25,7 @@ export class RenderSystem extends System {
 
     for (let i = 0; i < entities.length; i++) {
       const entityId = entities[i];
-      const entity = this.entityManager.getComponents(entityId, ...RenderSystem.components) as RenderSystemComponents;
+      const entity = this.entityManager.getComponents(entityId, RenderSystem.components) as RenderSystemComponents;
 
       if (typeof entity.Shape !== "undefined") {
         this.drawShape(entity.Shape, entity.Position);

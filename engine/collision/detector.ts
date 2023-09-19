@@ -3,9 +3,11 @@ import { EntityManager } from "../entities/entity-manager.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";
-import { Collidable } from "../utils/types.js";
+import { Collidable, ComponentType } from "../utils/types.js";
 
 export class CollisionDetector {
+  static components: ComponentType[] = ["Size"];
+
   entityManager: EntityManager;
   viewport: Viewport;
   entityCollisions: PairedSet<number>;
@@ -26,9 +28,9 @@ export class CollisionDetector {
 
     for (let i = 0; i < collidables.length; i++) {
       const [a, posA, collisionA] = collidables[i];
-      const sizeA = this.entityManager.getComponent(a, "Size")!;
+      const entityA = this.entityManager.getComponents(a, CollisionDetector.components);
 
-      if (this.viewportCollisionCheck(posA, sizeA)) {
+      if (this.viewportCollisionCheck(posA, entityA.Size!)) {
         this.viewportCollisions.add(a);
       }
 
@@ -39,8 +41,8 @@ export class CollisionDetector {
           continue;
         }
 
-        const sizeB = this.entityManager.getComponent(b, "Size")!;
-        if (this.AABBCollisionCheck(posA, sizeA, posB, sizeB)) {
+        const entityB = this.entityManager.getComponents(b, CollisionDetector.components);
+        if (this.AABBCollisionCheck(posA, entityA.Size!, posB, entityB.Size!)) {
           this.entityCollisions.add(a, b);
         }
       }

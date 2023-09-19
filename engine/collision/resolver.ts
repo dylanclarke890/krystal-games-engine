@@ -27,7 +27,7 @@ export class CollisionResolver {
   }
 
   getComponentsForEntity(entityId: number): Defined<ResolverComponents> {
-    const entity = this.entityManager.getComponents(entityId, ...CollisionResolver.components) as ResolverComponents;
+    const entity = this.entityManager.getComponents(entityId, CollisionResolver.components) as ResolverComponents;
     entity.Bounciness ??= CollisionResolver.componentDefaults.bounce;
     entity.Mass ??= CollisionResolver.componentDefaults.mass;
 
