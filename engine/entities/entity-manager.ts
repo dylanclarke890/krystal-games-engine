@@ -67,10 +67,13 @@ export class EntityManager {
   }
 
   getComponents<T extends ComponentType>(entity: number, componentTypes: T[]) {
-    return componentTypes.reduce((components, type) => {
-      components[type] = this.#components.get(entity + type) as Component<T> | undefined;
-      return components;
-    }, {} as ComponentMap<T>);
+    const components: ComponentMap<T> = {} as ComponentMap<T>;
+
+    componentTypes.forEach((componentType) => {
+      components[componentType] = this.#components.get(entity + componentType) as Component<T> | undefined;
+    });
+
+    return components;
   }
 
   /**
