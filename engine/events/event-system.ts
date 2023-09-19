@@ -8,7 +8,7 @@ export class EventSystem {
 
   constructor(parent?: EventSystem) {
     this.#subscribers = new Map();
-    if (parent) {
+    if (typeof parent !== "undefined") {
       Assert.instanceOf("parent", parent, EventSystem);
       this.#parent = parent;
     }
@@ -25,7 +25,7 @@ export class EventSystem {
     if (!this.#subscribers.has(event)) {
       this.#subscribers.set(event, new PriorityQueue());
     }
-    
+
     const priorityLevel = priority instanceof PriorityLevel ? priority.valueOf() : priority;
     this.#subscribers.get(event)!.add(listener, priorityLevel);
   }

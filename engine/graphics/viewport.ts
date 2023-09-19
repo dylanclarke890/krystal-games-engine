@@ -40,21 +40,17 @@ export class Viewport {
   }
 
   clear(color?: string) {
-    if (typeof color === "undefined") this.ctx.clearRect(0, 0, this.width, this.height);
-    else {
+    if (typeof color === "undefined") {
+      this.ctx.clearRect(0, 0, this.width, this.height);
+    } else {
       this.ctx.fillStyle = color;
       this.ctx.fillRect(0, 0, this.width, this.height);
     }
   }
 
-  drawRect(x: number, y: number, width: number, height: number, color: string) {
-    this.ctx.fillStyle = color;
-    this.ctx.fillRect(x, y, width, height);
-  }
-
-  drawText(text: string, x: number, y: number, font: string, color: string) {
-    this.ctx.fillStyle = color;
-    this.ctx.font = font;
+  drawText(text: string, x: number, y: number, font?: string, color?: string) {
+    this.ctx.fillStyle = color ?? "white";
+    this.ctx.font = font ?? "Arial";
     this.ctx.fillText(text, x, y);
   }
 }

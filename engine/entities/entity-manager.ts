@@ -75,7 +75,9 @@ export class EntityManager {
    */
   hasComponents(entity: number, ...componentTypes: ComponentType[]) {
     const mask = this.entityMasks.get(entity);
-    if (typeof mask === "undefined") return false;
+    if (typeof mask === "undefined") {
+      return false;
+    }
     return componentTypes.every((componentType) => mask.has(componentType));
   }
 
@@ -103,7 +105,9 @@ export class EntityManager {
   /** Destroy an entity and remove all of its components. */
   destroyEntity(entity: number) {
     const masks = this.entityMasks.get(entity);
-    if (typeof masks === "undefined") return;
+    if (typeof masks === "undefined") {
+      return;
+    }
     masks.forEach((componentType) => this.components.delete(entity + componentType));
     this.entityMasks.delete(entity);
     this.entities.delete(entity);

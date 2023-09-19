@@ -23,10 +23,12 @@ export class TestGame extends Game {
 
       const newEntity = em.createEntity();
       em.addComponent(newEntity, new Position(x, y));
-      em.addComponent(newEntity, new Shape("circle", color, { radius: 6 }));
+      em.addComponent(newEntity, new Shape("circle", color, { radius: 3 }));
       em.addComponent(newEntity, new Velocity(0, 10));
       em.addComponent(newEntity, new GravityFactor());
     }
+
+    this.viewport.drawText(`${em.entities.size} objects`, 10, 20);
   }
 }
 

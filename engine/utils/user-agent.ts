@@ -15,7 +15,7 @@ export class UserAgent {
   viewport = { w: 0, h: 0 };
 
   constructor(settings = {}) {
-    Object.assign(this, settings);
+    Object.assign(this, settings ?? {});
   }
 
   static #cached: UserAgent;
