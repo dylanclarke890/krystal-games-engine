@@ -1,5 +1,5 @@
 import { constrain, randomInt } from "./number.js";
-import { parseJSON } from "./string.js";
+import { parseJSON } from "../string.js";
 
 export class Vector2D {
   x: number;

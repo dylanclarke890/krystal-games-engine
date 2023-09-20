@@ -1,4 +1,4 @@
-import { safeParseInt } from "./number.js";
+import { safeParseInt } from "./maths/number.js";
 
 type ParseResult = {
   success: boolean;
