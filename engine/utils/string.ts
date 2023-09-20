@@ -62,3 +62,11 @@ export function uniqueId(prefix?: string) {
 export function hyphenToCamelCase(str: string): string {
   return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase()).replace("-", "");
 }
+
+export function parseJSON<T>(dataString: string): T {
+  if (typeof dataString !== "string" || dataString === "") {
+    return {} as T;
+  }
+
+  return JSON.parse(dataString) as T;
+}

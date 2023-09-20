@@ -1,4 +1,5 @@
-import { constrain } from "./number.js";
+import { constrain, randomInt } from "./number.js";
+import { parseJSON } from "./string.js";
 
 export class Vector2D {
   x: number;
@@ -83,6 +84,55 @@ export class Vector2D {
     return this;
   }
 
+  assign(other: Vector2D) {
+    this.x = other.x;
+    this.y = other.y;
+    this.xMin = other.xMin;
+    this.xMax = other.xMax;
+    this.yMin = other.yMin;
+    this.yMax = other.yMax;
+    return this;
+  }
+
+  floor() {
+    this.x = Math.floor(this.x);
+    this.y = Math.floor(this.y);
+    return this;
+  }
+
+  round() {
+    this.x = Math.round(this.x);
+    this.y = Math.round(this.y);
+    return this;
+  }
+
+  ceil() {
+    this.x = Math.ceil(this.x);
+    this.y = Math.ceil(this.y);
+    return this;
+  }
+
+  /** Randomizes x and y to be between their min and max if set. */
+  randomize(xMin = this.xMin, xMax = this.xMax, yMin = this.yMin, yMax = this.yMax) {
+    let randomised = false;
+
+    if (typeof xMin === "number" && typeof xMax === "number") {
+      this.x = randomInt(xMin, xMax);
+      randomised = true;
+    }
+
+    if (typeof yMin === "number" && typeof yMax === "number") {
+      this.y = randomInt(yMin, yMax);
+      randomised = true;
+    }
+
+    if (randomised) {
+      this.#constrain();
+    }
+
+    return this;
+  }
+
   /** @returns the dot product. */
   dot(other: Vector2D): number {
     return this.x * other.x + this.y * other.y;
@@ -115,6 +165,16 @@ export class Vector2D {
   /** @returns a clone of the current instance. */
   clone(): Vector2D {
     return new Vector2D(this.x, this.y, this.xMin, this.xMax, this.yMin, this.yMax);
+  }
+
+  serialize(): string {
+    return JSON.stringify(this);
+  }
+
+  deserialize(data: string): void {
+    const parsed = parseJSON<Vector2D>(data);
+    this.assign(parsed);
+    this.#constrain();
   }
 
   #constrain() {

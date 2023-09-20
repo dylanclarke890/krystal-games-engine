@@ -1,3 +1,6 @@
+import { randomInt } from "./number.js";
+import { parseJSON } from "./string.js";
+
 export class ScalarValue {
   value: number;
   min?: number;
@@ -40,6 +43,48 @@ export class ScalarValue {
     this.value *= value;
     this.#constrain();
     return this;
+  }
+
+  floor() {
+    this.value = Math.floor(this.value);
+    return this;
+  }
+
+  round() {
+    this.value = Math.round(this.value);
+    return this;
+  }
+
+  ceil() {
+    this.value = Math.ceil(this.value);
+    return this;
+  }
+
+  /** Randomizes value to be between min and max if set. */
+  randomize(min = this.min, max = this.max) {
+    if (typeof min === "number" && typeof max === "number") {
+      this.value = randomInt(min, max);
+      this.#constrain();
+    }
+
+    return this;
+  }
+
+  assign(other: ScalarValue) {
+    this.value = other.value;
+    this.min = other.min;
+    this.max = other.max;
+    return this;
+  }
+
+  serialize(): string {
+    return JSON.stringify(this);
+  }
+
+  deserialize(data: string): void {
+    const parsed = parseJSON<ScalarValue>(data);
+    this.assign(parsed);
+    this.#constrain();
   }
 
   #constrain() {

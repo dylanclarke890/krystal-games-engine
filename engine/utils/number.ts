@@ -6,3 +6,7 @@ export function safeParseInt(value: string): number {
 export function constrain(num: number, min: number, max: number): number {
   return num < min ? min : num > max ? max : num;
 }
+
+export function randomInt(min: number, max: number): number {
+  return Math.random() * (max - min) + min;
+}
