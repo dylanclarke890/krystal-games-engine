@@ -10,7 +10,7 @@ export class EntityManager {
   entities: Set<number>;
 
   #nextEntityId: number;
-  #entityMasks: Map<number, Set<string>>;
+  #entityMasks: Map<number, Set<ComponentType>>;
   #componentTypeToEntities: Map<ComponentType, Set<number>>;
   #components: Map<string, Component<ComponentType>>;
 
@@ -132,9 +132,14 @@ export class EntityManager {
       return;
     }
 
-    masks.forEach((componentType) => this.#components.delete(entity + componentType));
+    masks.forEach((componentType) => {
+      this.#components.delete(entity + componentType);
+      this.#componentTypeToEntities.get(componentType)?.delete(entity);
+    });
+
     this.#entityMasks.delete(entity);
     this.entities.delete(entity);
+
     this.eventSystem.trigger(GameEvents.Entity_Destroyed, entity);
   }
 }
