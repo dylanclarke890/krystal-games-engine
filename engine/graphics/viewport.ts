@@ -1,3 +1,4 @@
+import { Assert } from "../utils/assert.js";
 import { uniqueId } from "../utils/string.js";
 
 export class Viewport {
@@ -17,6 +18,9 @@ export class Viewport {
    * @param {HTMLElement} parent
    */
   constructor(width: number, height: number, canvasId?: string, parent: HTMLElement = document.body) {
+    Assert.number("height", height);
+    Assert.number("width", width);
+
     this.canvasId = canvasId ?? uniqueId("kg-canvas-");
     this.width = width;
     this.height = height;

@@ -14,6 +14,8 @@ export class GameLoop {
 
   constructor(eventSystem: EventSystem, targetFps = 60) {
     Assert.instanceOf("eventSystem", eventSystem, EventSystem);
+    Assert.number("targetFps", targetFps);
+
     this.eventSystem = eventSystem;
     this.clock = new Timer();
     this.targetFps = targetFps;
