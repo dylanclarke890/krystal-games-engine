@@ -13,7 +13,6 @@ class Quadrant extends Enum {
   }
 }
 
-/** A 2d spatial subdivision algorithm data structure. */
 export class Quadtree {
   /** The node representing the entire viewport/bounds. */
   root: QuadtreeNode;
