@@ -12,7 +12,7 @@ export class GameLoop {
   #requestAnimationFrameId: number;
   stopped: boolean;
 
-  constructor(eventSystem: EventSystem, targetFps = 60) {
+  constructor(eventSystem: EventSystem, targetFps: number) {
     Assert.instanceOf("eventSystem", eventSystem, EventSystem);
     Assert.number("targetFps", targetFps);
 

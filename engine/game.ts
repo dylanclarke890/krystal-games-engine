@@ -7,6 +7,7 @@ import { CollisionDetector } from "./collision/detector.js";
 import { CollisionResolver } from "./collision/resolver.js";
 import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "./systems/index.js";
 import { EntityQuadtree } from "./entities/entity-quadtree.js";
+import { config } from "./config.js";
 
 export class Game {
   viewport: Viewport;
@@ -27,7 +28,7 @@ export class Game {
     this.entityManager = new EntityManager(this.eventSystem);
     this.systemManager = new SystemManager(this.eventSystem, this.entityManager);
     this.inputManager = new InputManager(this.eventSystem, this.viewport);
-    this.loop = new GameLoop(this.eventSystem, 60);
+    this.loop = new GameLoop(this.eventSystem, config.frameRate);
     this.setup();
   }
 
@@ -35,7 +36,7 @@ export class Game {
     const entityManager = this.entityManager;
     const eventSystem = this.eventSystem;
 
-    const quadtree = new EntityQuadtree(this.viewport, { maxDepth: 20 });
+    const quadtree = new EntityQuadtree(this.viewport, { maxDepth: config.quadtreeMaxDepth });
     const detector = new CollisionDetector(entityManager, this.viewport, quadtree);
     const resolver = new CollisionResolver(entityManager, this.viewport);
 
