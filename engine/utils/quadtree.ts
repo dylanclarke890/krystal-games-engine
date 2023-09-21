@@ -8,50 +8,59 @@ enum Quadrant {
   SouthEast,
 }
 
-export class PointNode {
+export class QuadtreeNode {
   bounds: { position: Vector2D; size: Vector2D };
-  nodes: PointNode[];
-  children: PointNode[];
-  maxChildren: number;
-  depth: number;
-  maxDepth: number;
+
+  #nodes: QuadtreeNode[];
+
+  #children: QuadtreeNode[];
+  #overlappingChildren: QuadtreeNode[];
+  #maxChildren: number;
+
+  #depth: number;
+  #maxDepth: number;
 
   constructor(position: Vector2D, size: Vector2D, depth = 0, maxDepth = 4, maxChildren = 4) {
     this.bounds = { position, size };
-    this.depth = depth;
-    this.maxChildren = maxChildren;
-    this.maxDepth = maxDepth;
-    this.nodes = [];
-    this.children = [];
+    this.#depth = depth;
+    this.#maxChildren = maxChildren;
+    this.#maxDepth = maxDepth;
+    this.#nodes = [];
+    this.#children = [];
+    this.#overlappingChildren = [];
   }
 
-  insert(node: PointNode | PointNode[]) {
+  insert(node: QuadtreeNode | QuadtreeNode[]) {
     if (Array.isArray(node)) {
       node.forEach((n) => this.insert(n));
       return;
     }
 
-    if (this.children.length) {
+    if (this.#children.length) {
       const quadrant = this.findQuadrant(node);
-      this.children[quadrant].insert(node);
+      if (this.isInBounds(node, this.#children[quadrant])) {
+        this.#children[quadrant].insert(node);
+      } else {
+        this.#overlappingChildren.push(node);
+      }
       return;
     }
 
-    this.nodes.push(node);
+    this.#nodes.push(node);
 
-    if (this.nodes.length > this.maxChildren && this.depth < this.maxDepth) {
+    if (this.#nodes.length > this.#maxChildren && this.#depth < this.#maxDepth) {
       this.subdivide();
     }
   }
 
-  retrieve(node: PointNode): PointNode[] {
+  retrieve(node: QuadtreeNode): QuadtreeNode[] {
     // If this node is subdivided
-    if (this.children.length) {
+    if (this.#children.length) {
       const quadrant = this.findQuadrant(node);
-      return this.children[quadrant].retrieve(node);
+      return this.#children[quadrant].retrieve(node).concat(this.#overlappingChildren);
     }
 
-    return this.nodes;
+    return this.#nodes;
   }
 
   subdivide() {
@@ -68,20 +77,23 @@ export class PointNode {
 
     const size = new Vector2D(halfWidth, halfHeight);
 
-    this.children = positions.map((pos) => new PointNode(pos, size, this.depth + 1, this.maxDepth, this.maxChildren));
+    this.#children = positions.map(
+      (pos) => new QuadtreeNode(pos, size, this.#depth + 1, this.#maxDepth, this.#maxChildren)
+    );
 
-    const nodes = [...this.nodes];
-    this.nodes.length = 0;
+    const nodes = [...this.#nodes];
+    this.#nodes.length = 0;
     this.insert(nodes);
   }
 
   clear() {
-    this.children.length = 0;
-    this.nodes.forEach((n) => n.clear());
-    this.nodes.length = 0;
+    this.#children.length = 0;
+    this.#overlappingChildren.length = 0;
+    this.#nodes.forEach((n) => n.clear());
+    this.#nodes.length = 0;
   }
 
-  findQuadrant(node: PointNode): Quadrant {
+  findQuadrant(node: QuadtreeNode): Quadrant {
     const left = node.bounds.position.x < this.bounds.position.x + this.bounds.size.x / 2;
     const top = node.bounds.position.y < this.bounds.position.y + this.bounds.size.y / 2;
 
@@ -91,46 +103,8 @@ export class PointNode {
 
     return top ? Quadrant.NorthEast : Quadrant.SouthEast;
   }
-}
 
-export class BoundsNode extends PointNode {
-  #overlappingChildren: BoundsNode[];
-
-  constructor(position: Vector2D, size: Vector2D, depth = 0, maxDepth = 4, maxChildren = 4) {
-    super(position, size, depth, maxDepth, maxChildren);
-    this.#overlappingChildren = [];
-  }
-
-  insert(node: BoundsNode | BoundsNode[]) {
-    if (Array.isArray(node)) {
-      node.forEach((n) => this.insert(n));
-      return;
-    }
-
-    if (this.children.length) {
-      const quadrant = this.findQuadrant(node);
-
-      if (this.isInBounds(node, this.children[quadrant])) {
-        this.children[quadrant].insert(node);
-      } else {
-        this.#overlappingChildren.push(node);
-      }
-      return;
-    }
-
-    super.insert(node);
-  }
-
-  retrieve(item: BoundsNode): PointNode[] {
-    return super.retrieve(item).concat(this.#overlappingChildren);
-  }
-
-  clear() {
-    this.#overlappingChildren.length = 0;
-    super.clear();
-  }
-
-  isInBounds(a: PointNode, b: PointNode): boolean {
+  isInBounds(a: QuadtreeNode, b: QuadtreeNode): boolean {
     return (
       a.bounds.position.x >= b.bounds.position.x &&
       a.bounds.position.x + a.bounds.size.x <= b.bounds.position.x + b.bounds.size.x &&
@@ -143,7 +117,7 @@ export class BoundsNode extends PointNode {
 /** A 2d spatial subdivision algorithm data structure. */
 export class Quadtree {
   /** The node representing the entire viewport/bounds. */
-  root: INode;
+  root: QuadtreeNode;
   size: number;
 
   /**
@@ -151,23 +125,22 @@ export class Quadtree {
    * @param size Vector with x, y properties representing the size of the bounds.
    * @param maxDepth The maximum number of levels that the quadtree will create. Default is 4.
    * @param maxChildren The maximum number of items per quadrant before subdividing. Default is 4.
-   * @param pointQuad Whether the QuadTree will contain points, or items with bounds. Default value is false.
    **/
-  constructor(position: Vector2D, size: Vector2D, { maxDepth = 4, maxChildren = 4, pointQuad = false } = {}) {
+  constructor(position: Vector2D, size: Vector2D, { maxDepth = 4, maxChildren = 4 } = {}) {
     Assert.instanceOf("position", position, Vector2D);
     Assert.instanceOf("size", size, Vector2D);
 
     this.size = 0;
-    this.root = new (pointQuad ? PointNode : BoundsNode)(position, size, 0, maxDepth, maxChildren);
+    this.root = new QuadtreeNode(position, size, 0, maxDepth, maxChildren);
   }
 
-  insert(value: INode | INode[]) {
-    if (Array.isArray(value)) {
-      this.size += value.length;
-      value.forEach((item) => this.root.insert(item));
+  insert(node: QuadtreeNode | QuadtreeNode[]) {
+    if (Array.isArray(node)) {
+      this.size += node.length;
+      this.root.insert(node);
     } else {
       this.size++;
-      this.root.insert(value);
+      this.root.insert(node);
     }
   }
 
@@ -176,7 +149,7 @@ export class Quadtree {
     this.size = 0;
   }
 
-  retrieve(value: INode) {
-    return this.root.retrieve(value);
+  retrieve(node: QuadtreeNode) {
+    return this.root.retrieve(node);
   }
 }

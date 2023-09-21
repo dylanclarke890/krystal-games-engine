@@ -6,8 +6,6 @@ import { InputManager } from "./input/input-manager.js";
 import { CollisionDetector } from "./collision/detector.js";
 import { CollisionResolver } from "./collision/resolver.js";
 import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "./systems/index.js";
-import { BoundsNode, Quadtree } from "./utils/quadtree.js";
-import { Position, Size } from "./components/index.js";
 
 export class Game {
   viewport: Viewport;
@@ -29,14 +27,6 @@ export class Game {
     this.systemManager = new SystemManager(this.eventSystem, this.entityManager);
     this.inputManager = new InputManager(this.eventSystem, this.viewport);
     this.loop = new GameLoop(this.eventSystem, 60);
-
-    const quadtree = new Quadtree(new Position(0, 0), new Size(100, 100), { maxChildren: 1 });
-    const point1 = new BoundsNode(new Position(10, 10), new Size(10, 10));
-    const point2 = new BoundsNode(new Position(90, 90), new Size(10, 10));
-    quadtree.insert([point1, point2]);
-    const result = quadtree.retrieve(point1);
-    console.log(result);
-
     this.setup();
   }
 
