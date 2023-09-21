@@ -51,8 +51,8 @@ export class PhysicSystem extends System {
     const collidables: Collidable[] = [];
     this.quadtree.clear();
 
-    entities.forEach((entityId) => {
-      const components = em.getComponents(entityId, PhysicSystem.components) as PhysicsSystemComponents;
+    for (const id of entities) {
+      const components = em.getComponents(id, PhysicSystem.components) as PhysicsSystemComponents;
 
       components.Mass ??= defaults.mass;
       const mass = components.Mass.value;
@@ -73,10 +73,10 @@ export class PhysicSystem extends System {
       components.Position.add(components.Velocity.x * dt, components.Velocity.y * dt);
 
       if (typeof components.Collision !== "undefined" && typeof components.Size !== "undefined") {
-        collidables.push([entityId, components as CollidableComponents]);
-        this.quadtree.insertEntity(entityId, components.Position, components.Size);
+        collidables.push([id, components as CollidableComponents]);
+        this.quadtree.insertEntity(id, components.Position, components.Size);
       }
-    });
+    }
 
     this.detector.detect(collidables);
     this.resolver.resolve(this.detector);

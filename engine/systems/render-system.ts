@@ -24,8 +24,8 @@ export class RenderSystem extends System {
   update(dt: number, entities: Set<number>) {
     this.viewport.clear();
 
-    entities.forEach((entityId) => {
-      const entity = this.entityManager.getComponents(entityId, RenderSystem.components) as SystemComponents;
+    for (const id of entities) {
+      const entity = this.entityManager.getComponents(id, RenderSystem.components) as SystemComponents;
 
       if (typeof entity.Shape !== "undefined") {
         this.drawShape(entity.Shape, entity.Position);
@@ -34,7 +34,7 @@ export class RenderSystem extends System {
       if (typeof entity.Sprite !== "undefined") {
         if (typeof entity.Animation === "undefined") {
           this.drawSprite(entity.Sprite, entity.Position, 0, 0);
-          return;
+          continue;
         }
 
         // Update current animation frame of sprite
@@ -54,7 +54,7 @@ export class RenderSystem extends System {
 
         this.drawSprite(entity.Sprite, entity.Position, sourceX, sourceY);
       }
-    });
+    }
   }
 
   drawSprite(sprite: Sprite, position: Position, sourceX: number, sourceY: number): void {
