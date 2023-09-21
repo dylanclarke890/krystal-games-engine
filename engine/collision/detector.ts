@@ -8,19 +8,19 @@ import { Collidable } from "../utils/types.js";
 
 export class CollisionDetector {
   entityManager: EntityManager;
-  quadtree: EntityQuadtree;
   viewport: Viewport;
+  quadtree: EntityQuadtree;
   entityCollisions: PairedSet<number>;
   viewportCollisions: Set<number>;
 
-  constructor(entityManager: EntityManager, quadtree: EntityQuadtree, viewport: Viewport) {
+  constructor(entityManager: EntityManager, viewport: Viewport, quadtree: EntityQuadtree) {
     Assert.instanceOf("entityManager", entityManager, EntityManager);
-    Assert.instanceOf("quadtree", quadtree, EntityQuadtree);
     Assert.instanceOf("viewport", viewport, Viewport);
+    Assert.instanceOf("quadtree", quadtree, EntityQuadtree);
 
     this.entityManager = entityManager;
-    this.quadtree = quadtree;
     this.viewport = viewport;
+    this.quadtree = quadtree;
 
     this.entityCollisions = new PairedSet();
     this.viewportCollisions = new Set();

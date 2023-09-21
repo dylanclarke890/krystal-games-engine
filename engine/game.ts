@@ -38,7 +38,7 @@ export class Game {
     const { width, height } = this.viewport;
 
     const quadtree = new EntityQuadtree(new Vector2D(0, 0), new Vector2D(width, height), { maxDepth: 20 });
-    const detector = new CollisionDetector(entityManager, quadtree, this.viewport);
+    const detector = new CollisionDetector(entityManager, this.viewport, quadtree);
     const resolver = new CollisionResolver(entityManager, this.viewport);
 
     this.systemManager.registerSystem(new InputSystem(entityManager, eventSystem, this.inputManager));
