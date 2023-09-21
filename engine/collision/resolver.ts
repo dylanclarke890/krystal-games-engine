@@ -3,11 +3,9 @@ import { EntityManager } from "../entities/entity-manager.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";
-import { ComponentMap, ComponentType } from "../utils/types.js";
+import { ComponentType, Components } from "../utils/types.js";
 
-type RequiredComponents = "Position" | "Velocity" | "Size" | "Collision";
-type OptionalComponents = "Bounciness" | "Mass";
-type ResolverComponents = DefinedExcept<ComponentMap<RequiredComponents | OptionalComponents>, OptionalComponents>;
+type ResolverComponents = Components<"Position" | "Velocity" | "Size" | "Collision", "Bounciness" | "Mass">;
 
 export class CollisionResolver {
   static components: ComponentType[] = ["Position", "Velocity", "Size", "Collision", "Bounciness", "Mass"];

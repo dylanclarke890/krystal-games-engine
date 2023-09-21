@@ -4,10 +4,10 @@ import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
-import { Collidable, ComponentType, SystemComponents } from "../utils/types.js";
+import { Collidable, ComponentType, Components } from "../utils/types.js";
 import { Mass } from "../components/index.js";
 
-type PhysicSystemComponents = SystemComponents<
+type SystemComponents = Components<
   "Position" | "Velocity",
   "Acceleration" | "Friction" | "Collision" | "GravityFactor" | "Mass"
 >;
@@ -48,7 +48,7 @@ export class PhysicSystem extends System {
 
     for (let i = 0; i < entities.length; i++) {
       const entityId = entities[i];
-      const entity = em.getComponents(entityId, PhysicSystem.components) as PhysicSystemComponents;
+      const entity = em.getComponents(entityId, PhysicSystem.components) as SystemComponents;
 
       entity.Mass ??= defaults.mass;
       const mass = entity.Mass.value;

@@ -31,12 +31,11 @@ export class Game {
   }
 
   setup() {
-    this.systemManager.registerSystem(new InputSystem(this.entityManager, this.inputManager));
-
     const detector = new CollisionDetector(this.entityManager, this.viewport);
     const resolver = new CollisionResolver(this.entityManager, this.viewport);
-    this.systemManager.registerSystem(new PhysicSystem(this.entityManager, detector, resolver));
 
+    this.systemManager.registerSystem(new InputSystem(this.entityManager, this.inputManager));
+    this.systemManager.registerSystem(new PhysicSystem(this.entityManager, detector, resolver));
     this.systemManager.registerSystem(new RenderSystem(this.entityManager, this.viewport));
   }
 

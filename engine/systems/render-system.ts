@@ -4,9 +4,9 @@ import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Sprite, Position, Shape } from "../components/index.js";
 import { Assert } from "../utils/assert.js";
-import { ComponentType, SystemComponents } from "../utils/types.js";
+import { ComponentType, Components } from "../utils/types.js";
 
-type RenderSystemComponents = SystemComponents<"Position", "Animation" | "Sprite" | "Shape">;
+type SystemComponents = Components<"Position", "Animation" | "Sprite" | "Shape">;
 export class RenderSystem extends System {
   static requiredComponents: ComponentType[] = ["Position"];
   static components: ComponentType[] = [...this.requiredComponents, "Sprite", "Animation", "Shape"];
@@ -25,7 +25,7 @@ export class RenderSystem extends System {
 
     for (let i = 0; i < entities.length; i++) {
       const entityId = entities[i];
-      const entity = this.entityManager.getComponents(entityId, RenderSystem.components) as RenderSystemComponents;
+      const entity = this.entityManager.getComponents(entityId, RenderSystem.components) as SystemComponents;
 
       if (typeof entity.Shape !== "undefined") {
         this.drawShape(entity.Shape, entity.Position);
