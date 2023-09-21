@@ -1,4 +1,5 @@
 import { Position, Size } from "../components/index.js";
+import { Viewport } from "../graphics/viewport.js";
 import { Quadtree, QuadtreeNode } from "../utils/quadtree.js";
 
 export class EntityQuadtreeNode extends QuadtreeNode {
@@ -11,6 +12,10 @@ export class EntityQuadtreeNode extends QuadtreeNode {
 }
 
 export class EntityQuadtree extends Quadtree {
+  constructor(viewport: Viewport, options?: { maxDepth?: number; maxChildren?: number }) {
+    super(new Position(0, 0), new Size(viewport.width, viewport.height), options);
+  }
+
   insertEntity(entityId: number, position: Position, size: Size) {
     const node = new EntityQuadtreeNode(entityId, position, size);
     super.insert(node);

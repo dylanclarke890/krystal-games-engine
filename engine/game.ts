@@ -7,7 +7,6 @@ import { CollisionDetector } from "./collision/detector.js";
 import { CollisionResolver } from "./collision/resolver.js";
 import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "./systems/index.js";
 import { EntityQuadtree } from "./entities/entity-quadtree.js";
-import { Vector2D } from "./utils/maths/vector-2d.js";
 
 export class Game {
   viewport: Viewport;
@@ -35,9 +34,8 @@ export class Game {
   setup() {
     const entityManager = this.entityManager;
     const eventSystem = this.eventSystem;
-    const { width, height } = this.viewport;
 
-    const quadtree = new EntityQuadtree(new Vector2D(0, 0), new Vector2D(width, height), { maxDepth: 20 });
+    const quadtree = new EntityQuadtree(this.viewport, { maxDepth: 20 });
     const detector = new CollisionDetector(entityManager, this.viewport, quadtree);
     const resolver = new CollisionResolver(entityManager, this.viewport);
 
