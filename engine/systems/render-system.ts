@@ -6,6 +6,7 @@ import { Sprite, Position, Shape } from "../components/index.js";
 import { Assert } from "../utils/assert.js";
 import { ComponentType, Components } from "../utils/types.js";
 import { EventSystem } from "../events/event-system.js";
+import { InvalidOperationError } from "../utils/errors.js";
 
 type SystemComponents = Components<"Position", "Animation" | "Sprite" | "Shape">;
 export class RenderSystem extends System {
@@ -79,7 +80,7 @@ export class RenderSystem extends System {
         break;
       }
       default: {
-        throw new Error(`Unable to draw shape: shape type not recognised: ${shape.type}.`);
+        throw new InvalidOperationError("Shape type not recognised - unable to draw.", shape);
       }
     }
   }

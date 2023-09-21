@@ -1,8 +1,7 @@
+import { IntervalParsingFailedError } from "./errors.js";
 import { safeParseInt } from "./maths/number.js";
 
 type ParseResult = {
-  success: boolean;
-  error?: string;
   from: number;
   to: number;
   includeEnd: boolean;
@@ -10,50 +9,34 @@ type ParseResult = {
   reverse: boolean;
 };
 
-function setErrorAndType(result: ParseResult, error: string): ParseResult {
-  result.success = false;
-  result.error = error;
-  return result;
-}
-
 function getIntervalInfo(interval: string): ParseResult {
   interval = interval.trim();
   const first = interval[0];
   const last = interval[interval.length - 1];
-  const result: ParseResult = {
-    from: 0,
-    to: 0,
-    includeStart: false,
-    includeEnd: false,
-    reverse: false,
-    success: true,
-    error: "",
-  };
-
-  if (first === "(") result.includeStart = false;
-  else if (first === "[") result.includeStart = true;
-  else return setErrorAndType(result, "Invalid start character. Allowed characters are '(' and '['.");
-
-  if (last === ")") result.includeEnd = false;
-  else if (last === "]") result.includeEnd = true;
-  else return setErrorAndType(result, "Invalid end character. Allowed characters are ')' and ']'.");
-
-  const usesCommaDelimiter = interval.indexOf(",") !== -1;
-  if (!usesCommaDelimiter && interval.indexOf("..") === -1)
-    return setErrorAndType(result, "Invalid delimeter. Allowed characters are ',' and '..'.");
-
   const range = interval.slice(1, interval.length - 1);
-  const fromToArray = range.split(usesCommaDelimiter ? "," : "..");
+  const commaDelimiter = range.indexOf(",");
+  const periodDelimiter = range.indexOf("..");
+  const fromToArray = range.split(commaDelimiter !== -1 ? "," : "..");
+  const from = safeParseInt(fromToArray[0]);
+  const to = safeParseInt(fromToArray[1]);
 
-  if (fromToArray.length !== 2)
-    return setErrorAndType(result, "Wrong number of arguments provided. Interval requires a from and to value.");
+  if (first !== "(" && first !== "[") {
+    throw new IntervalParsingFailedError("Invalid start character. Allowed characters are '(' and '['.", interval);
+  }
+  if (last !== ")" && last !== "]") {
+    throw new IntervalParsingFailedError("Invalid end character. Allowed characters are ')' and ']'.", interval);
+  }
+  if (commaDelimiter === -1 && periodDelimiter === -1) {
+    throw new IntervalParsingFailedError("Invalid range delimeter. Allowed characters are ',' and '..'.", interval);
+  }
+  if (fromToArray.length !== 2) {
+    throw new IntervalParsingFailedError("Requires a from and to value.", interval);
+  }
+  if (from === to) {
+    throw new IntervalParsingFailedError("From cannot be the same as to", interval);
+  }
 
-  result.from = safeParseInt(fromToArray[0]);
-  result.to = safeParseInt(fromToArray[1]);
-
-  if (result.from > result.to) result.reverse = true;
-
-  return result;
+  return { includeStart: first === "[", includeEnd: last === "]", from, to, reverse: from > to };
 }
 
 /**
@@ -63,11 +46,7 @@ function getIntervalInfo(interval: string): ParseResult {
  * @returns
  */
 export function arrayFromInterval(interval: string): number[] {
-  const { success, error, from, to, includeEnd, includeStart, reverse } = getIntervalInfo(interval);
-  if (!success) {
-    console.warn(error);
-    return [];
-  }
+  const { from, to, includeEnd, includeStart, reverse } = getIntervalInfo(interval);
 
   let start = includeStart ? from : from + 1;
   let end = includeEnd ? to + 1 : to;

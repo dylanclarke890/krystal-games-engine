@@ -1,6 +1,7 @@
 import { EntityManager } from "../entities/entity-manager.js";
 import { EventSystem } from "../events/event-system.js";
 import { Assert } from "../utils/assert.js";
+import { InvalidOperationError } from "../utils/errors.js";
 import { ComponentType } from "../utils/types.js";
 import { SystemTypes } from "./system-types.js";
 
@@ -31,6 +32,6 @@ export class System {
    * @param _entities Entities for the system to update.
    */
   update(_dt: number, _entities: Set<number>): void {
-    throw new Error("Update method must be implemented.");
+    throw new InvalidOperationError("Update method must be implemented.");
   }
 }
