@@ -4,7 +4,7 @@ import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
-import { Collidable, CollidableComponents, ComponentType, PhysicsSystemComponents } from "../utils/types.js";
+import { Collidable, CollidableComponents, ComponentType, PhysicsComponents } from "../utils/types.js";
 import { Mass } from "../components/index.js";
 import { EventSystem } from "../events/event-system.js";
 import { EntityQuadtree } from "../entities/entity-quadtree.js";
@@ -52,7 +52,7 @@ export class PhysicSystem extends System {
     this.quadtree.clear();
 
     for (const id of entities) {
-      const components = em.getComponents(id, PhysicSystem.components) as PhysicsSystemComponents;
+      const components = em.getComponents(id, PhysicSystem.components) as PhysicsComponents;
 
       components.Mass ??= defaults.mass;
       const mass = components.Mass.value;
