@@ -1,5 +1,6 @@
 import { Assert } from "./assert.js";
 import { Vector2D } from "./maths/vector-2d.js";
+import { Bounds } from "./types.js";
 
 enum QuadtreeSegments {
   TOP_LEFT,
@@ -8,10 +9,23 @@ enum QuadtreeSegments {
   BOTTOM_RIGHT,
 }
 
-class QuadtreeNode {
+interface INode {
+  bounds: Bounds;
+  nodes: INode[];
+  children: INode[];
+  maxChildren: number;
+  depth: number;
+  maxDepth: number;
+
+  insert(item: INode): void;
+  retrieve(item: INode): INode[];
+  clear(): void;
+}
+
+export class PointNode implements INode {
   bounds: { position: Vector2D; size: Vector2D };
-  nodes: QuadtreeNode[];
-  children: QuadtreeNode[];
+  nodes: PointNode[];
+  children: PointNode[];
   maxChildren: number;
   depth: number;
   maxDepth: number;
@@ -25,7 +39,7 @@ class QuadtreeNode {
     this.children = [];
   }
 
-  insert(item: QuadtreeNode) {
+  insert(item: PointNode) {
     if (this.nodes.length > 0) {
       const index = this.findIndex(item);
       this.nodes[index].insert(item);
@@ -41,7 +55,7 @@ class QuadtreeNode {
     }
   }
 
-  retrieve(item: QuadtreeNode): QuadtreeNode[] {
+  retrieve(item: PointNode): PointNode[] {
     if (this.nodes.length > 0) {
       const index = this.findIndex(item);
       return this.nodes[index].retrieve(item);
@@ -49,7 +63,7 @@ class QuadtreeNode {
     return this.children;
   }
 
-  findIndex(item: QuadtreeNode) {
+  findIndex(item: PointNode) {
     const left = item.bounds.position.x > this.bounds.position.x + this.bounds.size.x / 2 ? false : true;
     const top = item.bounds.position.y > this.bounds.position.y + this.bounds.position.y / 2 ? false : true;
 
@@ -61,7 +75,7 @@ class QuadtreeNode {
   }
 
   #newNode = (position: Vector2D, size: Vector2D) =>
-    new QuadtreeNode(position, size, this.depth, this.maxDepth, this.maxChildren);
+    new PointNode(position, size, this.depth, this.maxDepth, this.maxChildren);
 
   subdivide() {
     this.depth++;
@@ -85,7 +99,7 @@ class QuadtreeNode {
   }
 }
 
-export class BoundsNode extends QuadtreeNode {
+export class BoundsNode extends PointNode implements INode {
   #stuckChildren: BoundsNode[];
 
   constructor(position: Vector2D, size: Vector2D, depth: number, maxDepth?: number, maxChildren?: number) {
@@ -93,7 +107,7 @@ export class BoundsNode extends QuadtreeNode {
     this.#stuckChildren = [];
   }
 
-  isInBounds(a: QuadtreeNode, b: QuadtreeNode): boolean {
+  isInBounds(a: PointNode, b: PointNode): boolean {
     return (
       a.bounds.position.x >= b.bounds.position.x &&
       a.bounds.position.x + a.bounds.size.x <= b.bounds.position.x + b.bounds.size.x &&
@@ -200,16 +214,15 @@ export class BoundsNode extends QuadtreeNode {
 }
 
 /** A 2d spatial subdivision algorithm. */
-export class Quadtree<TNode = QuadtreeNode | BoundsNode> {
-  position: Vector2D;
-  size: Vector2D;
+export class Quadtree {
+  bounds: Bounds;
   /** The maximum number of levels that the quadtree will create. Default is 4. */
   maxDepth: number;
   /** The maximum number of children that a node can contain before it is split into sub-nodes. Default is 4. */
   maxChildren: number;
 
-  /** The node representing the entire viewport. */
-  root: TNode;
+  /** The node representing the entire viewport/bounds. */
+  root: INode;
 
   /**
    * @param {boolean} pointQuad Whether the QuadTree will contain points, or items with bounds. Default value is false.
@@ -220,17 +233,14 @@ export class Quadtree<TNode = QuadtreeNode | BoundsNode> {
     Assert.number("maxDepth", maxDepth);
     Assert.number("size", maxChildren);
 
-    this.position = position;
-    this.size = size;
+    this.bounds = { position, size };
     this.maxDepth = maxDepth;
     this.maxChildren = maxChildren;
 
-    this.root = (pointQuad
-      ? new QuadtreeNode(position, size, 0, maxDepth, maxChildren)
-      : new BoundsNode(position, size, 0, maxDepth, maxChildren)) as unknown as TNode;
+    this.root = new (pointQuad ? PointNode : BoundsNode)(position, size, 0, maxDepth, maxChildren);
   }
 
-  insert(value: TNode | TNode[]) {
+  insert(value: INode | INode[]) {
     if (Array.isArray(value)) value.forEach((item) => this.root.insert(item));
     else this.root.insert(value);
   }
@@ -239,7 +249,7 @@ export class Quadtree<TNode = QuadtreeNode | BoundsNode> {
     this.root.clear();
   }
 
-  retrieve(value: TNode) {
+  retrieve(value: INode) {
     return [...this.root.retrieve(value)];
   }
 }
