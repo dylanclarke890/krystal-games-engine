@@ -26,7 +26,9 @@ export class TestGame extends Game {
       em.addComponent(newEntity, new Collision("DEFAULT", collisionSettings));
     }
 
+    const collisionDetector = this.systemManager.getSystem("PhysicSystem")!.detector;
     this.viewport.drawText(`${em.entities.size} objects`, 10, 20);
+    this.viewport.drawText(`${collisionDetector.collisionChecks} collisions checked`, 10, 40);
   }
 }
 

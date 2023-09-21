@@ -15,6 +15,9 @@ export type PhysicsComponents = Components<
   "Acceleration" | "Friction" | "Collision" | "GravityFactor" | "Mass" | "Size"
 >;
 
+export type GameSystem<T extends GameSystemType> = InstanceType<typeof import("../systems/index.js")[T]>;
+export type GameSystemType = Key<typeof import("../systems/index.js")> & string;
+
 export type InputBindingFn = (entityId: number, entityManager: EntityManager, dt: number) => void;
 export type InputBindingType = "held" | "pressed" | "released";
 export type InputBindings = { [K in InputBindingType]?: InputBindingFn };

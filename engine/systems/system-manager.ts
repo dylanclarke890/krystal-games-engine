@@ -2,6 +2,7 @@ import { EntityManager } from "../entities/entity-manager.js";
 import { EventSystem } from "../events/event-system.js";
 import { GameEvents } from "../events/events.js";
 import { Assert } from "../utils/assert.js";
+import { GameSystem, GameSystemType } from "../utils/types.js";
 import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 
@@ -50,6 +51,18 @@ export class SystemManager {
     Assert.instanceOf("System", system, System);
     system.cleanup();
     this.systems.delete(system);
+  }
+
+  getSystem<T extends GameSystemType>(name: T): GameSystem<T> | undefined {
+    let system: GameSystem<T> | undefined;
+
+    this.systems.forEach((sys) => {
+      if (name === (sys.constructor.name as GameSystemType)) {
+        system = sys as GameSystem<T>;
+      }
+    });
+
+    return system;
   }
 
   update(dt: number) {

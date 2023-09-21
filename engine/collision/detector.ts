@@ -12,6 +12,7 @@ export class CollisionDetector {
   quadtree: EntityQuadtree;
   entityCollisions: PairedSet<number>;
   viewportCollisions: Set<number>;
+  collisionChecks: number;
 
   constructor(entityManager: EntityManager, viewport: Viewport, quadtree: EntityQuadtree) {
     Assert.instanceOf("entityManager", entityManager, EntityManager);
@@ -24,11 +25,13 @@ export class CollisionDetector {
 
     this.entityCollisions = new PairedSet();
     this.viewportCollisions = new Set();
+    this.collisionChecks = 0;
   }
 
   detect(collidables: Collidable[]) {
     this.entityCollisions.clear();
     this.viewportCollisions.clear();
+    this.collisionChecks = 0;
 
     for (let i = 0; i < collidables.length; i++) {
       const [idA, entityA] = collidables[i];
@@ -37,9 +40,8 @@ export class CollisionDetector {
         this.viewportCollisions.add(idA);
       }
 
-      const possibleCollisions = this.quadtree.findPossibleCollisions(entityA.Position, entityA.Size);
-
       for (let j = 0; j < collidables.length; j++) {
+        this.collisionChecks++;
         const [idB, entityB] = collidables[j];
 
         if (idA === idB || entityA.Collision!.collisionLayer !== entityB.Collision!.collisionLayer) {
