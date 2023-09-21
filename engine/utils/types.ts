@@ -19,7 +19,11 @@ export type InputBindingFn = (entityId: number, entityManager: EntityManager, dt
 export type InputBindingType = "held" | "pressed" | "released";
 export type InputBindings = { [K in InputBindingType]?: InputBindingFn };
 
-export type Collidable = [number, PhysicsSystemComponents];
+export type CollidableComponents = DefinedExcept<
+  PhysicsSystemComponents,
+  "Acceleration" | "Friction" | "GravityFactor" | "Mass"
+>;
+export type Collidable = [number, CollidableComponents];
 export type CollisionLayer = "DEFAULT" | "PLAYER" | "ENEMY";
 
 type CollisionBehaviour = "NONE" | "BOUNCE";

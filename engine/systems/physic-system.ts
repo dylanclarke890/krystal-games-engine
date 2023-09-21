@@ -4,7 +4,7 @@ import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
-import { Collidable, ComponentType, PhysicsSystemComponents } from "../utils/types.js";
+import { Collidable, CollidableComponents, ComponentType, PhysicsSystemComponents } from "../utils/types.js";
 import { Mass } from "../components/index.js";
 import { EventSystem } from "../events/event-system.js";
 import { EntityQuadtree } from "../entities/entity-quadtree.js";
@@ -74,8 +74,7 @@ export class PhysicSystem extends System {
       entity.Position.add(entity.Velocity.x * dt, entity.Velocity.y * dt);
 
       if (typeof entity.Collision !== "undefined" && typeof entity.Size !== "undefined") {
-        this.entityQuadtree.insertEntity(entityId, entity.Position, entity.Size);
-        collidables.push([entityId, entity]);
+        collidables.push([entityId, entity as CollidableComponents]);
       }
     }
 
