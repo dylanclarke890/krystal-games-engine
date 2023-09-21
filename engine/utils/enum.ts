@@ -36,9 +36,9 @@ export class Enum {
     return `${this.name}: {${entries}}`;
   }
 
-  enumKey: string | undefined;
-  enumOrdinal: number | undefined;
-  #value: number | any;
+  enumKey!: string;
+  enumOrdinal!: number;
+  #value: number | undefined;
 
   /**
    * @param value Optional value to use instead of the enum's index.

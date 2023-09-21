@@ -1,11 +1,56 @@
 import { Assert } from "./assert.js";
+import { Enum } from "./enum.js";
 import { Vector2D } from "./maths/vector-2d.js";
 
-enum Quadrant {
-  NorthWest,
-  NorthEast,
-  SouthWest,
-  SouthEast,
+class Quadrant extends Enum {
+  static NorthWest = new Quadrant();
+  static NorthEast = new Quadrant();
+  static SouthWest = new Quadrant();
+  static SouthEast = new Quadrant();
+
+  static {
+    this.freeze();
+  }
+}
+
+/** A 2d spatial subdivision algorithm data structure. */
+export class Quadtree {
+  /** The node representing the entire viewport/bounds. */
+  root: QuadtreeNode;
+  size: number;
+
+  /**
+   * @param position Vector with x, y properties representing the top left position of the bounds.
+   * @param size Vector with x, y properties representing the size of the bounds.
+   * @param maxDepth The maximum number of levels that the quadtree will create. Default is 4.
+   * @param maxChildren The maximum number of items per quadrant before subdividing. Default is 4.
+   **/
+  constructor(position: Vector2D, size: Vector2D, { maxDepth = 4, maxChildren = 4 } = {}) {
+    Assert.instanceOf("position", position, Vector2D);
+    Assert.instanceOf("size", size, Vector2D);
+
+    this.size = 0;
+    this.root = new QuadtreeNode(position, size, 0, maxDepth, maxChildren);
+  }
+
+  insert(node: QuadtreeNode | QuadtreeNode[]) {
+    if (Array.isArray(node)) {
+      this.size += node.length;
+      this.root.insert(node);
+    } else {
+      this.size++;
+      this.root.insert(node);
+    }
+  }
+
+  clear() {
+    this.root.clear();
+    this.size = 0;
+  }
+
+  retrieve(node: QuadtreeNode) {
+    return this.root.retrieve(node);
+  }
 }
 
 export class QuadtreeNode {
@@ -38,8 +83,10 @@ export class QuadtreeNode {
 
     if (this.#children.length) {
       const quadrant = this.findQuadrant(node);
-      if (this.isInBounds(node, this.#children[quadrant])) {
-        this.#children[quadrant].insert(node);
+      const index = quadrant.valueOf();
+
+      if (this.isInBounds(node, this.#children[index])) {
+        this.#children[index].insert(node);
       } else {
         this.#overlappingChildren.push(node);
       }
@@ -57,7 +104,9 @@ export class QuadtreeNode {
     // If this node is subdivided
     if (this.#children.length) {
       const quadrant = this.findQuadrant(node);
-      return this.#children[quadrant].retrieve(node).concat(this.#overlappingChildren);
+      const index = quadrant.valueOf();
+
+      return this.#children[index].retrieve(node).concat(this.#overlappingChildren);
     }
 
     return this.#nodes;
@@ -114,42 +163,3 @@ export class QuadtreeNode {
   }
 }
 
-/** A 2d spatial subdivision algorithm data structure. */
-export class Quadtree {
-  /** The node representing the entire viewport/bounds. */
-  root: QuadtreeNode;
-  size: number;
-
-  /**
-   * @param position Vector with x, y properties representing the top left position of the bounds.
-   * @param size Vector with x, y properties representing the size of the bounds.
-   * @param maxDepth The maximum number of levels that the quadtree will create. Default is 4.
-   * @param maxChildren The maximum number of items per quadrant before subdividing. Default is 4.
-   **/
-  constructor(position: Vector2D, size: Vector2D, { maxDepth = 4, maxChildren = 4 } = {}) {
-    Assert.instanceOf("position", position, Vector2D);
-    Assert.instanceOf("size", size, Vector2D);
-
-    this.size = 0;
-    this.root = new QuadtreeNode(position, size, 0, maxDepth, maxChildren);
-  }
-
-  insert(node: QuadtreeNode | QuadtreeNode[]) {
-    if (Array.isArray(node)) {
-      this.size += node.length;
-      this.root.insert(node);
-    } else {
-      this.size++;
-      this.root.insert(node);
-    }
-  }
-
-  clear() {
-    this.root.clear();
-    this.size = 0;
-  }
-
-  retrieve(node: QuadtreeNode) {
-    return this.root.retrieve(node);
-  }
-}
