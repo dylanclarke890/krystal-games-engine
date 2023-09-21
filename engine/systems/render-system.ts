@@ -26,34 +26,34 @@ export class RenderSystem extends System {
     this.viewport.clear();
 
     for (const id of entities) {
-      const entity = this.entityManager.getComponents(id, RenderSystem.components) as SystemComponents;
+      const components = this.entityManager.getComponents(id, RenderSystem.components) as SystemComponents;
 
-      if (typeof entity.Shape !== "undefined") {
-        this.drawShape(entity.Shape, entity.Position);
+      if (typeof components.Shape !== "undefined") {
+        this.drawShape(components.Shape, components.Position);
       }
 
-      if (typeof entity.Sprite !== "undefined") {
-        if (typeof entity.Animation === "undefined") {
-          this.drawSprite(entity.Sprite, entity.Position, 0, 0);
+      if (typeof components.Sprite !== "undefined") {
+        if (typeof components.Animation === "undefined") {
+          this.drawSprite(components.Sprite, components.Position, 0, 0);
           continue;
         }
 
         // Update current animation frame of sprite
-        const frameTotal = Math.floor(dt / entity.Animation.frameDuration);
-        entity.Animation.loopCount = Math.floor(frameTotal / entity.Animation.sequence.length);
-        if (entity.Animation.stop && entity.Animation.loopCount > 0)
-          entity.Animation.frame = entity.Animation.sequence.length - 1;
-        else entity.Animation.frame = frameTotal % entity.Animation.sequence.length;
+        const frameTotal = Math.floor(dt / components.Animation.frameDuration);
+        components.Animation.loopCount = Math.floor(frameTotal / components.Animation.sequence.length);
+        if (components.Animation.stop && components.Animation.loopCount > 0)
+          components.Animation.frame = components.Animation.sequence.length - 1;
+        else components.Animation.frame = frameTotal % components.Animation.sequence.length;
 
         // Calculate source position in the sprite sheet
-        const { width, height, columns } = entity.Sprite;
-        const currentTile = entity.Animation.sequence[entity.Animation.frame];
+        const { width, height, columns } = components.Sprite;
+        const currentTile = components.Animation.sequence[components.Animation.frame];
         const currentColumn = currentTile % columns;
         const currentRow = Math.floor(currentTile / columns);
         const sourceX = currentColumn * width;
         const sourceY = currentRow * height;
 
-        this.drawSprite(entity.Sprite, entity.Position, sourceX, sourceY);
+        this.drawSprite(components.Sprite, components.Position, sourceX, sourceY);
       }
     }
   }

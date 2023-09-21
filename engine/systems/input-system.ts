@@ -24,12 +24,12 @@ export class InputSystem extends System {
     this.inputManager.clearPressed();
 
     for (const id of entities) {
-      const entity = em.getComponents(id, InputSystem.components);
-      if (typeof entity.Input === "undefined") {
+      const components = em.getComponents(id, InputSystem.components);
+      if (typeof components.Input === "undefined") {
         continue;
       }
 
-      for (const [action, { pressed, held, released }] of entity.Input.actions) {
+      for (const [action, { pressed, held, released }] of components.Input.actions) {
         const state = this.inputManager.state(action);
         if (state.pressed && typeof pressed === "function") pressed(id, em, dt);
         if (state.held && typeof held === "function") held(id, em, dt);
