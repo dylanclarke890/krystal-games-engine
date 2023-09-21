@@ -37,6 +37,8 @@ export class CollisionDetector {
         this.viewportCollisions.add(idA);
       }
 
+      const possibleCollisions = this.quadtree.findPossibleCollisions(entityA.Position, entityA.Size);
+
       for (let j = 0; j < collidables.length; j++) {
         const [idB, entityB] = collidables[j];
 
