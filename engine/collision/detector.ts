@@ -34,22 +34,25 @@ export class CollisionDetector {
     this.collisionChecks = 0;
 
     for (let i = 0; i < collidables.length; i++) {
-      const [idA, entityA] = collidables[i];
+      const [aId, aComponents] = collidables[i];
 
-      if (this.viewportCollisionCheck(entityA.Position, entityA.Size!)) {
-        this.viewportCollisions.add(idA);
+      if (this.viewportCollisionCheck(aComponents.Position, aComponents.Size!)) {
+        this.viewportCollisions.add(aId);
       }
 
-      for (let j = 0; j < collidables.length; j++) {
-        this.collisionChecks++;
-        const [idB, entityB] = collidables[j];
+      const possibleCollisions = this.quadtree.findPossibleCollisions(aComponents.Position, aComponents.Size);
 
-        if (idA === idB || entityA.Collision!.collisionLayer !== entityB.Collision!.collisionLayer) {
+      for (let j = 0; j < possibleCollisions.length; j++) {
+        this.collisionChecks++;
+        const bEntityNode = possibleCollisions[j];
+        const bId = bEntityNode.entityId;
+        const bCollision = this.entityManager.getComponents(bId, ["Collision"]).Collision!;
+        if (aId === bId || aComponents.Collision.collisionLayer !== bCollision.collisionLayer) {
           continue;
         }
 
-        if (this.AABBCollisionCheck(entityA.Position, entityA.Size!, entityB.Position, entityB.Size!)) {
-          this.entityCollisions.add(idA, idB);
+        if (this.AABBCollisionCheck(aComponents.Position, aComponents.Size, bEntityNode.position, bEntityNode.size)) {
+          this.entityCollisions.add(aId, bId);
         }
       }
     }
