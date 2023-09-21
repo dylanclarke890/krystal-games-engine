@@ -53,25 +53,27 @@ export class Quadtree {
 }
 
 export class QuadtreeNode {
-  bounds: { position: Vector2D; size: Vector2D };
+  position: Vector2D;
+  size: Vector2D;
 
-  #nodes: QuadtreeNode[];
+  nodes: QuadtreeNode[];
 
-  #children: QuadtreeNode[];
-  #overlappingChildren: QuadtreeNode[];
-  #maxChildren: number;
+  children: QuadtreeNode[];
+  overlappingChildren: QuadtreeNode[];
+  maxChildren: number;
 
-  #depth: number;
-  #maxDepth: number;
+  depth: number;
+  maxDepth: number;
 
   constructor(position: Vector2D, size: Vector2D, depth = 0, maxDepth = 4, maxChildren = 4) {
-    this.bounds = { position, size };
-    this.#depth = depth;
-    this.#maxChildren = maxChildren;
-    this.#maxDepth = maxDepth;
-    this.#nodes = [];
-    this.#children = [];
-    this.#overlappingChildren = [];
+    this.position = position;
+    this.size = size;
+    this.depth = depth;
+    this.maxChildren = maxChildren;
+    this.maxDepth = maxDepth;
+    this.nodes = [];
+    this.children = [];
+    this.overlappingChildren = [];
   }
 
   insert(node: QuadtreeNode | QuadtreeNode[]) {
@@ -80,70 +82,70 @@ export class QuadtreeNode {
       return;
     }
 
-    if (this.#children.length) {
+    if (this.children.length) {
       const quadrant = this.findQuadrant(node);
       const index = quadrant.valueOf();
 
-      if (this.isInBounds(node, this.#children[index])) {
-        this.#children[index].insert(node);
+      if (this.isInBounds(node, this.children[index])) {
+        this.children[index].insert(node);
       } else {
-        this.#overlappingChildren.push(node);
+        this.overlappingChildren.push(node);
       }
       return;
     }
 
-    this.#nodes.push(node);
+    this.nodes.push(node);
 
-    if (this.#nodes.length > this.#maxChildren && this.#depth < this.#maxDepth) {
+    if (this.nodes.length > this.maxChildren && this.depth < this.maxDepth) {
       this.subdivide();
     }
   }
 
   retrieve(node: QuadtreeNode): QuadtreeNode[] {
     // If this node is subdivided
-    if (this.#children.length) {
+    if (this.children.length) {
       const quadrant = this.findQuadrant(node);
       const index = quadrant.valueOf();
 
-      return this.#children[index].retrieve(node).concat(this.#overlappingChildren);
+      return this.children[index].retrieve(node).concat(this.overlappingChildren);
     }
 
-    return this.#nodes;
+    return this.nodes;
   }
 
   subdivide() {
-    const halfWidth = this.bounds.size.x / 2;
-    const halfHeight = this.bounds.size.y / 2;
+    const halfWidth = this.size.x / 2;
+    const halfHeight = this.size.y / 2;
 
     // Positions of the children quadrants
     const positions = [
-      new Vector2D(this.bounds.position.x, this.bounds.position.y), // NW
-      new Vector2D(this.bounds.position.x + halfWidth, this.bounds.position.y), // NE
-      new Vector2D(this.bounds.position.x, this.bounds.position.y + halfHeight), // SW
-      new Vector2D(this.bounds.position.x + halfWidth, this.bounds.position.y + halfHeight), // SE
+      new Vector2D(this.position.x, this.position.y), // NW
+      new Vector2D(this.position.x + halfWidth, this.position.y), // NE
+      new Vector2D(this.position.x, this.position.y + halfHeight), // SW
+      new Vector2D(this.position.x + halfWidth, this.position.y + halfHeight), // SE
     ];
 
     const size = new Vector2D(halfWidth, halfHeight);
 
-    this.#children = positions.map(
-      (pos) => new QuadtreeNode(pos, size, this.#depth + 1, this.#maxDepth, this.#maxChildren)
+    this.children = positions.map(
+      (pos) => new QuadtreeNode(pos, size, this.depth + 1, this.maxDepth, this.maxChildren)
     );
 
-    const nodes = [...this.#nodes];
-    this.#nodes.length = 0;
+    const nodes = [...this.nodes];
+    this.nodes.length = 0;
     this.insert(nodes);
   }
 
   clear() {
-    this.#children.length = 0;
-    this.#overlappingChildren.length = 0;
-    this.#nodes.forEach((n) => n.clear());
-    this.#nodes.length = 0;
+    this.children.length = 0;
+    this.overlappingChildren.length = 0;
+    this.nodes.forEach((n) => n.clear());
+    this.nodes.length = 0;
   }
 
   findQuadrant(node: QuadtreeNode): Quadrant {
-    const left = node.bounds.position.x < this.bounds.position.x + this.bounds.size.x / 2;
-    const top = node.bounds.position.y < this.bounds.position.y + this.bounds.size.y / 2;
+    const left = node.position.x < this.position.x + this.size.x / 2;
+    const top = node.position.y < this.position.y + this.size.y / 2;
 
     if (left) {
       return top ? Quadrant.NorthWest : Quadrant.SouthWest;
@@ -154,10 +156,10 @@ export class QuadtreeNode {
 
   isInBounds(a: QuadtreeNode, b: QuadtreeNode): boolean {
     return (
-      a.bounds.position.x >= b.bounds.position.x &&
-      a.bounds.position.x + a.bounds.size.x <= b.bounds.position.x + b.bounds.size.x &&
-      a.bounds.position.y >= b.bounds.position.y &&
-      a.bounds.position.y + a.bounds.size.y <= b.bounds.position.y + b.bounds.size.y
+      a.position.x >= b.position.x &&
+      a.position.x + a.size.x <= b.position.x + b.size.x &&
+      a.position.y >= b.position.y &&
+      a.position.y + a.size.y <= b.position.y + b.size.y
     );
   }
 }

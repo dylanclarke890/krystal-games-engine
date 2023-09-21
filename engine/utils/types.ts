@@ -1,4 +1,3 @@
-import { Position, Collision } from "../components/index.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Vector2D } from "./maths/vector-2d.js";
 
@@ -11,12 +10,16 @@ export type Components<TRequired extends ComponentType, TOptional extends Compon
   TOptional
 >;
 export type RequiredComponents<T extends ComponentType> = Defined<ComponentMap<T>>;
+export type PhysicsSystemComponents = Components<
+  "Position" | "Velocity",
+  "Acceleration" | "Friction" | "Collision" | "GravityFactor" | "Mass" | "Size"
+>;
 
 export type InputBindingFn = (entityId: number, entityManager: EntityManager, dt: number) => void;
 export type InputBindingType = "held" | "pressed" | "released";
 export type InputBindings = { [K in InputBindingType]?: InputBindingFn };
 
-export type Collidable = [number, Position, Collision];
+export type Collidable = [number, PhysicsSystemComponents];
 export type CollisionLayer = "DEFAULT" | "PLAYER" | "ENEMY";
 
 type CollisionBehaviour = "NONE" | "BOUNCE";

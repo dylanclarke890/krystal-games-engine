@@ -1,4 +1,5 @@
 import { EntityManager } from "../entities/entity-manager.js";
+import { EventSystem } from "../events/event-system.js";
 import { Assert } from "../utils/assert.js";
 import { ComponentType } from "../utils/types.js";
 import { SystemTypes } from "./system-types.js";
@@ -6,11 +7,15 @@ import { SystemTypes } from "./system-types.js";
 export class System {
   static requiredComponents: ComponentType[];
   static systemType: SystemTypes;
-  entityManager: EntityManager;
 
-  constructor(entityManager: EntityManager) {
+  entityManager: EntityManager;
+  eventSystem: EventSystem;
+
+  constructor(entityManager: EntityManager, eventSystem: EventSystem) {
     Assert.instanceOf("entityManager", entityManager, EntityManager);
+    Assert.instanceOf("eventSystem", eventSystem, EventSystem);
     this.entityManager = entityManager;
+    this.eventSystem = eventSystem;
   }
 
   setup() {

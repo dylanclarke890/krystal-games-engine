@@ -5,6 +5,7 @@ import { EntityManager } from "../entities/entity-manager.js";
 import { Sprite, Position, Shape } from "../components/index.js";
 import { Assert } from "../utils/assert.js";
 import { ComponentType, Components } from "../utils/types.js";
+import { EventSystem } from "../events/event-system.js";
 
 type SystemComponents = Components<"Position", "Animation" | "Sprite" | "Shape">;
 export class RenderSystem extends System {
@@ -14,8 +15,8 @@ export class RenderSystem extends System {
 
   viewport: Viewport;
 
-  constructor(entityManager: EntityManager, viewport: Viewport) {
-    super(entityManager);
+  constructor(entityManager: EntityManager, eventSystem: EventSystem, viewport: Viewport) {
+    super(entityManager, eventSystem);
     Assert.instanceOf("viewport", viewport, Viewport);
     this.viewport = viewport;
   }

@@ -3,11 +3,9 @@ import { EntityManager } from "../entities/entity-manager.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";
-import { Collidable, ComponentType } from "../utils/types.js";
+import { Collidable } from "../utils/types.js";
 
 export class CollisionDetector {
-  static components: ComponentType[] = ["Size"];
-
   entityManager: EntityManager;
   viewport: Viewport;
   entityCollisions: PairedSet<number>;
@@ -27,23 +25,21 @@ export class CollisionDetector {
     this.viewportCollisions.clear();
 
     for (let i = 0; i < collidables.length; i++) {
-      const [a, posA, collisionA] = collidables[i];
-      const entityA = this.entityManager.getComponents(a, CollisionDetector.components);
+      const [idA, entityA] = collidables[i];
 
-      if (this.viewportCollisionCheck(posA, entityA.Size!)) {
-        this.viewportCollisions.add(a);
+      if (this.viewportCollisionCheck(entityA.Position, entityA.Size!)) {
+        this.viewportCollisions.add(idA);
       }
 
       for (let j = 0; j < collidables.length; j++) {
-        const [b, posB, collisionB] = collidables[j];
+        const [idB, entityB] = collidables[j];
 
-        if (a === b || collisionA.collisionLayer !== collisionB.collisionLayer) {
+        if (idA === idB || entityA.Collision!.collisionLayer !== entityB.Collision!.collisionLayer) {
           continue;
         }
 
-        const entityB = this.entityManager.getComponents(b, CollisionDetector.components);
-        if (this.AABBCollisionCheck(posA, entityA.Size!, posB, entityB.Size!)) {
-          this.entityCollisions.add(a, b);
+        if (this.AABBCollisionCheck(entityA.Position, entityA.Size!, entityB.Position, entityB.Size!)) {
+          this.entityCollisions.add(idA, idB);
         }
       }
     }

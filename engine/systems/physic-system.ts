@@ -4,13 +4,10 @@ import { SystemTypes } from "./system-types.js";
 import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
-import { Collidable, ComponentType, Components } from "../utils/types.js";
+import { Collidable, ComponentType, PhysicsSystemComponents } from "../utils/types.js";
 import { Mass } from "../components/index.js";
-
-type SystemComponents = Components<
-  "Position" | "Velocity",
-  "Acceleration" | "Friction" | "Collision" | "GravityFactor" | "Mass"
->;
+import { EventSystem } from "../events/event-system.js";
+import { EntityQuadtree } from "../entities/entity-quadtree.js";
 
 export class PhysicSystem extends System {
   static requiredComponents: ComponentType[] = ["Position", "Velocity"];
@@ -21,22 +18,29 @@ export class PhysicSystem extends System {
     "Collision",
     "GravityFactor",
     "Mass",
+    "Size",
   ];
 
   static defaultComponents = { mass: new Mass(1) };
   static systemType = SystemTypes.Physics;
 
+  entityQuadtree: EntityQuadtree;
   collisionDetector: CollisionDetector;
   collisionResolver: CollisionResolver;
 
   constructor(
     entityManager: EntityManager,
+    entityQuadtree: EntityQuadtree,
+    eventSystem: EventSystem,
     collisionDetector: CollisionDetector,
     collisionResolver: CollisionResolver
   ) {
-    super(entityManager);
+    super(entityManager, eventSystem);
     Assert.instanceOf("collisionDetector", collisionDetector, CollisionDetector);
     Assert.instanceOf("collisionResolver", collisionResolver, CollisionResolver);
+    Assert.instanceOf("entityQuadtree", entityQuadtree, EntityQuadtree);
+
+    this.entityQuadtree = entityQuadtree;
     this.collisionDetector = collisionDetector;
     this.collisionResolver = collisionResolver;
   }
@@ -45,10 +49,11 @@ export class PhysicSystem extends System {
     const em = this.entityManager;
     const defaults = PhysicSystem.defaultComponents;
     const collidables: Collidable[] = [];
+    this.entityQuadtree.clear();
 
     for (let i = 0; i < entities.length; i++) {
       const entityId = entities[i];
-      const entity = em.getComponents(entityId, PhysicSystem.components) as SystemComponents;
+      const entity = em.getComponents(entityId, PhysicSystem.components) as PhysicsSystemComponents;
 
       entity.Mass ??= defaults.mass;
       const mass = entity.Mass.value;
@@ -68,8 +73,9 @@ export class PhysicSystem extends System {
 
       entity.Position.add(entity.Velocity.x * dt, entity.Velocity.y * dt);
 
-      if (typeof entity.Collision !== "undefined") {
-        collidables.push([entityId, entity.Position, entity.Collision]);
+      if (typeof entity.Collision !== "undefined" && typeof entity.Size !== "undefined") {
+        this.entityQuadtree.insertEntity(entityId, entity.Position, entity.Size);
+        collidables.push([entityId, entity]);
       }
     }
 

@@ -4,6 +4,7 @@ import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
 import { ComponentType } from "../utils/types.js";
+import { EventSystem } from "../events/event-system.js";
 
 export class InputSystem extends System {
   static requiredComponents: ComponentType[] = ["Input"];
@@ -12,8 +13,8 @@ export class InputSystem extends System {
 
   inputManager: InputManager;
 
-  constructor(entityManager: EntityManager, inputManager: InputManager) {
-    super(entityManager);
+  constructor(entityManager: EntityManager, eventSystem: EventSystem, inputManager: InputManager) {
+    super(entityManager, eventSystem);
     Assert.instanceOf("inputManager", inputManager, InputManager);
     this.inputManager = inputManager;
   }
