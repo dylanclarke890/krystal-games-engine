@@ -19,7 +19,7 @@ export class InputSystem extends System {
     this.inputManager = inputManager;
   }
 
-  update(dt: number, entities: number[]) {
+  update(dt: number, entities: Set<number>) {
     const em = this.entityManager;
     this.inputManager.clearPressed();
 

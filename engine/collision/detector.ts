@@ -1,5 +1,6 @@
 import { Position, Size } from "../components/index.js";
 import { EntityManager } from "../entities/entity-manager.js";
+import { EntityQuadtree } from "../entities/entity-quadtree.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";
@@ -7,15 +8,20 @@ import { Collidable } from "../utils/types.js";
 
 export class CollisionDetector {
   entityManager: EntityManager;
+  quadtree: EntityQuadtree;
   viewport: Viewport;
   entityCollisions: PairedSet<number>;
   viewportCollisions: Set<number>;
 
-  constructor(entityManager: EntityManager, viewport: Viewport) {
+  constructor(entityManager: EntityManager, quadtree: EntityQuadtree, viewport: Viewport) {
     Assert.instanceOf("entityManager", entityManager, EntityManager);
+    Assert.instanceOf("quadtree", quadtree, EntityQuadtree);
     Assert.instanceOf("viewport", viewport, Viewport);
+
     this.entityManager = entityManager;
+    this.quadtree = quadtree;
     this.viewport = viewport;
+
     this.entityCollisions = new PairedSet();
     this.viewportCollisions = new Set();
   }

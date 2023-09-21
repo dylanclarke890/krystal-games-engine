@@ -35,15 +35,14 @@ export class Game {
   setup() {
     const entityManager = this.entityManager;
     const eventSystem = this.eventSystem;
-    const detector = new CollisionDetector(entityManager, this.viewport);
+    const { width, height } = this.viewport;
+
+    const quadtree = new EntityQuadtree(new Vector2D(0, 0), new Vector2D(width, height), { maxDepth: 20 });
+    const detector = new CollisionDetector(entityManager, quadtree, this.viewport);
     const resolver = new CollisionResolver(entityManager, this.viewport);
 
-    const { width, height } = this.viewport;
-    const viewportSettings = { maxChildren: 8, maxDepth: 20 };
-    const quadtree = new EntityQuadtree(new Vector2D(0, 0), new Vector2D(width, height), viewportSettings);
-
     this.systemManager.registerSystem(new InputSystem(entityManager, eventSystem, this.inputManager));
-    this.systemManager.registerSystem(new PhysicSystem(entityManager, quadtree, eventSystem, detector, resolver));
+    this.systemManager.registerSystem(new PhysicSystem(entityManager, eventSystem, quadtree, detector, resolver));
     this.systemManager.registerSystem(new RenderSystem(entityManager, eventSystem, this.viewport));
   }
 

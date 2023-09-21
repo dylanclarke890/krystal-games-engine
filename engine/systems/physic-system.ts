@@ -24,62 +24,61 @@ export class PhysicSystem extends System {
   static defaultComponents = { mass: new Mass(1) };
   static systemType = SystemTypes.Physics;
 
-  entityQuadtree: EntityQuadtree;
-  collisionDetector: CollisionDetector;
-  collisionResolver: CollisionResolver;
+  quadtree: EntityQuadtree;
+  detector: CollisionDetector;
+  resolver: CollisionResolver;
 
   constructor(
     entityManager: EntityManager,
-    entityQuadtree: EntityQuadtree,
     eventSystem: EventSystem,
-    collisionDetector: CollisionDetector,
-    collisionResolver: CollisionResolver
+    quadtree: EntityQuadtree,
+    detector: CollisionDetector,
+    resolver: CollisionResolver
   ) {
     super(entityManager, eventSystem);
-    Assert.instanceOf("collisionDetector", collisionDetector, CollisionDetector);
-    Assert.instanceOf("collisionResolver", collisionResolver, CollisionResolver);
-    Assert.instanceOf("entityQuadtree", entityQuadtree, EntityQuadtree);
+    Assert.instanceOf("detector", detector, CollisionDetector);
+    Assert.instanceOf("resolver", resolver, CollisionResolver);
+    Assert.instanceOf("quadtree", quadtree, EntityQuadtree);
 
-    this.entityQuadtree = entityQuadtree;
-    this.collisionDetector = collisionDetector;
-    this.collisionResolver = collisionResolver;
+    this.quadtree = quadtree;
+    this.detector = detector;
+    this.resolver = resolver;
   }
 
-  update(dt: number, entities: number[]) {
+  update(dt: number, entities: Set<number>) {
     const em = this.entityManager;
     const defaults = PhysicSystem.defaultComponents;
     const collidables: Collidable[] = [];
-    this.entityQuadtree.clear();
+    this.quadtree.clear();
 
-    for (let i = 0; i < entities.length; i++) {
-      const entityId = entities[i];
-      const entity = em.getComponents(entityId, PhysicSystem.components) as PhysicsSystemComponents;
+    entities.forEach((entityId) => {
+      const components = em.getComponents(entityId, PhysicSystem.components) as PhysicsSystemComponents;
 
-      entity.Mass ??= defaults.mass;
-      const mass = entity.Mass.value;
+      components.Mass ??= defaults.mass;
+      const mass = components.Mass.value;
 
-      if (typeof entity.Acceleration !== "undefined") {
-        const accel = entity.Acceleration;
-        entity.Velocity.add((accel.x / mass) * dt, (accel.y / mass) * dt);
+      if (typeof components.Acceleration !== "undefined") {
+        const accel = components.Acceleration;
+        components.Velocity.add((accel.x / mass) * dt, (accel.y / mass) * dt);
       }
 
-      if (typeof entity.Friction !== "undefined") {
-        entity.Velocity.sub(entity.Friction.x * mass * dt, entity.Friction.y * mass * dt);
+      if (typeof components.Friction !== "undefined") {
+        components.Velocity.sub(components.Friction.x * mass * dt, components.Friction.y * mass * dt);
       }
 
-      if (typeof entity.GravityFactor !== "undefined") {
-        entity.Velocity.add(0, entity.GravityFactor.value * mass * dt);
+      if (typeof components.GravityFactor !== "undefined") {
+        components.Velocity.add(0, components.GravityFactor.value * mass * dt);
       }
 
-      entity.Position.add(entity.Velocity.x * dt, entity.Velocity.y * dt);
+      components.Position.add(components.Velocity.x * dt, components.Velocity.y * dt);
 
-      if (typeof entity.Collision !== "undefined" && typeof entity.Size !== "undefined") {
-        collidables.push([entityId, entity as CollidableComponents]);
+      if (typeof components.Collision !== "undefined" && typeof components.Size !== "undefined") {
+        collidables.push([entityId, components as CollidableComponents]);
+        this.quadtree.insertEntity(entityId, components.Position, components.Size);
       }
-    }
+    });
 
-    this.collisionDetector.detect(collidables);
-    this.collisionResolver.resolveEntityCollisions(this.collisionDetector.entityCollisions);
-    this.collisionResolver.resolveViewportCollisions(this.collisionDetector.viewportCollisions);
+    this.detector.detect(collidables);
+    this.resolver.resolve(this.detector);
   }
 }

@@ -6,6 +6,7 @@ import { PairedSet } from "../utils/paired-set.js";
 import { ComponentType, Components } from "../utils/types.js";
 
 type ResolverComponents = Components<"Position" | "Velocity" | "Size" | "Collision", "Bounciness" | "Mass">;
+type IResolverData = { entityCollisions: PairedSet<number>; viewportCollisions: Set<number> };
 
 export class CollisionResolver {
   static components: ComponentType[] = ["Position", "Velocity", "Size", "Collision", "Bounciness", "Mass"];
@@ -22,11 +23,16 @@ export class CollisionResolver {
   }
 
   getComponentsForEntity(entityId: number): Defined<ResolverComponents> {
-    const entity = this.entityManager.getComponents(entityId, CollisionResolver.components) as ResolverComponents;
-    entity.Bounciness ??= CollisionResolver.componentDefaults.bounce;
-    entity.Mass ??= CollisionResolver.componentDefaults.mass;
+    const components = this.entityManager.getComponents(entityId, CollisionResolver.components) as ResolverComponents;
+    components.Bounciness ??= CollisionResolver.componentDefaults.bounce;
+    components.Mass ??= CollisionResolver.componentDefaults.mass;
 
-    return entity as Defined<ResolverComponents>;
+    return components as Defined<ResolverComponents>;
+  }
+
+  resolve(data: IResolverData) {
+    this.resolveEntityCollisions(data.entityCollisions);
+    this.resolveViewportCollisions(data.viewportCollisions);
   }
 
   resolveEntityCollisions(entityCollisions: PairedSet<number>) {

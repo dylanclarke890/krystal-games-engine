@@ -9,6 +9,7 @@ export class SystemManager {
   eventSystem: EventSystem;
   entityManager: EntityManager;
   systems: Set<System>;
+  buckets: Map<string, Set<number>>;
 
   /**
    * @param {EventSystem} eventSystem
@@ -22,6 +23,8 @@ export class SystemManager {
     this.entityManager = entityManager;
 
     this.systems = new Set();
+    this.buckets = new Map();
+
     this.eventSystem.on(GameEvents.Loop_BeforeStart, () =>
       this.systems.forEach((system) => this.#validateSystem(system))
     );
@@ -38,17 +41,19 @@ export class SystemManager {
   }
 
   registerSystem(system: System) {
-    Assert.defined("System", system);
+    Assert.instanceOf("System", system, System);
     this.systems.add(system);
+    system.setup();
   }
 
   unregisterSystem(system: System) {
-    Assert.defined("System", system);
+    Assert.instanceOf("System", system, System);
+    system.cleanup();
     this.systems.delete(system);
   }
 
   update(dt: number) {
-    const buckets: { [x: string]: number[] } = {};
+    this.buckets.clear();
 
     this.entityManager.entities.forEach((entity) => {
       this.systems.forEach((system) => {
@@ -58,13 +63,15 @@ export class SystemManager {
         }
 
         const name = (<typeof System>system.constructor).name;
-        buckets[name] ??= [];
-        buckets[name].push(entity);
+        if (!this.buckets.has(name)) {
+          this.buckets.set(name, new Set());
+        }
+        this.buckets.get(name)!.add(entity);
       });
     });
 
     this.systems.forEach((system) => {
-      system.update(dt, buckets[system.constructor.name] ?? []);
+      system.update(dt, this.buckets.get(system.constructor.name) ?? new Set());
     });
   }
 }

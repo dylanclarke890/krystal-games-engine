@@ -21,11 +21,10 @@ export class RenderSystem extends System {
     this.viewport = viewport;
   }
 
-  update(dt: number, entities: number[]) {
+  update(dt: number, entities: Set<number>) {
     this.viewport.clear();
 
-    for (let i = 0; i < entities.length; i++) {
-      const entityId = entities[i];
+    entities.forEach((entityId) => {
       const entity = this.entityManager.getComponents(entityId, RenderSystem.components) as SystemComponents;
 
       if (typeof entity.Shape !== "undefined") {
@@ -35,7 +34,7 @@ export class RenderSystem extends System {
       if (typeof entity.Sprite !== "undefined") {
         if (typeof entity.Animation === "undefined") {
           this.drawSprite(entity.Sprite, entity.Position, 0, 0);
-          continue;
+          return;
         }
 
         // Update current animation frame of sprite
@@ -55,7 +54,7 @@ export class RenderSystem extends System {
 
         this.drawSprite(entity.Sprite, entity.Position, sourceX, sourceY);
       }
-    }
+    });
   }
 
   drawSprite(sprite: Sprite, position: Position, sourceX: number, sourceY: number): void {
