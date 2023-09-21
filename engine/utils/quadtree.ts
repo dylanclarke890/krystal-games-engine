@@ -1,6 +1,5 @@
 import { Assert } from "./assert.js";
 import { Vector2D } from "./maths/vector-2d.js";
-import { Bounds } from "./types.js";
 
 enum Quadrant {
   NorthWest,
@@ -9,20 +8,7 @@ enum Quadrant {
   SouthEast,
 }
 
-interface INode {
-  bounds: Bounds;
-  nodes: INode[];
-  children: INode[];
-  maxChildren: number;
-  depth: number;
-  maxDepth: number;
-
-  insert(item: INode | INode[]): void;
-  retrieve(item: INode): INode[];
-  clear(): void;
-}
-
-export class PointNode implements INode {
+export class PointNode {
   bounds: { position: Vector2D; size: Vector2D };
   nodes: PointNode[];
   children: PointNode[];
@@ -107,7 +93,7 @@ export class PointNode implements INode {
   }
 }
 
-export class BoundsNode extends PointNode implements INode {
+export class BoundsNode extends PointNode {
   #overlappingChildren: BoundsNode[];
 
   constructor(position: Vector2D, size: Vector2D, depth = 0, maxDepth = 4, maxChildren = 4) {
