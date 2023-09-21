@@ -1,5 +1,6 @@
 import { Position, Size } from "../components/index.js";
 import { Viewport } from "../graphics/viewport.js";
+import { Assert } from "../utils/assert.js";
 import { Quadtree, QuadtreeNode } from "../utils/quadtree.js";
 
 export class EntityQuadtreeNode extends QuadtreeNode {
@@ -12,8 +13,12 @@ export class EntityQuadtreeNode extends QuadtreeNode {
 }
 
 export class EntityQuadtree extends Quadtree {
+  viewport: Viewport;
+
   constructor(viewport: Viewport, options?: { maxDepth?: number; maxChildren?: number }) {
+    Assert.instanceOf("viewport", viewport, Viewport);
     super(new Position(0, 0), new Size(viewport.width, viewport.height), options);
+    this.viewport = viewport;
   }
 
   insertEntity(entityId: number, position: Position, size: Size) {
@@ -78,5 +83,9 @@ export class EntityQuadtree extends Quadtree {
 
     // Node was not found in this branch
     return false;
+  }
+
+  drawBoundaries(color?: string, ctx?: CanvasRenderingContext2D): void {
+    super.drawBoundaries(color, ctx ?? this.viewport.ctx);
   }
 }

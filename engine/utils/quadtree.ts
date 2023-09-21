@@ -50,6 +50,13 @@ export class Quadtree {
   retrieve(node: QuadtreeNode) {
     return this.root.retrieve(node);
   }
+
+  drawBoundaries(color?: string, ctx?: CanvasRenderingContext2D) {
+    if (typeof ctx === "undefined") {
+      return;
+    }
+    ctx.fillStyle = color ?? "white";
+  }
 }
 
 export class QuadtreeNode {
