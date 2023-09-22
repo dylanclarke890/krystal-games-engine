@@ -7,7 +7,7 @@ import { CollisionDetector } from "./collision/detector.js";
 import { CollisionResolver } from "./collision/resolver.js";
 import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "./systems/index.js";
 import { EntityQuadtree } from "./entities/entity-quadtree.js";
-import { config } from "./config.js";
+import { config } from "./config/config.js";
 
 export class Game {
   viewport: Viewport;
