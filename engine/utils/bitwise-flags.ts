@@ -1,6 +1,7 @@
 import { Enum } from "./enum.js";
 
 export class BitwiseFlags<TFlags extends Record<string, number>> {
+  // TODO: do we need this?
   static create<T extends Record<string, number> | typeof Enum>(obj: T): BitwiseFlags<Record<string, number>> {
     const instance = new BitwiseFlags<Record<string, number>>();
 
