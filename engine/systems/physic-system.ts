@@ -8,7 +8,6 @@ import { Collidable, CollidableComponents, ComponentType, PhysicsComponents } fr
 import { Mass } from "../components/index.js";
 import { EventSystem } from "../events/event-system.js";
 import { EntityQuadtree } from "../entities/entity-quadtree.js";
-import { Vector2D } from "../utils/maths/vector-2d.js";
 
 export class PhysicSystem extends System {
   static requiredComponents: ComponentType[] = ["Position", "Velocity"];
@@ -69,8 +68,8 @@ export class PhysicSystem extends System {
       }
 
       if (typeof components.GravityFactor !== "undefined") {
-        const gravityEffect = new Vector2D(0, components.GravityFactor.value * mass * dt);
-        components.Velocity.add(gravityEffect);
+        const gravityEffect = components.GravityFactor.value * mass * dt;
+        components.Velocity.add(0, gravityEffect);
       }
 
       components.Position.add(components.Velocity.clone().mul(dt));

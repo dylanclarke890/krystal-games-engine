@@ -19,10 +19,11 @@ export class Vector2D {
     this.#constrain();
   }
 
-  add(other: Vector2D | number) {
+  add(other: Vector2D | number, y?: number) {
     if (typeof other === "number") {
+      y ??= other;
       this.x += other;
-      this.y += other;
+      this.y += y;
     } else {
       this.x += other.x;
       this.y += other.y;
@@ -32,10 +33,11 @@ export class Vector2D {
     return this;
   }
 
-  sub(other: Vector2D | number) {
+  sub(other: Vector2D | number, y?: number) {
     if (typeof other === "number") {
+      y ??= other;
       this.x -= other;
-      this.y -= other;
+      this.y -= y;
     } else {
       this.x -= other.x;
       this.y -= other.y;
@@ -45,11 +47,14 @@ export class Vector2D {
     return this;
   }
 
-  div(other: Vector2D | number) {
+  div(other: Vector2D | number, y?: number) {
     if (typeof other === "number") {
       if (other !== 0) {
+        y ??= other;
         this.x /= other;
-        this.y /= other;
+      }
+      if (typeof y !== "undefined" && y !== 0) {
+        this.y /= y;
       }
     } else {
       if (other.x !== 0) {
@@ -65,10 +70,11 @@ export class Vector2D {
     return this;
   }
 
-  mul(other: Vector2D | number) {
+  mul(other: Vector2D | number, y?: number) {
     if (typeof other === "number") {
+      y ??= other;
       this.x *= other;
-      this.y *= other;
+      this.y *= y;
     } else {
       this.x *= other.x;
       this.y *= other.y;
