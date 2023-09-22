@@ -3,7 +3,7 @@ import { EntityManager } from "../entities/entity-manager.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";
-import { ComponentType, Components } from "../utils/types.js";
+import { ComponentType, Components, SideOfCollision } from "../utils/types.js";
 
 type ResolverComponents = Components<"Position" | "Velocity" | "Size" | "Collision", "Bounciness" | "Mass">;
 type IResolverData = { entityCollisions: PairedSet<number>; viewportCollisions: Set<number> };
@@ -76,38 +76,38 @@ export class CollisionResolver {
     const absDY = Math.abs(dy);
 
     if (absDX > absDY) {
-      return dx > 0 ? "RIGHT" : "LEFT";
+      return dx > 0 ? SideOfCollision.Right : SideOfCollision.Left;
     }
-    return dy > 0 ? "BOTTOM" : "TOP";
+    return dy > 0 ? SideOfCollision.Bottom : SideOfCollision.Top;
   }
 
   #findSideOfViewportCollision(position: Position, size: Size): SideOfCollision {
     const { x, y } = position;
 
     if (x < 0) {
-      return "LEFT";
+      return SideOfCollision.Left;
     }
 
     if (x + size.x > this.viewport.width) {
-      return "RIGHT";
+      return SideOfCollision.Right;
     }
 
     if (y < 0) {
-      return "TOP";
+      return SideOfCollision.Top;
     }
 
     if (y + size.y > this.viewport.height) {
-      return "BOTTOM";
+      return SideOfCollision.Bottom;
     }
 
-    return "NONE";
+    return SideOfCollision.None;
   }
 
   #resolveEntityCollision(a: Defined<ResolverComponents>, b: Defined<ResolverComponents>, side: SideOfCollision): void {
     const collisionBehaviourA = a.Collision.entityCollisionBehaviour;
     const collisionBehaviourB = b.Collision.entityCollisionBehaviour;
 
-    if (side === "NONE" || collisionBehaviourA === "NONE" || collisionBehaviourB === "NONE") {
+    if (side === SideOfCollision.None || collisionBehaviourA === "NONE" || collisionBehaviourB === "NONE") {
       return;
     }
   }
@@ -115,7 +115,7 @@ export class CollisionResolver {
   #resolveViewportCollision(entity: Defined<ResolverComponents>, side: SideOfCollision): void {
     const viewportCollisionBehaviour = entity.Collision.viewportCollisionBehaviour;
 
-    if (side === "NONE" || viewportCollisionBehaviour === "NONE") {
+    if (side === SideOfCollision.None || viewportCollisionBehaviour === "NONE") {
       return;
     }
 
@@ -130,19 +130,19 @@ export class CollisionResolver {
 
   #resolveViewportBounce(entity: Defined<ResolverComponents>, side: SideOfCollision) {
     switch (side) {
-      case "LEFT":
+      case SideOfCollision.Left:
         entity.Position.x = entity.Size.x;
         entity.Velocity.x *= -entity.Bounciness.value;
         break;
-      case "RIGHT":
+      case SideOfCollision.Right:
         entity.Position.x = this.viewport.width - entity.Size.x;
         entity.Velocity.x *= -entity.Bounciness.value;
         break;
-      case "TOP":
+      case SideOfCollision.Top:
         entity.Position.y = entity.Size.y;
         entity.Velocity.y *= -entity.Bounciness.value;
         break;
-      case "BOTTOM":
+      case SideOfCollision.Left:
         entity.Position.y = this.viewport.height - entity.Size.y;
         entity.Velocity.y *= -entity.Bounciness.value;
         break;
