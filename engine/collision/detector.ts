@@ -5,6 +5,7 @@ import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";
 import { Collidable } from "../utils/types.js";
+import { AABBCollision } from "./strategies.js";
 
 export class CollisionDetector {
   entityManager: EntityManager;
@@ -51,7 +52,7 @@ export class CollisionDetector {
           continue;
         }
 
-        if (this.AABBCollisionCheck(aComponents.Position, aComponents.Size, bEntityNode.position, bEntityNode.size)) {
+        if (AABBCollision(aComponents.Position, aComponents.Size, bEntityNode.position, bEntityNode.size)) {
           this.entityCollisions.add(aId, bId);
         }
       }
@@ -65,14 +66,5 @@ export class CollisionDetector {
     }
 
     return false;
-  }
-
-  /**
-   * Aligned Axis Bounding Box check.
-   */
-  AABBCollisionCheck(posA: Position, sizeA: Size, posB: Position, sizeB: Size): boolean {
-    return (
-      posA.x < posB.x + sizeB.x && posA.x + sizeA.x > posB.x && posA.y < posB.y + sizeB.y && posA.y + sizeA.y > posB.y
-    );
   }
 }
