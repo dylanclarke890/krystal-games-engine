@@ -8,6 +8,7 @@ import { Collidable, CollidableComponents, ComponentType, PhysicsComponents } fr
 import { Mass } from "../components/index.js";
 import { EventSystem } from "../events/event-system.js";
 import { EntityQuadtree } from "../entities/entity-quadtree.js";
+import { Vector2D } from "../utils/maths/vector-2d.js";
 
 export class PhysicSystem extends System {
   static requiredComponents: ComponentType[] = ["Position", "Velocity"];
@@ -58,19 +59,21 @@ export class PhysicSystem extends System {
       const mass = components.Mass.value;
 
       if (typeof components.Acceleration !== "undefined") {
-        const accel = components.Acceleration;
-        components.Velocity.add((accel.x / mass) * dt, (accel.y / mass) * dt);
+        const changeInVelocity = components.Acceleration.clone().div(mass).mul(dt);
+        components.Velocity.add(changeInVelocity);
       }
 
       if (typeof components.Friction !== "undefined") {
-        components.Velocity.sub(components.Friction.x * mass * dt, components.Friction.y * mass * dt);
+        const frictionDrag = components.Friction.clone().mul(mass).mul(dt);
+        components.Velocity.sub(frictionDrag);
       }
 
       if (typeof components.GravityFactor !== "undefined") {
-        components.Velocity.add(0, components.GravityFactor.value * mass * dt);
+        const gravityEffect = new Vector2D(0, components.GravityFactor.value * mass * dt);
+        components.Velocity.add(gravityEffect);
       }
 
-      components.Position.add(components.Velocity.x * dt, components.Velocity.y * dt);
+      components.Position.add(components.Velocity.clone().mul(dt));
 
       if (typeof components.Collision !== "undefined" && typeof components.Size !== "undefined") {
         collidables.push([id, components as CollidableComponents]);

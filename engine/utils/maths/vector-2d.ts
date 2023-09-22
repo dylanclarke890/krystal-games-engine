@@ -19,36 +19,60 @@ export class Vector2D {
     this.#constrain();
   }
 
-  add(x: number, y: number) {
-    this.x += x;
-    this.y += y;
-    this.#constrain();
-    return this;
-  }
-
-  sub(x: number, y: number) {
-    this.x -= x;
-    this.y -= y;
-    this.#constrain();
-    return this;
-  }
-
-  div(x: number, y: number) {
-    if (x !== 0) {
-      this.x /= x;
-    }
-
-    if (y !== 0) {
-      this.y /= y;
+  add(other: Vector2D | number) {
+    if (typeof other === "number") {
+      this.x += other;
+      this.y += other;
+    } else {
+      this.x += other.x;
+      this.y += other.y;
     }
 
     this.#constrain();
     return this;
   }
 
-  mul(x: number, y: number) {
-    this.x *= x;
-    this.y *= y;
+  sub(other: Vector2D | number) {
+    if (typeof other === "number") {
+      this.x -= other;
+      this.y -= other;
+    } else {
+      this.x -= other.x;
+      this.y -= other.y;
+    }
+
+    this.#constrain();
+    return this;
+  }
+
+  div(other: Vector2D | number) {
+    if (typeof other === "number") {
+      if (other !== 0) {
+        this.x /= other;
+        this.y /= other;
+      }
+    } else {
+      if (other.x !== 0) {
+        this.x /= other.x;
+      }
+
+      if (other.y !== 0) {
+        this.y /= other.y;
+      }
+    }
+
+    this.#constrain();
+    return this;
+  }
+
+  mul(other: Vector2D | number) {
+    if (typeof other === "number") {
+      this.x *= other;
+      this.y *= other;
+    } else {
+      this.x *= other.x;
+      this.y *= other.y;
+    }
     this.#constrain();
     return this;
   }
