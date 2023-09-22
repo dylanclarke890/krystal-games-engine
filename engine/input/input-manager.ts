@@ -1,6 +1,8 @@
 import { EventSystem } from "../events/event-system.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
+import { Vector2D } from "../utils/maths/vector-2d.js";
+import { Vector3D } from "../utils/maths/vector-3d.js";
 import { InputBindingType } from "../utils/types.js";
 import { UserAgent } from "../utils/user-agent.js";
 import { InputKeys, keyboardMap } from "./input-keys.js";
@@ -15,8 +17,8 @@ export class InputManager {
   #delayedActions: Map<string, boolean>;
   #using;
 
-  mouse!: { x: number; y: number };
-  accel!: DeviceMotionEventAcceleration;
+  mouse: Vector2D;
+  accel: Vector3D;
   eventSystem: EventSystem;
 
   constructor(eventSystem: EventSystem, viewport: Viewport) {
@@ -30,6 +32,8 @@ export class InputManager {
     this.#delayedActions = new Map();
     this.#locks = new Map();
     this.#actions = new Map();
+    this.mouse = new Vector2D();
+    this.accel = new Vector3D();
     this.#using = {
       mouse: false,
       touch: false,
@@ -40,11 +44,14 @@ export class InputManager {
 
   //#region Initialise
 
+  enableMouse() {
+    this.#initializeMouseEvents();
+  }
+
   #initializeMouseEvents() {
     if (this.#using.mouse) return;
     this.#using.mouse = true;
 
-    this.mouse = { x: 0, y: 0 };
     const canvas = this.viewport.canvas;
     canvas.addEventListener("wheel", (e) => this.#onMouseWheel(e), { passive: false }); // Stops Chrome warning
     canvas.addEventListener("contextmenu", (e) => this.#onContextMenu(e), false);
@@ -83,7 +90,6 @@ export class InputManager {
   #initializeAccelerometer() {
     if (this.#using.accelerometer) return;
     this.#using.accelerometer = true;
-    this.accel = { x: 0, y: 0, z: 0 };
     window.addEventListener("devicemotion", (e) => this.onDeviceMotion(e), false);
   }
 
@@ -91,6 +97,7 @@ export class InputManager {
     switch (key) {
       case InputKeys.Mouse_BtnOne:
       case InputKeys.Mouse_BtnTwo:
+      case InputKeys.Mouse_Move:
       case InputKeys.Mouse_WheelDown:
       case InputKeys.Mouse_WheelUp:
         this.#initializeMouseEvents();
@@ -308,7 +315,11 @@ export class InputManager {
   }
 
   onDeviceMotion(e: DeviceMotionEvent) {
-    this.accel = e.accelerationIncludingGravity!;
+    if (e.accelerationIncludingGravity !== null) {
+      this.accel.x = e.accelerationIncludingGravity.x ?? undefined;
+      this.accel.y = e.accelerationIncludingGravity.y ?? undefined;
+      this.accel.z = e.accelerationIncludingGravity.z ?? undefined;
+    }
   }
 
   //#endregion Events
