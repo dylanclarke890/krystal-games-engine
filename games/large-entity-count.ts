@@ -1,9 +1,9 @@
-import { Collision, GravityFactor, Position, Shape, Size, Velocity } from "../../engine/components/index.js";
-import { GameEvents } from "../../engine/events/events.js";
-import { Game } from "../../engine/game.js";
-import { CollisionSettings } from "../../engine/utils/types.js";
+import { Collision, GravityFactor, Position, Shape, Size, Velocity } from "../engine/components/index.js";
+import { GameEvents } from "../engine/events/events.js";
+import { Game } from "../engine/game.js";
+import { CollisionSettings } from "../engine/utils/types.js";
 
-export class TestGame extends Game {
+export class LargeEntityCountTest extends Game {
   constructor() {
     super("canvas1", 500, 500);
     this.eventSystem.on(GameEvents.Loop_NextFrame, () => this.update());
@@ -34,4 +34,4 @@ export class TestGame extends Game {
   }
 }
 
-new TestGame();
+new LargeEntityCountTest();
