@@ -5,7 +5,7 @@ import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";
 import { Collidable } from "../utils/types.js";
-import { AABBCollision } from "./strategies.js";
+import { rectVsRect } from "./strategies.js";
 
 export class CollisionDetector {
   entityManager: EntityManager;
@@ -52,7 +52,7 @@ export class CollisionDetector {
           continue;
         }
 
-        if (AABBCollision(aComponents.Position, aComponents.Size, bEntityNode.position, bEntityNode.size)) {
+        if (rectVsRect(aComponents.Position, aComponents.Size, bEntityNode.position, bEntityNode.size)) {
           this.entityCollisions.add(aId, bId);
         }
       }
