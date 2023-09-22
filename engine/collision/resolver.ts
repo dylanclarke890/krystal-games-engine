@@ -46,6 +46,7 @@ export class CollisionResolver {
       b.Collision.onEntityCollisionCallbacks.forEach((func) => func(pair[0], pair[1], side));
     });
   }
+
   resolveViewportCollisions(viewportCollisions: Set<number>) {
     viewportCollisions.forEach((entityId) => {
       const entity = this.getComponentsForEntity(entityId);
