@@ -1,4 +1,4 @@
-import { pointVsPoint, pointVsRect, rectVsRect } from "../../../engine/collision/strategies";
+import { pointVsPoint, pointVsRect, rectVsRect } from "../../../engine/collision/detection-strategies";
 import { Vector2D } from "../../../engine/utils/maths/vector-2d.js";
 
 describe("pointVsPoint", () => {

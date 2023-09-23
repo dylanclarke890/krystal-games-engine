@@ -5,7 +5,7 @@ const exports = {
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
   testEnvironment: "node",
-  modulePathIgnorePatterns: ["older"],
+  modulePathIgnorePatterns: ["older", "dist"],
   moduleFileExtensions: ["ts", "js"],
 };
 
