@@ -5,7 +5,7 @@ import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";
 import { Collidable } from "../utils/types.js";
-import { rectVsRect } from "./strategies.js";
+import { rectVsRect } from "./detection-strategies.js";
 
 export class CollisionDetector {
   entityManager: EntityManager;
