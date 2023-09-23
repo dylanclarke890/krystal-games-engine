@@ -1,12 +1,12 @@
 import { SystemTypes, GameEvents } from "../constants/enums.js";
 import { EntityManager } from "../entities/entity-manager.js";
-import { EventSystem } from "../events/event-system.js";
 import { Assert } from "../utils/assert.js";
 import { GameSystem, GameSystemType } from "../types/common-types.js";
 import { System } from "./system.js";
+import { IEventSystem } from "../types/common-interfaces.js";
 
 export class SystemManager {
-  eventSystem: EventSystem;
+  eventSystem: IEventSystem;
   entityManager: EntityManager;
   systems: Set<System>;
   buckets: Map<string, Set<number>>;
@@ -15,8 +15,7 @@ export class SystemManager {
    * @param {EventSystem} eventSystem
    * @param {EntityManager} entityManager
    */
-  constructor(eventSystem: EventSystem, entityManager: EntityManager) {
-    Assert.instanceOf("eventSystem", eventSystem, EventSystem);
+  constructor(eventSystem: IEventSystem, entityManager: EntityManager) {
     Assert.instanceOf("entityManager", entityManager, EntityManager);
 
     this.eventSystem = eventSystem;

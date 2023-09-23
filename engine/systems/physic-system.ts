@@ -6,8 +6,8 @@ import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
 import { Collidable, CollidableComponents, ComponentType, PhysicsComponents } from "../types/common-types.js";
 import { Mass } from "../components/2d/index.js";
-import { EventSystem } from "../events/event-system.js";
 import { EntityQuadtree } from "../entities/entity-quadtree.js";
+import { IEventSystem } from "../types/common-interfaces.js";
 
 export class PhysicSystem extends System {
   static requiredComponents: ComponentType[] = ["Position", "Velocity"];
@@ -30,7 +30,7 @@ export class PhysicSystem extends System {
 
   constructor(
     entityManager: EntityManager,
-    eventSystem: EventSystem,
+    eventSystem: IEventSystem,
     quadtree: EntityQuadtree,
     detector: CollisionDetector,
     resolver: CollisionResolver

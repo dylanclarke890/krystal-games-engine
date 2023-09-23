@@ -1,12 +1,11 @@
 import { GameEvents } from "../constants/enums.js";
-import { EventSystem } from "../events/event-system.js";
-import { Assert } from "../utils/assert.js";
 import { Component, ComponentMap, ComponentType } from "../types/common-types.js";
+import { IEventSystem } from "../types/common-interfaces.js";
 
 export class EntityManager {
   static #emptySet: Set<number> = new Set();
 
-  eventSystem: EventSystem;
+  eventSystem: IEventSystem;
   entities: Set<number>;
 
   #nextEntityId: number;
@@ -14,8 +13,7 @@ export class EntityManager {
   #componentTypeToEntities: Map<ComponentType, Set<number>>;
   #components: Map<string, Component<ComponentType>>;
 
-  constructor(eventSystem: EventSystem) {
-    Assert.instanceOf("eventSystem", eventSystem, EventSystem);
+  constructor(eventSystem: IEventSystem) {
     this.eventSystem = eventSystem;
 
     this.entities = new Set();

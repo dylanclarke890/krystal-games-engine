@@ -1,12 +1,12 @@
 import { InputKeys } from "../constants/enums.js";
-import { EventSystem } from "../events/event-system.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { Vector2D } from "../utils/maths/vector-2d.js";
 import { Vector3D } from "../utils/maths/vector-3d.js";
-import { InputBindingType } from "../types/common-types.js";
 import { UserAgent } from "../utils/user-agent.js";
 import { keyboardMap } from "./keyboard-map.js";
+import { IEventSystem } from "../types/common-interfaces.js";
+import { InputBindingType } from "../types/common-types.js";
 
 export class InputManager {
   viewport: Viewport;
@@ -20,10 +20,9 @@ export class InputManager {
 
   mouse: Vector2D;
   accel: Vector3D;
-  eventSystem: EventSystem;
+  eventSystem: IEventSystem;
 
-  constructor(eventSystem: EventSystem, viewport: Viewport) {
-    Assert.instanceOf("eventSystem", eventSystem, EventSystem);
+  constructor(eventSystem: IEventSystem, viewport: Viewport) {
     Assert.instanceOf("viewport", viewport, Viewport);
     this.eventSystem = eventSystem;
     this.viewport = viewport;

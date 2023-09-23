@@ -4,9 +4,9 @@ import { Sprite, Position, Shape } from "../components/2d/index.js";
 import { Viewport } from "../graphics/viewport.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
-import { EventSystem } from "../events/event-system.js";
 import { InvalidOperationError } from "../utils/errors.js";
 import { ComponentType, Components } from "../types/common-types.js";
+import { IEventSystem } from "../types/common-interfaces.js";
 
 type SystemComponents = Components<"Position", "Animation" | "Sprite" | "Shape">;
 export class RenderSystem extends System {
@@ -16,7 +16,7 @@ export class RenderSystem extends System {
 
   viewport: Viewport;
 
-  constructor(entityManager: EntityManager, eventSystem: EventSystem, viewport: Viewport) {
+  constructor(entityManager: EntityManager, eventSystem: IEventSystem, viewport: Viewport) {
     super(entityManager, eventSystem);
     Assert.instanceOf("viewport", viewport, Viewport);
     this.viewport = viewport;

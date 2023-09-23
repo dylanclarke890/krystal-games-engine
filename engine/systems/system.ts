@@ -1,20 +1,19 @@
 import { SystemTypes } from "../constants/enums.js";
 import { EntityManager } from "../entities/entity-manager.js";
-import { EventSystem } from "../events/event-system.js";
 import { Assert } from "../utils/assert.js";
 import { InvalidOperationError } from "../utils/errors.js";
 import { ComponentType } from "../types/common-types.js";
+import { IEventSystem } from "../types/common-interfaces.js";
 
 export class System {
   static requiredComponents: ComponentType[];
   static systemType: SystemTypes;
 
   entityManager: EntityManager;
-  eventSystem: EventSystem;
+  eventSystem: IEventSystem;
 
-  constructor(entityManager: EntityManager, eventSystem: EventSystem) {
+  constructor(entityManager: EntityManager, eventSystem: IEventSystem) {
     Assert.instanceOf("entityManager", entityManager, EntityManager);
-    Assert.instanceOf("eventSystem", eventSystem, EventSystem);
     this.entityManager = entityManager;
     this.eventSystem = eventSystem;
   }

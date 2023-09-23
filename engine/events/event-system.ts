@@ -1,26 +1,23 @@
 import { PriorityLevel } from "../constants/enums.js";
 import { PriorityQueue } from "../utils/priority-queue.js";
 import { Enum } from "../utils/enum.js";
-import { Assert } from "../utils/assert.js";
+import { IEventSystem } from "../types/common-interfaces.js";
 
-export class EventSystem {
+export class EventSystem implements IEventSystem {
   #subscribers: Map<Enum, PriorityQueue<EventHandler<any>>>;
-  #parent: EventSystem | undefined;
+  #parent: IEventSystem | undefined;
 
-  constructor(parent?: EventSystem) {
+  constructor(parent?: IEventSystem) {
     this.#subscribers = new Map();
     if (typeof parent !== "undefined") {
-      Assert.instanceOf("parent", parent, EventSystem);
       this.#parent = parent;
     }
   }
 
-  /** Get the parent EventSystem. */
-  get parent(): EventSystem | undefined {
+  get parent(): IEventSystem | undefined {
     return this.#parent;
   }
 
-  /** Subscribe to an event. */
   on<T>(event: Enum, listener: EventHandler<T>, priority: number | PriorityLevel = PriorityLevel.None) {
     priority ??= PriorityLevel.None;
     if (!this.#subscribers.has(event)) {
@@ -31,7 +28,6 @@ export class EventSystem {
     this.#subscribers.get(event)!.add(listener, priorityLevel);
   }
 
-  /** Unsubscribe from an event. */
   off<T>(event: Enum, listener: EventHandler<T>) {
     const queue = this.#subscribers.get(event);
 
@@ -42,7 +38,6 @@ export class EventSystem {
     return queue.remove(listener);
   }
 
-  /** Trigger an event. */
   trigger<T>(event: Enum, data?: T) {
     const queue = this.#subscribers.get(event);
 

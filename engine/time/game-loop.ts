@@ -1,19 +1,18 @@
 import { GameEvents } from "../constants/enums.js";
 import { Assert } from "../utils/assert.js";
-import { EventSystem } from "../events/event-system.js";
 import { Timer } from "./timer.js";
+import { IEventSystem } from "../types/common-interfaces.js";
 
 export class GameLoop {
   #lastFrame: number;
-  eventSystem: EventSystem;
+  eventSystem: IEventSystem;
   clock: Timer;
   fpsInterval: number;
   targetFps: number;
   #requestAnimationFrameId: number;
   stopped: boolean;
 
-  constructor(eventSystem: EventSystem, targetFps: number) {
-    Assert.instanceOf("eventSystem", eventSystem, EventSystem);
+  constructor(eventSystem: IEventSystem, targetFps: number) {
     Assert.number("targetFps", targetFps);
 
     this.eventSystem = eventSystem;

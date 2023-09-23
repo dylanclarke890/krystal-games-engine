@@ -8,10 +8,11 @@ import { CollisionResolver } from "../collision/resolver.js";
 import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "../systems/index.js";
 import { EntityQuadtree } from "../entities/entity-quadtree.js";
 import { ConfigManager, config } from "../config/index.js";
+import { IEventSystem } from "../types/common-interfaces.js";
 
 export class Game {
   viewport: Viewport;
-  eventSystem: EventSystem;
+  eventSystem: IEventSystem;
 
   entityManager: EntityManager;
   systemManager: SystemManager;
