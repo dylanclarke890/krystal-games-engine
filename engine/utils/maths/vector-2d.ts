@@ -115,6 +115,12 @@ export class Vector2D {
     return this;
   }
 
+  set(other: Vector2D) {
+    this.x = other.x;
+    this.y = other.y;
+    return this;
+  }
+
   assign(other: Vector2D) {
     this.x = other.x;
     this.y = other.y;
