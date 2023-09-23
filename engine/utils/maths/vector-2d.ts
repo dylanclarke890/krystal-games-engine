@@ -1,5 +1,6 @@
 import { constrain, randomInt } from "./number.js";
 import { parseJSON } from "../string.js";
+import { calcHypotenuse } from "./triangles.js";
 
 export class Vector2D {
   x: number;
@@ -190,6 +191,10 @@ export class Vector2D {
     const dx = this.x - other.x;
     const dy = this.y - other.y;
     return dx * dx + dy * dy;
+  }
+
+  magnitude(): number {
+    return calcHypotenuse(this.x, this.y);
   }
 
   /** @returns a clone of the current instance. */
