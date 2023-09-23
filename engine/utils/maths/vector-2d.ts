@@ -184,20 +184,6 @@ export class Vector2D {
     return Math.atan2(other.y - this.y, other.x - this.x);
   }
 
-  distanceTo(other: Vector2D): number {
-    return Math.sqrt(this.distanceToSquared(other));
-  }
-
-  /**
-   * Calculates the squared distance between the current position and another position, which is faster
-   * than calculating the actual distance if you only need to compare distances.
-   */
-  distanceToSquared(other: Vector2D): number {
-    const dx = this.x - other.x;
-    const dy = this.y - other.y;
-    return dx * dx + dy * dy;
-  }
-
   magnitude(): number {
     return calcHypotenuse(this.x, this.y);
   }
