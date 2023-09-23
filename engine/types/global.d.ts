@@ -8,7 +8,7 @@ declare type Defined<TObj> = {
 
 declare type DefinedExcept<TObj, TExcept extends Key<TObj>> = {
   [P in Key<Pick<TObj, Exclude<Key<TObj>, TExcept>>>]-?: NonNullable<TObj[P]>;
-} & { [P in TExcept]?: TObj[P] | undefined };
+} & { [P in TExcept]?: Nullable<TObj[P]> };
 
 declare type MapObj<TObj, TValue, TOptional extends boolean> = TOptional extends true
   ? {

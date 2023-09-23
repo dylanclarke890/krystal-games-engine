@@ -23,7 +23,7 @@ export class Assert {
     }
   }
 
-  static defined<T>(name: string, value: T | undefined | null, message?: string): asserts value is NonNullable<T> {
+  static defined<T>(name: string, value: Nullable<T> | null, message?: string): asserts value is NonNullable<T> {
     if (value === null || typeof value === "undefined") {
       throw new AssertionError(message ?? `${name} was not defined.`, value);
     }

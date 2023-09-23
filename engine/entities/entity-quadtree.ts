@@ -31,7 +31,7 @@ export class EntityQuadtree extends Quadtree {
   findEntityNode(
     entityId: number,
     node: EntityQuadtreeNode = this.root as EntityQuadtreeNode
-  ): EntityQuadtreeNode | undefined {
+  ): Nullable<EntityQuadtreeNode> {
     if ((node as EntityQuadtreeNode).entityId === entityId) {
       return node;
     }

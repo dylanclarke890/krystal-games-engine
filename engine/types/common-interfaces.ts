@@ -4,7 +4,7 @@ import { Component, ComponentMap, ComponentType } from "./common-types.js";
 
 export interface IEventSystem {
   /** Get the parent EventSystem. */
-  get parent(): IEventSystem | undefined;
+  get parent(): Nullable<IEventSystem>;
 
   /** Subscribe to an event. */
   on<T>(event: Enum, listener: EventHandler<T>, priority?: number | PriorityLevel): void;

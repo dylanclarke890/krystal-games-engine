@@ -38,7 +38,7 @@ export class Enum {
 
   enumKey!: string;
   enumOrdinal!: number;
-  #value: number | undefined;
+  #value: Nullable<number>;
 
   /**
    * @param value Optional value to use instead of the enum's index.

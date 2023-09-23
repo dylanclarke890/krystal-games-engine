@@ -44,8 +44,8 @@ export class SystemManager {
     this.systems.delete(system);
   }
 
-  getSystem<T extends GameSystemType>(name: T): GameSystem<T> | undefined {
-    let system: GameSystem<T> | undefined;
+  getSystem<T extends GameSystemType>(name: T): Nullable<GameSystem<T>> {
+    let system: Nullable<GameSystem<T>>;
 
     this.systems.forEach((sys) => {
       if (name === (sys.constructor.name as GameSystemType)) {

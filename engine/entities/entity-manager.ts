@@ -74,7 +74,7 @@ export class EntityManager implements IEntityManager {
     const components: ComponentMap<T> = {} as ComponentMap<T>;
 
     componentTypes.forEach((componentType) => {
-      components[componentType] = this.#components.get(entity + componentType) as Component<T> | undefined;
+      components[componentType] = this.#components.get(entity + componentType) as Nullable<Component<T>>;
     });
 
     return components;

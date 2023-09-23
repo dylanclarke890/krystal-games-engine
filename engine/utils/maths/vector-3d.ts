@@ -1,7 +1,7 @@
 export class Vector3D {
-  z: number | undefined;
-  y: number | undefined;
-  x: number | undefined;
+  z?: number;
+  y?: number;
+  x?: number;
 
   constructor(x?: number, y?: number, z?: number) {
     this.x = x;
