@@ -125,6 +125,11 @@ export class Vector2D {
     return this;
   }
 
+  /** @returns a clone of the current instance. */
+  clone(): Vector2D {
+    return new Vector2D().assign(this);
+  }
+
   floor() {
     this.x = Math.floor(this.x);
     this.y = Math.floor(this.y);
@@ -186,11 +191,6 @@ export class Vector2D {
 
   magnitude(): number {
     return calcHypotenuse(this.x, this.y);
-  }
-
-  /** @returns a clone of the current instance. */
-  clone(): Vector2D {
-    return new Vector2D(this.x, this.y, this.xMin, this.xMax, this.yMin, this.yMax);
   }
 
   serialize(): string {

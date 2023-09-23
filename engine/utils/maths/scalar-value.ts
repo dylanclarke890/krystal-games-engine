@@ -77,6 +77,10 @@ export class ScalarValue {
     return this;
   }
 
+  clone(): ScalarValue {
+    return new ScalarValue().assign(this);
+  }
+
   serialize(): string {
     return JSON.stringify(this);
   }
