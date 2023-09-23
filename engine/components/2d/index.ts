@@ -38,7 +38,7 @@ export class Offset extends Vector2D {}
 export class Position extends Vector2D {}
 export class Mass extends ScalarValue {
   constructor(value?: number, max?: number) {
-    super(value, 0, max);
+    super(value ?? 1, 0, max);
   }
 }
 export class Size extends Vector2D {}
