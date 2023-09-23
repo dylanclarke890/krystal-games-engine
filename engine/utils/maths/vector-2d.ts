@@ -143,6 +143,11 @@ export class Vector2D {
     return this;
   }
 
+  normalize() {
+    const length = this.magnitude();
+    return this.div(length);
+  }
+
   /** Randomizes x and y to be between their min and max if set. */
   randomize(xMin = this.xMin, xMax = this.xMax, yMin = this.yMin, yMax = this.yMax) {
     let randomised = false;
