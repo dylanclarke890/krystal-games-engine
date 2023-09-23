@@ -1,13 +1,13 @@
-import { EventSystem } from "./events/event-system.js";
-import { EntityManager } from "./entities/entity-manager.js";
-import { GameLoop } from "./time/game-loop.js";
-import { Viewport } from "./graphics/viewport.js";
-import { InputManager } from "./input/input-manager.js";
-import { CollisionDetector } from "./collision/detector.js";
-import { CollisionResolver } from "./collision/resolver.js";
-import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "./systems/index.js";
-import { EntityQuadtree } from "./entities/entity-quadtree.js";
-import { ConfigManager, config } from "./config/index.js";
+import { EventSystem } from "../events/event-system.js";
+import { EntityManager } from "../entities/entity-manager.js";
+import { GameLoop } from "../time/game-loop.js";
+import { Viewport } from "../graphics/viewport.js";
+import { InputManager } from "../input/input-manager.js";
+import { CollisionDetector } from "../collision/detector.js";
+import { CollisionResolver } from "../collision/resolver.js";
+import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "../systems/index.js";
+import { EntityQuadtree } from "../entities/entity-quadtree.js";
+import { ConfigManager, config } from "../config/index.js";
 
 export class Game {
   viewport: Viewport;
@@ -49,7 +49,6 @@ export class Game {
     systemManager.registerSystem(new InputSystem(entityManager, eventSystem, this.inputManager));
     systemManager.registerSystem(new PhysicSystem(entityManager, eventSystem, quadtree, detector, resolver));
     systemManager.registerSystem(new RenderSystem(entityManager, eventSystem, this.viewport));
-
   }
 
   start() {

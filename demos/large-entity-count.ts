@@ -1,6 +1,6 @@
 import { Collision, GravityFactor, Position, Shape, Size, Velocity } from "../engine/components/2d/index.js";
 import { GameEvents } from "../engine/constants/enums.js";
-import { Game } from "../engine/game.js";
+import { Game } from "../engine/main/game.js";
 import { CollisionSettings } from "../engine/types/common-types.js";
 
 export class LargeEntityCountTest extends Game {
