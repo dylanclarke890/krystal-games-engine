@@ -1,6 +1,6 @@
 import { CollisionDetector } from "../collision/detector.js";
 import { CollisionResolver } from "../collision/resolver.js";
-import { SystemTypes } from "./system-types.js";
+import { SystemTypes } from "../constants/enums.js";
 import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";

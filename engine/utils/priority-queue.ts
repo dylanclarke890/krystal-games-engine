@@ -1,21 +1,3 @@
-import { Enum } from "./enum.js";
-
-export class PriorityLevel extends Enum {
-  /**
-   * Used by core functionality, it is not recommended to have events with higher priority
-   * levels than Critical unless you know what you're doing.
-   */
-  static Critical = new PriorityLevel(1024);
-  static High = new PriorityLevel(768);
-  static Med = new PriorityLevel(512);
-  static Low = new PriorityLevel(256);
-  static None = new PriorityLevel(0);
-
-  static {
-    this.freeze();
-  }
-}
-
 type CompareFn<T> = (a: PriorityQueueItem<T>, b: PriorityQueueItem<T>) => number;
 
 export class PriorityQueue<T> {

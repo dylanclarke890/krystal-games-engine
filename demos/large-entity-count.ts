@@ -1,5 +1,5 @@
 import { Collision, GravityFactor, Position, Shape, Size, Velocity } from "../engine/components/index.js";
-import { GameEvents } from "../engine/events/events.js";
+import { GameEvents } from "../engine/constants/enums.js";
 import { Game } from "../engine/game.js";
 import { CollisionSettings } from "../engine/utils/types.js";
 

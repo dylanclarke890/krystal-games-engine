@@ -1,17 +1,6 @@
+import { Quadrant } from "../constants/enums.js";
 import { Assert } from "./assert.js";
-import { Enum } from "./enum.js";
 import { Vector2D } from "./maths/vector-2d.js";
-
-class Quadrant extends Enum {
-  static NorthWest = new Quadrant();
-  static NorthEast = new Quadrant();
-  static SouthWest = new Quadrant();
-  static SouthEast = new Quadrant();
-
-  static {
-    this.freeze();
-  }
-}
 
 export class Quadtree {
   /** The node representing the entire viewport/bounds. */

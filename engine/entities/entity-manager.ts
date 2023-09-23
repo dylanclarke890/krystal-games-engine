@@ -1,5 +1,5 @@
+import { GameEvents } from "../constants/enums.js";
 import { EventSystem } from "../events/event-system.js";
-import { GameEvents } from "../events/events.js";
 import { Assert } from "../utils/assert.js";
 import { Component, ComponentMap, ComponentType } from "../utils/types.js";
 

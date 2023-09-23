@@ -1,9 +1,9 @@
+import { SystemTypes } from "../constants/enums.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { EventSystem } from "../events/event-system.js";
 import { Assert } from "../utils/assert.js";
 import { InvalidOperationError } from "../utils/errors.js";
 import { ComponentType } from "../utils/types.js";
-import { SystemTypes } from "./system-types.js";
 
 export class System {
   static requiredComponents: ComponentType[];

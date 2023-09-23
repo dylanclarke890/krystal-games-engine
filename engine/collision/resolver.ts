@@ -1,9 +1,10 @@
 import { Bounciness, Mass, Position, Size } from "../components/index.js";
+import { SideOfCollision } from "../constants/enums.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";
-import { ComponentType, Components, SideOfCollision } from "../utils/types.js";
+import { ComponentType, Components } from "../utils/types.js";
 
 type ResolverComponents = Components<"Position" | "Velocity" | "Size" | "Collision", "Bounciness" | "Mass">;
 type IResolverData = { entityCollisions: PairedSet<number>; viewportCollisions: Set<number> };

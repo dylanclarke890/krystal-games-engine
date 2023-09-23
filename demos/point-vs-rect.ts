@@ -1,6 +1,6 @@
+import { GameEvents } from "../engine/constants/enums.js";
 import { pointVsRect } from "../engine/collision/strategies.js";
 import { Position, Shape, Size } from "../engine/components/index.js";
-import { GameEvents } from "../engine/events/events.js";
 import { Game } from "../engine/game.js";
 
 export class PointVsRectTest extends Game {

@@ -1,4 +1,5 @@
-import { PriorityQueue, PriorityLevel } from "../utils/priority-queue.js";
+import { PriorityLevel } from "../constants/enums.js";
+import { PriorityQueue } from "../utils/priority-queue.js";
 import { Enum } from "../utils/enum.js";
 import { Assert } from "../utils/assert.js";
 
