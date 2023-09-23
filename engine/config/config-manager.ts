@@ -67,7 +67,7 @@ export class ConfigManager<T> {
 
   getObject<TObj>(key: string): TObj | undefined {
     const value = this.getValue<any>(key);
-    return value && typeof value === "object" && !Array.isArray(value) ? value : undefined;
+    return typeof value === "object" && !Array.isArray(value) ? value : undefined;
   }
 
   getArray<TItem>(key: string): TItem[] | undefined {

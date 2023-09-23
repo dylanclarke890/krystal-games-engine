@@ -18,7 +18,7 @@ export class Game {
   inputManager: InputManager;
   configManager: ConfigManager<typeof config>;
 
-  loop!: GameLoop;
+  loop: GameLoop;
 
   /**
    * @param {string?} canvasId Id of the canvas, if known.
@@ -32,6 +32,7 @@ export class Game {
     this.entityManager = new EntityManager(this.eventSystem);
     this.systemManager = new SystemManager(this.eventSystem, this.entityManager);
     this.inputManager = new InputManager(this.eventSystem, this.viewport);
+    this.loop = new GameLoop(this.eventSystem, this.configManager.getInt("frameRate") ?? 60);
     this.setup();
   }
 
@@ -49,7 +50,6 @@ export class Game {
     systemManager.registerSystem(new PhysicSystem(entityManager, eventSystem, quadtree, detector, resolver));
     systemManager.registerSystem(new RenderSystem(entityManager, eventSystem, this.viewport));
 
-    this.loop = new GameLoop(this.eventSystem, this.configManager.getInt("frameRate") ?? 60);
   }
 
   start() {
