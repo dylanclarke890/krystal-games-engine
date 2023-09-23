@@ -15,7 +15,7 @@ export class ConfigManager<T> {
     this.config = config;
   }
 
-  private navigateConfig(keys: string[], config: any): any {
+  #navigateConfig(keys: string[], config: any): any {
     if (!keys.length || !config) {
       return config;
     }
@@ -23,7 +23,7 @@ export class ConfigManager<T> {
 
     // Handle dot notation first
     if (typeof config[keySegment] !== "undefined") {
-      return this.navigateConfig(keys, config[keySegment]);
+      return this.#navigateConfig(keys, config[keySegment]);
     }
 
     // Handle array notation (e.g., arr[0])
@@ -31,7 +31,7 @@ export class ConfigManager<T> {
     if (arrayMatch) {
       const [, arrayKey, arrayIndex] = arrayMatch;
       if (typeof config[arrayKey] !== "undefined" && typeof config[arrayKey][arrayIndex] !== "undefined") {
-        return this.navigateConfig(keys, config[arrayKey][arrayIndex]);
+        return this.#navigateConfig(keys, config[arrayKey][arrayIndex]);
       }
     }
 
@@ -42,7 +42,7 @@ export class ConfigManager<T> {
   getValue<TValue>(key: string): TValue | undefined {
     // Updated regex to split correctly for array indexes
     const keys = key.split(/\.|\[(?=\d+\])/).map((segment) => segment.replace(/\]$/, ""));
-    return this.navigateConfig(keys, this.config);
+    return this.#navigateConfig(keys, this.config);
   }
 
   getString(key: string): string | undefined {
