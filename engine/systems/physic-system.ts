@@ -68,7 +68,7 @@ export class PhysicSystem extends System {
       }
 
       if (typeof components.GravityFactor !== "undefined") {
-        components.Velocity.add(components.GravityFactor.clone().mul(mass * dt));
+        components.Velocity.add(components.GravityFactor.clone().mul(dt));
       }
 
       components.Position.add(components.Velocity.clone().mul(dt));
