@@ -1,3 +1,4 @@
-export function calcHypotenuse(a: number, b: number): number {
-  return Math.sqrt(a * a + b * b);
+export function calcHypotenuse(x: number, y: number, z?: number): number {
+  z ??= 0;
+  return Math.sqrt(x * x + y * y + z * z);
 }
