@@ -1,5 +1,5 @@
-import { pointVsPoint, pointVsRect, rectVsRect } from "../../../engine/collision/detection-strategies";
-import { Vector2D } from "../../../engine/utils/maths/vector-2d.js";
+import { pointVsPoint, pointVsRect, rectVsRect } from "../../collision/detection-strategies";
+import { Vector2D } from "../../utils/maths/vector-2d.js";
 
 describe("pointVsPoint", () => {
   it("should return true for points in the same location", () => {

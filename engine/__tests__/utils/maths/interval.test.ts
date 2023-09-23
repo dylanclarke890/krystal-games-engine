@@ -1,5 +1,5 @@
-import { IntervalParsingFailedError } from "../../../../engine/utils/errors.js";
-import { arrayFromInterval } from "../../../../engine/utils/maths/interval";
+import { IntervalParsingFailedError } from "../../../utils/errors";
+import { arrayFromInterval } from "../../../utils/maths/interval";
 
 describe("arrayFromInterval", () => {
   it("should return the expected array for successful cases", () => {

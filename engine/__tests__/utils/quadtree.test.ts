@@ -1,5 +1,5 @@
-import { Vector2D } from "../../engine/utils/maths/vector-2d";
-import { Quadtree, QuadtreeNode } from "../../engine/utils/quadtree";
+import { Vector2D } from "../../utils/maths/vector-2d";
+import { Quadtree, QuadtreeNode } from "../../utils/quadtree";
 
 it("Quadtree handles nodes correctly", () => {
   // Setup

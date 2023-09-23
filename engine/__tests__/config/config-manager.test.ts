@@ -1,4 +1,4 @@
-import { ConfigManager } from "../../../engine/config/config-manager";
+import { ConfigManager } from "../../config/config-manager";
 
 const config = {
   option: {
