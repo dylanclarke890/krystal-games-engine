@@ -56,3 +56,21 @@ export interface IEntityManager {
    */
   hasComponents(entity: number, componentTypes: ComponentType[]): boolean;
 }
+
+export interface IConfigManager<T> {
+  config: T;
+
+  getValue<TValue>(key: string): Nullable<TValue>;
+
+  getString(key: string): Nullable<string>;
+
+  getInt(key: string): Nullable<number>;
+
+  getBool(key: string): Nullable<boolean>;
+
+  getDate(key: string): Nullable<Date>;
+
+  getObject<TObj>(key: string): Nullable<TObj>;
+
+  getArray<TItem>(key: string): Nullable<TItem[]>;
+}

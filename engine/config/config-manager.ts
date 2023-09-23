@@ -1,4 +1,6 @@
-export class ConfigManager<T> {
+import { IConfigManager } from "../types/common-interfaces.js";
+
+export class ConfigManager<T> implements IConfigManager<T> {
   config: T;
 
   constructor(config: T | string) {
@@ -39,38 +41,38 @@ export class ConfigManager<T> {
     return undefined;
   }
 
-  getValue<TValue>(key: string): TValue | undefined {
+  getValue<TValue>(key: string): Nullable<TValue> {
     // Updated regex to split correctly for array indexes
     const keys = key.split(/\.|\[(?=\d+\])/).map((segment) => segment.replace(/\]$/, ""));
     return this.#navigateConfig(keys, this.config);
   }
 
-  getString(key: string): string | undefined {
+  getString(key: string): Nullable<string> {
     const value = this.getValue<any>(key);
     return typeof value === "string" ? value : undefined;
   }
 
-  getInt(key: string): number | undefined {
+  getInt(key: string): Nullable<number> {
     const value = this.getValue<any>(key);
     return typeof value === "number" ? value : undefined;
   }
 
-  getBool(key: string): boolean | undefined {
+  getBool(key: string): Nullable<boolean> {
     const value = this.getValue<any>(key);
     return typeof value === "boolean" ? value : undefined;
   }
 
-  getDate(key: string): Date | undefined {
+  getDate(key: string): Nullable<Date> {
     const value = this.getValue<any>(key);
     return value instanceof Date ? value : undefined;
   }
 
-  getObject<TObj>(key: string): TObj | undefined {
+  getObject<TObj>(key: string): Nullable<TObj> {
     const value = this.getValue<any>(key);
     return typeof value === "object" && !Array.isArray(value) ? value : undefined;
   }
 
-  getArray<TItem>(key: string): TItem[] | undefined {
+  getArray<TItem>(key: string): Nullable<TItem[]> {
     const value = this.getValue<any>(key);
     return Array.isArray(value) ? value : undefined;
   }

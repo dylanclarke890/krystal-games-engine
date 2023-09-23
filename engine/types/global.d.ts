@@ -21,3 +21,5 @@ declare type MapObj<TObj, TValue, TOptional extends boolean> = TOptional extends
 declare type Pair<T> = [T, T];
 
 declare type EventHandler<T> = (data: T) => void;
+
+declare type Nullable<T> = T | undefined;

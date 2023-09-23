@@ -7,8 +7,8 @@ import { CollisionDetector } from "../collision/detector.js";
 import { CollisionResolver } from "../collision/resolver.js";
 import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "../systems/index.js";
 import { EntityQuadtree } from "../entities/entity-quadtree.js";
-import { ConfigManager, config } from "../config/index.js";
-import { IEntityManager, IEventSystem } from "../types/common-interfaces.js";
+import { config, ConfigManager } from "../config/index.js";
+import { IConfigManager, IEntityManager, IEventSystem } from "../types/common-interfaces.js";
 
 export class Game {
   viewport: Viewport;
@@ -17,7 +17,7 @@ export class Game {
   entityManager: IEntityManager;
   systemManager: SystemManager;
   inputManager: InputManager;
-  configManager: ConfigManager<typeof config>;
+  configManager: IConfigManager<typeof config>;
 
   loop: GameLoop;
 
