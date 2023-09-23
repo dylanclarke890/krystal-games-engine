@@ -4,7 +4,7 @@ import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { Vector2D } from "../utils/maths/vector-2d.js";
 import { Vector3D } from "../utils/maths/vector-3d.js";
-import { InputBindingType } from "../utils/types.js";
+import { InputBindingType } from "../types/common-types.js";
 import { UserAgent } from "../utils/user-agent.js";
 import { keyboardMap } from "./keyboard-map.js";
 

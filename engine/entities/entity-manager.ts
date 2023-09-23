@@ -1,7 +1,7 @@
 import { GameEvents } from "../constants/enums.js";
 import { EventSystem } from "../events/event-system.js";
 import { Assert } from "../utils/assert.js";
-import { Component, ComponentMap, ComponentType } from "../utils/types.js";
+import { Component, ComponentMap, ComponentType } from "../types/common-types.js";
 
 export class EntityManager {
   static #emptySet: Set<number> = new Set();

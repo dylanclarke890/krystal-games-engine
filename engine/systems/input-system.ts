@@ -3,7 +3,7 @@ import { InputManager } from "../input/input-manager.js";
 import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
-import { ComponentType } from "../utils/types.js";
+import { ComponentType } from "../types/common-types.js";
 import { EventSystem } from "../events/event-system.js";
 
 export class InputSystem extends System {

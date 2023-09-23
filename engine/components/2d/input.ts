@@ -1,4 +1,4 @@
-import { InputBindings } from "../../utils/types.js";
+import { InputBindings } from "../../types/common-types.js";
 
 export class Input {
   actions: Map<string, InputBindings>;

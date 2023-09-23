@@ -3,7 +3,7 @@ import { EntityManager } from "../entities/entity-manager.js";
 import { EventSystem } from "../events/event-system.js";
 import { Assert } from "../utils/assert.js";
 import { InvalidOperationError } from "../utils/errors.js";
-import { ComponentType } from "../utils/types.js";
+import { ComponentType } from "../types/common-types.js";
 
 export class System {
   static requiredComponents: ComponentType[];

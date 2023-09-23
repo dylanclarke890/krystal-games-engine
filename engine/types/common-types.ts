@@ -1,6 +1,6 @@
 import { SideOfCollision } from "../constants/enums.js";
 import { EntityManager } from "../entities/entity-manager.js";
-import { Vector2D } from "./maths/vector-2d.js";
+import { Vector2D } from "../utils/maths/vector-2d.js";
 
 export type Bounds = { position: Vector2D; size: Vector2D };
 export type ComponentType = Key<typeof import("../components/2d/index.js")> & string;

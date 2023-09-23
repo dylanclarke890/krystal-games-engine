@@ -6,7 +6,7 @@ import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
 import { EventSystem } from "../events/event-system.js";
 import { InvalidOperationError } from "../utils/errors.js";
-import { ComponentType, Components } from "../utils/types.js";
+import { ComponentType, Components } from "../types/common-types.js";
 
 type SystemComponents = Components<"Position", "Animation" | "Sprite" | "Shape">;
 export class RenderSystem extends System {
