@@ -1,6 +1,6 @@
 import { SideOfCollision } from "../constants/enums.js";
-import { EntityManager } from "../entities/entity-manager.js";
 import { Vector2D } from "../utils/maths/vector-2d.js";
+import { IEntityManager } from "./common-interfaces.js";
 
 export type Bounds = { position: Vector2D; size: Vector2D };
 export type ComponentType = Key<typeof import("../components/2d/index.js")> & string;
@@ -19,7 +19,7 @@ export type PhysicsComponents = Components<
 export type GameSystem<T extends GameSystemType> = InstanceType<typeof import("../systems/index.js")[T]>;
 export type GameSystemType = Key<typeof import("../systems/index.js")> & string;
 
-export type InputBindingFn = (entityId: number, entityManager: EntityManager, dt: number) => void;
+export type InputBindingFn = (entityId: number, entityManager: IEntityManager, dt: number) => void;
 export type InputBindingType = "held" | "pressed" | "released";
 export type InputBindings = { [K in InputBindingType]?: InputBindingFn };
 

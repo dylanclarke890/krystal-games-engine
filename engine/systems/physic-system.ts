@@ -2,12 +2,11 @@ import { CollisionDetector } from "../collision/detector.js";
 import { CollisionResolver } from "../collision/resolver.js";
 import { SystemTypes } from "../constants/enums.js";
 import { System } from "./system.js";
-import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
 import { Collidable, CollidableComponents, ComponentType, PhysicsComponents } from "../types/common-types.js";
 import { Mass } from "../components/2d/index.js";
 import { EntityQuadtree } from "../entities/entity-quadtree.js";
-import { IEventSystem } from "../types/common-interfaces.js";
+import { IEntityManager, IEventSystem } from "../types/common-interfaces.js";
 
 export class PhysicSystem extends System {
   static requiredComponents: ComponentType[] = ["Position", "Velocity"];
@@ -29,7 +28,7 @@ export class PhysicSystem extends System {
   resolver: CollisionResolver;
 
   constructor(
-    entityManager: EntityManager,
+    entityManager: IEntityManager,
     eventSystem: IEventSystem,
     quadtree: EntityQuadtree,
     detector: CollisionDetector,

@@ -8,13 +8,13 @@ import { CollisionResolver } from "../collision/resolver.js";
 import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "../systems/index.js";
 import { EntityQuadtree } from "../entities/entity-quadtree.js";
 import { ConfigManager, config } from "../config/index.js";
-import { IEventSystem } from "../types/common-interfaces.js";
+import { IEntityManager, IEventSystem } from "../types/common-interfaces.js";
 
 export class Game {
   viewport: Viewport;
   eventSystem: IEventSystem;
 
-  entityManager: EntityManager;
+  entityManager: IEntityManager;
   systemManager: SystemManager;
   inputManager: InputManager;
   configManager: ConfigManager<typeof config>;
@@ -22,9 +22,9 @@ export class Game {
   loop: GameLoop;
 
   /**
-   * @param {string?} canvasId Id of the canvas, if known.
-   * @param {number} width Width of the canvas.
-   * @param {number} height Height of the canvas.
+   * @param canvasId Id of the canvas, if known.
+   * @param width Width of the viewport.
+   * @param height Height of the viewport.
    */
   constructor(canvasId: string | undefined, width: number, height: number) {
     this.viewport = new Viewport(width, height, canvasId);

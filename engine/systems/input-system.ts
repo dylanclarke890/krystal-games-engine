@@ -1,10 +1,9 @@
 import { SystemTypes } from "../constants/enums.js";
 import { InputManager } from "../input/input-manager.js";
 import { System } from "./system.js";
-import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
 import { ComponentType } from "../types/common-types.js";
-import { IEventSystem } from "../types/common-interfaces.js";
+import { IEntityManager, IEventSystem } from "../types/common-interfaces.js";
 
 export class InputSystem extends System {
   static requiredComponents: ComponentType[] = ["Input"];
@@ -13,7 +12,7 @@ export class InputSystem extends System {
 
   inputManager: InputManager;
 
-  constructor(entityManager: EntityManager, eventSystem: IEventSystem, inputManager: InputManager) {
+  constructor(entityManager: IEntityManager, eventSystem: IEventSystem, inputManager: InputManager) {
     super(entityManager, eventSystem);
     Assert.instanceOf("inputManager", inputManager, InputManager);
     this.inputManager = inputManager;

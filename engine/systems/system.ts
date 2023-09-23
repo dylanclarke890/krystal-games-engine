@@ -1,28 +1,21 @@
 import { SystemTypes } from "../constants/enums.js";
-import { EntityManager } from "../entities/entity-manager.js";
-import { Assert } from "../utils/assert.js";
 import { InvalidOperationError } from "../utils/errors.js";
 import { ComponentType } from "../types/common-types.js";
-import { IEventSystem } from "../types/common-interfaces.js";
+import { IEntityManager, IEventSystem } from "../types/common-interfaces.js";
 
 export class System {
   static requiredComponents: ComponentType[];
   static systemType: SystemTypes;
 
-  entityManager: EntityManager;
+  entityManager: IEntityManager;
   eventSystem: IEventSystem;
 
-  constructor(entityManager: EntityManager, eventSystem: IEventSystem) {
-    Assert.instanceOf("entityManager", entityManager, EntityManager);
+  constructor(entityManager: IEntityManager, eventSystem: IEventSystem) {
     this.entityManager = entityManager;
     this.eventSystem = eventSystem;
   }
 
   setup() {
-    /* stub */
-  }
-
-  cleanup() {
     /* stub */
   }
 
@@ -32,5 +25,9 @@ export class System {
    */
   update(_dt: number, _entities: Set<number>): void {
     throw new InvalidOperationError("Update method must be implemented.");
+  }
+
+  cleanup() {
+    /* stub */
   }
 }

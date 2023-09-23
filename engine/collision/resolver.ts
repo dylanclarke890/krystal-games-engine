@@ -1,10 +1,10 @@
 import { Bounciness, Mass, Position, Size } from "../components/2d/index.js";
 import { SideOfCollision } from "../constants/enums.js";
-import { EntityManager } from "../entities/entity-manager.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";
 import { ComponentType, Components } from "../types/common-types.js";
+import { IEntityManager } from "../types/common-interfaces.js";
 
 type ResolverComponents = Components<"Position" | "Velocity" | "Size" | "Collision", "Bounciness" | "Mass">;
 type IResolverData = { entityCollisions: PairedSet<number>; viewportCollisions: Set<number> };
@@ -13,11 +13,10 @@ export class CollisionResolver {
   static components: ComponentType[] = ["Position", "Velocity", "Size", "Collision", "Bounciness", "Mass"];
   static componentDefaults = { bounce: new Bounciness(1), mass: new Mass(1) };
 
-  entityManager: EntityManager;
+  entityManager: IEntityManager;
   viewport: Viewport;
 
-  constructor(entityManager: EntityManager, viewport: Viewport) {
-    Assert.instanceOf("entityManager", entityManager, EntityManager);
+  constructor(entityManager: IEntityManager, viewport: Viewport) {
     Assert.instanceOf("viewport", viewport, Viewport);
     this.entityManager = entityManager;
     this.viewport = viewport;
