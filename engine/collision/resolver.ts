@@ -7,7 +7,7 @@ import { ComponentType, Components } from "../types/common-types.js";
 import { IEntityManager } from "../types/common-interfaces.js";
 
 type ResolverComponents = Components<"Position" | "Velocity" | "Size" | "Collision", "Bounciness" | "Mass">;
-type IResolverData = { entityCollisions: PairedSet<number>; viewportCollisions: Set<number> };
+type ResolverData = { entityCollisions: PairedSet<number>; viewportCollisions: Set<number> };
 
 export class CollisionResolver {
   static components: ComponentType[] = ["Position", "Velocity", "Size", "Collision", "Bounciness", "Mass"];
@@ -30,7 +30,7 @@ export class CollisionResolver {
     return components as Defined<ResolverComponents>;
   }
 
-  resolve(data: IResolverData) {
+  resolve(data: ResolverData) {
     this.resolveEntityCollisions(data.entityCollisions);
     this.resolveViewportCollisions(data.viewportCollisions);
   }
