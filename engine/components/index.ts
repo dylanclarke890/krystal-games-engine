@@ -24,9 +24,9 @@ export class Friction extends Vector2D {
     super(x ?? 1, y ?? 1, 0, 1, 0, 1);
   }
 }
-export class GravityFactor extends ScalarValue {
-  constructor(value?: number) {
-    super(value ?? 9.81);
+export class GravityFactor extends Acceleration {
+  constructor(x?: number, y?: number, xMin?: number, yMin?: number, xMax?: number, yMax?: number) {
+    super(x, y ?? 9.81, xMin, xMax, yMin, yMax);
   }
 }
 export class Health extends ScalarValue {

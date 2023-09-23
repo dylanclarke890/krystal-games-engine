@@ -68,8 +68,7 @@ export class PhysicSystem extends System {
       }
 
       if (typeof components.GravityFactor !== "undefined") {
-        const gravityEffect = components.GravityFactor.value * mass * dt;
-        components.Velocity.add(0, gravityEffect);
+        components.Velocity.add(components.GravityFactor.clone().mul(mass * dt));
       }
 
       components.Position.add(components.Velocity.clone().mul(dt));
