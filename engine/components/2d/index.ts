@@ -1,5 +1,5 @@
-import { ScalarValue } from "../utils/maths/scalar-value.js";
-import { Vector2D } from "../utils/maths/vector-2d.js";
+import { ScalarValue } from "../../utils/maths/scalar-value.js";
+import { Vector2D } from "../../utils/maths/vector-2d.js";
 
 export { AI } from "./ai.js";
 export { Animation } from "./animation.js";

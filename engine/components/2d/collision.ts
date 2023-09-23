@@ -5,7 +5,7 @@ import {
   EntityCollisionCallback,
   ViewportCollisionBehaviour,
   ViewportCollisionCallback,
-} from "../utils/types.js";
+} from "../../utils/types.js";
 
 export class Collision {
   collisionLayer: CollisionLayer;

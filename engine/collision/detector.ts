@@ -1,4 +1,4 @@
-import { Position, Size } from "../components/index.js";
+import { Position, Size } from "../components/2d/index.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { EntityQuadtree } from "../entities/entity-quadtree.js";
 import { Viewport } from "../graphics/viewport.js";

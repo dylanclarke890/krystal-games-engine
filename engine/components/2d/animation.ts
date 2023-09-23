@@ -1,5 +1,5 @@
-import { Assert } from "../utils/assert.js";
-import { arrayFromInterval } from "../utils/maths/interval.js";
+import { Assert } from "../../utils/assert.js";
+import { arrayFromInterval } from "../../utils/maths/interval.js";
 
 export class Animation {
   sequence: number[];

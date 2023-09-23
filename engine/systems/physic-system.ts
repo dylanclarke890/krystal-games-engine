@@ -5,7 +5,7 @@ import { System } from "./system.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";
 import { Collidable, CollidableComponents, ComponentType, PhysicsComponents } from "../utils/types.js";
-import { Mass } from "../components/index.js";
+import { Mass } from "../components/2d/index.js";
 import { EventSystem } from "../events/event-system.js";
 import { EntityQuadtree } from "../entities/entity-quadtree.js";
 

@@ -3,9 +3,9 @@ import { EntityManager } from "../entities/entity-manager.js";
 import { Vector2D } from "./maths/vector-2d.js";
 
 export type Bounds = { position: Vector2D; size: Vector2D };
-export type ComponentType = Key<typeof import("../components/index.js")> & string;
+export type ComponentType = Key<typeof import("../components/2d/index.js")> & string;
 export type ComponentMap<T extends ComponentType> = { [K in T]?: Component<K> };
-export type Component<T extends ComponentType> = InstanceType<typeof import("../components/index.js")[T]>;
+export type Component<T extends ComponentType> = InstanceType<typeof import("../components/2d/index.js")[T]>;
 export type Components<TRequired extends ComponentType, TOptional extends ComponentType> = DefinedExcept<
   ComponentMap<TRequired | TOptional>,
   TOptional

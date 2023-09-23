@@ -1,6 +1,6 @@
 import { System } from "./system.js";
 import { SystemTypes } from "../constants/enums.js";
-import { Sprite, Position, Shape } from "../components/index.js";
+import { Sprite, Position, Shape } from "../components/2d/index.js";
 import { Viewport } from "../graphics/viewport.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Assert } from "../utils/assert.js";

@@ -1,4 +1,4 @@
-import { Bounciness, Mass, Position, Size } from "../components/index.js";
+import { Bounciness, Mass, Position, Size } from "../components/2d/index.js";
 import { SideOfCollision } from "../constants/enums.js";
 import { EntityManager } from "../entities/entity-manager.js";
 import { Viewport } from "../graphics/viewport.js";

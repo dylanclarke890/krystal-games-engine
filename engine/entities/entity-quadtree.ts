@@ -1,4 +1,4 @@
-import { Position, Size } from "../components/index.js";
+import { Position, Size } from "../components/2d/index.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { Quadtree, QuadtreeNode } from "../utils/quadtree.js";
