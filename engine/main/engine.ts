@@ -1,7 +1,7 @@
 import { config, GameConfig, ConfigManager } from "../config/index.js";
 import { CollisionDetector, CollisionResolver } from "../collision/index.js";
 import { EntityManager } from "../entities/entity-manager.js";
-import { EntityQuadtree } from "../entities/entity-quadtree.js";
+import { Quadtree } from "../entities/quadtree.js";
 import { EventSystem } from "../events/event-system.js";
 import { Viewport } from "../graphics/viewport.js";
 import { InputManager } from "../input/input-manager.js";
@@ -48,7 +48,9 @@ export class KrystalGameEngine {
     const configManager = this.configManager;
     const systemManager = this.systemManager;
 
-    const quadtree = new EntityQuadtree(this.viewport, { maxDepth: configManager.getInt("quadtreeMaxDepth") });
+    const quadtree = new Quadtree(this.viewport, this.objectPoolManager, {
+      maxDepth: configManager.getInt("quadtreeMaxDepth"),
+    });
     const detector = new CollisionDetector(entityManager, this.viewport, quadtree);
     const resolver = new CollisionResolver(entityManager, this.viewport);
 

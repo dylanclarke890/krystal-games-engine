@@ -2,7 +2,7 @@ import { System } from "./system.js";
 import { CollisionDetector, CollisionResolver } from "../collision/index.js";
 import { Mass } from "../components/2d/index.js";
 import { SystemTypes } from "../constants/enums.js";
-import { EntityQuadtree } from "../entities/entity-quadtree.js";
+import { Quadtree } from "../entities/quadtree.js";
 import { IEntityManager, IEventSystem } from "../types/common-interfaces.js";
 import { Collidable, CollidableComponents, ComponentType, PhysicsComponents } from "../types/common-types.js";
 import { Assert } from "../utils/assert.js";
@@ -22,21 +22,20 @@ export class PhysicSystem extends System {
   static defaultComponents = { mass: new Mass(1) };
   static systemType = SystemTypes.Physics;
 
-  quadtree: EntityQuadtree;
+  quadtree: Quadtree;
   detector: CollisionDetector;
   resolver: CollisionResolver;
 
   constructor(
     entityManager: IEntityManager,
     eventSystem: IEventSystem,
-    quadtree: EntityQuadtree,
+    quadtree: Quadtree,
     detector: CollisionDetector,
     resolver: CollisionResolver
   ) {
     super(entityManager, eventSystem);
     Assert.instanceOf("detector", detector, CollisionDetector);
     Assert.instanceOf("resolver", resolver, CollisionResolver);
-    Assert.instanceOf("quadtree", quadtree, EntityQuadtree);
 
     this.quadtree = quadtree;
     this.detector = detector;
@@ -73,7 +72,7 @@ export class PhysicSystem extends System {
 
       if (typeof components.Collision !== "undefined" && typeof components.Size !== "undefined") {
         collidables.push([id, components as CollidableComponents]);
-        this.quadtree.insertEntity(id, components.Position, components.Size);
+        this.quadtree.insert(id, components.Position, components.Size);
       }
     }
 

@@ -1,5 +1,5 @@
 import { Position, Size } from "../components/2d/index.js";
-import { EntityQuadtree } from "../entities/entity-quadtree.js";
+import { Quadtree } from "../entities/quadtree.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { PairedSet } from "../utils/paired-set.js";
@@ -10,14 +10,13 @@ import { IEntityManager } from "../types/common-interfaces.js";
 export class CollisionDetector {
   entityManager: IEntityManager;
   viewport: Viewport;
-  quadtree: EntityQuadtree;
+  quadtree: Quadtree;
   entityCollisions: PairedSet<number>;
   viewportCollisions: Set<number>;
   collisionChecks: number;
 
-  constructor(entityManager: IEntityManager, viewport: Viewport, quadtree: EntityQuadtree) {
+  constructor(entityManager: IEntityManager, viewport: Viewport, quadtree: Quadtree) {
     Assert.instanceOf("viewport", viewport, Viewport);
-    Assert.instanceOf("quadtree", quadtree, EntityQuadtree);
 
     this.entityManager = entityManager;
     this.viewport = viewport;
@@ -40,12 +39,12 @@ export class CollisionDetector {
         this.viewportCollisions.add(aId);
       }
 
-      const possibleCollisions = this.quadtree.findPossibleCollisions(aComponents.Position, aComponents.Size);
+      const possibleCollisions = this.quadtree.retrieve(aComponents.Position, aComponents.Size);
 
       for (let j = 0; j < possibleCollisions.length; j++) {
         this.collisionChecks++;
         const bEntityNode = possibleCollisions[j];
-        const bId = bEntityNode.entityId;
+        const bId = bEntityNode.id;
         const bCollision = this.entityManager.getComponents(bId, ["Collision"]).Collision!;
         if (aId === bId || aComponents.Collision.collisionLayer !== bCollision.collisionLayer) {
           continue;
