@@ -1,9 +1,9 @@
 import { GameEvents } from "../constants/enums.js";
 import { Assert } from "../utils/assert.js";
 import { Timer } from "./timer.js";
-import { IEventSystem } from "../types/common-interfaces.js";
+import { IEventSystem, ILoop } from "../types/common-interfaces.js";
 
-export class GameLoop {
+export class GameLoop implements ILoop {
   #lastFrame: number;
   eventSystem: IEventSystem;
   clock: Timer;

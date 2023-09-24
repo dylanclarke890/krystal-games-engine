@@ -74,3 +74,9 @@ export interface IConfigManager<T> {
 
   getArray<TItem>(key: string): Nullable<TItem[]>;
 }
+
+export interface ILoop {
+  start(): void;
+  main(timestamp: number): void;
+  stop(unloadAssets?: boolean): void;
+}

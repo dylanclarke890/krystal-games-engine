@@ -8,7 +8,7 @@ import { CollisionResolver } from "../collision/resolver.js";
 import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "../systems/index.js";
 import { EntityQuadtree } from "../entities/entity-quadtree.js";
 import { config, ConfigManager } from "../config/index.js";
-import { IConfigManager, IEntityManager, IEventSystem } from "../types/common-interfaces.js";
+import { IConfigManager, IEntityManager, IEventSystem, ILoop } from "../types/common-interfaces.js";
 
 export class Game {
   viewport: Viewport;
@@ -19,7 +19,7 @@ export class Game {
   inputManager: InputManager;
   configManager: IConfigManager<typeof config>;
 
-  loop: GameLoop;
+  loop: ILoop;
 
   /**
    * @param canvasId Id of the canvas, if known.
