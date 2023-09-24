@@ -23,18 +23,3 @@ declare type Pair<T> = [T, T];
 declare type EventHandler<T> = (data: T) => void;
 
 declare type Nullable<T> = T | undefined;
-
-type IPoolableMethods = {
-  init: (...args: any[]) => void;
-  reset: (...args: any[]) => void;
-  clear: (...args: any[]) => void;
-} & { [x: string]: any };
-
-declare type RequiresAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyof T, Keys>> &
-  {
-    [K in Keys]-?: Required<Pick<T, K>>;
-  }[Keys];
-
-declare type IPoolable<T extends IPoolableMethods> = RequiresAtLeastOne<{
-  [K in keyof T]?: T[K];
-}>;

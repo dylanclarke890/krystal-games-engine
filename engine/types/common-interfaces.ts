@@ -91,16 +91,16 @@ export interface IQuadtree {
   clear(): void;
 }
 
-export interface IObjectPool<T> {
+export interface IObjectPool<T extends new (...args: any) => any> {
   acquire(...args: ConstructorParameters<T>): InstanceType<T>;
   release(obj: InstanceType<T>): void;
   clear(): void;
 }
 
 export interface IObjectPoolManager {
-  get<T) => any>(name: string): IObjectPool<T> | undefined;
+  get<T extends new (...args: any) => any>(name: string): IObjectPool<T> | undefined;
   has(name: string): boolean;
-  create<T>(
+  create<T extends new (...args: any) => any>(
     name: string,
     createFn: (...args: ConstructorParameters<T>) => T,
     size?: number

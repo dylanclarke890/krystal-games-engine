@@ -17,11 +17,7 @@ export class Quadtree implements IQuadtree {
   constructor(viewport: Viewport, objectPoolManager: IObjectPoolManager, { maxDepth = 4, maxChildren = 4 } = {}) {
     this.size = 0;
     this.viewport = viewport;
-    this.nodePool = objectPoolManager.create(
-      "quadtree",
-      (id, position, size, pool, depth, maxDepth, maxChildren) =>
-        new QuadtreeNode(id, position, size, pool, depth, maxDepth, maxChildren)
-    );
+    this.nodePool = objectPoolManager.create("quadtree", QuadtreeNode);
 
     const pos = new Vector2D(0, 0);
     const size = new Vector2D(viewport.width, viewport.height);
@@ -225,9 +221,9 @@ export class QuadtreeNode implements IQuadtreeNode {
   }
 
   clear(): void {
-    this.children.forEach(child => {
+    this.children.forEach((child) => {
       this.nodePool.release(child);
-    })
+    });
     this.overlappingChildren.forEach((child) => {
       this.nodePool.release(child);
     });
