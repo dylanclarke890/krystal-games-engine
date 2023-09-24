@@ -1,54 +1,114 @@
 import { Quadrant } from "../constants/enums.js";
-import { Assert } from "./assert.js";
-import { Vector2D } from "./maths/vector-2d.js";
+import { Viewport } from "../graphics/viewport.js";
+import { IObjectPool, IObjectPoolManager } from "../types/common-interfaces.js";
+import { Vector2D } from "../utils/maths/vector-2d.js";
 
 export class Quadtree {
   /** The node representing the entire viewport/bounds. */
   root: QuadtreeNode;
   size: number;
 
+  viewport: Viewport;
+
+  nodePool: IObjectPool<QuadtreeNode>;
+
   /**
-   * @param position Vector with x, y properties representing the top left position of the bounds.
-   * @param size Vector with x, y properties representing the size of the bounds.
    * @param maxDepth The maximum number of levels that the quadtree will create. Default is 4.
    * @param maxChildren The maximum number of items per quadrant before subdividing. Default is 4.
    **/
-  constructor(position: Vector2D, size: Vector2D, { maxDepth = 4, maxChildren = 4 } = {}) {
-    Assert.instanceOf("position", position, Vector2D);
-    Assert.instanceOf("size", size, Vector2D);
-
+  constructor(viewport: Viewport, objectPoolManager: IObjectPoolManager, { maxDepth = 4, maxChildren = 4 } = {}) {
     this.size = 0;
-    this.root = new QuadtreeNode(position, size, 0, maxDepth, maxChildren);
+    this.viewport = viewport;
+    this.nodePool = objectPoolManager.create(
+      "quadtree",
+      (id, position, size, depth, maxDepth, maxChildren) =>
+        new QuadtreeNode(id, position, size, depth, maxDepth, maxChildren)
+    );
+
+    const pos = new Vector2D(0, 0);
+    const size = new Vector2D(viewport.width, viewport.height);
+    this.root = this.nodePool.acquire(-1, pos, size, 0, maxDepth, maxChildren);
   }
 
-  insert(node: QuadtreeNode | QuadtreeNode[]) {
-    if (Array.isArray(node)) {
-      this.size += node.length;
-      this.root.insert(node);
-    } else {
-      this.size++;
-      this.root.insert(node);
+  insert(id: number, position: Vector2D, size: Vector2D): void {
+    const node = new QuadtreeNode(id, position, size);
+    this.size++;
+    this.root.insert(node);
+  }
+
+  retrieve(position: Vector2D, size: Vector2D): QuadtreeNode[] {
+    const node = new QuadtreeNode(-1, position, size);
+    return this.root.retrieve(node);
+  }
+
+  retrieveById(id: number, node: QuadtreeNode = this.root): Nullable<QuadtreeNode> {
+    if (node.id === id) {
+      return node;
     }
+
+    // If the node has children, search them
+    for (let child of node.children) {
+      const foundNode = this.retrieveById(id, child);
+      if (foundNode) {
+        return foundNode;
+      }
+    }
+
+    // If the node has overlapping children, search them as well
+    for (let overlappingChild of node.overlappingChildren) {
+      const foundNode = this.retrieveById(id, overlappingChild);
+      if (foundNode) {
+        return foundNode;
+      }
+    }
+
+    // Node was not found in this branch
+    return undefined;
+  }
+
+  drawBoundaries(color?: string) {
+    this.viewport.ctx.fillStyle = color ?? "white";
+  }
+
+  removeById(id: number, node: QuadtreeNode = this.root): boolean {
+    // If the node has children, search them
+    for (let i = 0; i < node.children.length; i++) {
+      if (node.children[i].id === id) {
+        node.children.splice(i, 1);
+        return true;
+      }
+
+      const wasRemoved = this.removeById(id, node.children[i]);
+      if (wasRemoved) {
+        return true;
+      }
+    }
+
+    // If the node has overlapping children, search them as well
+    for (let i = 0; i < node.overlappingChildren.length; i++) {
+      if (node.overlappingChildren[i].id === id) {
+        node.overlappingChildren.splice(i, 1);
+        return true;
+      }
+
+      const wasRemoved = this.removeById(id, node.overlappingChildren[i]);
+      if (wasRemoved) {
+        return true;
+      }
+    }
+
+    // Node was not found in this branch
+    return false;
   }
 
   clear() {
     this.root.clear();
     this.size = 0;
   }
-
-  retrieve(node: QuadtreeNode) {
-    return this.root.retrieve(node);
-  }
-
-  drawBoundaries(color?: string, ctx?: CanvasRenderingContext2D) {
-    if (typeof ctx === "undefined") {
-      return;
-    }
-    ctx.fillStyle = color ?? "white";
-  }
 }
 
 export class QuadtreeNode {
+  id: number;
   position: Vector2D;
   size: Vector2D;
 
@@ -61,7 +121,8 @@ export class QuadtreeNode {
   depth: number;
   maxDepth: number;
 
-  constructor(position: Vector2D, size: Vector2D, depth = 0, maxDepth = 4, maxChildren = 4) {
+  constructor(id: number, position: Vector2D, size: Vector2D, depth = 0, maxDepth = 4, maxChildren = 4) {
+    this.id = id;
     this.position = position;
     this.size = size;
     this.depth = depth;
@@ -124,7 +185,7 @@ export class QuadtreeNode {
     const size = new Vector2D(halfWidth, halfHeight);
 
     this.children = positions.map(
-      (pos) => new QuadtreeNode(pos, size, this.depth + 1, this.maxDepth, this.maxChildren)
+      (pos) => new QuadtreeNode(-1, pos, size, this.depth + 1, this.maxDepth, this.maxChildren)
     );
 
     const nodes = [...this.nodes];
