@@ -22,6 +22,61 @@ export class Vector2D {
     this.#constrain();
   }
 
+  get normalized() {
+    return this.div(this.magnitude);
+  }
+
+  get magnitude(): number {
+    return calcHypotenuse(this.x, this.y);
+  }
+
+  get serialized(): string {
+    return JSON.stringify(this);
+  }
+
+  /** @returns the dot product. */
+  dot(other: Vector2D): number {
+    return this.x * other.x + this.y * other.y;
+  }
+
+  /** @returns the cross product. */
+  cross(other: Vector2D): number {
+    return this.x * other.y - this.y * other.x;
+  }
+
+  /** @returns the angle in radians between the vectors, relative to the x-axis. */
+  angleTo(other: Vector2D): number {
+    return Math.atan2(other.y - this.y, other.x - this.x);
+  }
+
+  set(other: Vector2D) {
+    this.x = other.x;
+    this.y = other.y;
+    return this;
+  }
+
+  assign(other: Vector2D) {
+    this.x = other.x;
+    this.y = other.y;
+    this.xMin = other.xMin;
+    this.xMax = other.xMax;
+    this.yMin = other.yMin;
+    this.yMax = other.yMax;
+    return this;
+  }
+
+  deserialize(data: string) {
+    const parsed = parseJSON<Vector2D>(data);
+    this.assign(parsed);
+    this.#constrain();
+    return this;
+  }
+
+  /** Get a clone of the current instance. */
+  clone(): Vector2D {
+    return new Vector2D().assign(this);
+  }
+
   add(other: Vector2D | number, y?: number) {
     if (typeof other === "number") {
       y ??= other;
@@ -86,9 +141,7 @@ export class Vector2D {
     return this;
   }
 
-  /**
-   * Linearly interpolates between the vectors based on an alpha value between 0 and 1.
-   */
+  /** Linearly interpolates between the vectors based on an alpha value between 0 and 1. */
   lerp(other: Vector2D, alpha: number) {
     alpha = constrain(alpha, 0, 1);
     this.x = this.x + (other.x - this.x) * alpha;
@@ -117,27 +170,6 @@ export class Vector2D {
     return this;
   }
 
-  set(other: Vector2D) {
-    this.x = other.x;
-    this.y = other.y;
-    return this;
-  }
-
-  assign(other: Vector2D) {
-    this.x = other.x;
-    this.y = other.y;
-    this.xMin = other.xMin;
-    this.xMax = other.xMax;
-    this.yMin = other.yMin;
-    this.yMax = other.yMax;
-    return this;
-  }
-
-  /** @returns a clone of the current instance. */
-  clone(): Vector2D {
-    return new Vector2D().assign(this);
-  }
-
   floor() {
     this.x = Math.floor(this.x);
     this.y = Math.floor(this.y);
@@ -154,11 +186,6 @@ export class Vector2D {
     this.x = Math.ceil(this.x);
     this.y = Math.ceil(this.y);
     return this;
-  }
-
-  normalize() {
-    const length = this.magnitude();
-    return this.div(length);
   }
 
   /** Randomizes x and y to be between their min and max if set. */
@@ -180,35 +207,6 @@ export class Vector2D {
     }
 
     return this;
-  }
-
-  /** @returns the dot product. */
-  dot(other: Vector2D): number {
-    return this.x * other.x + this.y * other.y;
-  }
-
-  /** @returns the cross product. */
-  cross(other: Vector2D): number {
-    return this.x * other.y - this.y * other.x;
-  }
-
-  /** @returns the angle in radians between the vectors, relative to the x-axis. */
-  angleTo(other: Vector2D): number {
-    return Math.atan2(other.y - this.y, other.x - this.x);
-  }
-
-  magnitude(): number {
-    return calcHypotenuse(this.x, this.y);
-  }
-
-  serialize(): string {
-    return JSON.stringify(this);
-  }
-
-  deserialize(data: string): void {
-    const parsed = parseJSON<Vector2D>(data);
-    this.assign(parsed);
-    this.#constrain();
   }
 
   #constrain() {
