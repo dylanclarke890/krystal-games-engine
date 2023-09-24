@@ -28,7 +28,7 @@ export class SystemManager {
     const required = (<typeof System>system.constructor).requiredComponents;
     const type = (<typeof System>system.constructor).systemType;
 
-    Assert.defined(`${name} requiredComponents`, required);
+    Assert.isArray(`${name} requiredComponents`, required);
     Assert.instanceOf(`${name} systemType`, type, SystemTypes);
   }
 

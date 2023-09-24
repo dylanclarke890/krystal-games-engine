@@ -23,6 +23,12 @@ export class Assert {
     }
   }
 
+  static isArray<T>(name: string, value: unknown, message?: string): asserts value is Array<T> {
+    if (!Array.isArray(value)) {
+      throw new AssertionError(message ?? Assert.#defaultTypeError(name, "array"), value);
+    }
+  }
+
   static defined<T>(name: string, value: Nullable<T> | null, message?: string): asserts value is NonNullable<T> {
     if (value === null || typeof value === "undefined") {
       throw new AssertionError(message ?? `${name} was not defined.`, value);
