@@ -1,9 +1,9 @@
 import { GameEvents } from "../engine/constants/enums.js";
 import { rectVsRect } from "../engine/collision/detection-strategies.js";
 import { Position, Shape, Size } from "../engine/components/2d/index.js";
-import { Game } from "../engine/main/game.js";
+import { KrystalGameEngine } from "../engine/main/engine.js";
 
-export class RectVsRectTest extends Game {
+export class RectVsRectTest extends KrystalGameEngine {
   mouseRectId: number;
   staticRectId: number;
   constructor() {

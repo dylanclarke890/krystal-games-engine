@@ -9,7 +9,7 @@ import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "../syste
 import { GameLoop } from "../time/game-loop.js";
 import { IConfigManager, IEntityManager, IEventSystem, ILoop } from "../types/common-interfaces.js";
 
-export class Game {
+export class KrystalGameEngine {
   viewport: Viewport;
   eventSystem: IEventSystem;
   entityManager: IEntityManager;

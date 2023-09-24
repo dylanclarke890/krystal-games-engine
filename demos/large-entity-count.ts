@@ -1,9 +1,9 @@
 import { Collision, GravityFactor, Position, Shape, Size, Velocity } from "../engine/components/2d/index.js";
 import { GameEvents } from "../engine/constants/enums.js";
-import { Game } from "../engine/main/game.js";
+import { KrystalGameEngine } from "../engine/main/engine.js";
 import { CollisionSettings } from "../engine/types/common-types.js";
 
-export class LargeEntityCountTest extends Game {
+export class LargeEntityCountTest extends KrystalGameEngine {
   constructor() {
     super("canvas1", 500, 500);
     this.eventSystem.on(GameEvents.Loop_NextFrame, () => this.update());
