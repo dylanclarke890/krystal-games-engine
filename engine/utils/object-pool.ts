@@ -1,6 +1,7 @@
 import { IObjectPool } from "../types/common-interfaces.js";
+import { isFunction } from "./func.js";
 
-export class ObjectPool<T> implements IObjectPool<T> {
+export class ObjectPool<T extends Initialisable> implements IObjectPool<T> {
   pool: T[] = [];
   createFn: (...args: any[]) => T;
 
@@ -9,8 +10,12 @@ export class ObjectPool<T> implements IObjectPool<T> {
   }
 
   acquire(...args: any[]): T {
-    if (this.pool.length > 0) {
-      return this.pool.pop() as T;
+    const object = this.pool.pop();
+    if (object) {
+      if (isFunction(object, "initialise")) {
+        object.initialise(...args);
+      }
+      return object;
     }
     return this.createFn(...args);
   }

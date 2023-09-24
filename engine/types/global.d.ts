@@ -23,3 +23,7 @@ declare type Pair<T> = [T, T];
 declare type EventHandler<T> = (data: T) => void;
 
 declare type Nullable<T> = T | undefined;
+
+declare type Initialisable = {
+  initialise?: (...args: any[]) => void;
+};
