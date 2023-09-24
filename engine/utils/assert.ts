@@ -29,6 +29,12 @@ export class Assert {
     }
   }
 
+  static isFunction(name: string, value: unknown, message?: string): asserts value is Function {
+    if (typeof value !== "function") {
+      throw new AssertionError(message ?? Assert.#defaultTypeError(name, "function"), value);
+    }
+  }
+
   static defined<T>(name: string, value: Nullable<T> | null, message?: string): asserts value is NonNullable<T> {
     if (value === null || typeof value === "undefined") {
       throw new AssertionError(message ?? `${name} was not defined.`, value);

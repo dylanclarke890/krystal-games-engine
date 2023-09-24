@@ -84,4 +84,13 @@ export interface ILoop {
 export interface IObjectPool<T> {
   acquire(createFn: (...args: any[]) => T): T;
   release(obj: T): void;
+  clear(): void;
+}
+
+export interface IObjectPoolManager {
+  get<T extends Initialisable>(name: string): IObjectPool<T> | undefined;
+  has(name: string): boolean;
+  create<T extends Initialisable>(name: string, createFn: (...args: any[]) => T, size?: number): IObjectPool<T>;
+  clear(name: string): void;
+  clearAll(): void;
 }

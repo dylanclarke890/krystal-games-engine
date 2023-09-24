@@ -3,10 +3,12 @@ import { isFunction } from "../utils/func.js";
 
 export class ObjectPool<T extends Initialisable> implements IObjectPool<T> {
   pool: T[] = [];
+  poolSize: number;
   createFn: (...args: any[]) => T;
 
-  constructor(createFn: (...args: any[]) => T) {
+  constructor(createFn: (...args: any[]) => T, poolSize?: number) {
     this.createFn = createFn;
+    this.poolSize = poolSize ?? 5000;
   }
 
   acquire(...args: any[]): T {
@@ -22,5 +24,9 @@ export class ObjectPool<T extends Initialisable> implements IObjectPool<T> {
 
   release(obj: T): void {
     this.pool.push(obj);
+  }
+
+  clear(): void {
+    this.pool = [];
   }
 }
