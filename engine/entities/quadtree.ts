@@ -1,16 +1,16 @@
 import { Quadrant } from "../constants/enums.js";
 import { Viewport } from "../graphics/viewport.js";
-import { IObjectPool, IObjectPoolManager } from "../types/common-interfaces.js";
+import { IObjectPool, IObjectPoolManager, IQuadtree, IQuadtreeNode } from "../types/common-interfaces.js";
 import { Vector2D } from "../utils/maths/vector-2d.js";
 
-export class Quadtree {
+export class Quadtree implements IQuadtree {
   /** The node representing the entire viewport/bounds. */
-  root: QuadtreeNode;
+  root: IQuadtreeNode;
   size: number;
 
   viewport: Viewport;
 
-  nodePool: IObjectPool<QuadtreeNode>;
+  nodePool: IObjectPool<IQuadtreeNode>;
 
   /**
    * @param maxDepth The maximum number of levels that the quadtree will create. Default is 4.
@@ -36,12 +36,12 @@ export class Quadtree {
     this.root.insert(node);
   }
 
-  retrieve(position: Vector2D, size: Vector2D): QuadtreeNode[] {
+  retrieve(position: Vector2D, size: Vector2D): IQuadtreeNode[] {
     const node = new QuadtreeNode(-1, position, size);
     return this.root.retrieve(node);
   }
 
-  retrieveById(id: number, node: QuadtreeNode = this.root): Nullable<QuadtreeNode> {
+  retrieveById(id: number, node: IQuadtreeNode = this.root): Nullable<IQuadtreeNode> {
     if (node.id === id) {
       return node;
     }
@@ -70,7 +70,7 @@ export class Quadtree {
     this.viewport.ctx.fillStyle = color ?? "white";
   }
 
-  removeById(id: number, node: QuadtreeNode = this.root): boolean {
+  removeById(id: number, node: IQuadtreeNode = this.root): boolean {
     // If the node has children, search them
     for (let i = 0; i < node.children.length; i++) {
       if (node.children[i].id === id) {
@@ -107,15 +107,15 @@ export class Quadtree {
   }
 }
 
-export class QuadtreeNode {
+export class QuadtreeNode implements IQuadtreeNode {
   id: number;
   position: Vector2D;
   size: Vector2D;
 
-  nodes: QuadtreeNode[];
+  nodes: IQuadtreeNode[];
 
-  children: QuadtreeNode[];
-  overlappingChildren: QuadtreeNode[];
+  children: IQuadtreeNode[];
+  overlappingChildren: IQuadtreeNode[];
   maxChildren: number;
 
   depth: number;
@@ -133,9 +133,7 @@ export class QuadtreeNode {
     this.overlappingChildren = [];
   }
 
-  init() {}
-
-  insert(node: QuadtreeNode | QuadtreeNode[]) {
+  insert(node: IQuadtreeNode | IQuadtreeNode[]): void {
     if (Array.isArray(node)) {
       node.forEach((n) => this.insert(n));
       return;
@@ -145,7 +143,7 @@ export class QuadtreeNode {
       const quadrant = this.findQuadrant(node);
       const index = quadrant.valueOf();
 
-      if (this.isInBounds(node, this.children[index])) {
+      if (this.#isInBounds(node, this.children[index])) {
         this.children[index].insert(node);
       } else {
         this.overlappingChildren.push(node);
@@ -160,7 +158,7 @@ export class QuadtreeNode {
     }
   }
 
-  retrieve(node: QuadtreeNode): QuadtreeNode[] {
+  retrieve(node: IQuadtreeNode): IQuadtreeNode[] {
     // If this node is subdivided
     if (this.children.length) {
       const quadrant = this.findQuadrant(node);
@@ -172,7 +170,7 @@ export class QuadtreeNode {
     return this.nodes;
   }
 
-  subdivide() {
+  subdivide(): void {
     const halfWidth = this.size.x / 2;
     const halfHeight = this.size.y / 2;
 
@@ -195,14 +193,7 @@ export class QuadtreeNode {
     this.insert(nodes);
   }
 
-  clear() {
-    this.children.length = 0;
-    this.overlappingChildren.length = 0;
-    this.nodes.forEach((n) => n.clear());
-    this.nodes.length = 0;
-  }
-
-  findQuadrant(node: QuadtreeNode): Quadrant {
+  findQuadrant(node: IQuadtreeNode): Quadrant {
     const left = node.position.x < this.position.x + this.size.x / 2;
     const top = node.position.y < this.position.y + this.size.y / 2;
 
@@ -213,12 +204,19 @@ export class QuadtreeNode {
     return top ? Quadrant.NorthEast : Quadrant.SouthEast;
   }
 
-  isInBounds(a: QuadtreeNode, b: QuadtreeNode): boolean {
+  #isInBounds(a: IQuadtreeNode, b: IQuadtreeNode): boolean {
     return (
       a.position.x >= b.position.x &&
       a.position.x + a.size.x <= b.position.x + b.size.x &&
       a.position.y >= b.position.y &&
       a.position.y + a.size.y <= b.position.y + b.size.y
     );
+  }
+
+  clear(): void {
+    this.children.length = 0;
+    this.overlappingChildren.length = 0;
+    this.nodes.forEach((n) => n.clear());
+    this.nodes.length = 0;
   }
 }

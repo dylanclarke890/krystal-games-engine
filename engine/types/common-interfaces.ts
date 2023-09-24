@@ -1,5 +1,6 @@
-import { PriorityLevel } from "../constants/enums.js";
+import { PriorityLevel, Quadrant } from "../constants/enums.js";
 import { Enum } from "../utils/enum.js";
+import { Vector2D } from "../utils/maths/vector-2d.js";
 import { Component, ComponentMap, ComponentType } from "./common-types.js";
 
 export interface IEventSystem {
@@ -79,6 +80,30 @@ export interface ILoop {
   start(): void;
   main(timestamp: number): void;
   stop(unloadAssets?: boolean): void;
+}
+
+export interface IQuadtree {
+  insert(id: number, position: Vector2D, size: Vector2D): void;
+  retrieve(position: Vector2D, size: Vector2D): IQuadtreeNode[];
+  retrieveById(id: number, node?: IQuadtreeNode): Nullable<IQuadtreeNode>;
+  removeById(id: number, node?: IQuadtreeNode): boolean;
+  drawBoundaries(color?: string): void;
+  clear(): void;
+}
+
+export interface IQuadtreeNode {
+  id: number;
+  position: Vector2D;
+  size: Vector2D;
+
+  children: IQuadtreeNode[];
+  overlappingChildren: IQuadtreeNode[];
+
+  insert(node: IQuadtreeNode | IQuadtreeNode[]): void;
+  retrieve(node: IQuadtreeNode): IQuadtreeNode[];
+  subdivide(): void;
+  findQuadrant(node: IQuadtreeNode): Quadrant;
+  clear(): void;
 }
 
 export interface IObjectPool<T> {
