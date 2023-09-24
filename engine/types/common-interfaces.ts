@@ -3,6 +3,24 @@ import { Enum } from "../utils/enum.js";
 import { Vector2D } from "../utils/maths/vector-2d.js";
 import { Component, ComponentMap, ComponentType } from "./common-types.js";
 
+export interface IConfigManager<T> {
+  config: T;
+
+  getValue<TValue>(key: string): Nullable<TValue>;
+
+  getString(key: string): Nullable<string>;
+
+  getInt(key: string): Nullable<number>;
+
+  getBool(key: string): Nullable<boolean>;
+
+  getDate(key: string): Nullable<Date>;
+
+  getObject<TObj>(key: string): Nullable<TObj>;
+
+  getArray<TItem>(key: string): Nullable<TItem[]>;
+}
+
 export interface IEventSystem {
   /** Get the parent EventSystem. */
   get parent(): Nullable<IEventSystem>;
@@ -58,24 +76,6 @@ export interface IEntityManager {
   hasComponents(entity: number, componentTypes: ComponentType[]): boolean;
 }
 
-export interface IConfigManager<T> {
-  config: T;
-
-  getValue<TValue>(key: string): Nullable<TValue>;
-
-  getString(key: string): Nullable<string>;
-
-  getInt(key: string): Nullable<number>;
-
-  getBool(key: string): Nullable<boolean>;
-
-  getDate(key: string): Nullable<Date>;
-
-  getObject<TObj>(key: string): Nullable<TObj>;
-
-  getArray<TItem>(key: string): Nullable<TItem[]>;
-}
-
 export interface ILoop {
   start(): void;
   main(timestamp: number): void;
@@ -91,6 +91,20 @@ export interface IQuadtree {
   clear(): void;
 }
 
+export interface IObjectPool<T> {
+  acquire(...args: any[]): T;
+  release(obj: T): void;
+  clear(): void;
+}
+
+export interface IObjectPoolManager {
+  get<T>(name: string): IObjectPool<T> | undefined;
+  has(name: string): boolean;
+  create<T>(name: string, createFn: (...args: any[]) => T, size?: number): IObjectPool<T>;
+  clear(name: string): void;
+  clearAll(): void;
+}
+
 export interface IQuadtreeNode {
   id: number;
   position: Vector2D;
@@ -104,18 +118,4 @@ export interface IQuadtreeNode {
   subdivide(): void;
   findQuadrant(node: IQuadtreeNode): Quadrant;
   clear(): void;
-}
-
-export interface IObjectPool<T> {
-  acquire(...args: any[]): T;
-  release(obj: T): void;
-  clear(): void;
-}
-
-export interface IObjectPoolManager {
-  get<T>(name: string): IObjectPool<T> | undefined;
-  has(name: string): boolean;
-  create<T>(name: string, createFn: (...args: any[]) => T, size?: number): IObjectPool<T>;
-  clear(name: string): void;
-  clearAll(): void;
 }

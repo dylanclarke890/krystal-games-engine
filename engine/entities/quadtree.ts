@@ -7,9 +7,7 @@ export class Quadtree implements IQuadtree {
   /** The node representing the entire viewport/bounds. */
   root: IQuadtreeNode;
   size: number;
-
   viewport: Viewport;
-
   nodePool: IObjectPool<IQuadtreeNode>;
 
   /**
@@ -21,24 +19,26 @@ export class Quadtree implements IQuadtree {
     this.viewport = viewport;
     this.nodePool = objectPoolManager.create(
       "quadtree",
-      (id, position, size, depth, maxDepth, maxChildren) =>
-        new QuadtreeNode(id, position, size, depth, maxDepth, maxChildren)
+      (id, position, size, pool, depth, maxDepth, maxChildren) =>
+        new QuadtreeNode(id, position, size, pool, depth, maxDepth, maxChildren)
     );
 
     const pos = new Vector2D(0, 0);
     const size = new Vector2D(viewport.width, viewport.height);
-    this.root = this.nodePool.acquire(-1, pos, size, 0, maxDepth, maxChildren);
+    this.root = this.nodePool.acquire(-1, pos, size, this.nodePool, 0, maxDepth, maxChildren);
   }
 
   insert(id: number, position: Vector2D, size: Vector2D): void {
-    const node = new QuadtreeNode(id, position, size);
+    const node = this.nodePool.acquire(id, position, size, this.nodePool);
     this.size++;
     this.root.insert(node);
   }
 
   retrieve(position: Vector2D, size: Vector2D): IQuadtreeNode[] {
-    const node = new QuadtreeNode(-1, position, size);
-    return this.root.retrieve(node);
+    const node = this.nodePool.acquire(-1, position, size, this.nodePool);
+    const result = this.root.retrieve(node);
+    this.nodePool.release(node);
+    return result;
   }
 
   retrieveById(id: number, node: IQuadtreeNode = this.root): Nullable<IQuadtreeNode> {
@@ -73,8 +73,10 @@ export class Quadtree implements IQuadtree {
   removeById(id: number, node: IQuadtreeNode = this.root): boolean {
     // If the node has children, search them
     for (let i = 0; i < node.children.length; i++) {
-      if (node.children[i].id === id) {
+      const child = node.children[i];
+      if (child.id === id) {
         node.children.splice(i, 1);
+        this.nodePool.release(child);
         return true;
       }
 
@@ -86,12 +88,14 @@ export class Quadtree implements IQuadtree {
 
     // If the node has overlapping children, search them as well
     for (let i = 0; i < node.overlappingChildren.length; i++) {
-      if (node.overlappingChildren[i].id === id) {
+      const child = node.overlappingChildren[i];
+      if (child.id === id) {
         node.overlappingChildren.splice(i, 1);
+        this.nodePool.release(child);
         return true;
       }
 
-      const wasRemoved = this.removeById(id, node.overlappingChildren[i]);
+      const wasRemoved = this.removeById(id, child);
       if (wasRemoved) {
         return true;
       }
@@ -111,20 +115,27 @@ export class QuadtreeNode implements IQuadtreeNode {
   id: number;
   position: Vector2D;
   size: Vector2D;
-
   nodes: IQuadtreeNode[];
-
   children: IQuadtreeNode[];
   overlappingChildren: IQuadtreeNode[];
   maxChildren: number;
-
   depth: number;
   maxDepth: number;
+  nodePool: IObjectPool<IQuadtreeNode>;
 
-  constructor(id: number, position: Vector2D, size: Vector2D, depth = 0, maxDepth = 4, maxChildren = 4) {
+  constructor(
+    id: number,
+    position: Vector2D,
+    size: Vector2D,
+    nodePool: IObjectPool<IQuadtreeNode>,
+    depth = 0,
+    maxDepth = 4,
+    maxChildren = 4
+  ) {
     this.id = id;
     this.position = position;
     this.size = size;
+    this.nodePool = nodePool;
     this.depth = depth;
     this.maxChildren = maxChildren;
     this.maxDepth = maxDepth;
@@ -184,8 +195,8 @@ export class QuadtreeNode implements IQuadtreeNode {
 
     const size = new Vector2D(halfWidth, halfHeight);
 
-    this.children = positions.map(
-      (pos) => new QuadtreeNode(-1, pos, size, this.depth + 1, this.maxDepth, this.maxChildren)
+    this.children = positions.map((pos) =>
+      this.nodePool.acquire(-1, pos, size, this.nodePool, this.depth + 1, this.maxDepth, this.maxChildren)
     );
 
     const nodes = [...this.nodes];
@@ -214,9 +225,19 @@ export class QuadtreeNode implements IQuadtreeNode {
   }
 
   clear(): void {
+    this.children.forEach(child => {
+      this.nodePool.release(child);
+    })
+    this.overlappingChildren.forEach((child) => {
+      this.nodePool.release(child);
+    });
+    this.nodes.forEach((n) => {
+      n.clear();
+      this.nodePool.release(n);
+    });
+
     this.children.length = 0;
     this.overlappingChildren.length = 0;
-    this.nodes.forEach((n) => n.clear());
     this.nodes.length = 0;
   }
 }
