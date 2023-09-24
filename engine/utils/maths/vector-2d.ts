@@ -22,8 +22,8 @@ export class Vector2D {
     this.#constrain();
   }
 
-  get normalized() {
-    return this.div(this.magnitude);
+  get normalized(): Vector2D {
+    return new Vector2D(this.x, this.y).div(this.magnitude);
   }
 
   get magnitude(): number {
