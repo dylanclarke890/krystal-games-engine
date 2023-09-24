@@ -1,13 +1,12 @@
-import { EventSystem } from "../events/event-system.js";
+import { config, GameConfig, ConfigManager } from "../config/index.js";
+import { CollisionDetector, CollisionResolver } from "../collision/index.js";
 import { EntityManager } from "../entities/entity-manager.js";
-import { GameLoop } from "../time/game-loop.js";
+import { EntityQuadtree } from "../entities/entity-quadtree.js";
+import { EventSystem } from "../events/event-system.js";
 import { Viewport } from "../graphics/viewport.js";
 import { InputManager } from "../input/input-manager.js";
-import { CollisionDetector } from "../collision/detector.js";
-import { CollisionResolver } from "../collision/resolver.js";
 import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "../systems/index.js";
-import { EntityQuadtree } from "../entities/entity-quadtree.js";
-import { config, GameConfig, ConfigManager } from "../config/index.js";
+import { GameLoop } from "../time/game-loop.js";
 import { IConfigManager, IEntityManager, IEventSystem, ILoop } from "../types/common-interfaces.js";
 
 export class Game {
