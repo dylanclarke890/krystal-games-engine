@@ -1,5 +1,5 @@
 import { IObjectPool } from "../types/common-interfaces.js";
-import { isFunction } from "./func.js";
+import { isFunction } from "../utils/func.js";
 
 export class ObjectPool<T extends Initialisable> implements IObjectPool<T> {
   pool: T[] = [];
