@@ -133,6 +133,8 @@ export class QuadtreeNode {
     this.overlappingChildren = [];
   }
 
+  init() {}
+
   insert(node: QuadtreeNode | QuadtreeNode[]) {
     if (Array.isArray(node)) {
       node.forEach((n) => this.insert(n));

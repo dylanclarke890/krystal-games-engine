@@ -12,7 +12,7 @@ export class ObjectPool<T> implements IObjectPool<T> {
 
   acquire(...args: any[]): T {
     const object = this.pool.pop();
-    if (typeof object !== "undefined") {
+    if (typeof object !== "undefined" && object !== null) {
       return object;
     }
     return this.createFn(...args);

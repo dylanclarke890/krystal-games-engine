@@ -82,7 +82,7 @@ export interface ILoop {
 }
 
 export interface IObjectPool<T> {
-  acquire(createFn: (...args: any[]) => T): T;
+  acquire(...args: any[]): T;
   release(obj: T): void;
   clear(): void;
 }
