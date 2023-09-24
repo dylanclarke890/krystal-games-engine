@@ -26,7 +26,13 @@ export class Vector2D {
     return this.div(this.magnitude);
   }
 
+  /** @returns length of the vector. */
   get magnitude(): number {
+    return calcHypotenuse(this.x, this.y);
+  }
+
+  /** @returns length of the vector squared. */
+  get magnitudeSquared(): number {
     return calcHypotenuse(this.x, this.y);
   }
 
