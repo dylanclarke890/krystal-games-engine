@@ -1,12 +1,11 @@
-import { CollisionDetector } from "../collision/detector.js";
-import { CollisionResolver } from "../collision/resolver.js";
-import { SystemTypes } from "../constants/enums.js";
 import { System } from "./system.js";
-import { Assert } from "../utils/assert.js";
-import { Collidable, CollidableComponents, ComponentType, PhysicsComponents } from "../types/common-types.js";
+import { CollisionDetector, CollisionResolver } from "../collision/index.js";
 import { Mass } from "../components/2d/index.js";
+import { SystemTypes } from "../constants/enums.js";
 import { EntityQuadtree } from "../entities/entity-quadtree.js";
 import { IEntityManager, IEventSystem } from "../types/common-interfaces.js";
+import { Collidable, CollidableComponents, ComponentType, PhysicsComponents } from "../types/common-types.js";
+import { Assert } from "../utils/assert.js";
 
 export class PhysicSystem extends System {
   static requiredComponents: ComponentType[] = ["Position", "Velocity"];
