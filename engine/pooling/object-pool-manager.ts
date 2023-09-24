@@ -13,7 +13,7 @@ export class ObjectPoolManager implements IObjectPoolManager {
     return this.pools.has(name);
   }
 
-  create<T>(name: string, createFn: (...args: any[]) => T, size?: number): IObjectPool<T> {
+  create<T>(name: string, createFn: (...args: ConstructorParameters<T>) => T, size?: number): IObjectPool<T> {
     if (this.has(name)) {
       return this.get(name)!;
     }

@@ -1,16 +1,16 @@
 import { IObjectPool } from "../types/common-interfaces.js";
 
-export class ObjectPool<T> implements IObjectPool<T> {
-  pool: T[] = [];
+export class ObjectPool<T extends new (...args: any[]) => any> implements IObjectPool<T> {
+  pool: InstanceType<T>[] = [];
   poolSize: number;
-  createFn: (...args: any[]) => T;
+  createFn: (...args: ConstructorParameters<T>) => InstanceType<T>;
 
-  constructor(createFn: (...args: any[]) => T, poolSize?: number) {
+  constructor(createFn: (...args: ConstructorParameters<T>) => InstanceType<T>, size: number = 0) {
     this.createFn = createFn;
-    this.poolSize = poolSize ?? Infinity;
+    this.poolSize = size;
   }
 
-  acquire(...args: any[]): T {
+  acquire(...args: ConstructorParameters<T>): InstanceType<T> {
     const object = this.pool.pop();
     if (typeof object !== "undefined" && object !== null) {
       return object;
@@ -18,7 +18,7 @@ export class ObjectPool<T> implements IObjectPool<T> {
     return this.createFn(...args);
   }
 
-  release(obj: T): void {
+  release(obj: InstanceType<T>): void {
     this.pool.push(obj);
   }
 
