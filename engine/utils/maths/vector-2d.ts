@@ -10,6 +10,8 @@ export class Vector2D {
   yMin?: number;
   yMax?: number;
 
+  static zero = Object.freeze(new Vector2D(0, 0, 0, 0, 0, 0));
+
   constructor(x?: number, y?: number, xMin?: number, xMax?: number, yMin?: number, yMax?: number) {
     this.x = x ?? 0;
     this.y = y ?? 0;
