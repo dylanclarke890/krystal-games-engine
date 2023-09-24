@@ -7,7 +7,7 @@ export class ObjectPool<T> implements IObjectPool<T> {
 
   constructor(createFn: (...args: any[]) => T, poolSize?: number) {
     this.createFn = createFn;
-    this.poolSize = poolSize ?? 5000;
+    this.poolSize = poolSize ?? Infinity;
   }
 
   acquire(...args: any[]): T {
