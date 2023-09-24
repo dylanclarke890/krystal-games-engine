@@ -80,3 +80,8 @@ export interface ILoop {
   main(timestamp: number): void;
   stop(unloadAssets?: boolean): void;
 }
+
+export interface IObjectPool<T> {
+  acquire(createFn: (...args: any[]) => T): T;
+  release(obj: T): void;
+}
