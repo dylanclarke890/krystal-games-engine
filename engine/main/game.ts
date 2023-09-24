@@ -7,18 +7,16 @@ import { CollisionDetector } from "../collision/detector.js";
 import { CollisionResolver } from "../collision/resolver.js";
 import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "../systems/index.js";
 import { EntityQuadtree } from "../entities/entity-quadtree.js";
-import { config, ConfigManager } from "../config/index.js";
+import { config, GameConfig, ConfigManager } from "../config/index.js";
 import { IConfigManager, IEntityManager, IEventSystem, ILoop } from "../types/common-interfaces.js";
 
 export class Game {
   viewport: Viewport;
   eventSystem: IEventSystem;
-
   entityManager: IEntityManager;
   systemManager: SystemManager;
   inputManager: InputManager;
-  configManager: IConfigManager<typeof config>;
-
+  configManager: IConfigManager<GameConfig>;
   loop: ILoop;
 
   /**
