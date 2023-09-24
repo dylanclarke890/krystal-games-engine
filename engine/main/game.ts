@@ -24,7 +24,7 @@ export class Game {
    * @param width Width of the viewport.
    * @param height Height of the viewport.
    */
-  constructor(canvasId: Nullable<string | undefined>, width: number, height: number) {
+  constructor(canvasId: Nullable<string>, width: number, height: number) {
     this.viewport = new Viewport(width, height, canvasId);
     this.eventSystem = new EventSystem();
     this.configManager = new ConfigManager(config);

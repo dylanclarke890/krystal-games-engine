@@ -22,7 +22,7 @@ export class Enum {
     return this.enumValues[Symbol.iterator]();
   }
 
-  static from(str: string): Enum | undefined {
+  static from(str: string): Nullable<Enum> {
     const index = this.enumKeys.indexOf(str);
     return index >= 0 ? this.enumValues[index] : undefined;
   }

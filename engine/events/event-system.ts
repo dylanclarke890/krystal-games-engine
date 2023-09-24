@@ -5,7 +5,7 @@ import { IEventSystem } from "../types/common-interfaces.js";
 
 export class EventSystem implements IEventSystem {
   #subscribers: Map<Enum, PriorityQueue<EventHandler<any>>>;
-  #parent: IEventSystem | undefined;
+  #parent: Nullable<IEventSystem>;
 
   constructor(parent?: IEventSystem) {
     this.#subscribers = new Map();
@@ -14,7 +14,7 @@ export class EventSystem implements IEventSystem {
     }
   }
 
-  get parent(): IEventSystem | undefined {
+  get parent(): Nullable<IEventSystem> {
     return this.#parent;
   }
 
