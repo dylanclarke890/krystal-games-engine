@@ -1,12 +1,12 @@
 import { ScalarValue } from "../../utils/maths/scalar-value.js";
 import { Vector2D } from "../../utils/maths/vector-2d.js";
 
-export { AI } from "./ai.js";
-export { Animation } from "./animation.js";
-export { Input } from "./input.js";
-export { Collision } from "./collision.js";
-export { Shape } from "./shape.js";
-export { Sprite } from "./sprite.js";
+export * from "./ai.js";
+export * from "./animation.js";
+export * from "./input.js";
+export * from "./collision.js";
+export * from "./shape.js";
+export * from "./sprite.js";
 
 export class Acceleration extends Vector2D {}
 export class Bounciness extends ScalarValue {

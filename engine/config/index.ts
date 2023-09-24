@@ -1,2 +1,2 @@
-export { config, GameConfig } from "./config.js";
-export { ConfigManager } from "./config-manager.js";
+export * from "./config.js";
+export * from "./config-manager.js";

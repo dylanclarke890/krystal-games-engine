@@ -1,5 +1,5 @@
-export { InputSystem } from "./input-system.js";
-export { PhysicSystem } from "./physic-system.js";
-export { RenderSystem } from "./render-system.js";
-export { SystemManager } from "./system-manager.js";
-export { SystemTypes } from "../constants/enums.js";
+export * from "./input-system.js";
+export * from "./physic-system.js";
+export * from "./render-system.js";
+export * from "./system-manager.js";
+export * from "../constants/enums.js";
