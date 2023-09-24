@@ -7,16 +7,19 @@ import { Viewport } from "../graphics/viewport.js";
 import { InputManager } from "../input/input-manager.js";
 import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "../systems/index.js";
 import { GameLoop } from "../time/game-loop.js";
-import { IConfigManager, IEntityManager, IEventSystem, ILoop } from "../types/common-interfaces.js";
+import { IConfigManager, IEntityManager, IEventSystem, ILoop, IObjectPoolManager } from "../types/common-interfaces.js";
+import { ObjectPoolManager } from "../pooling/object-pool-manager.js";
 
 export class KrystalGameEngine {
   viewport: Viewport;
   eventSystem: IEventSystem;
-  entityManager: IEntityManager;
-  systemManager: SystemManager;
-  inputManager: InputManager;
-  configManager: IConfigManager<GameConfig>;
   loop: ILoop;
+
+  systemManager!: SystemManager;
+  entityManager!: IEntityManager;
+  inputManager!: InputManager;
+  configManager!: IConfigManager<GameConfig>;
+  objectPoolManager!: IObjectPoolManager;
 
   /**
    * @param canvasId Id of the canvas, if known.
@@ -26,15 +29,20 @@ export class KrystalGameEngine {
   constructor(canvasId: Nullable<string>, width: number, height: number) {
     this.viewport = new Viewport(width, height, canvasId);
     this.eventSystem = new EventSystem();
+    this.#setupManagers();
+    this.#setupSystems();
+    this.loop = new GameLoop(this.eventSystem, this.configManager.getInt("frameRate") ?? 60);
+  }
+
+  #setupManagers() {
     this.configManager = new ConfigManager(config);
     this.entityManager = new EntityManager(this.eventSystem);
     this.systemManager = new SystemManager(this.eventSystem, this.entityManager);
     this.inputManager = new InputManager(this.eventSystem, this.viewport);
-    this.loop = new GameLoop(this.eventSystem, this.configManager.getInt("frameRate") ?? 60);
-    this.setup();
+    this.objectPoolManager = new ObjectPoolManager();
   }
 
-  setup() {
+  #setupSystems() {
     const entityManager = this.entityManager;
     const eventSystem = this.eventSystem;
     const configManager = this.configManager;

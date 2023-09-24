@@ -5,7 +5,7 @@ import { ObjectPool } from "./object-pool.js";
 export class ObjectPoolManager implements IObjectPoolManager {
   pools: Map<string, IObjectPool<any>> = new Map();
 
-  get<T extends Initialisable>(name: string): IObjectPool<T> | undefined {
+  get<T>(name: string): IObjectPool<T> | undefined {
     return this.pools.get(name);
   }
 
@@ -13,7 +13,7 @@ export class ObjectPoolManager implements IObjectPoolManager {
     return this.pools.has(name);
   }
 
-  create<T extends Initialisable>(name: string, createFn: (...args: any[]) => T, size?: number): IObjectPool<T> {
+  create<T>(name: string, createFn: (...args: any[]) => T, size?: number): IObjectPool<T> {
     if (this.has(name)) {
       return this.get(name)!;
     }
