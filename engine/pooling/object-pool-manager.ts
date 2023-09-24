@@ -18,7 +18,7 @@ export class ObjectPoolManager implements IObjectPoolManager {
       return this.get(name)!;
     }
 
-    Assert.isFunction("ObjectPool createFn", createFn);
+    Assert.isFunction("new object from the object pool", createFn);
     const pool = new ObjectPool<T>(createFn, size);
     this.pools.set(name, pool);
     return pool;
