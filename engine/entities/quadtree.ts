@@ -17,7 +17,13 @@ export class Quadtree implements IQuadtree {
   constructor(viewport: Viewport, objectPoolManager: IObjectPoolManager, { maxDepth = 4, maxChildren = 4 } = {}) {
     this.size = 0;
     this.viewport = viewport;
-    this.nodePool = objectPoolManager.create("quadtreeNodes", QuadtreeNode);
+    this.nodePool = objectPoolManager.create(
+      "quadtreeNodes",
+      QuadtreeNode,
+      (node, id, pos, size, nodePool, depth, maxDepth, maxChildren) => {
+        node.init(id, pos, size, nodePool, depth!, maxDepth!, maxChildren!);
+      }
+    );
 
     const pos = new Vector2D(0, 0);
     const size = new Vector2D(viewport.width, viewport.height);
@@ -108,16 +114,16 @@ export class Quadtree implements IQuadtree {
 }
 
 export class QuadtreeNode implements IQuadtreeNode {
-  id: number;
-  position: Vector2D;
-  size: Vector2D;
-  nodes: IQuadtreeNode[];
-  children: IQuadtreeNode[];
-  overlappingChildren: IQuadtreeNode[];
-  maxChildren: number;
-  depth: number;
-  maxDepth: number;
-  nodePool: IObjectPool<IQuadtreeNode, ConstructorParameters<typeof QuadtreeNode>>;
+  id!: number;
+  position!: Vector2D;
+  size!: Vector2D;
+  nodes!: IQuadtreeNode[];
+  children!: IQuadtreeNode[];
+  overlappingChildren!: IQuadtreeNode[];
+  maxChildren!: number;
+  depth!: number;
+  maxDepth!: number;
+  nodePool!: IObjectPool<IQuadtreeNode, ConstructorParameters<typeof QuadtreeNode>>;
 
   constructor(
     id: number,
@@ -127,6 +133,18 @@ export class QuadtreeNode implements IQuadtreeNode {
     depth = 0,
     maxDepth = 4,
     maxChildren = 4
+  ) {
+    this.init(id, position, size, nodePool, depth, maxDepth, maxChildren);
+  }
+
+  init(
+    id: number,
+    position: Vector2D,
+    size: Vector2D,
+    nodePool: IObjectPool<IQuadtreeNode>,
+    depth: number,
+    maxDepth: number,
+    maxChildren: number
   ) {
     this.id = id;
     this.position = position;

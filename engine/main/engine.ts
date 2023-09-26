@@ -39,7 +39,7 @@ export class KrystalGameEngine {
     this.entityManager = new EntityManager(this.eventSystem);
     this.systemManager = new SystemManager(this.eventSystem, this.entityManager);
     this.inputManager = new InputManager(this.eventSystem, this.viewport);
-    this.objectPoolManager = new ObjectPoolManager();
+    this.objectPoolManager = new ObjectPoolManager(this.configManager);
   }
 
   #setupSystems() {

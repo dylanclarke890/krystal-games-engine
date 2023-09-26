@@ -1,18 +1,22 @@
 import { ObjectFactory } from "./object-factory.js";
 
 export class ObjectPool<T, Args extends any[]> {
-  pool: T[] = [];
-  poolSize: number;
   factory: ObjectFactory<T, Args>;
+  onReuse: ((obj: T, ...args: Args) => void) | undefined;
+  pool: T[];
+  poolSize: number;
 
-  constructor(factory: ObjectFactory<T, Args>, size: number = 0) {
+  constructor(factory: ObjectFactory<T, Args>, onReuse?: (obj: T, ...args: Args) => void, size: number = 0) {
     this.factory = factory;
+    this.onReuse = onReuse;
+    this.pool = [];
     this.poolSize = size;
   }
 
   acquire(...args: Args): T {
     const object = this.pool.pop();
     if (typeof object !== "undefined" && object !== null) {
+      this.onReuse?.(object, ...args);
       return object;
     }
     return this.factory.create(...args);

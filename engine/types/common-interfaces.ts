@@ -91,6 +91,29 @@ export interface IQuadtree {
   clear(): void;
 }
 
+export interface IQuadtreeNode {
+  id: number;
+  position: Vector2D;
+  size: Vector2D;
+  children: IQuadtreeNode[];
+  overlappingChildren: IQuadtreeNode[];
+
+  init(
+    id: number,
+    position: Vector2D,
+    size: Vector2D,
+    nodePool: IObjectPool<IQuadtreeNode>,
+    depth: number,
+    maxDepth: number,
+    maxChildren: number
+  ): void;
+  insert(node: IQuadtreeNode | IQuadtreeNode[]): void;
+  retrieve(node: IQuadtreeNode): IQuadtreeNode[];
+  subdivide(): void;
+  findQuadrant(node: IQuadtreeNode): Quadrant;
+  clear(): void;
+}
+
 export interface IObjectPool<T, Args extends any[] = any[]> {
   acquire(...args: Args): T;
   release(obj: T): void;
@@ -103,23 +126,9 @@ export interface IObjectPoolManager {
   create<T, Args extends any[] = any[]>(
     name: string,
     ClassConstructor: ClassConstructor<T, Args>,
+    onReuse?: (obj: T, ...args: Args) => void,
     size?: number
   ): IObjectPool<T, Args>;
   clear(name: string): void;
   clearAll(): void;
-}
-
-export interface IQuadtreeNode {
-  id: number;
-  position: Vector2D;
-  size: Vector2D;
-
-  children: IQuadtreeNode[];
-  overlappingChildren: IQuadtreeNode[];
-
-  insert(node: IQuadtreeNode | IQuadtreeNode[]): void;
-  retrieve(node: IQuadtreeNode): IQuadtreeNode[];
-  subdivide(): void;
-  findQuadrant(node: IQuadtreeNode): Quadrant;
-  clear(): void;
 }
