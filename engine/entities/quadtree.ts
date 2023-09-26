@@ -8,7 +8,7 @@ export class Quadtree implements IQuadtree {
   root: IQuadtreeNode;
   size: number;
   viewport: Viewport;
-  nodePool: IObjectPool<IQuadtreeNode>;
+  nodePool: IObjectPool<IQuadtreeNode, ConstructorParameters<typeof QuadtreeNode>>;
 
   /**
    * @param maxDepth The maximum number of levels that the quadtree will create. Default is 4.
@@ -17,7 +17,7 @@ export class Quadtree implements IQuadtree {
   constructor(viewport: Viewport, objectPoolManager: IObjectPoolManager, { maxDepth = 4, maxChildren = 4 } = {}) {
     this.size = 0;
     this.viewport = viewport;
-    this.nodePool = objectPoolManager.create("quadtree", QuadtreeNode);
+    this.nodePool = objectPoolManager.create("quadtreeNodes", QuadtreeNode);
 
     const pos = new Vector2D(0, 0);
     const size = new Vector2D(viewport.width, viewport.height);
@@ -117,7 +117,7 @@ export class QuadtreeNode implements IQuadtreeNode {
   maxChildren: number;
   depth: number;
   maxDepth: number;
-  nodePool: IObjectPool<IQuadtreeNode>;
+  nodePool: IObjectPool<IQuadtreeNode, ConstructorParameters<typeof QuadtreeNode>>;
 
   constructor(
     id: number,

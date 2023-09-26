@@ -1,24 +1,24 @@
-import { IObjectPool } from "../types/common-interfaces.js";
+import { ObjectFactory } from "./object-factory.js";
 
-export class ObjectPool<T extends new (...args: any[]) => any> implements IObjectPool<T> {
-  pool: InstanceType<T>[] = [];
+export class ObjectPool<T, Args extends any[]> {
+  pool: T[] = [];
   poolSize: number;
-  createFn: (...args: ConstructorParameters<T>) => InstanceType<T>;
+  factory: ObjectFactory<T, Args>;
 
-  constructor(createFn: (...args: ConstructorParameters<T>) => InstanceType<T>, size: number = 0) {
-    this.createFn = createFn;
+  constructor(factory: ObjectFactory<T, Args>, size: number = 0) {
+    this.factory = factory;
     this.poolSize = size;
   }
 
-  acquire(...args: ConstructorParameters<T>): InstanceType<T> {
+  acquire(...args: Args): T {
     const object = this.pool.pop();
     if (typeof object !== "undefined" && object !== null) {
       return object;
     }
-    return this.createFn(...args);
+    return this.factory.create(...args);
   }
 
-  release(obj: InstanceType<T>): void {
+  release(obj: T): void {
     this.pool.push(obj);
   }
 

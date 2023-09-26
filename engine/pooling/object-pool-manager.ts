@@ -1,29 +1,29 @@
-import { IObjectPool, IObjectPoolManager } from "../types/common-interfaces.js";
-import { Assert } from "../utils/assert.js";
+import { IObjectPool } from "../types/common-interfaces.js";
+import { ObjectFactory } from "./object-factory.js";
 import { ObjectPool } from "./object-pool.js";
 
-export class ObjectPoolManager implements IObjectPoolManager {
-  pools: Map<string, IObjectPool<any>> = new Map();
+export class ObjectPoolManager {
+  pools: Map<string, IObjectPool<any, any[]>> = new Map();
 
-  get<T extends new (...args: any) => any>(name: string): IObjectPool<T> | undefined {
-    return this.pools.get(name);
+  get<T, Args extends any[] = any[]>(name: string): IObjectPool<T, Args> | undefined {
+    return this.pools.get(name) as IObjectPool<T, Args> | undefined;
   }
 
   has(name: string): boolean {
     return this.pools.has(name);
   }
 
-  create<T extends new (...args: any) => any>(
+  create<T, Args extends any[]>(
     name: string,
-    createFn: (...args: ConstructorParameters<T>) => InstanceType<T>,
+    ClassConstructor: ClassConstructor<T, Args>,
     size?: number
-  ): IObjectPool<T> {
+  ): IObjectPool<T, Args> {
     if (this.has(name)) {
       return this.get(name)!;
     }
 
-    Assert.isFunction("new object from the object pool", createFn);
-    const pool = new ObjectPool<T>(createFn, size);
+    const factory = new ObjectFactory<T, Args>(ClassConstructor);
+    const pool = new ObjectPool(factory, size);
     this.pools.set(name, pool);
     return pool;
   }
