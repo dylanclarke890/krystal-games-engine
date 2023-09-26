@@ -25,5 +25,3 @@ declare type EventHandler<T> = (data: T) => void;
 declare type Nullable<T> = T | undefined;
 
 declare type ClassConstructor<T, Args extends any[]> = new (...args: Args) => T;
-declare type ConstructorArgs<T extends new (...args: any) => any> = ConstructorParameters<T>;
-declare type ConstructorOf<T> = { new (...args: any[]): T };
