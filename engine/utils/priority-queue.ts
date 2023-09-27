@@ -4,7 +4,7 @@ export class PriorityQueue<T> {
   #list: PriorityQueueItem<T>[];
   #comparator: CompareFn<T>;
 
-  static #defaultCompareFn: CompareFn<any> = (a, b) => b.priority - a.priority;
+  static #defaultCompareFn: CompareFn<unknown> = (a, b) => b.priority - a.priority;
 
   constructor(compareFn?: CompareFn<T>) {
     this.#comparator = compareFn || PriorityQueue.#defaultCompareFn;
@@ -21,7 +21,7 @@ export class PriorityQueue<T> {
     if (indexOfItem === -1) {
       return false;
     }
-    
+
     this.#list.splice(indexOfItem, 1);
     return true;
   }
