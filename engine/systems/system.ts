@@ -1,5 +1,5 @@
 import { SystemTypes } from "../constants/enums.js";
-import { InvalidOperationError } from "../utils/errors.js";
+import { InvalidOperationError } from "../types/errors.js";
 import { ComponentType } from "../types/common-types.js";
 import { IEntityManager, IEventSystem } from "../types/common-interfaces.js";
 

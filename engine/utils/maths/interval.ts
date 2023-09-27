@@ -1,4 +1,4 @@
-import { IntervalParsingFailedError } from "../errors.js";
+import { IntervalParsingFailedError } from "../../types/errors.js";
 import { safeParseInt } from "./number.js";
 
 function getIntervalInfo(interval: string) {

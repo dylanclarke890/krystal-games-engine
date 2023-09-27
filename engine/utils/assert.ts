@@ -1,4 +1,4 @@
-import { AssertionError } from "./errors.js";
+import { AssertionError } from "../types/errors.js";
 
 export class Assert {
   static #defaultTypeError(value: string, type: string): string {
