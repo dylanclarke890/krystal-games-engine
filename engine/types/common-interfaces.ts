@@ -114,6 +114,10 @@ export interface IQuadtreeNode {
   clear(): void;
 }
 
+export interface IObjectFactory<T, Args extends any[] = any[]> {
+  create(...args: Args): T;
+}
+
 export interface IObjectPool<T, Args extends any[] = any[]> {
   acquire(...args: Args): T;
   release(obj: T): void;

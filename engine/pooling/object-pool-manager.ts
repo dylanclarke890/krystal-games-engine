@@ -30,7 +30,8 @@ export class ObjectPoolManager implements IObjectPoolManager {
     }
 
     const factory = new ObjectFactory<T, Args>(ClassConstructor, this.configManager);
-    const pool = new ObjectPool(factory, onReuse, size);
+    const pool = new ObjectPool<T, Args>(factory, onReuse, size);
+
     this.pools.set(name, pool);
     return pool;
   }

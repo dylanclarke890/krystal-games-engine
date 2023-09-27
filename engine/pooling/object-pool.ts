@@ -1,12 +1,12 @@
-import { ObjectFactory } from "./object-factory.js";
+import { IObjectFactory } from "../types/common-interfaces.js";
 
 export class ObjectPool<T, Args extends any[]> {
-  factory: ObjectFactory<T, Args>;
+  factory: IObjectFactory<T, Args>;
   onReuse: ((obj: T, ...args: Args) => void) | undefined;
   pool: T[];
   poolSize: number;
 
-  constructor(factory: ObjectFactory<T, Args>, onReuse?: (obj: T, ...args: Args) => void, size: number = 0) {
+  constructor(factory: IObjectFactory<T, Args>, onReuse?: (obj: T, ...args: Args) => void, size: number = 0) {
     this.factory = factory;
     this.onReuse = onReuse;
     this.pool = [];

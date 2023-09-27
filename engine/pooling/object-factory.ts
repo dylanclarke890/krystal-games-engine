@@ -1,21 +1,21 @@
 import { GameConfig } from "../config/config.js";
-import { IConfigManager } from "../types/common-interfaces.js";
+import { IConfigManager, IObjectFactory } from "../types/common-interfaces.js";
 
-export class ObjectFactory<T, Args extends any[] = any[]> {
+export class ObjectFactory<T, Args extends any[] = any[]> implements IObjectFactory<T, Args> {
   createFn: (...args: Args) => T;
-  factoryStats: {
+  stats: {
     enabled: boolean;
     creationCount: number;
   };
 
   constructor(ClassConstructor: ClassConstructor<T, Args>, configManager: IConfigManager<GameConfig>) {
     this.createFn = (...args) => new ClassConstructor(...args);
-    this.factoryStats = { enabled: configManager.getBool("trackObjectCreation") ?? false, creationCount: 0 };
+    this.stats = { enabled: configManager.getBool("trackObjectCreation") ?? false, creationCount: 0 };
   }
 
   create(...args: Args): T {
-    if (this.factoryStats.enabled) {
-      this.factoryStats.creationCount++;
+    if (this.stats.enabled) {
+      this.stats.creationCount++;
     }
 
     return this.createFn(...args);
