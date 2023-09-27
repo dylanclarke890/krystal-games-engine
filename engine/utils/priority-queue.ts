@@ -18,13 +18,18 @@ export class PriorityQueue<T> {
 
   remove(item: T) {
     const indexOfItem = this.#list.findIndex((v) => v.item === item);
-    if (indexOfItem === -1) return false;
+    if (indexOfItem === -1) {
+      return false;
+    }
+    
     this.#list.splice(indexOfItem, 1);
     return true;
   }
 
   forEach(callbackFn: (value: T, index: number) => void) {
-    for (let i = 0; i < this.#list.length; i++) callbackFn(this.#list[i].item, i);
+    for (let i = 0; i < this.#list.length; i++) {
+      callbackFn(this.#list[i].item, i);
+    }
   }
 
   get size() {
