@@ -1,5 +1,5 @@
 import { GameEvents } from "../engine/constants/enums.js";
-import { rectVsRect } from "../engine/collision/detection-strategies.js";
+import { rectVsRect } from "../engine/collision/detection/detection-strategies.js";
 import { Position, Shape, Size } from "../engine/components/2d/index.js";
 import { KrystalGameEngine } from "../engine/main/engine.js";
 

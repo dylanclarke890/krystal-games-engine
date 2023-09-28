@@ -1,5 +1,5 @@
-import { ScalarValue } from "../utils/maths/scalar-value.js";
-import { Vector2D } from "../utils/maths/vector-2d.js";
+import { ScalarValue } from "../../utils/maths/scalar-value.js";
+import { Vector2D } from "../../utils/maths/vector-2d.js";
 
 export function elastic1D(aVel: ScalarValue, bVel: ScalarValue, aMass: ScalarValue, bMass: ScalarValue): void {
   if (aMass.value === bMass.value) {

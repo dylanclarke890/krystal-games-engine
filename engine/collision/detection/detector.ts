@@ -1,10 +1,10 @@
-import { Position, Size } from "../components/2d/index.js";
-import { Viewport } from "../graphics/viewport.js";
-import { Assert } from "../utils/assert.js";
-import { PairedSet } from "../utils/paired-set.js";
-import { Collidable } from "../types/common-types.js";
+import { Position, Size } from "../../components/2d/index.js";
+import { Viewport } from "../../graphics/viewport.js";
+import { Assert } from "../../utils/assert.js";
+import { PairedSet } from "../../utils/paired-set.js";
+import { Collidable } from "../../types/common-types.js";
 import { rectVsRect } from "./detection-strategies.js";
-import { IEntityManager, IQuadtree } from "../types/common-interfaces.js";
+import { IEntityManager, IQuadtree } from "../../types/common-interfaces.js";
 
 export class CollisionDetector {
   entityManager: IEntityManager;
