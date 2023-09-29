@@ -6,7 +6,7 @@ export class RadialTriggerDemo extends KrystalGameEngine {
   radialTriggerId: number;
   constructor() {
     super("canvas1", 500, 500);
-    this.eventSystem.on(GameEvents.Loop_NextFrame, () => this.update());
+    this.eventManager.on(GameEvents.Loop_NextFrame, () => this.update());
     this.inputManager.enableMouse();
 
     this.radialTriggerId = this.entityManager.createEntity();

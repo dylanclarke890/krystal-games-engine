@@ -27,12 +27,12 @@ export class PhysicsSystem extends RigidBodySystem {
 
   constructor(
     entityManager: IEntityManager,
-    eventSystem: IEventManager,
+    eventManager: IEventManager,
     quadtree: IQuadtree,
     detector: CollisionDetector,
     resolver: CollisionResolver
   ) {
-    super(entityManager, eventSystem);
+    super(entityManager, eventManager);
     Assert.instanceOf("detector", detector, CollisionDetector);
     Assert.instanceOf("resolver", resolver, CollisionResolver);
 

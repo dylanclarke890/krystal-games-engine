@@ -20,11 +20,11 @@ export class InputManager {
 
   mouse: Vector2D;
   accel: Vector3D;
-  eventSystem: IEventManager;
+  eventManager: IEventManager;
 
-  constructor(eventSystem: IEventManager, viewport: Viewport) {
+  constructor(eventManager: IEventManager, viewport: Viewport) {
     Assert.instanceOf("viewport", viewport, Viewport);
-    this.eventSystem = eventSystem;
+    this.eventManager = eventManager;
     this.viewport = viewport;
 
     this.#bindings = new Map();

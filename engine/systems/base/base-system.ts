@@ -8,11 +8,11 @@ export class BaseSystem {
   static systemType: SystemTypes;
 
   entityManager: IEntityManager;
-  eventSystem: IEventManager;
+  eventManager: IEventManager;
 
-  constructor(entityManager: IEntityManager, eventSystem: IEventManager) {
+  constructor(entityManager: IEntityManager, eventManager: IEventManager) {
     this.entityManager = entityManager;
-    this.eventSystem = eventSystem;
+    this.eventManager = eventManager;
   }
 
   setup() {

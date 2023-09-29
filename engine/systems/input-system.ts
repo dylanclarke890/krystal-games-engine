@@ -12,8 +12,8 @@ export class InputSystem extends ComponentSystem {
 
   inputManager: InputManager;
 
-  constructor(entityManager: IEntityManager, eventSystem: IEventManager, inputManager: InputManager) {
-    super(entityManager, eventSystem);
+  constructor(entityManager: IEntityManager, eventManager: IEventManager, inputManager: InputManager) {
+    super(entityManager, eventManager);
     Assert.instanceOf("inputManager", inputManager, InputManager);
     this.inputManager = inputManager;
   }

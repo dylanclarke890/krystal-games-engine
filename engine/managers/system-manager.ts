@@ -5,22 +5,22 @@ import { BaseSystem } from "../systems/base/base-system.js";
 import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
 
 export class SystemManager {
-  eventSystem: IEventManager;
+  eventManager: IEventManager;
   entityManager: IEntityManager;
   systems: Set<BaseSystem>;
   buckets: Map<string, Set<number>>;
 
-  constructor(eventSystem: IEventManager, entityManager: IEntityManager) {
-    this.eventSystem = eventSystem;
+  constructor(eventManager: IEventManager, entityManager: IEntityManager) {
+    this.eventManager = eventManager;
     this.entityManager = entityManager;
 
     this.systems = new Set();
     this.buckets = new Map();
 
-    this.eventSystem.on(GameEvents.Loop_BeforeStart, () =>
+    this.eventManager.on(GameEvents.Loop_BeforeStart, () =>
       this.systems.forEach((system) => this.#validateSystem(system))
     );
-    this.eventSystem.on(GameEvents.Loop_NextFrame, (dt: number) => this.update(dt));
+    this.eventManager.on(GameEvents.Loop_NextFrame, (dt: number) => this.update(dt));
   }
 
   #validateSystem(system: BaseSystem): void {

@@ -8,7 +8,7 @@ export class PointVsRectTest extends KrystalGameEngine {
 
   constructor() {
     super("canvas1", 500, 500);
-    this.eventSystem.on(GameEvents.Loop_NextFrame, () => this.update());
+    this.eventManager.on(GameEvents.Loop_NextFrame, () => this.update());
     this.inputManager.enableMouse();
 
     this.rectId = this.entityManager.createEntity();

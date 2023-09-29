@@ -15,8 +15,8 @@ export class RenderSystem extends ComponentSystem {
 
   viewport: Viewport;
 
-  constructor(entityManager: IEntityManager, eventSystem: IEventManager, viewport: Viewport) {
-    super(entityManager, eventSystem);
+  constructor(entityManager: IEntityManager, eventManager: IEventManager, viewport: Viewport) {
+    super(entityManager, eventManager);
     Assert.instanceOf("viewport", viewport, Viewport);
     this.viewport = viewport;
   }

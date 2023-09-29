@@ -6,7 +6,7 @@ import { CollisionSettings } from "../engine/types/common-types.js";
 export class LargeEntityCountTest extends KrystalGameEngine {
   constructor() {
     super("canvas1", 500, 500);
-    this.eventSystem.on(GameEvents.Loop_NextFrame, () => this.update());
+    this.eventManager.on(GameEvents.Loop_NextFrame, () => this.update());
     this.start();
   }
 

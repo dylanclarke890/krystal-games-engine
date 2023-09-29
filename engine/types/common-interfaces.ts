@@ -22,7 +22,7 @@ export interface IConfigManager<T> {
 }
 
 export interface IEventManager {
-  /** Get the parent EventSystem. */
+  /** Get the parent EventManager. */
   get parent(): Nullable<IEventManager>;
 
   /** Subscribe to an event. */

@@ -5,7 +5,7 @@ import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
 export class EntityManager implements IEntityManager {
   static #emptySet: Set<number> = new Set();
 
-  eventSystem: IEventManager;
+  eventManager: IEventManager;
   entities: Set<number>;
 
   #nextEntityId: number;
@@ -13,8 +13,8 @@ export class EntityManager implements IEntityManager {
   #componentTypeToEntities: Map<ComponentType, Set<number>>;
   #components: Map<string, Component<ComponentType>>;
 
-  constructor(eventSystem: IEventManager) {
-    this.eventSystem = eventSystem;
+  constructor(eventManager: IEventManager) {
+    this.eventManager = eventManager;
 
     this.entities = new Set();
     this.#entityMasks = new Map();
@@ -28,7 +28,7 @@ export class EntityManager implements IEntityManager {
     const entity = this.#nextEntityId++;
 
     this.entities.add(entity);
-    this.eventSystem.trigger(GameEvents.Entity_Created, entity);
+    this.eventManager.trigger(GameEvents.Entity_Created, entity);
 
     return entity;
   }
@@ -47,7 +47,7 @@ export class EntityManager implements IEntityManager {
     this.#entityMasks.delete(id);
     this.entities.delete(id);
 
-    this.eventSystem.trigger(GameEvents.Entity_Destroyed, id);
+    this.eventManager.trigger(GameEvents.Entity_Destroyed, id);
   }
 
   addComponent(entity: number, component: Component<ComponentType>): void {
