@@ -21,6 +21,8 @@ export class GameEvents extends Enum {
 
   //region Entity
   static Entity_Created = new GameEvents();
+  static Entity_ComponentAdded = new GameEvents();
+  static Entity_ComponentRemoved = new GameEvents();
   static Entity_Destroyed = new GameEvents();
   static Entity_Collided = new GameEvents();
   //endregion Entity

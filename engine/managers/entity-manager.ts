@@ -63,11 +63,20 @@ export class EntityManager implements IEntityManager {
       this.#entityMasks.set(entity, new Set());
     }
     this.#entityMasks.get(entity)!.add(componentType);
+
+    this.eventManager.trigger(GameEvents.Entity_ComponentAdded, { entity, component });
   }
 
   removeComponent(entity: number, componentType: ComponentType): void {
-    this.#components.delete(entity + componentType);
+    const componentMapKey = entity + componentType;
+    const component = this.#components.get(componentMapKey);
+    if (typeof component === "undefined") {
+      return;
+    }
+
+    this.#components.delete(componentMapKey);
     this.#entityMasks.get(entity)!.delete(componentType);
+    this.eventManager.trigger(GameEvents.Entity_ComponentAdded, { entity, component });
   }
 
   getComponents<T extends ComponentType>(entity: number, componentTypes: T[]): ComponentMap<T> {
