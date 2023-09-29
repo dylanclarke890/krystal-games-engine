@@ -1,13 +1,13 @@
 import { SystemTypes, GameEvents } from "../constants/enums.js";
 import { Assert } from "../utils/assert.js";
 import { GameSystem, GameSystemType } from "../types/common-types.js";
-import { System } from "./system.js";
+import { BaseSystem } from "./system.js";
 import { IEntityManager, IEventSystem } from "../types/common-interfaces.js";
 
 export class SystemManager {
   eventSystem: IEventSystem;
   entityManager: IEntityManager;
-  systems: Set<System>;
+  systems: Set<BaseSystem>;
   buckets: Map<string, Set<number>>;
 
   constructor(eventSystem: IEventSystem, entityManager: IEntityManager) {
@@ -23,23 +23,23 @@ export class SystemManager {
     this.eventSystem.on(GameEvents.Loop_NextFrame, (dt: number) => this.update(dt));
   }
 
-  #validateSystem(system: System): void {
-    const name = (<typeof System>system.constructor).name;
-    const required = (<typeof System>system.constructor).requiredComponents;
-    const type = (<typeof System>system.constructor).systemType;
+  #validateSystem(system: BaseSystem): void {
+    const name = (<typeof BaseSystem>system.constructor).name;
+    const required = (<typeof BaseSystem>system.constructor).requiredComponents;
+    const type = (<typeof BaseSystem>system.constructor).systemType;
 
     Assert.isArray(`${name} requiredComponents`, required);
     Assert.instanceOf(`${name} systemType`, type, SystemTypes);
   }
 
-  registerSystem(system: System) {
-    Assert.instanceOf("System", system, System);
+  registerSystem(system: BaseSystem) {
+    Assert.instanceOf("System", system, BaseSystem);
     this.systems.add(system);
     system.setup();
   }
 
-  unregisterSystem(system: System) {
-    Assert.instanceOf("System", system, System);
+  unregisterSystem(system: BaseSystem) {
+    Assert.instanceOf("System", system, BaseSystem);
     system.cleanup();
     this.systems.delete(system);
   }
@@ -61,12 +61,12 @@ export class SystemManager {
 
     this.entityManager.entities.forEach((entity) => {
       this.systems.forEach((system) => {
-        const components = (<typeof System>system.constructor).requiredComponents;
+        const components = (<typeof BaseSystem>system.constructor).requiredComponents;
         if (!this.entityManager.hasComponents(entity, components)) {
           return;
         }
 
-        const name = (<typeof System>system.constructor).name;
+        const name = (<typeof BaseSystem>system.constructor).name;
         if (!this.buckets.has(name)) {
           this.buckets.set(name, new Set());
         }

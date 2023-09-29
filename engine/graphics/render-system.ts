@@ -1,14 +1,14 @@
-import { System } from "./system.js";
+import { BaseSystem } from "../systems/system.js";
 import { SystemTypes } from "../constants/enums.js";
 import { Sprite, Position, Shape } from "../components/2d/index.js";
-import { Viewport } from "../graphics/viewport.js";
+import { Viewport } from "./viewport.js";
 import { Assert } from "../utils/assert.js";
 import { InvalidOperationError } from "../types/errors.js";
 import { ComponentType, Components } from "../types/common-types.js";
 import { IEntityManager, IEventSystem } from "../types/common-interfaces.js";
 
 type SystemComponents = Components<"Position", "Animation" | "Sprite" | "Shape">;
-export class RenderSystem extends System {
+export class RenderSystem extends BaseSystem {
   static requiredComponents: ComponentType[] = ["Position"];
   static components: ComponentType[] = [...this.requiredComponents, "Sprite", "Animation", "Shape"];
   static systemType = SystemTypes.Graphics;

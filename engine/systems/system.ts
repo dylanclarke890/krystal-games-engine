@@ -3,7 +3,7 @@ import { InvalidOperationError } from "../types/errors.js";
 import { ComponentType } from "../types/common-types.js";
 import { IEntityManager, IEventSystem } from "../types/common-interfaces.js";
 
-export class System {
+export class BaseSystem {
   static requiredComponents: ComponentType[];
   static systemType: SystemTypes;
 
