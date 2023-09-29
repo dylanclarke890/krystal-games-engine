@@ -1,84 +1,67 @@
-import { SystemTypes, GameEvents } from "../constants/enums.js";
-import { Assert } from "../utils/assert.js";
-import { GameSystem, GameSystemType } from "../types/common-types.js";
-import { BaseSystem } from "../systems/base/base-system.js";
-import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
-import { ComponentSystem } from "../systems/base/component-system.js";
+import { IEventManager, ISystem } from "../types/common-interfaces.js";
+import { PriorityQueue } from "../utils/priority-queue.js";
 
 export class SystemManager {
   eventManager: IEventManager;
-  entityManager: IEntityManager;
-  systems: Set<BaseSystem>;
-  buckets: Map<string, Set<number>>;
+  systems: Map<string, ISystem> = new Map();
+  executionQueue: PriorityQueue<ISystem>;
 
-  constructor(eventManager: IEventManager, entityManager: IEntityManager) {
+  constructor(eventManager: IEventManager) {
     this.eventManager = eventManager;
-    this.entityManager = entityManager;
-
-    this.systems = new Set();
-    this.buckets = new Map();
-
-    this.eventManager.on(GameEvents.Loop_BeforeStart, () =>
-      this.systems.forEach((system) => this.#validateSystem(system))
-    );
-    this.eventManager.on(GameEvents.Loop_NextFrame, (dt: number) => this.update(dt));
+    this.executionQueue = new PriorityQueue<ISystem>((a, b) => a.priority - b.priority);
   }
 
-  #validateSystem(system: BaseSystem): void {
-    if (system instanceof ComponentSystem) {
-      const name = (<typeof BaseSystem>system.constructor).name;
-      const required = (<typeof BaseSystem>system.constructor).requiredComponents;
-      const type = (<typeof BaseSystem>system.constructor).systemType;
+  /**
+   * Register a system.
+   * @param system The system to register.
+   */
+  registerSystem(system: ISystem) {
+    if (this.systems.has(system.name)) {
+      console.warn(`System with name ${system.name} already registered.`);
+      return;
+    }
 
-      Assert.isArray(`${name} requiredComponents`, required);
-      Assert.instanceOf(`${name} systemType`, type, SystemTypes);
+    this.systems.set(system.name, system);
+    this.executionQueue.add(system, system.priority);
+    system.init();
+  }
+
+  /**
+   * Unregister a system.
+   * @param systemName The name of the system to unregister.
+   */
+  unregisterSystem(systemName: string) {
+    const system = this.systems.get(systemName);
+    if (system) {
+      this.executionQueue.remove(system);
+      if (system.destroy) {
+        system.destroy();
+      }
+      this.systems.delete(systemName);
     }
   }
 
-  registerSystem(system: BaseSystem) {
-    Assert.instanceOf("System", system, BaseSystem);
-    this.systems.add(system);
-    system.setup();
-  }
-
-  unregisterSystem(system: BaseSystem) {
-    Assert.instanceOf("System", system, BaseSystem);
-    system.cleanup();
-    this.systems.delete(system);
-  }
-
-  getSystem<T extends GameSystemType>(name: T): Nullable<GameSystem<T>> {
-    let system: Nullable<GameSystem<T>>;
-
-    this.systems.forEach((sys) => {
-      if (name === (sys.constructor.name as GameSystemType)) {
-        system = sys as GameSystem<T>;
+  /**
+   * Update all registered systems in the order of their priority.
+   * @param dt Time since the last frame.
+   */
+  update(dt: number) {
+    this.executionQueue.forEach((system) => {
+      if (system.enabled) {
+        system.update(dt);
       }
     });
-
-    return system;
   }
 
-  update(dt: number) {
-    this.buckets.clear();
-
-    this.entityManager.entities.forEach((entity) => {
-      this.systems.forEach((system) => {
-        const components = (<typeof BaseSystem>system.constructor).requiredComponents;
-        if (!this.entityManager.hasComponents(entity, components)) {
-          return;
-        }
-
-        const name = (<typeof BaseSystem>system.constructor).name;
-        if (!this.buckets.has(name)) {
-          this.buckets.set(name, new Set());
-        }
-        this.buckets.get(name)!.add(entity);
-      });
-    });
-
-    this.systems.forEach((system) => {
-      system.update(dt, this.buckets.get(system.constructor.name) ?? new Set());
-    });
+  /**
+   * Enable or disable a system.
+   * @param systemName The name of the system.
+   * @param enabled Whether the system should be enabled or disabled.
+   */
+  setSystemEnabled(systemName: string, enabled: boolean) {
+    const system = this.systems.get(systemName);
+    if (system) {
+      system.enabled = enabled;
+    }
   }
 }

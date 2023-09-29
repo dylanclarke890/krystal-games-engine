@@ -82,6 +82,29 @@ export interface ILoop {
   stop(unloadAssets?: boolean): void;
 }
 
+export interface IObjectPoolManager {
+  get<T, Args extends any[] = any[]>(name: string): IObjectPool<T, Args> | undefined;
+  has(name: string): boolean;
+  create<T, Args extends any[] = any[]>(
+    name: string,
+    ClassConstructor: ClassConstructor<T, Args>,
+    onReuse?: (obj: T, ...args: Args) => void,
+    size?: number
+  ): IObjectPool<T, Args>;
+  clear(name: string): void;
+  clearAll(): void;
+}
+
+export interface IObjectFactory<T, Args extends any[] = any[]> {
+  create(...args: Args): T;
+}
+
+export interface IObjectPool<T, Args extends any[] = any[]> {
+  acquire(...args: Args): T;
+  release(obj: T): void;
+  clear(): void;
+}
+
 export interface IQuadtree {
   insert(id: number, position: Vector2D, size: Vector2D): void;
   retrieve(position: Vector2D, size: Vector2D): IQuadtreeNode[];
@@ -114,25 +137,11 @@ export interface IQuadtreeNode {
   clear(): void;
 }
 
-export interface IObjectFactory<T, Args extends any[] = any[]> {
-  create(...args: Args): T;
-}
-
-export interface IObjectPool<T, Args extends any[] = any[]> {
-  acquire(...args: Args): T;
-  release(obj: T): void;
-  clear(): void;
-}
-
-export interface IObjectPoolManager {
-  get<T, Args extends any[] = any[]>(name: string): IObjectPool<T, Args> | undefined;
-  has(name: string): boolean;
-  create<T, Args extends any[] = any[]>(
-    name: string,
-    ClassConstructor: ClassConstructor<T, Args>,
-    onReuse?: (obj: T, ...args: Args) => void,
-    size?: number
-  ): IObjectPool<T, Args>;
-  clear(name: string): void;
-  clearAll(): void;
+export interface ISystem {
+  name: string;
+  enabled: boolean;
+  priority: number;
+  init(): void;
+  update(dt: number): void;
+  destroy?(): void;
 }

@@ -9,10 +9,12 @@ export class PriorityQueue<T> {
   constructor(compareFn?: CompareFn<T>) {
     this.#comparator = compareFn || PriorityQueue.#defaultCompareFn;
     this.#list = [];
+    // TODO: implement pooling for the priorityqueueitem instances.
   }
 
   add(item: T, priority: number) {
     this.#list.push(new PriorityQueueItem(item, priority));
+    // TODO: come back to this and make it faster
     this.#list.sort(this.#comparator);
   }
 
