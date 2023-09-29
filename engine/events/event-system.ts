@@ -1,20 +1,20 @@
 import { PriorityLevel } from "../constants/enums.js";
 import { PriorityQueue } from "../utils/priority-queue.js";
 import { Enum } from "../utils/enum.js";
-import { IEventSystem } from "../types/common-interfaces.js";
+import { IEventManager } from "../types/common-interfaces.js";
 
-export class EventSystem implements IEventSystem {
+export class EventManager implements IEventManager {
   #subscribers: Map<Enum, PriorityQueue<EventHandler<any>>>;
-  #parent: Nullable<IEventSystem>;
+  #parent: Nullable<IEventManager>;
 
-  constructor(parent?: IEventSystem) {
+  constructor(parent?: IEventManager) {
     this.#subscribers = new Map();
     if (typeof parent !== "undefined") {
       this.#parent = parent;
     }
   }
 
-  get parent(): Nullable<IEventSystem> {
+  get parent(): Nullable<IEventManager> {
     return this.#parent;
   }
 

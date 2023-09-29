@@ -1,11 +1,11 @@
 import { GameEvents } from "../constants/enums.js";
 import { Component, ComponentMap, ComponentType } from "../types/common-types.js";
-import { IEntityManager, IEventSystem } from "../types/common-interfaces.js";
+import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
 
 export class EntityManager implements IEntityManager {
   static #emptySet: Set<number> = new Set();
 
-  eventSystem: IEventSystem;
+  eventSystem: IEventManager;
   entities: Set<number>;
 
   #nextEntityId: number;
@@ -13,7 +13,7 @@ export class EntityManager implements IEntityManager {
   #componentTypeToEntities: Map<ComponentType, Set<number>>;
   #components: Map<string, Component<ComponentType>>;
 
-  constructor(eventSystem: IEventSystem) {
+  constructor(eventSystem: IEventManager) {
     this.eventSystem = eventSystem;
 
     this.entities = new Set();

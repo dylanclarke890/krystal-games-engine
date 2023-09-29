@@ -2,18 +2,18 @@ import { config, GameConfig } from "./config.js";
 import { CollisionDetector, CollisionResolver } from "./physics/collision/index.js";
 import { EntityManager } from "./managers/entity-manager.js";
 import { Quadtree } from "./physics/collision/broadphase/quadtree.js";
-import { EventSystem } from "./events/event-system.js";
+import { EventManager } from "./events/event-system.js";
 import { Viewport } from "./graphics/viewport.js";
 import { InputManager } from "./managers/input-manager.js";
 import { InputSystem, PhysicsSystem, RenderSystem, SystemManager } from "./systems/index.js";
 import { GameLoop } from "./time/game-loop.js";
-import { IConfigManager, IEntityManager, IEventSystem, ILoop, IObjectPoolManager } from "./types/common-interfaces.js";
+import { IConfigManager, IEntityManager, IEventManager, ILoop, IObjectPoolManager } from "./types/common-interfaces.js";
 import { ObjectPoolManager } from "./managers/object-pool-manager.js";
 import { ConfigManager } from "./managers/config-manager.js";
 
 export class KrystalGameEngine {
   viewport: Viewport;
-  eventSystem: IEventSystem;
+  eventSystem: IEventManager;
   loop: ILoop;
 
   systemManager!: SystemManager;
@@ -29,7 +29,7 @@ export class KrystalGameEngine {
    */
   constructor(canvasId: Nullable<string>, width: number, height: number) {
     this.viewport = new Viewport(width, height, canvasId);
-    this.eventSystem = new EventSystem();
+    this.eventSystem = new EventManager();
     this.#setupManagers();
     this.#setupSystems();
     this.loop = new GameLoop(this.eventSystem, this.configManager.getInt("frameRate") ?? 60);

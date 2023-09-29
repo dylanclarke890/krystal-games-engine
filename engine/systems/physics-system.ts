@@ -2,7 +2,7 @@ import { BaseSystem } from "./base/base-system.js";
 import { CollisionDetector, CollisionResolver } from "../physics/collision/index.js";
 import { Mass } from "../components/2d/index.js";
 import { SystemTypes } from "../constants/enums.js";
-import { IEntityManager, IEventSystem, IQuadtree } from "../types/common-interfaces.js";
+import { IEntityManager, IEventManager, IQuadtree } from "../types/common-interfaces.js";
 import { Collidable, CollidableComponents, ComponentType, PhysicsComponents } from "../types/common-types.js";
 import { Assert } from "../utils/assert.js";
 
@@ -27,7 +27,7 @@ export class PhysicsSystem extends BaseSystem {
 
   constructor(
     entityManager: IEntityManager,
-    eventSystem: IEventSystem,
+    eventSystem: IEventManager,
     quadtree: IQuadtree,
     detector: CollisionDetector,
     resolver: CollisionResolver

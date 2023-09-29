@@ -1,18 +1,18 @@
 import { GameEvents } from "../constants/enums.js";
 import { Assert } from "../utils/assert.js";
 import { Timer } from "./timer.js";
-import { IEventSystem, ILoop } from "../types/common-interfaces.js";
+import { IEventManager, ILoop } from "../types/common-interfaces.js";
 
 export class GameLoop implements ILoop {
   #lastFrame: number;
-  eventSystem: IEventSystem;
+  eventSystem: IEventManager;
   clock: Timer;
   fpsInterval: number;
   targetFps: number;
   #requestAnimationFrameId: number;
   stopped: boolean;
 
-  constructor(eventSystem: IEventSystem, targetFps: number) {
+  constructor(eventSystem: IEventManager, targetFps: number) {
     Assert.number("targetFps", targetFps);
 
     this.eventSystem = eventSystem;

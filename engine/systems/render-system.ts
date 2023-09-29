@@ -5,7 +5,7 @@ import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { InvalidOperationError } from "../types/errors.js";
 import { ComponentType, Components } from "../types/common-types.js";
-import { IEntityManager, IEventSystem } from "../types/common-interfaces.js";
+import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
 
 type SystemComponents = Components<"Position", "Animation" | "Sprite" | "Shape">;
 export class RenderSystem extends BaseSystem {
@@ -15,7 +15,7 @@ export class RenderSystem extends BaseSystem {
 
   viewport: Viewport;
 
-  constructor(entityManager: IEntityManager, eventSystem: IEventSystem, viewport: Viewport) {
+  constructor(entityManager: IEntityManager, eventSystem: IEventManager, viewport: Viewport) {
     super(entityManager, eventSystem);
     Assert.instanceOf("viewport", viewport, Viewport);
     this.viewport = viewport;

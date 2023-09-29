@@ -1,16 +1,16 @@
 import { SystemTypes } from "../../constants/enums.js";
 import { InvalidOperationError } from "../../types/errors.js";
 import { ComponentType } from "../../types/common-types.js";
-import { IEntityManager, IEventSystem } from "../../types/common-interfaces.js";
+import { IEntityManager, IEventManager } from "../../types/common-interfaces.js";
 
 export class BaseSystem {
   static requiredComponents: ComponentType[];
   static systemType: SystemTypes;
 
   entityManager: IEntityManager;
-  eventSystem: IEventSystem;
+  eventSystem: IEventManager;
 
-  constructor(entityManager: IEntityManager, eventSystem: IEventSystem) {
+  constructor(entityManager: IEntityManager, eventSystem: IEventManager) {
     this.entityManager = entityManager;
     this.eventSystem = eventSystem;
   }

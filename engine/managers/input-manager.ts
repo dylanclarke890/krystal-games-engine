@@ -5,7 +5,7 @@ import { Vector2D } from "../utils/maths/vector-2d.js";
 import { Vector3D } from "../utils/maths/vector-3d.js";
 import { UserAgent } from "../utils/user-agent.js";
 import { keyboardMap } from "../constants/keyboard-map.js";
-import { IEventSystem } from "../types/common-interfaces.js";
+import { IEventManager } from "../types/common-interfaces.js";
 import { InputBindingType } from "../types/common-types.js";
 
 export class InputManager {
@@ -20,9 +20,9 @@ export class InputManager {
 
   mouse: Vector2D;
   accel: Vector3D;
-  eventSystem: IEventSystem;
+  eventSystem: IEventManager;
 
-  constructor(eventSystem: IEventSystem, viewport: Viewport) {
+  constructor(eventSystem: IEventManager, viewport: Viewport) {
     Assert.instanceOf("viewport", viewport, Viewport);
     this.eventSystem = eventSystem;
     this.viewport = viewport;

@@ -2,15 +2,15 @@ import { SystemTypes, GameEvents } from "../constants/enums.js";
 import { Assert } from "../utils/assert.js";
 import { GameSystem, GameSystemType } from "../types/common-types.js";
 import { BaseSystem } from "../systems/base/base-system.js";
-import { IEntityManager, IEventSystem } from "../types/common-interfaces.js";
+import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
 
 export class SystemManager {
-  eventSystem: IEventSystem;
+  eventSystem: IEventManager;
   entityManager: IEntityManager;
   systems: Set<BaseSystem>;
   buckets: Map<string, Set<number>>;
 
-  constructor(eventSystem: IEventSystem, entityManager: IEntityManager) {
+  constructor(eventSystem: IEventManager, entityManager: IEntityManager) {
     this.eventSystem = eventSystem;
     this.entityManager = entityManager;
 

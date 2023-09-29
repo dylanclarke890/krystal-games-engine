@@ -21,9 +21,9 @@ export interface IConfigManager<T> {
   getArray<TItem>(key: string): Nullable<TItem[]>;
 }
 
-export interface IEventSystem {
+export interface IEventManager {
   /** Get the parent EventSystem. */
-  get parent(): Nullable<IEventSystem>;
+  get parent(): Nullable<IEventManager>;
 
   /** Subscribe to an event. */
   on<T>(event: Enum, listener: EventHandler<T>, priority?: number | PriorityLevel): void;
