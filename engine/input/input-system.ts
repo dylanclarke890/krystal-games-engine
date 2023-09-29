@@ -1,5 +1,5 @@
 import { SystemTypes } from "../constants/enums.js";
-import { InputManager } from "./input-manager.js";
+import { InputManager } from "../managers/input-manager.js";
 import { BaseSystem } from "../systems/system.js";
 import { Assert } from "../utils/assert.js";
 import { ComponentType } from "../types/common-types.js";

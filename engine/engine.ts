@@ -4,7 +4,7 @@ import { EntityManager } from "./entities/entity-manager.js";
 import { Quadtree } from "./collision/broadphase/quadtree.js";
 import { EventSystem } from "./events/event-system.js";
 import { Viewport } from "./graphics/viewport.js";
-import { InputManager } from "./input/input-manager.js";
+import { InputManager } from "./managers/input-manager.js";
 import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "./systems/index.js";
 import { GameLoop } from "./time/game-loop.js";
 import { IConfigManager, IEntityManager, IEventSystem, ILoop, IObjectPoolManager } from "./types/common-interfaces.js";
