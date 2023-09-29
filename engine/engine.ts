@@ -1,4 +1,4 @@
-import { config, GameConfig, ConfigManager } from "./config/index.js";
+import { config, GameConfig } from "./config.js";
 import { CollisionDetector, CollisionResolver } from "./collision/index.js";
 import { EntityManager } from "./entities/entity-manager.js";
 import { Quadtree } from "./collision/broadphase/quadtree.js";
@@ -9,6 +9,7 @@ import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "./system
 import { GameLoop } from "./time/game-loop.js";
 import { IConfigManager, IEntityManager, IEventSystem, ILoop, IObjectPoolManager } from "./types/common-interfaces.js";
 import { ObjectPoolManager } from "./pooling/object-pool-manager.js";
+import { ConfigManager } from "./managers/config-manager.js";
 
 export class KrystalGameEngine {
   viewport: Viewport;

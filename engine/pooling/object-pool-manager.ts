@@ -1,4 +1,4 @@
-import { GameConfig } from "../config/index.js";
+import { GameConfig } from "../config.js";
 import { IConfigManager, IObjectPool, IObjectPoolManager } from "../types/common-interfaces.js";
 import { ObjectFactory } from "./object-factory.js";
 import { ObjectPool } from "./object-pool.js";
