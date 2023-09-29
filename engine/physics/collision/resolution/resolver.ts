@@ -1,10 +1,10 @@
-import { Bounciness, Mass, Position, Size } from "../../components/2d/index.js";
-import { SideOfCollision } from "../../constants/enums.js";
-import { Viewport } from "../../graphics/viewport.js";
-import { Assert } from "../../utils/assert.js";
-import { PairedSet } from "../../utils/paired-set.js";
-import { ComponentType, Components } from "../../types/common-types.js";
-import { IEntityManager } from "../../types/common-interfaces.js";
+import { Bounciness, Mass, Position, Size } from "../../../components/2d/index.js";
+import { SideOfCollision } from "../../../constants/enums.js";
+import { Viewport } from "../../../graphics/viewport.js";
+import { Assert } from "../../../utils/assert.js";
+import { PairedSet } from "../../../utils/paired-set.js";
+import { ComponentType, Components } from "../../../types/common-types.js";
+import { IEntityManager } from "../../../types/common-interfaces.js";
 
 type ResolverComponents = Components<"Position" | "Velocity" | "Size" | "Collision", "Bounciness" | "Mass">;
 type ResolverData = { entityCollisions: PairedSet<number>; viewportCollisions: Set<number> };

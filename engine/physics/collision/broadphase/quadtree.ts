@@ -1,7 +1,7 @@
-import { Quadrant } from "../../constants/enums.js";
-import { Viewport } from "../../graphics/viewport.js";
-import { IObjectPool, IObjectPoolManager, IQuadtree, IQuadtreeNode } from "../../types/common-interfaces.js";
-import { Vector2D } from "../../utils/maths/vector-2d.js";
+import { Quadrant } from "../../../constants/enums.js";
+import { Viewport } from "../../../graphics/viewport.js";
+import { IObjectPool, IObjectPoolManager, IQuadtree, IQuadtreeNode } from "../../../types/common-interfaces.js";
+import { Vector2D } from "../../../utils/maths/vector-2d.js";
 
 export class Quadtree implements IQuadtree {
   /** The node representing the entire viewport/bounds. */

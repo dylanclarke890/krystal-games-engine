@@ -1,4 +1,4 @@
-import { Vector2D } from "../../utils/maths/vector-2d.js";
+import { Vector2D } from "../../../utils/maths/vector-2d.js";
 
 export function pointVsPoint(a: Vector2D, b: Vector2D) {
   return a.x === b.x && a.y === b.y;

@@ -1,7 +1,7 @@
 import { config, GameConfig } from "./config.js";
-import { CollisionDetector, CollisionResolver } from "./collision/index.js";
+import { CollisionDetector, CollisionResolver } from "./physics/collision/index.js";
 import { EntityManager } from "./managers/entity-manager.js";
-import { Quadtree } from "./collision/broadphase/quadtree.js";
+import { Quadtree } from "./physics/collision/broadphase/quadtree.js";
 import { EventSystem } from "./events/event-system.js";
 import { Viewport } from "./graphics/viewport.js";
 import { InputManager } from "./managers/input-manager.js";

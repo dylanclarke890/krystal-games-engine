@@ -1,5 +1,5 @@
 import { BaseSystem } from "./base/base-system.js";
-import { CollisionDetector, CollisionResolver } from "../collision/index.js";
+import { CollisionDetector, CollisionResolver } from "../physics/collision/index.js";
 import { Mass } from "../components/2d/index.js";
 import { SystemTypes } from "../constants/enums.js";
 import { IEntityManager, IEventSystem, IQuadtree } from "../types/common-interfaces.js";
