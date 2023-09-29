@@ -1,11 +1,11 @@
 import { SystemTypes } from "../constants/enums.js";
 import { InputManager } from "../managers/input-manager.js";
-import { BaseSystem } from "./base/base-system.js";
 import { Assert } from "../utils/assert.js";
 import { ComponentType } from "../types/common-types.js";
 import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
+import { ComponentSystem } from "./base/component-system.js";
 
-export class InputSystem extends BaseSystem {
+export class InputSystem extends ComponentSystem {
   static requiredComponents: ComponentType[] = ["Input"];
   static components: ComponentType[] = [...this.requiredComponents];
   static systemType = SystemTypes.Input;
