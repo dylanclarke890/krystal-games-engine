@@ -3,6 +3,7 @@ import { Assert } from "../utils/assert.js";
 import { GameSystem, GameSystemType } from "../types/common-types.js";
 import { BaseSystem } from "../systems/base/base-system.js";
 import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
+import { ComponentSystem } from "../systems/base/component-system.js";
 
 export class SystemManager {
   eventManager: IEventManager;
@@ -24,12 +25,14 @@ export class SystemManager {
   }
 
   #validateSystem(system: BaseSystem): void {
-    const name = (<typeof BaseSystem>system.constructor).name;
-    const required = (<typeof BaseSystem>system.constructor).requiredComponents;
-    const type = (<typeof BaseSystem>system.constructor).systemType;
+    if (system instanceof ComponentSystem) {
+      const name = (<typeof BaseSystem>system.constructor).name;
+      const required = (<typeof BaseSystem>system.constructor).requiredComponents;
+      const type = (<typeof BaseSystem>system.constructor).systemType;
 
-    Assert.isArray(`${name} requiredComponents`, required);
-    Assert.instanceOf(`${name} systemType`, type, SystemTypes);
+      Assert.isArray(`${name} requiredComponents`, required);
+      Assert.instanceOf(`${name} systemType`, type, SystemTypes);
+    }
   }
 
   registerSystem(system: BaseSystem) {
