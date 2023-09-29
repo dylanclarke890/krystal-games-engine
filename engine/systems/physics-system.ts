@@ -4,9 +4,9 @@ import { SystemTypes } from "../constants/enums.js";
 import { IEntityManager, IEventManager, IQuadtree } from "../types/common-interfaces.js";
 import { Collidable, CollidableComponents, ComponentType, PhysicsComponents } from "../types/common-types.js";
 import { Assert } from "../utils/assert.js";
-import { RigidBodySystem } from "./base/rigid-body-system.js";
+import { BaseSystem } from "./base-system.js";
 
-export class PhysicsSystem extends RigidBodySystem {
+export class PhysicsSystem extends BaseSystem {
   static requiredComponents: ComponentType[] = ["Position", "Velocity"];
   static components: ComponentType[] = [
     ...this.requiredComponents,

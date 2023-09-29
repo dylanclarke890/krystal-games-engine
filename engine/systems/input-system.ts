@@ -3,9 +3,9 @@ import { InputManager } from "../managers/input-manager.js";
 import { Assert } from "../utils/assert.js";
 import { ComponentType } from "../types/common-types.js";
 import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
-import { ComponentSystem } from "./base/component-system.js";
+import { BaseSystem } from "./base-system.js";
 
-export class InputSystem extends ComponentSystem {
+export class InputSystem extends BaseSystem {
   static requiredComponents: ComponentType[] = ["Input"];
   static components: ComponentType[] = [...this.requiredComponents];
   static systemType = SystemTypes.Input;

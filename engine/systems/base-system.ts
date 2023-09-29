@@ -1,7 +1,7 @@
-import { SystemTypes } from "../../constants/enums.js";
-import { InvalidOperationError } from "../../types/errors.js";
-import { ComponentType } from "../../types/common-types.js";
-import { IEntityManager, IEventManager } from "../../types/common-interfaces.js";
+import { SystemTypes } from "../constants/enums.js";
+import { InvalidOperationError } from "../types/errors.js";
+import { ComponentType } from "../types/common-types.js";
+import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
 
 export class BaseSystem {
   static requiredComponents: ComponentType[];

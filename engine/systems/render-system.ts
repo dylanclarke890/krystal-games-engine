@@ -5,10 +5,10 @@ import { Assert } from "../utils/assert.js";
 import { InvalidOperationError } from "../types/errors.js";
 import { ComponentType, Components } from "../types/common-types.js";
 import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
-import { ComponentSystem } from "./base/component-system.js";
+import { BaseSystem } from "./base-system.js";
 
 type SystemComponents = Components<"Position", "Animation" | "Sprite" | "Shape">;
-export class RenderSystem extends ComponentSystem {
+export class RenderSystem extends BaseSystem {
   static requiredComponents: ComponentType[] = ["Position"];
   static components: ComponentType[] = [...this.requiredComponents, "Sprite", "Animation", "Shape"];
   static systemType = SystemTypes.Graphics;
