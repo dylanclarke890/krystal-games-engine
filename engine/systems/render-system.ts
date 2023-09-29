@@ -1,7 +1,7 @@
-import { BaseSystem } from "../systems/base/base-system.js";
+import { BaseSystem } from "./base/base-system.js";
 import { SystemTypes } from "../constants/enums.js";
 import { Sprite, Position, Shape } from "../components/2d/index.js";
-import { Viewport } from "./viewport.js";
+import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { InvalidOperationError } from "../types/errors.js";
 import { ComponentType, Components } from "../types/common-types.js";
