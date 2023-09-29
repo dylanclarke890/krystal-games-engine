@@ -3,7 +3,7 @@ class GameError<T> extends Error {
 
   constructor(name: string, message: string, data?: T) {
     super(message);
-    this.name = name;
+    this.name = name + "Error";
     this.data = data;
     this.stack = new Error().stack;
   }
@@ -11,18 +11,24 @@ class GameError<T> extends Error {
 
 export class AssertionError<T> extends GameError<T> {
   constructor(message: string, data?: T) {
-    super("AssertionError", message, data);
+    super("Assertion", message, data);
   }
 }
 
 export class InvalidOperationError<T> extends GameError<T> {
   constructor(message: string, data?: T) {
-    super("InvalidOperationError", message, data);
+    super("InvalidOperation", message, data);
   }
 }
 
 export class IntervalParsingFailedError<T> extends GameError<T> {
   constructor(message: string, data?: T) {
-    super("IntervalParsingFailedError", message, data);
+    super("IntervalParsingFailed", message, data);
+  }
+}
+
+export class SystemError<T> extends GameError<T> {
+  constructor(message: string, data?: T) {
+    super("System", message, data);
   }
 }

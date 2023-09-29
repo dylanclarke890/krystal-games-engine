@@ -1,14 +1,20 @@
-import { IEventManager, ISystem } from "../types/common-interfaces.js";
+import { IEntityManager, IEventManager, ISystem } from "../types/common-interfaces.js";
+import { SystemError } from "../types/errors.js";
 import { PriorityQueue } from "../utils/priority-queue.js";
 
 export class SystemManager {
+  entityManager: IEntityManager;
   eventManager: IEventManager;
-  systems: Map<string, ISystem> = new Map();
   executionQueue: PriorityQueue<ISystem>;
+  systems: Map<string, ISystem>;
+  systemEntities: Map<string, Set<number>>;
 
-  constructor(eventManager: IEventManager) {
+  constructor(entityManager: IEntityManager, eventManager: IEventManager) {
+    this.entityManager = entityManager;
     this.eventManager = eventManager;
     this.executionQueue = new PriorityQueue<ISystem>((a, b) => a.priority - b.priority);
+    this.systems = new Map();
+    this.systemEntities = new Map();
   }
 
   /**
@@ -17,13 +23,12 @@ export class SystemManager {
    */
   registerSystem(system: ISystem) {
     if (this.systems.has(system.name)) {
-      console.warn(`System with name ${system.name} already registered.`);
-      return;
+      throw new SystemError(`System with name ${system.name} already registered.`);
     }
 
     this.systems.set(system.name, system);
     this.executionQueue.add(system, system.priority);
-    system.init();
+    system.init?.();
   }
 
   /**
@@ -34,9 +39,7 @@ export class SystemManager {
     const system = this.systems.get(systemName);
     if (system) {
       this.executionQueue.remove(system);
-      if (system.destroy) {
-        system.destroy();
-      }
+      system.destroy?.();
       this.systems.delete(systemName);
     }
   }
@@ -48,7 +51,13 @@ export class SystemManager {
   update(dt: number) {
     this.executionQueue.forEach((system) => {
       if (system.enabled) {
-        system.update(dt);
+        const relevantEntities = new Set<number>();
+        this.entityManager.entities.forEach((entity) => {
+          if (system.belongsToSystem(entity)) {
+            relevantEntities.add(entity);
+          }
+        });
+        system.update(dt, relevantEntities);
       }
     });
   }

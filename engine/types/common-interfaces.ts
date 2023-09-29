@@ -141,7 +141,12 @@ export interface ISystem {
   name: string;
   enabled: boolean;
   priority: number;
-  init(): void;
-  update(dt: number): void;
+
+  init?(): void;
+  update(dt: number, entities: Set<number>): void;
+  belongsToSystem(entity: number): boolean;
   destroy?(): void;
 }
+
+// TODO: system manager needs to update systemEntities based on events from event manager.
+// TODO: systems need to implement ISystem
