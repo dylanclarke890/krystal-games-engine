@@ -13,9 +13,9 @@ import { ConfigManager } from "./managers/config-manager.js";
 
 export class KrystalGameEngine {
   viewport: Viewport;
-  eventManager: IEventManager;
   loop: ILoop;
 
+  eventManager!: IEventManager;
   systemManager!: SystemManager;
   entityManager!: IEntityManager;
   inputManager!: InputManager;
@@ -29,18 +29,18 @@ export class KrystalGameEngine {
    */
   constructor(canvasId: Nullable<string>, width: number, height: number) {
     this.viewport = new Viewport(width, height, canvasId);
-    this.eventManager = new EventManager();
     this.#setupManagers();
     this.#setupSystems();
     this.loop = new GameLoop(this.eventManager, this.configManager.getInt("frameRate") ?? 60);
   }
 
   #setupManagers() {
+    this.objectPoolManager = new ObjectPoolManager();
+    this.eventManager = new EventManager();
     this.configManager = new ConfigManager(config);
     this.entityManager = new EntityManager(this.eventManager);
     this.systemManager = new SystemManager(this.entityManager, this.eventManager);
     this.inputManager = new InputManager(this.eventManager, this.viewport);
-    this.objectPoolManager = new ObjectPoolManager(this.configManager);
   }
 
   #setupSystems() {

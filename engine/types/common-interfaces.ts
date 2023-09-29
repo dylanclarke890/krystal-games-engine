@@ -96,6 +96,8 @@ export interface IObjectPoolManager {
 }
 
 export interface IObjectFactory<T, Args extends any[] = any[]> {
+  ClassConstructor: ClassConstructor<T, Args>;
+  totalCreated: number;
   create(...args: Args): T;
 }
 

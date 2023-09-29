@@ -1,15 +1,9 @@
-import { GameConfig } from "../config.js";
-import { IConfigManager, IObjectPool, IObjectPoolManager } from "../types/common-interfaces.js";
-import { ObjectFactory } from "../utils/object-factory.js";
+import { IObjectPool, IObjectPoolManager } from "../types/common-interfaces.js";
+import { ObjectFactory } from "../utils/factories/object-factory.js";
 import { ObjectPool } from "../utils/object-pool.js";
 
 export class ObjectPoolManager implements IObjectPoolManager {
   pools: Map<string, IObjectPool<any, any[]>> = new Map();
-  configManager: IConfigManager<GameConfig>;
-
-  constructor(configManager: IConfigManager<GameConfig>) {
-    this.configManager = configManager;
-  }
 
   get<T, Args extends any[] = any[]>(name: string): IObjectPool<T, Args> | undefined {
     return this.pools.get(name) as IObjectPool<T, Args> | undefined;
@@ -29,7 +23,7 @@ export class ObjectPoolManager implements IObjectPoolManager {
       return this.get(name)!;
     }
 
-    const factory = new ObjectFactory<T, Args>(ClassConstructor, this.configManager);
+    const factory = new ObjectFactory<T, Args>(ClassConstructor);
     const pool = new ObjectPool<T, Args>(factory, onReuse, size);
 
     this.pools.set(name, pool);
