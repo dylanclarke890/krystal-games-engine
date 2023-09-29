@@ -1,7 +1,7 @@
 import { SystemTypes, GameEvents } from "../constants/enums.js";
 import { Assert } from "../utils/assert.js";
 import { GameSystem, GameSystemType } from "../types/common-types.js";
-import { BaseSystem } from "./base-system.js";
+import { BaseSystem } from "./base/base-system.js";
 import { IEntityManager, IEventSystem } from "../types/common-interfaces.js";
 
 export class SystemManager {
