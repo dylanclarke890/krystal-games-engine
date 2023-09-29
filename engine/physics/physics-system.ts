@@ -6,7 +6,7 @@ import { IEntityManager, IEventSystem, IQuadtree } from "../types/common-interfa
 import { Collidable, CollidableComponents, ComponentType, PhysicsComponents } from "../types/common-types.js";
 import { Assert } from "../utils/assert.js";
 
-export class PhysicSystem extends BaseSystem {
+export class PhysicsSystem extends BaseSystem {
   static requiredComponents: ComponentType[] = ["Position", "Velocity"];
   static components: ComponentType[] = [
     ...this.requiredComponents,
@@ -43,12 +43,12 @@ export class PhysicSystem extends BaseSystem {
 
   update(dt: number, entities: Set<number>) {
     const em = this.entityManager;
-    const defaults = PhysicSystem.defaultComponents;
+    const defaults = PhysicsSystem.defaultComponents;
     const collidables: Collidable[] = [];
     this.quadtree.clear();
 
     for (const id of entities) {
-      const components = em.getComponents(id, PhysicSystem.components) as PhysicsComponents;
+      const components = em.getComponents(id, PhysicsSystem.components) as PhysicsComponents;
 
       components.Mass ??= defaults.mass;
       const mass = components.Mass.value;

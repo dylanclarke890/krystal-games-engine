@@ -26,7 +26,7 @@ export class LargeEntityCountTest extends KrystalGameEngine {
       em.addComponent(newEntity, new Collision("DEFAULT", collisionSettings));
     }
 
-    const collisionDetector = this.systemManager.getSystem("PhysicSystem")!.detector;
+    const collisionDetector = this.systemManager.getSystem("PhysicsSystem")!.detector;
     this.viewport.drawText(`${em.entities.size} objects`, 10, 20);
     this.viewport.drawText(`${collisionDetector.collisionChecks} entity collisions checked`, 10, 40);
     this.viewport.drawText(`${collisionDetector.entityCollisions.length} entity collisions found`, 10, 60);

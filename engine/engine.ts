@@ -5,7 +5,7 @@ import { Quadtree } from "./collision/broadphase/quadtree.js";
 import { EventSystem } from "./events/event-system.js";
 import { Viewport } from "./graphics/viewport.js";
 import { InputManager } from "./managers/input-manager.js";
-import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "./systems/index.js";
+import { InputSystem, PhysicsSystem, RenderSystem, SystemManager } from "./systems/index.js";
 import { GameLoop } from "./time/game-loop.js";
 import { IConfigManager, IEntityManager, IEventSystem, ILoop, IObjectPoolManager } from "./types/common-interfaces.js";
 import { ObjectPoolManager } from "./managers/object-pool-manager.js";
@@ -56,7 +56,7 @@ export class KrystalGameEngine {
     const resolver = new CollisionResolver(entityManager, this.viewport);
 
     systemManager.registerSystem(new InputSystem(entityManager, eventSystem, this.inputManager));
-    systemManager.registerSystem(new PhysicSystem(entityManager, eventSystem, quadtree, detector, resolver));
+    systemManager.registerSystem(new PhysicsSystem(entityManager, eventSystem, quadtree, detector, resolver));
     systemManager.registerSystem(new RenderSystem(entityManager, eventSystem, this.viewport));
   }
 
