@@ -1,4 +1,4 @@
-import { BaseSystem } from "../systems/base/base-system.js";
+import { BaseSystem } from "./base/base-system.js";
 import { CollisionDetector, CollisionResolver } from "../collision/index.js";
 import { Mass } from "../components/2d/index.js";
 import { SystemTypes } from "../constants/enums.js";
