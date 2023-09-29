@@ -1,4 +1,4 @@
-import { BaseSystem } from "../systems/system.js";
+import { BaseSystem } from "../systems/base-system.js";
 import { SystemTypes } from "../constants/enums.js";
 import { Sprite, Position, Shape } from "../components/2d/index.js";
 import { Viewport } from "./viewport.js";
