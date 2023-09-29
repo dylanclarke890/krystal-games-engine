@@ -1,6 +1,6 @@
 import { Position, Size } from "../engine/components/2d/index.js";
 import { GameEvents } from "../engine/constants/enums.js";
-import { KrystalGameEngine } from "../engine/main/engine.js";
+import { KrystalGameEngine } from "../engine/engine.js";
 
 export class RadialTriggerDemo extends KrystalGameEngine {
   radialTriggerId: number;

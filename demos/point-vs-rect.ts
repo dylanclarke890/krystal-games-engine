@@ -1,7 +1,7 @@
 import { GameEvents } from "../engine/constants/enums.js";
 import { pointVsRect } from "../engine/collision/detection/detection-strategies.js";
 import { Position, Shape, Size } from "../engine/components/2d/index.js";
-import { KrystalGameEngine } from "../engine/main/engine.js";
+import { KrystalGameEngine } from "../engine/engine.js";
 
 export class PointVsRectTest extends KrystalGameEngine {
   rectId: number;

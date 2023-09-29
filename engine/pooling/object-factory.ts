@@ -1,4 +1,4 @@
-import { GameConfig } from "../config/config.js";
+import { GameConfig } from "../config.js";
 import { IConfigManager, IObjectFactory } from "../types/common-interfaces.js";
 
 export class ObjectFactory<T, Args extends any[] = any[]> implements IObjectFactory<T, Args> {

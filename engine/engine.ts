@@ -1,14 +1,14 @@
-import { config, GameConfig, ConfigManager } from "../config/index.js";
-import { CollisionDetector, CollisionResolver } from "../collision/index.js";
-import { EntityManager } from "../entities/entity-manager.js";
-import { Quadtree } from "../collision/broadphase/quadtree.js";
-import { EventSystem } from "../events/event-system.js";
-import { Viewport } from "../graphics/viewport.js";
-import { InputManager } from "../input/input-manager.js";
-import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "../systems/index.js";
-import { GameLoop } from "../time/game-loop.js";
-import { IConfigManager, IEntityManager, IEventSystem, ILoop, IObjectPoolManager } from "../types/common-interfaces.js";
-import { ObjectPoolManager } from "../pooling/object-pool-manager.js";
+import { config, GameConfig, ConfigManager } from "./config/index.js";
+import { CollisionDetector, CollisionResolver } from "./collision/index.js";
+import { EntityManager } from "./entities/entity-manager.js";
+import { Quadtree } from "./collision/broadphase/quadtree.js";
+import { EventSystem } from "./events/event-system.js";
+import { Viewport } from "./graphics/viewport.js";
+import { InputManager } from "./input/input-manager.js";
+import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "./systems/index.js";
+import { GameLoop } from "./time/game-loop.js";
+import { IConfigManager, IEntityManager, IEventSystem, ILoop, IObjectPoolManager } from "./types/common-interfaces.js";
+import { ObjectPoolManager } from "./pooling/object-pool-manager.js";
 
 export class KrystalGameEngine {
   viewport: Viewport;
