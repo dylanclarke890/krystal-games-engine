@@ -8,7 +8,7 @@ import { InputManager } from "./managers/input-manager.js";
 import { InputSystem, PhysicSystem, RenderSystem, SystemManager } from "./systems/index.js";
 import { GameLoop } from "./time/game-loop.js";
 import { IConfigManager, IEntityManager, IEventSystem, ILoop, IObjectPoolManager } from "./types/common-interfaces.js";
-import { ObjectPoolManager } from "./pooling/object-pool-manager.js";
+import { ObjectPoolManager } from "./managers/object-pool-manager.js";
 import { ConfigManager } from "./managers/config-manager.js";
 
 export class KrystalGameEngine {

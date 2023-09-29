@@ -1,7 +1,7 @@
 import { GameConfig } from "../config.js";
 import { IConfigManager, IObjectPool, IObjectPoolManager } from "../types/common-interfaces.js";
-import { ObjectFactory } from "./object-factory.js";
-import { ObjectPool } from "./object-pool.js";
+import { ObjectFactory } from "../pooling/object-factory.js";
+import { ObjectPool } from "../pooling/object-pool.js";
 
 export class ObjectPoolManager implements IObjectPoolManager {
   pools: Map<string, IObjectPool<any, any[]>> = new Map();
