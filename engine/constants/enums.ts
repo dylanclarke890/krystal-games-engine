@@ -13,44 +13,40 @@ export class SideOfCollision extends Enum {
 }
 
 export class GameEvents extends Enum {
-  //#region System
-  static System_ReadyToLoad = new GameEvents();
-  static System_PreloadingAssets = new GameEvents();
-  static System_PreloadingComplete = new GameEvents();
-  //#endregion System
+  // #region Loop
+  static LOOP_BEFORE_START = new GameEvents();
+  static LOOP_STARTED = new GameEvents();
+  static LOOP_PAUSED = new GameEvents();
+  static LOOP_UNPAUSED = new GameEvents();
+  static LOOP_STOPPED = new GameEvents();
+  static LOOP_RESTARTED = new GameEvents();
+  // #endregion Loop
 
-  //region Entity
-  static Entity_Created = new GameEvents();
-  static Entity_ComponentAdded = new GameEvents();
-  static Entity_ComponentRemoved = new GameEvents();
-  static Entity_Destroyed = new GameEvents();
-  static Entity_Collided = new GameEvents();
-  //endregion Entity
+  // #region System
+  static SYSTEM_ADDED = new GameEvents();
+  static SYSTEM_ENABLED = new GameEvents();
+  static SYSTEM_DISABLED = new GameEvents();
+  static SYSTEM_REMOVED = new GameEvents();
+  // #endregion System
 
-  //region Loop
-  static Loop_BeforeStart = new GameEvents();
-  static Loop_Start = new GameEvents();
-  static Loop_NextFrame = new GameEvents();
-  static Loop_Pause = new GameEvents();
-  static Loop_Stop = new GameEvents();
-  static Loop_Restart = new GameEvents();
-  //endregion Loop
+  // #region Entity
+  static ENTITY_CREATED = new GameEvents();
+  static ENTITY_DESTROYED = new GameEvents();
+  static ENTITY_COLLIDED = new GameEvents();
+  // #endregion Entity
 
-  //region Input
-  static Mouse_Down = new GameEvents();
-  static Mouse_Move = new GameEvents();
-  static Mouse_Up = new GameEvents();
-  static Mouse_Click = new GameEvents();
-  static Window_Resized = new GameEvents();
-  //endregion Input
+  // #region Component
+  static COMPONENT_ADDED = new GameEvents();
+  static COMPONENT_REMOVED = new GameEvents();
+  // #endregion Component
 
-  //region Sound
-  static Sound_UnlockWebAudio = new GameEvents();
-  static Sound_Played = new GameEvents();
-  static Sound_Paused = new GameEvents();
-  static Sound_Stopped = new GameEvents();
-  static Sound_Looped = new GameEvents();
-  //endregion Sound
+  // #region Input
+  static MOUSE_DOWN = new GameEvents();
+  static MOUSE_MOVE = new GameEvents();
+  static MOUSE_UP = new GameEvents();
+  static MOUSE_CLICK = new GameEvents();
+  static WINDOW_RESIZED = new GameEvents();
+  // #endregion Input
 
   static {
     this.freeze();

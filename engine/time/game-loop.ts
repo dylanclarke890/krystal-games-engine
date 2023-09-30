@@ -5,11 +5,11 @@ import { IEventManager, ILoop } from "../types/common-interfaces.js";
 
 export class GameLoop implements ILoop {
   #lastFrame: number;
+  #requestAnimationFrameId: number;
   eventManager: IEventManager;
   clock: Timer;
   fpsInterval: number;
   targetFps: number;
-  #requestAnimationFrameId: number;
   stopped: boolean;
 
   constructor(eventManager: IEventManager, targetFps: number) {
@@ -26,7 +26,6 @@ export class GameLoop implements ILoop {
 
   start(): void {
     this.stopped = false;
-    this.eventManager.trigger(GameEvents.Loop_BeforeStart);
     this.main(performance.now());
   }
 
@@ -45,11 +44,11 @@ export class GameLoop implements ILoop {
     }
 
     this.#lastFrame = timestamp - (elapsed % this.fpsInterval);
-    this.eventManager.trigger(GameEvents.Loop_NextFrame, this.clock.tick());
+    this.eventManager.trigger(GameEvents.LOOP_STARTED, this.clock.tick());
   }
 
   stop(unloadAssets?: boolean): void {
     this.stopped = true;
-    this.eventManager.trigger(GameEvents.Loop_Stop, !!unloadAssets);
+    this.eventManager.trigger(GameEvents.LOOP_STOPPED, !!unloadAssets);
   }
 }

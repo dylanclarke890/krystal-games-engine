@@ -28,7 +28,7 @@ export class EntityManager implements IEntityManager {
     const entity = this.#nextEntityId++;
 
     this.entities.add(entity);
-    this.eventManager.trigger(GameEvents.Entity_Created, entity);
+    this.eventManager.trigger(GameEvents.ENTITY_CREATED, entity);
 
     return entity;
   }
@@ -47,7 +47,7 @@ export class EntityManager implements IEntityManager {
     this.#entityMasks.delete(id);
     this.entities.delete(id);
 
-    this.eventManager.trigger(GameEvents.Entity_Destroyed, id);
+    this.eventManager.trigger(GameEvents.ENTITY_DESTROYED, id);
   }
 
   addComponent(entity: number, component: Component<ComponentType>): void {
@@ -64,7 +64,7 @@ export class EntityManager implements IEntityManager {
     }
     this.#entityMasks.get(entity)!.add(componentType);
 
-    this.eventManager.trigger(GameEvents.Entity_ComponentAdded, { entity, component });
+    this.eventManager.trigger(GameEvents.COMPONENT_ADDED, { entity, component });
   }
 
   removeComponent(entity: number, componentType: ComponentType): void {
@@ -76,7 +76,7 @@ export class EntityManager implements IEntityManager {
 
     this.#components.delete(componentMapKey);
     this.#entityMasks.get(entity)!.delete(componentType);
-    this.eventManager.trigger(GameEvents.Entity_ComponentAdded, { entity, component });
+    this.eventManager.trigger(GameEvents.COMPONENT_REMOVED, { entity, component });
   }
 
   getComponents<T extends ComponentType>(entity: number, componentTypes: T[]): ComponentMap<T> {

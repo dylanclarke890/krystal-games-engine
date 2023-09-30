@@ -1,5 +1,6 @@
 import { GameEvents } from "../constants/enums.js";
 import { IEntityManager, IEventManager, ISystem } from "../types/common-interfaces.js";
+import { Component, ComponentType } from "../types/common-types.js";
 import { SystemError } from "../types/errors.js";
 import { PriorityQueue } from "../utils/priority-queue.js";
 
@@ -19,14 +20,49 @@ export class SystemManager {
   }
 
   bindEvents() {
-    this.eventManager.on(GameEvents.Entity_ComponentAdded, () => {});
+    this.eventManager.on(GameEvents.COMPONENT_ADDED, (data: { entity: number; component: Component<ComponentType> }) =>
+      this.#onComponentAdded(data.entity, data.component)
+    );
+
+    this.eventManager.on(
+      GameEvents.COMPONENT_REMOVED,
+      (data: { entity: number; component: Component<ComponentType> }) => this.#onComponentRemoved(data.entity)
+    );
+
+    this.eventManager.on(GameEvents.ENTITY_DESTROYED, (entity: number) => this.#onEntityDestroyed(entity));
+  }
+
+  #onComponentAdded(entity: number, component: Component<ComponentType>): void {
+    for (let [systemName, system] of this.systems) {
+      if (system.isInterestedInComponent(component)) {
+        const entitySet = this.systemEntities.get(systemName)!;
+        if (system.belongsToSystem(entity)) {
+          entitySet.add(entity);
+        }
+      }
+    }
+  }
+
+  #onComponentRemoved(entity: number): void {
+    for (let [systemName, system] of this.systems) {
+      const entitySet = this.systemEntities.get(systemName)!;
+      if (system.belongsToSystem(entity)) {
+        entitySet.add(entity);
+      }
+    }
+  }
+
+  #onEntityDestroyed(entity: number): void {
+    for (let entitySet of this.systemEntities.values()) {
+      entitySet.delete(entity);
+    }
   }
 
   /**
-   * Register a system.
+   * Register a system for updates.
    * @param system The system to register.
    */
-  registerSystem(system: ISystem): void {
+  addSystem(system: ISystem): void {
     if (this.systems.has(system.name)) {
       throw new SystemError(`System with name ${system.name} already registered.`);
     }
@@ -35,13 +71,15 @@ export class SystemManager {
     this.systemEntities.set(system.name, new Set());
     this.executionQueue.add(system, system.priority);
     system.init?.();
+
+    this.eventManager.trigger(GameEvents.SYSTEM_ADDED);
   }
 
   /**
    * Unregister a system.
    * @param systemName The name of the system to unregister.
    */
-  unregisterSystem(systemName: string): void {
+  removeSystem(systemName: string): void {
     const system = this.systems.get(systemName);
     if (typeof system === "undefined") {
       return;
@@ -51,6 +89,8 @@ export class SystemManager {
     system.destroy?.();
     this.systems.delete(systemName);
     this.systemEntities.delete(systemName);
+
+    this.eventManager.trigger(GameEvents.SYSTEM_REMOVED);
   }
 
   /**

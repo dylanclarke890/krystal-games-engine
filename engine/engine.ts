@@ -55,9 +55,9 @@ export class KrystalGameEngine {
     const detector = new CollisionDetector(entityManager, this.viewport, quadtree);
     const resolver = new CollisionResolver(entityManager, this.viewport);
 
-    systemManager.registerSystem(new InputSystem(entityManager, eventManager, this.inputManager));
-    systemManager.registerSystem(new PhysicsSystem(entityManager, eventManager, quadtree, detector, resolver));
-    systemManager.registerSystem(new RenderSystem(entityManager, eventManager, this.viewport));
+    systemManager.addSystem(new InputSystem(entityManager, eventManager, this.inputManager));
+    systemManager.addSystem(new PhysicsSystem(entityManager, eventManager, quadtree, detector, resolver));
+    systemManager.addSystem(new RenderSystem(entityManager, eventManager, this.viewport));
   }
 
   start() {

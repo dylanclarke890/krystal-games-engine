@@ -146,6 +146,7 @@ export interface ISystem {
 
   init?(): void;
   update(dt: number, entities: Set<number>): void;
+  isInterestedInComponent(component: Component<ComponentType>): boolean;
   belongsToSystem(entity: number): boolean;
   destroy?(): void;
 }
