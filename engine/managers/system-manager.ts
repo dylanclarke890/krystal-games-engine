@@ -17,6 +17,7 @@ export class SystemManager {
     this.executionQueue = new PriorityQueue<ISystem>((a, b) => a.priority - b.priority);
     this.systems = new Map();
     this.systemEntities = new Map();
+    this.bindEvents();
   }
 
   bindEvents() {
@@ -73,6 +74,10 @@ export class SystemManager {
     system.init?.();
 
     this.eventManager.trigger(GameEvents.SYSTEM_ADDED);
+  }
+
+  getSystem(name: string): ISystem | undefined {
+    return this.systems.get(name);
   }
 
   /**
