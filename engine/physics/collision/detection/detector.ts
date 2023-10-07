@@ -1,17 +1,15 @@
-import { Position, Size } from "../../../components/2d/index.js";
 import { Viewport } from "../../../graphics/viewport.js";
 import { Assert } from "../../../utils/assert.js";
-import { PairedSet } from "../../../utils/paired-set.js";
-import { Collidable } from "../../../types/common-types.js";
 import { rectVsRect } from "./detection-strategies.js";
 import { IEntityManager, IQuadtree } from "../../../types/common-interfaces.js";
+import { Collidable } from "../../../types/common-types.js";
 
 export class CollisionDetector {
   entityManager: IEntityManager;
   viewport: Viewport;
   quadtree: IQuadtree;
-  entityCollisions: PairedSet<number>;
-  viewportCollisions: Set<number>;
+  entityCollisions: Set<Pair<Collidable>>;
+  viewportCollisions: Set<Collidable>;
   collisionChecks: number;
 
   constructor(entityManager: IEntityManager, viewport: Viewport, quadtree: IQuadtree) {
@@ -21,7 +19,7 @@ export class CollisionDetector {
     this.viewport = viewport;
     this.quadtree = quadtree;
 
-    this.entityCollisions = new PairedSet();
+    this.entityCollisions = new Set();
     this.viewportCollisions = new Set();
     this.collisionChecks = 0;
   }
@@ -32,31 +30,32 @@ export class CollisionDetector {
     this.collisionChecks = 0;
 
     for (let i = 0; i < collidables.length; i++) {
-      const [aId, aComponents] = collidables[i];
+      const [aId, aRigidBody, aCollider] = collidables[i];
 
-      if (this.viewportCollisionCheck(aComponents.Position, aComponents.Size!)) {
-        this.viewportCollisions.add(aId);
+      if (this.viewportCollisionCheck(aRigidBody.position, aCollider.size)) {
+        this.viewportCollisions.add(collidables[i]);
       }
 
-      const possibleCollisions = this.quadtree.retrieve(aComponents.Position, aComponents.Size);
+      const possibleCollisions = this.quadtree.retrieve(aRigidBody, aCollider);
 
       for (let j = 0; j < possibleCollisions.length; j++) {
         this.collisionChecks++;
         const bEntityNode = possibleCollisions[j];
-        const bId = bEntityNode.id;
-        const bCollision = this.entityManager.getComponents(bId, ["Collision"]).Collision!;
-        if (aId === bId || aComponents.Collision.collisionLayer !== bCollision.collisionLayer) {
+        if (aId === bEntityNode.id) {
           continue;
         }
 
-        if (rectVsRect(aComponents.Position, aComponents.Size, bEntityNode.position, bEntityNode.size)) {
-          this.entityCollisions.add(aId, bId);
+        if (rectVsRect(aRigidBody.position, aCollider.size, bEntityNode.position, bEntityNode.size)) {
+          this.entityCollisions.add([
+            [aId, aRigidBody, aCollider],
+            [bEntityNode.id, bEntityNode.rigidBody!, bEntityNode.collider!],
+          ]);
         }
       }
     }
   }
 
-  viewportCollisionCheck(position: Position, size: Size): boolean {
+  viewportCollisionCheck(position: Vector, size: Vector): boolean {
     const { x, y } = position;
     if (x < 0 || x + size.x > this.viewport.width || y < 0 || y + size.y > this.viewport.height) {
       return true;

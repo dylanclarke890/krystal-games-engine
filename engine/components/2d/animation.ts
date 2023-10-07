@@ -1,7 +1,9 @@
 import { Assert } from "../../utils/assert.js";
 import { arrayFromInterval } from "../../utils/maths/interval.js";
+import { BaseComponent } from "../base.js";
 
-export class Animation {
+export class Animation extends BaseComponent {
+  type = "animation";
   sequence: number[];
   frameDuration: number;
   frame: number;
@@ -16,6 +18,7 @@ export class Animation {
    * @param stop - Will stop on the last frame if true.
    */
   constructor(sequence: Nullable<number[] | string>, frameDuration: number, stop: boolean) {
+    super();
     Assert.defined("sequence", sequence);
     this.sequence = typeof sequence === "string" ? arrayFromInterval(sequence) : sequence;
     this.frameDuration = frameDuration ?? 1;

@@ -1,7 +1,8 @@
 import { GameEvents } from "../engine/constants/enums.js";
 import { rectVsRect } from "../engine/physics/collision/detection/detection-strategies.js";
-import { Position, Shape, Size } from "../engine/components/2d/index.js";
+import { RectCollider, Rectangle, RigidBody, RenderableShape } from "../engine/components/2d/index.js";
 import { KrystalGameEngine } from "../engine/engine.js";
+import { Vector2D } from "../engine/utils/maths/vector-2d.js";
 
 export class RectVsRectTest extends KrystalGameEngine {
   mouseRectId: number;
@@ -11,30 +12,46 @@ export class RectVsRectTest extends KrystalGameEngine {
     this.eventManager.on(GameEvents.LOOP_STARTED, () => this.update());
     this.inputManager.enableMouse();
 
-    this.staticRectId = this.entityManager.createEntity();
-    this.mouseRectId = this.entityManager.createEntity();
+    this.staticRectId = this.#createRect(
+      new Vector2D(250, 150),
+      new Vector2D(250, 150),
+      new Vector2D(50, 200),
+      "purple"
+    );
 
-    this.entityManager.addComponent(this.staticRectId, new Position(250, 150));
-    this.entityManager.addComponent(this.staticRectId, new Size(50, 200));
-    this.entityManager.addComponent(this.staticRectId, new Shape("rectangle", "purple", { width: 50, height: 200 }));
-
-    this.entityManager.addComponent(this.mouseRectId, new Position(0, 0));
-    this.entityManager.addComponent(this.mouseRectId, new Size(25, 150));
-    this.entityManager.addComponent(this.mouseRectId, new Shape("rectangle", "orange", { width: 25, height: 150 }));
+    this.mouseRectId = this.#createRect(new Vector2D(), new Vector2D(), new Vector2D(50, 150), "orange");
 
     this.start();
   }
 
-  update() {
-    const rectComponents = this.entityManager.getComponents(this.staticRectId, ["Position", "Size", "Shape"]);
-    const mouseComponents = this.entityManager.getComponents(this.mouseRectId, ["Position", "Size"]);
-    const newPos = this.inputManager.mouse.clone().sub(mouseComponents.Size!.clone().div(2));
-    mouseComponents.Position!.assign(newPos);
+  #createRect(rigidPosition: Vector2D, shapePosition: Vector2D, size: Vector2D, color: string): number {
+    const id = this.entityManager.createEntity();
 
-    if (rectVsRect(mouseComponents.Position!, mouseComponents.Size!, rectComponents.Position!, rectComponents.Size!)) {
-      rectComponents.Shape!.color = "green";
+    const rigidBody = new RigidBody(rigidPosition);
+    rigidBody.addCollider(new RectCollider(size));
+    const renderable = new RenderableShape(shapePosition, new Rectangle(size, color));
+
+    this.entityManager.addComponent(id, rigidBody);
+    this.entityManager.addComponent(id, renderable);
+
+    return id;
+  }
+
+  update() {
+    const mouseRigidBody = this.entityManager.getComponent<RigidBody>(this.mouseRectId, "rigidBody")!;
+    const mouseRectSize = mouseRigidBody.colliders[0].size;
+    mouseRigidBody.position.assign(this.inputManager.mouse).sub(mouseRectSize.clone().div(2));
+    const mouseRectShape = this.entityManager.getComponent<RenderableShape>(this.mouseRectId, "renderable")!;
+    mouseRectShape.position.assign(mouseRigidBody.position);
+
+    const staticRectRigidBody = this.entityManager.getComponent<RigidBody>(this.staticRectId, "rigidBody")!;
+    const staticRectSize = staticRectRigidBody.colliders[0].size;
+    const staticRectShape = this.entityManager.getComponent<RenderableShape>(this.staticRectId, "renderable")!;
+
+    if (rectVsRect(mouseRigidBody.position, mouseRectSize, staticRectRigidBody.position, staticRectSize)) {
+      staticRectShape.shape!.color = "green";
     } else {
-      rectComponents.Shape!.color = "purple";
+      staticRectShape.shape!.color = "purple";
     }
   }
 }

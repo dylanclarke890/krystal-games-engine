@@ -33,6 +33,7 @@ export class GameEvents extends Enum {
   static ENTITY_CREATED = new GameEvents();
   static ENTITY_DESTROYED = new GameEvents();
   static ENTITY_COLLIDED = new GameEvents();
+  static VIEWPORT_COLLISION = new GameEvents();
   // #endregion Entity
 
   // #region Component
@@ -52,6 +53,7 @@ export class GameEvents extends Enum {
     this.freeze();
   }
 }
+
 export class InputKeys extends Enum {
   //#region Mouse
   static Mouse_BtnOne = new InputKeys();
@@ -223,18 +225,6 @@ export class InputKeys extends Enum {
   }
 }
 
-export class SystemTypes extends Enum {
-  static Graphics = new SystemTypes();
-  static Physics = new SystemTypes();
-  static Position = new SystemTypes();
-  static Input = new SystemTypes();
-  static Collision = new SystemTypes();
-
-  static {
-    this.freeze();
-  }
-}
-
 export class PriorityLevel extends Enum {
   /**
    * Used by core functionality, it is not recommended to have events with higher priority
@@ -260,4 +250,19 @@ export class Quadrant extends Enum {
   static {
     this.freeze();
   }
+}
+
+export class CollisionResponseType extends Enum {
+  /** No response, just notifies */
+  static None = new CollisionResponseType();
+  /** Has a physical response (e.g. bounce back) */
+  static Physical = new CollisionResponseType();
+  /** Triggers some event/script but doesn't move */
+  static Event = new CollisionResponseType();
+}
+
+export class ShapeType extends Enum {
+  static Circle = new ShapeType();
+  static Rectangle = new ShapeType();
+  static Polygon = new ShapeType();
 }

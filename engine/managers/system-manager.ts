@@ -1,39 +1,41 @@
+import { BaseComponent } from "../components/base.js";
 import { GameEvents } from "../constants/enums.js";
-import { IEntityManager, IEventManager, ISystem } from "../types/common-interfaces.js";
-import { Component, ComponentType } from "../types/common-types.js";
+import { BaseSystem } from "../systems/base-system.js";
+import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
 import { SystemError } from "../types/errors.js";
 import { PriorityQueue } from "../utils/priority-queue.js";
 
 export class SystemManager {
   entityManager: IEntityManager;
   eventManager: IEventManager;
-  executionQueue: PriorityQueue<ISystem>;
-  systems: Map<string, ISystem>;
+  executionQueue: PriorityQueue<BaseSystem>;
+  systems: Map<string, BaseSystem>;
   systemEntities: Map<string, Set<number>>;
 
   constructor(entityManager: IEntityManager, eventManager: IEventManager) {
     this.entityManager = entityManager;
     this.eventManager = eventManager;
-    this.executionQueue = new PriorityQueue<ISystem>((a, b) => a.priority - b.priority);
+    this.executionQueue = new PriorityQueue<BaseSystem>((a, b) => a.priority - b.priority);
     this.systems = new Map();
     this.systemEntities = new Map();
     this.bindEvents();
   }
 
   bindEvents() {
-    this.eventManager.on(GameEvents.COMPONENT_ADDED, (data: { entity: number; component: Component<ComponentType> }) =>
+    this.eventManager.on(GameEvents.LOOP_STARTED, (dt: number) => this.update(dt));
+
+    this.eventManager.on(GameEvents.COMPONENT_ADDED, (data: { entity: number; component: BaseComponent }) =>
       this.#onComponentAdded(data.entity, data.component)
     );
 
-    this.eventManager.on(
-      GameEvents.COMPONENT_REMOVED,
-      (data: { entity: number; component: Component<ComponentType> }) => this.#onComponentRemoved(data.entity)
+    this.eventManager.on(GameEvents.COMPONENT_REMOVED, (data: { entity: number; component: BaseComponent }) =>
+      this.#onComponentRemoved(data.entity)
     );
 
     this.eventManager.on(GameEvents.ENTITY_DESTROYED, (entity: number) => this.#onEntityDestroyed(entity));
   }
 
-  #onComponentAdded(entity: number, component: Component<ComponentType>): void {
+  #onComponentAdded(entity: number, component: BaseComponent): void {
     for (let [systemName, system] of this.systems) {
       if (system.isInterestedInComponent(component)) {
         const entitySet = this.systemEntities.get(systemName)!;
@@ -63,7 +65,7 @@ export class SystemManager {
    * Register a system for updates.
    * @param system The system to register.
    */
-  addSystem(system: ISystem): void {
+  addSystem(system: BaseSystem): void {
     if (this.systems.has(system.name)) {
       throw new SystemError(`System with name ${system.name} already registered.`);
     }
@@ -76,8 +78,8 @@ export class SystemManager {
     this.eventManager.trigger(GameEvents.SYSTEM_ADDED);
   }
 
-  getSystem(name: string): ISystem | undefined {
-    return this.systems.get(name);
+  getSystem<T extends BaseSystem>(name: string): T | undefined {
+    return this.systems.get(name) as T | undefined;
   }
 
   /**
@@ -91,7 +93,7 @@ export class SystemManager {
     }
 
     this.executionQueue.remove(system);
-    system.destroy?.();
+    system.cleanup?.();
     this.systems.delete(systemName);
     this.systemEntities.delete(systemName);
 

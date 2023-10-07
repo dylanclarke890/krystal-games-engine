@@ -1,7 +1,8 @@
+import { Collider } from "../components/2d/collision.js";
+import { RigidBody } from "../components/2d/rigid-body.js";
+import { BaseComponent } from "../components/base.js";
 import { PriorityLevel, Quadrant } from "../constants/enums.js";
 import { Enum } from "../utils/enum.js";
-import { Vector2D } from "../utils/maths/vector-2d.js";
-import { Component, ComponentMap, ComponentType } from "./common-types.js";
 
 export interface IConfigManager<T> {
   config: T;
@@ -49,31 +50,38 @@ export interface IEntityManager {
    * @param id ID of the entity.
    * @param component component to add
    */
-  addComponent(id: number, component: Component<ComponentType>): void;
+  addComponent(id: number, component: BaseComponent): void;
 
   /**
    * Remove a component from an entity.
-   * @param id ID of the entity.
-   * @param componentType component to remove
+   * @param id entity id.
+   * @param type type of component to remove
    */
-  removeComponent(id: number, componentType: ComponentType): void;
+  removeComponent(id: number, type: string): void;
 
-  getComponents<T extends ComponentType>(entity: number, componentTypes: T[]): ComponentMap<T>;
+  getComponent<T extends BaseComponent>(entity: number, type: string): T | undefined;
+  getComponents(entity: number, types: string[]): { [x: string]: BaseComponent | undefined };
 
   /** Get all entities that have a set of components. */
-  getEntitiesWithComponents<T extends ComponentType>(componentTypes: T[]): Set<number>;
+  getEntitiesWithComponents(types: string[]): Set<number>;
 
   /**
    * Check if any entity has a specific component.
-   * @param componentTypes the component type to check.
+   * @param type the component type to check.
    */
-  hasComponentType(componentType: ComponentType): boolean;
+  hasComponentType(type: string): boolean;
+
+  /**
+   * Check if an entity has a particular component type.
+   * @param type the type to check.
+   */
+  hasComponent(entity: number, type: string): boolean;
 
   /**
    * Check if an entity has a range of component types.
-   * @param componentTypes the component types to check.
+   * @param types the component types to check.
    */
-  hasComponents(entity: number, componentTypes: ComponentType[]): boolean;
+  hasComponents(entity: number, types: string[]): boolean;
 }
 
 export interface ILoop {
@@ -108,8 +116,8 @@ export interface IObjectPool<T, Args extends any[] = any[]> {
 }
 
 export interface IQuadtree {
-  insert(id: number, position: Vector2D, size: Vector2D): void;
-  retrieve(position: Vector2D, size: Vector2D): IQuadtreeNode[];
+  insert(id: number, rigidBody: RigidBody, collider: Collider): void;
+  retrieve(rigidBody: RigidBody, collider: Collider): IQuadtreeNode[];
   retrieveById(id: number, node?: IQuadtreeNode): Nullable<IQuadtreeNode>;
   removeById(id: number, node?: IQuadtreeNode): boolean;
   drawBoundaries(color?: string): void;
@@ -118,15 +126,17 @@ export interface IQuadtree {
 
 export interface IQuadtreeNode {
   id: number;
-  position: Vector2D;
-  size: Vector2D;
+  position: Vector;
+  size: Vector;
   children: IQuadtreeNode[];
   overlappingChildren: IQuadtreeNode[];
+  rigidBody?: RigidBody;
+  collider?: Collider;
 
   init(
     id: number,
-    position: Vector2D,
-    size: Vector2D,
+    position: Vector,
+    size: Vector,
     nodePool: IObjectPool<IQuadtreeNode>,
     depth: number,
     maxDepth: number,
@@ -138,18 +148,3 @@ export interface IQuadtreeNode {
   findQuadrant(node: IQuadtreeNode): Quadrant;
   clear(): void;
 }
-
-export interface ISystem {
-  name: string;
-  enabled: boolean;
-  priority: number;
-
-  init?(): void;
-  update(dt: number, entities: Set<number>): void;
-  isInterestedInComponent(component: Component<ComponentType>): boolean;
-  belongsToSystem(entity: number): boolean;
-  destroy?(): void;
-}
-
-// TODO: system manager needs to update systemEntities based on events from event manager.
-// TODO: systems need to implement ISystem

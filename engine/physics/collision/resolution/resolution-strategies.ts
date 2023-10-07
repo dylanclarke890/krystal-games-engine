@@ -1,3 +1,7 @@
+import { Collider } from "../../../components/2d/collision.js";
+import { RigidBody } from "../../../components/2d/rigid-body.js";
+import { SideOfCollision } from "../../../constants/enums.js";
+import { Viewport } from "../../../graphics/viewport.js";
 import { ScalarValue } from "../../../utils/maths/scalar-value.js";
 import { Vector2D } from "../../../utils/maths/vector-2d.js";
 
@@ -36,4 +40,32 @@ export function inelastic2D(aVel: Vector2D, bVel: Vector2D, aMass: ScalarValue, 
 
   bVel.set(finalVel);
   aVel.set(finalVel);
+}
+
+export function resolveViewportBounce(
+  rigidBody: RigidBody,
+  collider: Collider,
+  side: SideOfCollision,
+  viewport: Viewport
+) {
+  switch (side) {
+    case SideOfCollision.Left:
+      rigidBody.position.x = collider.size.x;
+      rigidBody.velocity.x *= -rigidBody.bounciness;
+      break;
+    case SideOfCollision.Right:
+      rigidBody.position.x = viewport.width - collider.size.x;
+      rigidBody.velocity.x *= -rigidBody.bounciness;
+      break;
+    case SideOfCollision.Top:
+      rigidBody.position.y = collider.size.y;
+      rigidBody.velocity.y *= -rigidBody.bounciness;
+      break;
+    case SideOfCollision.Left:
+      rigidBody.position.y = viewport.height - collider.size.y;
+      rigidBody.velocity.y *= -rigidBody.bounciness;
+      break;
+    default:
+      return;
+  }
 }

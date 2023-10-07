@@ -1,3 +1,5 @@
+import { Collider } from "../../../components/2d/collision.js";
+import { RigidBody } from "../../../components/2d/rigid-body.js";
 import { Quadrant } from "../../../constants/enums.js";
 import { Viewport } from "../../../graphics/viewport.js";
 import { IObjectPool, IObjectPoolManager, IQuadtree, IQuadtreeNode } from "../../../types/common-interfaces.js";
@@ -21,6 +23,8 @@ export class Quadtree implements IQuadtree {
       "quadtreeNodes",
       QuadtreeNode,
       (node, id, pos, size, nodePool, depth, maxDepth, maxChildren) => {
+        node.rigidBody = undefined;
+        node.collider = undefined;
         node.init(id, pos, size, nodePool, depth!, maxDepth!, maxChildren!);
       }
     );
@@ -30,14 +34,18 @@ export class Quadtree implements IQuadtree {
     this.root = this.nodePool.acquire(-1, pos, size, this.nodePool, 0, maxDepth, maxChildren);
   }
 
-  insert(id: number, position: Vector2D, size: Vector2D): void {
-    const node = this.nodePool.acquire(id, position, size, this.nodePool);
+  insert(id: number, rigidBody: RigidBody, collider: Collider): void {
+    const position = rigidBody.position.clone().add(collider.offset);
+    const node = this.nodePool.acquire(id, position, collider.size, this.nodePool);
+    node.rigidBody = rigidBody;
+    node.collider = collider;
     this.size++;
     this.root.insert(node);
   }
 
-  retrieve(position: Vector2D, size: Vector2D): IQuadtreeNode[] {
-    const node = this.nodePool.acquire(-1, position, size, this.nodePool);
+  retrieve(rigidBody: RigidBody, collider: Collider): IQuadtreeNode[] {
+    const position = rigidBody.position.clone().add(collider.offset);
+    const node = this.nodePool.acquire(-1, position, collider.size, this.nodePool);
     const result = this.root.retrieve(node);
     this.nodePool.release(node);
     return result;
@@ -115,8 +123,10 @@ export class Quadtree implements IQuadtree {
 
 export class QuadtreeNode implements IQuadtreeNode {
   id!: number;
-  position!: Vector2D;
-  size!: Vector2D;
+  rigidBody?: RigidBody;
+  collider?: Collider;
+  position!: Vector;
+  size!: Vector;
   nodes!: IQuadtreeNode[];
   children!: IQuadtreeNode[];
   overlappingChildren!: IQuadtreeNode[];
@@ -127,8 +137,8 @@ export class QuadtreeNode implements IQuadtreeNode {
 
   constructor(
     id: number,
-    position: Vector2D,
-    size: Vector2D,
+    position: Vector,
+    size: Vector,
     nodePool: IObjectPool<IQuadtreeNode>,
     depth = 0,
     maxDepth = 4,
@@ -139,16 +149,14 @@ export class QuadtreeNode implements IQuadtreeNode {
 
   init(
     id: number,
-    position: Vector2D,
-    size: Vector2D,
+    position: Vector,
+    size: Vector,
     nodePool: IObjectPool<IQuadtreeNode>,
     depth: number,
     maxDepth: number,
     maxChildren: number
   ) {
     this.id = id;
-    this.position = position;
-    this.size = size;
     this.nodePool = nodePool;
     this.depth = depth;
     this.maxChildren = maxChildren;
@@ -156,6 +164,8 @@ export class QuadtreeNode implements IQuadtreeNode {
     this.nodes = [];
     this.children = [];
     this.overlappingChildren = [];
+    this.position = position;
+    this.size = size;
   }
 
   insert(node: IQuadtreeNode | IQuadtreeNode[]): void {

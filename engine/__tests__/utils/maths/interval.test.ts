@@ -1,4 +1,4 @@
-import { IntervalParsingFailedError } from "../../../utils/errors";
+import { IntervalParsingFailedError } from "../../../types/errors";
 import { arrayFromInterval } from "../../../utils/maths/interval";
 
 describe("arrayFromInterval", () => {

@@ -1,73 +1,62 @@
-import { Bounciness, Mass, Position, Size } from "../../../components/2d/index.js";
-import { SideOfCollision } from "../../../constants/enums.js";
+import { Collider, RigidBody } from "../../../components/2d/index.js";
+import { GameEvents, SideOfCollision } from "../../../constants/enums.js";
 import { Viewport } from "../../../graphics/viewport.js";
 import { Assert } from "../../../utils/assert.js";
-import { PairedSet } from "../../../utils/paired-set.js";
-import { ComponentType, Components } from "../../../types/common-types.js";
-import { IEntityManager } from "../../../types/common-interfaces.js";
+import { IEntityManager, IEventManager } from "../../../types/common-interfaces.js";
+import { Vector2D } from "../../../utils/maths/vector-2d.js";
+import { Collidable } from "../../../types/common-types.js";
 
-type ResolverComponents = Components<"Position" | "Velocity" | "Size" | "Collision", "Bounciness" | "Mass">;
-type ResolverData = { entityCollisions: PairedSet<number>; viewportCollisions: Set<number> };
+type ResolverData = { entityCollisions: Set<Pair<Collidable>>; viewportCollisions: Set<Collidable> };
 
 export class CollisionResolver {
-  static components: ComponentType[] = ["Position", "Velocity", "Size", "Collision", "Bounciness", "Mass"];
-  static componentDefaults = { bounce: new Bounciness(1), mass: new Mass(1) };
-
   entityManager: IEntityManager;
+  eventManager: IEventManager;
   viewport: Viewport;
 
-  constructor(entityManager: IEntityManager, viewport: Viewport) {
+  constructor(entityManager: IEntityManager, eventManager: IEventManager, viewport: Viewport) {
     Assert.instanceOf("viewport", viewport, Viewport);
     this.entityManager = entityManager;
+    this.eventManager = eventManager;
     this.viewport = viewport;
   }
 
-  getComponentsForEntity(entityId: number): Defined<ResolverComponents> {
-    const components = this.entityManager.getComponents(entityId, CollisionResolver.components) as ResolverComponents;
-    components.Bounciness ??= CollisionResolver.componentDefaults.bounce;
-    components.Mass ??= CollisionResolver.componentDefaults.mass;
-
-    return components as Defined<ResolverComponents>;
-  }
-
   resolve(data: ResolverData) {
-    this.resolveEntityCollisions(data.entityCollisions);
-    this.resolveViewportCollisions(data.viewportCollisions);
+    this.#resolveEntityCollisions(data.entityCollisions);
+    this.#resolveViewportCollisions(data.viewportCollisions);
   }
 
-  resolveEntityCollisions(entityCollisions: PairedSet<number>) {
-    entityCollisions.forEach((pair) => {
-      const a = this.getComponentsForEntity(pair[0]);
-      const b = this.getComponentsForEntity(pair[1]);
-      const side = this.#findSideOfEntityCollision(a, b);
+  #resolveEntityCollisions(entityCollisions: Set<Pair<Collidable>>): void {
+    entityCollisions.forEach(([[aId, aRigidBody, aCollider], [bId, bRigidBody, bCollider]]) => {
+      if (typeof aRigidBody === "undefined" || typeof bRigidBody === "undefined") {
+        return;
+      }
 
-      this.#resolveEntityCollision(a, b, side);
-      a.Collision.onEntityCollisionCallbacks.forEach((func) => func(pair[0], pair[1], side));
-      b.Collision.onEntityCollisionCallbacks.forEach((func) => func(pair[0], pair[1], side));
+      const side = this.#findSideOfEntityCollision(aRigidBody, aCollider, bRigidBody, bCollider);
+      this.eventManager.trigger(GameEvents.ENTITY_COLLIDED, {
+        a: { id: aId, rigidBody: aRigidBody },
+        b: { id: bId, rigidBody: bRigidBody },
+        side,
+      });
     });
   }
 
-  resolveViewportCollisions(viewportCollisions: Set<number>) {
-    viewportCollisions.forEach((entityId) => {
-      const entity = this.getComponentsForEntity(entityId);
-      const side = this.#findSideOfViewportCollision(entity.Position, entity.Size);
+  #findSideOfEntityCollision(
+    aRigidBody: RigidBody,
+    aCollider: Collider,
+    bRigidBody: RigidBody,
+    bCollider: Collider
+  ): SideOfCollision {
+    const aHalfX = aCollider.size.x / 2;
+    const bHalfX = bCollider.size.x / 2;
 
-      this.#resolveViewportCollision(entity, side);
-      entity.Collision.onViewportCollisionCallbacks.forEach((func) => func(entityId, side));
-    });
-  }
-
-  #findSideOfEntityCollision(a: Defined<ResolverComponents>, b: Defined<ResolverComponents>): SideOfCollision {
-    const aHalfX = a.Size.x / 2;
-    const bHalfX = b.Size.x / 2;
-    const aHalfY = a.Size.y / 2;
-    const bHalfY = b.Size.y / 2;
+    const aHalfY = aCollider.size.y / 2;
+    const bHalfY = bCollider.size.y / 2;
 
     // Get midpoints
-    const aMidX = a.Position.x + aHalfX;
-    const aMidY = a.Position.y + aHalfY;
-    const bMidX = b.Position.x + bHalfX;
-    const bMidY = b.Position.y + bHalfY;
+    const aMidX = aRigidBody.position.x + aHalfX;
+    const aMidY = aRigidBody.position.y + aHalfY;
+    const bMidX = bRigidBody.position.x + bHalfX;
+    const bMidY = bRigidBody.position.y + bHalfY;
 
     // Find side of entry based on the normalized sides
     const dx = (aMidX - bMidX) / (aHalfX + bHalfX);
@@ -81,73 +70,35 @@ export class CollisionResolver {
     return dy > 0 ? SideOfCollision.Bottom : SideOfCollision.Top;
   }
 
-  #findSideOfViewportCollision(position: Position, size: Size): SideOfCollision {
-    const { x, y } = position;
+  #resolveViewportCollisions(viewportCollisions: Set<Collidable>): void {
+    viewportCollisions.forEach(([id, rigidBody, collider]) => {
+      const side = this.#findSideOfViewportCollision(rigidBody.position, collider.size);
 
-    if (x < 0) {
+      if (side === SideOfCollision.None) {
+        return;
+      }
+
+      this.eventManager.trigger(GameEvents.VIEWPORT_COLLISION, { id, rigidBody, collider, side });
+    });
+  }
+
+  #findSideOfViewportCollision(position: Vector2D, size: Vector2D): SideOfCollision {
+    if (position.x < 0) {
       return SideOfCollision.Left;
     }
 
-    if (x + size.x > this.viewport.width) {
+    if (position.x + size.x > this.viewport.width) {
       return SideOfCollision.Right;
     }
 
-    if (y < 0) {
+    if (position.y < 0) {
       return SideOfCollision.Top;
     }
 
-    if (y + size.y > this.viewport.height) {
+    if (position.y + size.y > this.viewport.height) {
       return SideOfCollision.Bottom;
     }
 
     return SideOfCollision.None;
-  }
-
-  #resolveEntityCollision(a: Defined<ResolverComponents>, b: Defined<ResolverComponents>, side: SideOfCollision): void {
-    const collisionBehaviourA = a.Collision.entityCollisionBehaviour;
-    const collisionBehaviourB = b.Collision.entityCollisionBehaviour;
-
-    if (side === SideOfCollision.None || collisionBehaviourA === "NONE" || collisionBehaviourB === "NONE") {
-      return;
-    }
-  }
-
-  #resolveViewportCollision(entity: Defined<ResolverComponents>, side: SideOfCollision): void {
-    const viewportCollisionBehaviour = entity.Collision.viewportCollisionBehaviour;
-
-    if (side === SideOfCollision.None || viewportCollisionBehaviour === "NONE") {
-      return;
-    }
-
-    switch (viewportCollisionBehaviour) {
-      case "BOUNCE":
-        this.#resolveViewportBounce(entity, side);
-        break;
-      default:
-        break;
-    }
-  }
-
-  #resolveViewportBounce(entity: Defined<ResolverComponents>, side: SideOfCollision) {
-    switch (side) {
-      case SideOfCollision.Left:
-        entity.Position.x = entity.Size.x;
-        entity.Velocity.x *= -entity.Bounciness.value;
-        break;
-      case SideOfCollision.Right:
-        entity.Position.x = this.viewport.width - entity.Size.x;
-        entity.Velocity.x *= -entity.Bounciness.value;
-        break;
-      case SideOfCollision.Top:
-        entity.Position.y = entity.Size.y;
-        entity.Velocity.y *= -entity.Bounciness.value;
-        break;
-      case SideOfCollision.Left:
-        entity.Position.y = this.viewport.height - entity.Size.y;
-        entity.Velocity.y *= -entity.Bounciness.value;
-        break;
-      default:
-        return;
-    }
   }
 }

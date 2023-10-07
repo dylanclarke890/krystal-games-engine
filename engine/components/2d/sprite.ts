@@ -1,4 +1,8 @@
-export class Sprite {
+import { BaseComponent } from "../base.js";
+
+export class Sprite extends BaseComponent {
+  type: string = "sprite";
+
   image: HTMLImageElement;
   width: number;
   height: number;
@@ -10,6 +14,7 @@ export class Sprite {
    * @param height - The height of a single sprite frame.
    */
   constructor(path: string, width: number, height: number) {
+    super();
     this.image = new Image();
     this.image.addEventListener("load", () => {
       this.columns = Math.floor(this.image.width / width);

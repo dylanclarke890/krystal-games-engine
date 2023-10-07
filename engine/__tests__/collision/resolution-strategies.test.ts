@@ -1,6 +1,6 @@
-import { elastic1D, inelastic1D, inelastic2D } from "../../collision/resolution-strategies";
-import { ScalarValue } from "../../utils/maths/scalar-value.js";
-import { Vector2D } from "../../utils/maths/vector-2d.js";
+import { elastic1D, inelastic1D, inelastic2D } from "../../physics/collision/resolution/resolution-strategies";
+import { ScalarValue } from "../../utils/maths/scalar-value";
+import { Vector2D } from "../../utils/maths/vector-2d";
 
 describe("elastic1D", () => {
   it("equal masses", () => {

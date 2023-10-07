@@ -21,6 +21,12 @@ export class InvalidOperationError<T> extends GameError<T> {
   }
 }
 
+export class NotImplementedError<T> extends GameError<T> {
+  constructor(message: string, data?: T) {
+    super("NotImplemented", message, data);
+  }
+}
+
 export class IntervalParsingFailedError<T> extends GameError<T> {
   constructor(message: string, data?: T) {
     super("IntervalParsingFailed", message, data);

@@ -4,7 +4,7 @@ const exports = {
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
-  testEnvironment: "node",
+  testEnvironment: "jsdom",
   modulePathIgnorePatterns: ["older", "dist"],
   moduleFileExtensions: ["ts", "js"],
 };

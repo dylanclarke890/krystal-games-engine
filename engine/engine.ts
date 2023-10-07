@@ -53,7 +53,7 @@ export class KrystalGameEngine {
       maxDepth: configManager.getInt("quadtreeMaxDepth"),
     });
     const detector = new CollisionDetector(entityManager, this.viewport, quadtree);
-    const resolver = new CollisionResolver(entityManager, this.viewport);
+    const resolver = new CollisionResolver(entityManager, eventManager, this.viewport);
 
     systemManager.addSystem(new InputSystem(entityManager, eventManager, this.inputManager));
     systemManager.addSystem(new PhysicsSystem(entityManager, eventManager, quadtree, detector, resolver));

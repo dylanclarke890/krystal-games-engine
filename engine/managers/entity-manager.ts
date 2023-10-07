@@ -1,5 +1,5 @@
+import { BaseComponent } from "../components/base.js";
 import { GameEvents } from "../constants/enums.js";
-import { Component, ComponentMap, ComponentType } from "../types/common-types.js";
 import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
 
 export class EntityManager implements IEntityManager {
@@ -9,9 +9,9 @@ export class EntityManager implements IEntityManager {
   entities: Set<number>;
 
   #nextEntityId: number;
-  #entityMasks: Map<number, Set<ComponentType>>;
-  #componentTypeToEntities: Map<ComponentType, Set<number>>;
-  #components: Map<string, Component<ComponentType>>;
+  #entityMasks: Map<number, Set<string>>;
+  #componentTypeToEntities: Map<string, Set<number>>;
+  #components: Map<string, BaseComponent>;
 
   constructor(eventManager: IEventManager) {
     this.eventManager = eventManager;
@@ -50,8 +50,8 @@ export class EntityManager implements IEntityManager {
     this.eventManager.trigger(GameEvents.ENTITY_DESTROYED, id);
   }
 
-  addComponent(entity: number, component: Component<ComponentType>): void {
-    const componentType = component.constructor.name as ComponentType;
+  addComponent(entity: number, component: BaseComponent): void {
+    const componentType = component.type;
     this.#components.set(entity + componentType, component);
 
     if (!this.#componentTypeToEntities.has(componentType)) {
@@ -67,47 +67,55 @@ export class EntityManager implements IEntityManager {
     this.eventManager.trigger(GameEvents.COMPONENT_ADDED, { entity, component });
   }
 
-  removeComponent(entity: number, componentType: ComponentType): void {
-    const componentMapKey = entity + componentType;
+  removeComponent(entity: number, type: string): void {
+    const componentMapKey = entity + type;
     const component = this.#components.get(componentMapKey);
     if (typeof component === "undefined") {
       return;
     }
 
     this.#components.delete(componentMapKey);
-    this.#entityMasks.get(entity)!.delete(componentType);
+    this.#entityMasks.get(entity)!.delete(type);
     this.eventManager.trigger(GameEvents.COMPONENT_REMOVED, { entity, component });
   }
 
-  getComponents<T extends ComponentType>(entity: number, componentTypes: T[]): ComponentMap<T> {
-    const components: ComponentMap<T> = {} as ComponentMap<T>;
+  getComponent<T extends BaseComponent>(entity: number, type: string): T | undefined {
+    return this.#components.get(entity + type) as T | undefined;
+  }
 
-    componentTypes.forEach((componentType) => {
-      components[componentType] = this.#components.get(entity + componentType) as Nullable<Component<T>>;
+  getComponents(entity: number, types: string[]): { [x: string]: BaseComponent | undefined } {
+    const components: { [x: string]: BaseComponent | undefined } = {};
+
+    types.forEach((componentType) => {
+      components[componentType] = this.#components.get(entity + componentType);
     });
 
     return components;
   }
 
-  /**
-   * Check if an entity has specific components.
-   * @param {ComponentType} componentTypes the names of the components.
-   */
-  hasComponents(entity: number, componentTypes: ComponentType[]) {
+  hasComponent(entity: number, type: string): boolean {
     const mask = this.#entityMasks.get(entity);
     if (typeof mask === "undefined") {
       return false;
     }
-    return componentTypes.every((componentType) => mask.has(componentType));
+    return mask.has(type);
   }
 
-  hasComponentType(componentType: ComponentType) {
-    return this.#componentTypeToEntities.has(componentType);
+  hasComponents(entity: number, types: string[]) {
+    const mask = this.#entityMasks.get(entity);
+    if (typeof mask === "undefined") {
+      return false;
+    }
+    return types.every((componentType) => mask.has(componentType));
   }
 
-  getEntitiesWithComponents<T extends ComponentType>(componentTypes: T[]): Set<number> {
+  hasComponentType(type: string) {
+    return this.#componentTypeToEntities.has(type);
+  }
+
+  getEntitiesWithComponents(types: string[]): Set<number> {
     const entities = new Set<number>();
-    const firstComponentType = componentTypes[0];
+    const firstComponentType = types[0];
 
     if (!this.#componentTypeToEntities.has(firstComponentType)) {
       return EntityManager.#emptySet;
@@ -118,8 +126,8 @@ export class EntityManager implements IEntityManager {
     firstTypeEntities.forEach((entity) => entities.add(entity));
 
     // Iterate through the other component types and retain only entities that have all specified component types.
-    for (let i = 1; i < componentTypes.length; i++) {
-      const componentType = componentTypes[i];
+    for (let i = 1; i < types.length; i++) {
+      const componentType = types[i];
       if (!this.#componentTypeToEntities.has(componentType)) {
         return EntityManager.#emptySet;
       }
