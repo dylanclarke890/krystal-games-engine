@@ -12,7 +12,7 @@ export class EulerIntegrator extends BaseIntegrator {
     this.pooledVectors.push(gravitationalForce);
 
     // Friction (applied only if there's some velocity)
-    if (rigidBody.velocity.magnitude() > 0) {
+    if (rigidBody.velocity.magnitude() > this.epsilon) {
       const normalForceMagnitude = rigidBody.mass * rigidBody.gravity.y;
       const frictionMagnitude = rigidBody.friction * normalForceMagnitude;
 
