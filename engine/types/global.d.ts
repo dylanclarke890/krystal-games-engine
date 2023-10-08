@@ -25,12 +25,3 @@ declare type EventHandler<T> = (data: T) => void;
 declare type Nullable<T> = T | undefined;
 
 declare type ClassConstructor<T, Args extends any[]> = new (...args: Args) => T;
-
-/** 
- * Generic type which can be used in places of concrete vector types (i.e `Vector2D`) when you just need access
- * to the 'x' and 'y' properties.
- */
-declare type Vector = {
-  x: number;
-  y: number;
-};

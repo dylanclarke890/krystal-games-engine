@@ -1,5 +1,5 @@
 import { BaseComponent } from "../base.js";
-import { Vector2D } from "../../maths/vector-2d.js";
+import { Vector2 } from "../../maths/vector2.js";
 import { Collider } from "./collision.js";
 import { Transform } from "./transform.js";
 
@@ -8,19 +8,19 @@ export class RigidBody extends BaseComponent {
 
   /** Indicates whether this rigid body should move or not. */
   isStatic: boolean;
-  acceleration: Vector2D;
+  acceleration: Vector2;
   bounciness: number;
   colliders: Collider[];
-  friction?: Vector2D;
-  gravity?: Vector2D;
+  friction?: number;
+  gravity?: Vector2;
   mass: number;
   transform: Transform;
-  velocity: Vector2D;
+  velocity: Vector2;
 
   constructor(
     transform: Transform,
-    velocity = new Vector2D(0, 0),
-    acceleration = new Vector2D(0, 0),
+    velocity = new Vector2(0, 0),
+    acceleration = new Vector2(0, 0),
     mass = 1,
     bounciness = 1,
     isStatic = false
@@ -35,10 +35,10 @@ export class RigidBody extends BaseComponent {
     this.transform = transform;
   }
 
-  applyForce(force: Vector2D): void {
+  applyForce(force: Vector2): void {
     if (!this.isStatic) {
       const forceCopy = force.clone();
-      forceCopy.div(this.mass);
+      forceCopy.divScalar(this.mass);
       this.acceleration.add(forceCopy);
     }
   }

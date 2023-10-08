@@ -2,7 +2,7 @@ import { GameEvents } from "../engine/constants/enums.js";
 import { areRectsColliding } from "../engine/physics/collision/detection/detection-strategies.js";
 import { RectCollider, Rectangle, RigidBody, RenderableShape, Transform } from "../engine/components/2d/index.js";
 import { KrystalGameEngine } from "../engine/engine.js";
-import { Vector2D } from "../engine/maths/vector-2d.js";
+import { Vector2 } from "../engine/maths/vector-2d.js";
 
 export class RectVsRectTest extends KrystalGameEngine {
   mouseRectId: number;
@@ -12,13 +12,13 @@ export class RectVsRectTest extends KrystalGameEngine {
     this.eventManager.on(GameEvents.LOOP_STARTED, () => this.update());
     this.inputManager.enableMouse();
 
-    this.staticRectId = this.#createRect(new Vector2D(250, 150), new Vector2D(50, 200), "purple");
-    this.mouseRectId = this.#createRect(new Vector2D(), new Vector2D(50, 150), "orange");
+    this.staticRectId = this.#createRect(new Vector2(250, 150), new Vector2(50, 200), "purple");
+    this.mouseRectId = this.#createRect(new Vector2(), new Vector2(50, 150), "orange");
 
     this.start();
   }
 
-  #createRect(position: Vector2D, size: Vector2D, color: string): number {
+  #createRect(position: Vector2, size: Vector2, color: string): number {
     const id = this.entityManager.createEntity();
 
     const transform = new Transform();

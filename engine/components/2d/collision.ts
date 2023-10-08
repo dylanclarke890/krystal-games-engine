@@ -1,6 +1,6 @@
 import { CollisionResponseType, ShapeType } from "../../constants/enums.js";
 import { InvalidOperationError } from "../../types/errors.js";
-import { Vector2D } from "../../maths/vector-2d.js";
+import { Vector2 } from "../../maths/vector-2d.js";
 import { BaseComponent } from "../base.js";
 
 export abstract class Collider extends BaseComponent {
@@ -8,25 +8,25 @@ export abstract class Collider extends BaseComponent {
 
   // Bounding box
   shape: ShapeType;
-  offset: Vector2D;
+  offset: Vector2;
   radius?: number;
-  dimensions?: Vector2D;
-  vertices?: Vector2D[];
+  dimensions?: Vector2;
+  vertices?: Vector2[];
 
   // Used to represent the area based on the ShapeType.
-  size: Vector2D;
+  size: Vector2;
 
   collisionLayer: number = 0;
   collisionMask: number = 0xffffffff;
   responseType: CollisionResponseType = CollisionResponseType.Physical;
   isTrigger: boolean;
 
-  constructor(shape: ShapeType, offset?: Vector2D, isTrigger?: boolean) {
+  constructor(shape: ShapeType, offset?: Vector2, isTrigger?: boolean) {
     super();
     this.shape = shape;
     this.isTrigger = isTrigger ?? false;
-    this.offset = offset ?? new Vector2D();
-    this.size = new Vector2D();
+    this.offset = offset ?? new Vector2();
+    this.size = new Vector2();
   }
 
   setSize() {
@@ -55,7 +55,7 @@ export abstract class Collider extends BaseComponent {
 }
 
 export class CircleCollider extends Collider {
-  constructor(radius: number, offset?: Vector2D, isTrigger?: boolean) {
+  constructor(radius: number, offset?: Vector2, isTrigger?: boolean) {
     super(ShapeType.Circle, offset, isTrigger);
     this.radius = radius;
     this.setSize();
@@ -63,7 +63,7 @@ export class CircleCollider extends Collider {
 }
 
 export class RectCollider extends Collider {
-  constructor(dimensions: Vector2D, offset?: Vector2D, isTrigger?: boolean) {
+  constructor(dimensions: Vector2, offset?: Vector2, isTrigger?: boolean) {
     super(ShapeType.Rectangle, offset, isTrigger);
     this.dimensions = dimensions;
     this.setSize();
@@ -71,7 +71,7 @@ export class RectCollider extends Collider {
 }
 
 export class PolygonCollider extends Collider {
-  constructor(vertices: Vector2D[], offset?: Vector2D, isTrigger?: boolean) {
+  constructor(vertices: Vector2[], offset?: Vector2, isTrigger?: boolean) {
     super(ShapeType.Polygon, offset, isTrigger);
     this.vertices = vertices;
     this.setSize();

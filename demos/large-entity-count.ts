@@ -4,7 +4,7 @@ import { KrystalGameEngine } from "../engine/engine.js";
 import { resolveViewportBounce } from "../engine/physics/collision/index.js";
 import { PhysicsSystem } from "../engine/systems/physics-system.js";
 import { ViewportCollisionEvent } from "../engine/types/common-types.js";
-import { Vector2D } from "../engine/maths/vector-2d.js";
+import { Vector2 } from "../engine/maths/vector2.js";
 
 export class LargeEntityCountTest extends KrystalGameEngine {
   constructor() {
@@ -22,11 +22,11 @@ export class LargeEntityCountTest extends KrystalGameEngine {
       const newEntity = em.createEntity();
 
       const transform = new Transform();
-      transform.position = new Vector2D(50, 100);
+      transform.position = new Vector2(50, 100);
 
       const rigidBody = new RigidBody(transform);
-      rigidBody.velocity = new Vector2D(5, 10);
-      rigidBody.gravity = new Vector2D(0, 9.81);
+      rigidBody.velocity = new Vector2(5, 10);
+      rigidBody.gravity = new Vector2(0, 9.81);
       rigidBody.colliders.push(new CircleCollider(3));
 
       em.addComponent(newEntity, transform);

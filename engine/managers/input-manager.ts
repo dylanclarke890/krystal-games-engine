@@ -1,7 +1,7 @@
 import { InputKeys } from "../constants/enums.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
-import { Vector2D } from "../maths/vector-2d.js";
+import { Vector2 } from "../maths/vector-2d.js";
 import { Vector3D } from "../maths/vector-3d.js";
 import { UserAgent } from "../utils/user-agent.js";
 import { keyboardMap } from "../constants/keyboard-map.js";
@@ -18,7 +18,7 @@ export class InputManager {
   #delayedActions: Map<string, boolean>;
   #using;
 
-  mouse: Vector2D;
+  mouse: Vector2;
   accel: Vector3D;
   eventManager: IEventManager;
 
@@ -32,7 +32,7 @@ export class InputManager {
     this.#delayedActions = new Map();
     this.#locks = new Map();
     this.#actions = new Map();
-    this.mouse = new Vector2D();
+    this.mouse = new Vector2();
     this.accel = new Vector3D();
     this.#using = {
       mouse: false,

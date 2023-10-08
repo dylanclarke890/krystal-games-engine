@@ -2,6 +2,7 @@ import { Collider } from "../components/2d/collision.js";
 import { RigidBody } from "../components/2d/rigid-body.js";
 import { BaseComponent } from "../components/base.js";
 import { PriorityLevel, Quadrant } from "../constants/enums.js";
+import { Vector2 } from "../maths/vector2.js";
 import { Enum } from "../utils/enum.js";
 
 export interface IConfigManager<T> {
@@ -126,8 +127,8 @@ export interface IQuadtree {
 
 export interface IQuadtreeNode {
   id: number;
-  position: Vector;
-  size: Vector;
+  position: Vector2;
+  size: Vector2;
   children: IQuadtreeNode[];
   overlappingChildren: IQuadtreeNode[];
   rigidBody?: RigidBody;
@@ -135,8 +136,8 @@ export interface IQuadtreeNode {
 
   init(
     id: number,
-    position: Vector,
-    size: Vector,
+    position: Vector2,
+    size: Vector2,
     nodePool: IObjectPool<IQuadtreeNode>,
     depth: number,
     maxDepth: number,

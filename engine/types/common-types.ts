@@ -1,10 +1,10 @@
 import { Collider } from "../components/2d/collision.js";
 import { RigidBody } from "../components/2d/rigid-body.js";
 import { SideOfCollision } from "../constants/enums.js";
-import { Vector2D } from "../maths/vector-2d.js";
+import { Vector2 } from "../maths/vector2.js";
 import { IEntityManager } from "./common-interfaces.js";
 
-export type Bounds = { position: Vector2D; size: Vector2D };
+export type Bounds = { position: Vector2; size: Vector2 };
 export type InputBindingFn = (entityId: number, entityManager: IEntityManager, dt: number) => void;
 export type InputBindingType = "held" | "pressed" | "released";
 export type InputBindings = { [K in InputBindingType]?: InputBindingFn };

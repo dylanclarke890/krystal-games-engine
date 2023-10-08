@@ -7,6 +7,7 @@ import { BaseSystem } from "./base-system.js";
 import { BaseComponent } from "../components/base.js";
 import { Renderable } from "../components/2d/renderable.js";
 import { ShapeType } from "../constants/enums.js";
+import { Vector2 } from "../maths/vector2.js";
 
 export class RenderSystem extends BaseSystem {
   name = "RenderSystem";
@@ -70,13 +71,13 @@ export class RenderSystem extends BaseSystem {
     }
   }
 
-  drawSprite(sprite: Sprite, position: Vector, sourceX: number, sourceY: number): void {
+  drawSprite(sprite: Sprite, position: Vector2, sourceX: number, sourceY: number): void {
     const { x, y } = position;
     const { width, height, image } = sprite;
     this.viewport.ctx.drawImage(image, sourceX, sourceY, width, height, x, y, width, height);
   }
 
-  drawShape(shape: Shape, position: Vector) {
+  drawShape(shape: Shape, position: Vector2) {
     const { x, y } = position;
     this.viewport.ctx.fillStyle = shape.color;
 

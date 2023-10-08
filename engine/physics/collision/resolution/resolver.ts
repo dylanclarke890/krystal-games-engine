@@ -3,7 +3,7 @@ import { GameEvents, SideOfCollision } from "../../../constants/enums.js";
 import { Viewport } from "../../../graphics/viewport.js";
 import { Assert } from "../../../utils/assert.js";
 import { IEntityManager, IEventManager } from "../../../types/common-interfaces.js";
-import { Vector2D } from "../../../maths/vector-2d.js";
+import { Vector2 } from "../../../maths/vector-2d.js";
 import { Collidable } from "../../../types/common-types.js";
 
 type ResolverData = { entityCollisions: Set<Pair<Collidable>>; viewportCollisions: Set<Collidable> };
@@ -82,7 +82,7 @@ export class CollisionResolver {
     });
   }
 
-  #findSideOfViewportCollision(position: Vector2D, size: Vector2D): SideOfCollision {
+  #findSideOfViewportCollision(position: Vector2, size: Vector2): SideOfCollision {
     if (position.x < 0) {
       return SideOfCollision.Left;
     }

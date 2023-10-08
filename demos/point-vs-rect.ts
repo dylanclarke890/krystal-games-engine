@@ -1,6 +1,6 @@
 import { RectCollider, Rectangle, RigidBody, RenderableShape, Transform } from "../engine/components/2d/index.js";
 import { KrystalGameEngine } from "../engine/engine.js";
-import { Vector2D } from "../engine/maths/vector-2d.js";
+import { Vector2 } from "../engine/maths/vector-2d.js";
 import { GameEvents } from "../engine/constants/enums.js";
 import { isPointCollidingWithRect } from "../engine/physics/collision/index.js";
 
@@ -19,10 +19,10 @@ export class PointVsRectTest extends KrystalGameEngine {
 
   #createRect() {
     const id = this.entityManager.createEntity();
-    const size = new Vector2D(50, 200);
+    const size = new Vector2(50, 200);
 
     const transform = new Transform();
-    transform.position = new Vector2D(200, 200);
+    transform.position = new Vector2(200, 200);
 
     const rigidBody = new RigidBody(transform);
     rigidBody.addCollider(new RectCollider(size));

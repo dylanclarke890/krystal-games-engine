@@ -1,5 +1,5 @@
 import { ShapeType } from "../../constants/enums.js";
-import { Vector2D } from "../../maths/vector-2d.js";
+import { Vector2 } from "../../maths/vector-2d.js";
 import { BaseComponent } from "../base.js";
 
 export abstract class Shape extends BaseComponent {
@@ -7,9 +7,9 @@ export abstract class Shape extends BaseComponent {
   shapeType: ShapeType;
 
   color: string;
-  size?: Vector2D;
+  size?: Vector2;
   radius?: number;
-  vertices?: Vector2D[];
+  vertices?: Vector2[];
 
   constructor(type: ShapeType, color: string) {
     super();
@@ -19,7 +19,7 @@ export abstract class Shape extends BaseComponent {
 }
 
 export class Rectangle extends Shape {
-  constructor(size: Vector2D, color: string) {
+  constructor(size: Vector2, color: string) {
     super(ShapeType.Rectangle, color);
     this.size = size;
   }
@@ -33,7 +33,7 @@ export class Circle extends Shape {
 }
 
 export class Polygon extends Shape {
-  constructor(vertices: Vector2D[], color: string) {
+  constructor(vertices: Vector2[], color: string) {
     super(ShapeType.Polygon, color);
     this.vertices = vertices;
   }

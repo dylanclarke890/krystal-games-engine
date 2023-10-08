@@ -3,7 +3,7 @@ import { RigidBody } from "../../../components/2d/rigid-body.js";
 import { Quadrant } from "../../../constants/enums.js";
 import { Viewport } from "../../../graphics/viewport.js";
 import { IObjectPool, IObjectPoolManager, IQuadtree, IQuadtreeNode } from "../../../types/common-interfaces.js";
-import { Vector2D } from "../../../maths/vector-2d.js";
+import { Vector2 } from "../../../maths/vector-2d.js";
 
 export class Quadtree implements IQuadtree {
   /** The node representing the entire viewport/bounds. */
@@ -29,8 +29,8 @@ export class Quadtree implements IQuadtree {
       }
     );
 
-    const pos = new Vector2D(0, 0);
-    const size = new Vector2D(viewport.width, viewport.height);
+    const pos = new Vector2(0, 0);
+    const size = new Vector2(viewport.width, viewport.height);
     this.root = this.nodePool.acquire(-1, pos, size, this.nodePool, 0, maxDepth, maxChildren);
   }
 
@@ -211,13 +211,13 @@ export class QuadtreeNode implements IQuadtreeNode {
 
     // Positions of the children quadrants
     const positions = [
-      new Vector2D(this.position.x, this.position.y), // NW
-      new Vector2D(this.position.x + halfWidth, this.position.y), // NE
-      new Vector2D(this.position.x, this.position.y + halfHeight), // SW
-      new Vector2D(this.position.x + halfWidth, this.position.y + halfHeight), // SE
+      new Vector2(this.position.x, this.position.y), // NW
+      new Vector2(this.position.x + halfWidth, this.position.y), // NE
+      new Vector2(this.position.x, this.position.y + halfHeight), // SW
+      new Vector2(this.position.x + halfWidth, this.position.y + halfHeight), // SE
     ];
 
-    const size = new Vector2D(halfWidth, halfHeight);
+    const size = new Vector2(halfWidth, halfHeight);
 
     this.children = positions.map((pos) =>
       this.nodePool.acquire(-1, pos, size, this.nodePool, this.depth + 1, this.maxDepth, this.maxChildren)

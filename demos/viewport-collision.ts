@@ -3,7 +3,7 @@ import { GameEvents } from "../engine/constants/enums.js";
 import { KrystalGameEngine } from "../engine/engine.js";
 import { resolveViewportBounce } from "../engine/physics/collision/index.js";
 import { ViewportCollisionEvent } from "../engine/types/common-types.js";
-import { Vector2D } from "../engine/maths/vector-2d.js";
+import { Vector2 } from "../engine/maths/vector-2d.js";
 
 export class ViewportCollisionTest extends KrystalGameEngine {
   testEntityId!: number;
@@ -25,11 +25,11 @@ export class ViewportCollisionTest extends KrystalGameEngine {
     this.testEntityId = newEntity;
 
     const transform = new Transform();
-    transform.position = new Vector2D(50, 100);
+    transform.position = new Vector2(50, 100);
 
     const rigidBody = new RigidBody(transform);
-    rigidBody.velocity = new Vector2D(5, 10);
-    rigidBody.gravity = new Vector2D(0, 9.81);
+    rigidBody.velocity = new Vector2(5, 10);
+    rigidBody.gravity = new Vector2(0, 9.81);
     rigidBody.colliders.push(new CircleCollider(3));
 
     em.addComponent(newEntity, transform);
