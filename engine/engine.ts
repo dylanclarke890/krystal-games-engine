@@ -10,6 +10,7 @@ import { GameLoop } from "./time/game-loop.js";
 import { IConfigManager, IEntityManager, IEventManager, ILoop, IObjectPoolManager } from "./types/common-interfaces.js";
 import { ObjectPoolManager } from "./managers/object-pool-manager.js";
 import { ConfigManager } from "./managers/config-manager.js";
+import { EulerIntegrator } from "./physics/integrators/euler-integrator.js";
 
 export class KrystalGameEngine {
   viewport: Viewport;
@@ -54,9 +55,10 @@ export class KrystalGameEngine {
     });
     const detector = new CollisionDetector(entityManager, this.viewport, quadtree);
     const resolver = new CollisionResolver(entityManager, eventManager, this.viewport);
-
+    const integrator = new EulerIntegrator();
+    
     systemManager.addSystem(new InputSystem(entityManager, eventManager, this.inputManager));
-    systemManager.addSystem(new PhysicsSystem(entityManager, eventManager, quadtree, detector, resolver));
+    systemManager.addSystem(new PhysicsSystem(entityManager, eventManager, quadtree, detector, resolver, integrator));
     systemManager.addSystem(new RenderSystem(entityManager, eventManager, this.viewport));
   }
 

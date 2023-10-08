@@ -1,5 +1,5 @@
 import { CollisionDetector, CollisionResolver } from "../physics/collision/index.js";
-import { IEntityManager, IEventManager, IQuadtree } from "../types/common-interfaces.js";
+import { IEntityManager, IEventManager, IIntegrator, IQuadtree } from "../types/common-interfaces.js";
 import { Assert } from "../utils/assert.js";
 import { BaseSystem } from "./base-system.js";
 import { BaseComponent } from "../components/base.js";
@@ -15,13 +15,15 @@ export class PhysicsSystem extends BaseSystem {
   quadtree: IQuadtree;
   detector: CollisionDetector;
   resolver: CollisionResolver;
+  integrator: IIntegrator;
 
   constructor(
     entityManager: IEntityManager,
     eventManager: IEventManager,
     quadtree: IQuadtree,
     detector: CollisionDetector,
-    resolver: CollisionResolver
+    resolver: CollisionResolver,
+    integrator: IIntegrator
   ) {
     super(entityManager, eventManager);
     Assert.instanceOf("detector", detector, CollisionDetector);
@@ -30,6 +32,7 @@ export class PhysicsSystem extends BaseSystem {
     this.quadtree = quadtree;
     this.detector = detector;
     this.resolver = resolver;
+    this.integrator = integrator;
   }
 
   update(dt: number, entities: Set<number>) {
@@ -43,30 +46,8 @@ export class PhysicsSystem extends BaseSystem {
         continue;
       }
 
-      // Friction
-      if (typeof rigidBody.friction !== "undefined") {
-        rigidBody.applyForce(rigidBody.friction.mul(dt));
-      }
+      this.integrator.integrate(rigidBody, dt);
 
-      // Gravity
-      if (typeof rigidBody.gravity !== "undefined") {
-        rigidBody.velocity.x += rigidBody.gravity.x * dt;
-        rigidBody.velocity.y += rigidBody.gravity.y * dt;
-      }
-
-      // Acceleration
-      const changeInVelocity = rigidBody.acceleration.clone();
-      changeInVelocity.div(rigidBody.mass).mul(dt);
-      rigidBody.velocity.add(changeInVelocity);
-
-      // Reset acceleration each frame after it's been applied
-      rigidBody.acceleration.set(0, 0);
-
-      // Position
-      rigidBody.transform.position.x += rigidBody.velocity.x * dt;
-      rigidBody.transform.position.y += rigidBody.velocity.y * dt;
-
-      // Update colliders
       for (const collider of rigidBody.colliders) {
         if (collider.responseType === CollisionResponseType.None) {
           continue;
@@ -77,7 +58,6 @@ export class PhysicsSystem extends BaseSystem {
       }
     }
 
-    // Detect/resolve collisions
     this.detector.detect(collidables);
     this.resolver.resolve(this.detector);
   }

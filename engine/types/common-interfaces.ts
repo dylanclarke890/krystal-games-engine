@@ -148,3 +148,7 @@ export interface IQuadtreeNode {
   findQuadrant(node: IQuadtreeNode): Quadrant;
   clear(): void;
 }
+
+export interface IIntegrator {
+  integrate(rigidBody: RigidBody, dt: number): void;
+}
