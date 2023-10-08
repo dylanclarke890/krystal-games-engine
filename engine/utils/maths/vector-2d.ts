@@ -153,6 +153,10 @@ export class Vector2D {
     return this;
   }
 
+  negate(): Vector2D {
+    return new Vector2D(-this.x, -this.y);
+  }
+
   /** Linearly interpolates between the vectors based on an alpha value between 0 and 1. */
   lerp(other: Vector2D, alpha: number) {
     alpha = constrain(alpha, 0, 1);

@@ -1,29 +1,35 @@
 import { RigidBody } from "../../components/2d/rigid-body.js";
 import { IIntegrator } from "../../types/common-interfaces.js";
+import { Vector2D } from "../../utils/maths/vector-2d.js";
 
 export class EulerIntegrator implements IIntegrator {
   integrate(rigidBody: RigidBody, dt: number): void {
-    // Apply friction
+    // Calculate total force acting on the body
+    const totalForce = new Vector2D(0, 0);
+
+    // Friction (assuming it's a force opposing the velocity)
     if (typeof rigidBody.friction !== "undefined") {
-      rigidBody.applyForce(rigidBody.friction.mul(dt));
+      rigidBody.applyForce(rigidBody.friction.negate()); // Assuming friction is opposing the motion
     }
 
-    // Apply gravity
+    // Gravity (assuming it's an acceleration, so multiply by mass to get force)
     if (typeof rigidBody.gravity !== "undefined") {
-      rigidBody.velocity.x += rigidBody.gravity.x * dt;
-      rigidBody.velocity.y += rigidBody.gravity.y * dt;
+      totalForce.add(rigidBody.gravity.mul(rigidBody.mass));
     }
 
-    // Apply acceleration (e.g., from external forces)
-    const changeInVelocity = rigidBody.acceleration.clone();
-    changeInVelocity.div(rigidBody.mass).mul(dt);
-    rigidBody.velocity.add(changeInVelocity);
+    // Other external forces can be added here...
+    totalForce.add(rigidBody.externalForces); // if you have other external forces
 
-    // Update position based on the new velocity
-    rigidBody.transform.position.x += rigidBody.velocity.x * dt;
-    rigidBody.transform.position.y += rigidBody.velocity.y * dt;
+    // Compute acceleration (F = ma => a = F/m)
+    let acceleration = totalForce.div(rigidBody.mass);
 
-    // Reset acceleration after applying
-    rigidBody.acceleration.set(0, 0);
+    // Update velocity
+    rigidBody.velocity.add(acceleration.mul(dt));
+
+    // Update position
+    rigidBody.transform.position.add(rigidBody.velocity.mul(dt));
+
+    // Reset external forces to zero after applying
+    rigidBody.externalForces.set(0, 0);
   }
 }
