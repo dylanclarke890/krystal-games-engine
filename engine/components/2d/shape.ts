@@ -1,5 +1,5 @@
 import { ShapeType } from "../../constants/enums.js";
-import { Vector2 } from "../../maths/vector-2d.js";
+import { Vector2 } from "../../maths/vector2.js";
 import { BaseComponent } from "../base.js";
 
 export abstract class Shape extends BaseComponent {

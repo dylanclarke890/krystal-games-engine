@@ -2,7 +2,7 @@ import { GameEvents } from "../engine/constants/enums.js";
 import { areRectsColliding } from "../engine/physics/collision/detection/detection-strategies.js";
 import { RectCollider, Rectangle, RigidBody, RenderableShape, Transform } from "../engine/components/2d/index.js";
 import { KrystalGameEngine } from "../engine/engine.js";
-import { Vector2 } from "../engine/maths/vector-2d.js";
+import { Vector2 } from "../engine/maths/vector2.js";
 
 export class RectVsRectTest extends KrystalGameEngine {
   mouseRectId: number;
@@ -39,7 +39,7 @@ export class RectVsRectTest extends KrystalGameEngine {
   update() {
     const mouseRigidBody = this.entityManager.getComponent<RigidBody>(this.mouseRectId, "rigidBody")!;
     const mouseRectSize = mouseRigidBody.colliders[0].size;
-    mouseRigidBody.transform.position.assign(this.inputManager.mouse).sub(mouseRectSize.clone().div(2));
+    mouseRigidBody.transform.position.assign(this.inputManager.mouse).sub(mouseRectSize.clone().divScalar(2));
 
     const staticRectRigidBody = this.entityManager.getComponent<RigidBody>(this.staticRectId, "rigidBody")!;
     const staticRectSize = staticRectRigidBody.colliders[0].size;

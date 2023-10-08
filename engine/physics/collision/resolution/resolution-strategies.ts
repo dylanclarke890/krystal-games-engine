@@ -3,7 +3,7 @@ import { COLLISION_ADJUSTMENT_BUFFER } from "../../../constants/global-constants
 import { Viewport } from "../../../graphics/viewport.js";
 import { ViewportCollisionEvent } from "../../../types/common-types.js";
 import { ScalarValue } from "../../../maths/scalar-value.js";
-import { Vector2 } from "../../../maths/vector-2d.js";
+import { Vector2 } from "../../../maths/vector2.js";
 
 export function elastic1D(aVel: ScalarValue, bVel: ScalarValue, aMass: ScalarValue, bMass: ScalarValue): void {
   if (aMass.value === bMass.value) {
@@ -36,10 +36,10 @@ export function inelastic1D(aVel: ScalarValue, bVel: ScalarValue, aMass: ScalarV
 
 export function inelastic2D(aVel: Vector2, bVel: Vector2, aMass: ScalarValue, bMass: ScalarValue): void {
   const totalMass = aMass.value + bMass.value;
-  const finalVel = aVel.clone().mul(aMass.value).add(bVel.mul(bMass.value)).div(totalMass);
+  const finalVel = aVel.clone().mulScalar(aMass.value).add(bVel.mulScalar(bMass.value)).divScalar(totalMass);
 
-  bVel.set(finalVel);
-  aVel.set(finalVel);
+  bVel.assign(finalVel);
+  aVel.assign(finalVel);
 }
 
 export function resolveViewportBounce(event: ViewportCollisionEvent, viewport: Viewport) {

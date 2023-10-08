@@ -3,7 +3,7 @@ import { RigidBody } from "../../../components/2d/rigid-body.js";
 import { Quadrant } from "../../../constants/enums.js";
 import { Viewport } from "../../../graphics/viewport.js";
 import { IObjectPool, IObjectPoolManager, IQuadtree, IQuadtreeNode } from "../../../types/common-interfaces.js";
-import { Vector2 } from "../../../maths/vector-2d.js";
+import { Vector2 } from "../../../maths/vector2.js";
 
 export class Quadtree implements IQuadtree {
   /** The node representing the entire viewport/bounds. */
@@ -125,8 +125,8 @@ export class QuadtreeNode implements IQuadtreeNode {
   id!: number;
   rigidBody?: RigidBody;
   collider?: Collider;
-  position!: Vector;
-  size!: Vector;
+  position!: Vector2;
+  size!: Vector2;
   nodes!: IQuadtreeNode[];
   children!: IQuadtreeNode[];
   overlappingChildren!: IQuadtreeNode[];
@@ -137,8 +137,8 @@ export class QuadtreeNode implements IQuadtreeNode {
 
   constructor(
     id: number,
-    position: Vector,
-    size: Vector,
+    position: Vector2,
+    size: Vector2,
     nodePool: IObjectPool<IQuadtreeNode>,
     depth = 0,
     maxDepth = 4,
@@ -149,8 +149,8 @@ export class QuadtreeNode implements IQuadtreeNode {
 
   init(
     id: number,
-    position: Vector,
-    size: Vector,
+    position: Vector2,
+    size: Vector2,
     nodePool: IObjectPool<IQuadtreeNode>,
     depth: number,
     maxDepth: number,

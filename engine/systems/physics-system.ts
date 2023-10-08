@@ -1,11 +1,12 @@
 import { CollisionDetector, CollisionResolver } from "../physics/collision/index.js";
-import { IEntityManager, IEventManager, IIntegrator, IQuadtree } from "../types/common-interfaces.js";
+import { IEntityManager, IEventManager, IQuadtree } from "../types/common-interfaces.js";
 import { Assert } from "../utils/assert.js";
 import { BaseSystem } from "./base-system.js";
 import { BaseComponent } from "../components/base.js";
 import { Collidable } from "../types/common-types.js";
 import { RigidBody } from "../components/2d/rigid-body.js";
 import { CollisionResponseType } from "../constants/enums.js";
+import { BaseIntegrator } from "../physics/integrators/base-integrator.js";
 
 export class PhysicsSystem extends BaseSystem {
   priority: number = 5;
@@ -15,7 +16,7 @@ export class PhysicsSystem extends BaseSystem {
   quadtree: IQuadtree;
   detector: CollisionDetector;
   resolver: CollisionResolver;
-  integrator: IIntegrator;
+  integrator: BaseIntegrator;
 
   constructor(
     entityManager: IEntityManager,
@@ -23,7 +24,7 @@ export class PhysicsSystem extends BaseSystem {
     quadtree: IQuadtree,
     detector: CollisionDetector,
     resolver: CollisionResolver,
-    integrator: IIntegrator
+    integrator: BaseIntegrator
   ) {
     super(entityManager, eventManager);
     Assert.instanceOf("detector", detector, CollisionDetector);

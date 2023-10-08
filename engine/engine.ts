@@ -55,7 +55,7 @@ export class KrystalGameEngine {
     });
     const detector = new CollisionDetector(entityManager, this.viewport, quadtree);
     const resolver = new CollisionResolver(entityManager, eventManager, this.viewport);
-    const integrator = new EulerIntegrator();
+    const integrator = new EulerIntegrator(this.objectPoolManager);
     
     systemManager.addSystem(new InputSystem(entityManager, eventManager, this.inputManager));
     systemManager.addSystem(new PhysicsSystem(entityManager, eventManager, quadtree, detector, resolver, integrator));

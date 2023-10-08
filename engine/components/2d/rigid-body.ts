@@ -11,8 +11,8 @@ export class RigidBody extends BaseComponent {
   acceleration: Vector2;
   bounciness: number;
   colliders: Collider[];
-  friction?: number;
-  gravity?: Vector2;
+  friction: number;
+  gravity: Vector2;
   mass: number;
   transform: Transform;
   velocity: Vector2;
@@ -26,13 +26,15 @@ export class RigidBody extends BaseComponent {
     isStatic = false
   ) {
     super();
+    this.transform = transform;
     this.velocity = velocity;
     this.acceleration = acceleration;
     this.mass = mass;
     this.bounciness = bounciness;
+    this.gravity = Vector2.zero;
+    this.friction = 0;
     this.isStatic = isStatic;
     this.colliders = [];
-    this.transform = transform;
   }
 
   applyForce(force: Vector2): void {

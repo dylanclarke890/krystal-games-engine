@@ -3,7 +3,7 @@ import { GameEvents } from "../engine/constants/enums.js";
 import { KrystalGameEngine } from "../engine/engine.js";
 import { resolveViewportBounce } from "../engine/physics/collision/index.js";
 import { ViewportCollisionEvent } from "../engine/types/common-types.js";
-import { Vector2 } from "../engine/maths/vector-2d.js";
+import { Vector2 } from "../engine/maths/vector2.js";
 
 export class ViewportCollisionTest extends KrystalGameEngine {
   testEntityId!: number;

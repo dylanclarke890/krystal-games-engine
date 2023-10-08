@@ -1,44 +1,48 @@
 import { RigidBody } from "../../components/2d/rigid-body.js";
-import { Vector2 } from "../../maths/vector2.js";
-import { IIntegrator } from "../../types/common-interfaces.js";
+import { BaseIntegrator } from "./base-integrator.js";
 
-export class EulerIntegrator implements IIntegrator {
+export class EulerIntegrator extends BaseIntegrator {
   integrate(rigidBody: RigidBody, dt: number): void {
-    const totalForce = new Vector2(0, 0);
+    const totalForce = this.vectorPool.acquire(0, 0);
+    this.pooledVectors.push(totalForce);
 
-    // Gravity
-    if (rigidBody.gravity) {
-      const gravitationalForce = rigidBody.gravity.clone().mulScalar(rigidBody.mass);
-      totalForce.add(gravitationalForce);
-    }
+    // Gravity - Assume it's an acceleration, so multiply by mass to get force
+    const gravitationalForce = this.vectorPool.acquire().assign(rigidBody.gravity).mulScalar(rigidBody.mass);
+    totalForce.add(gravitationalForce);
+    this.pooledVectors.push(gravitationalForce);
 
-    // Friction (assuming μ is stored in rigidBody.friction as a scalar)
-    if (rigidBody.velocity.magnitude() > 0 && typeof rigidBody.friction !== "undefined") {
-      // Calculate the normal force (assuming we're on a horizontal plane)
-      const normalForce = gravitationalForce.y; // only considering y-component for simplicity
-      // Calculate frictional force magnitude
-      const frictionMagnitude = rigidBody.friction * normalForce;
-      // Get friction direction (opposite to velocity)
-      const frictionDirection = rigidBody.velocity.clone().normalize().negate();
-      // Apply frictional force
-      totalForce.add(frictionDirection.mulScalar(frictionMagnitude));
+    // Friction (applied only if there's some velocity)
+    if (rigidBody.velocity.magnitude() > 0) {
+      const normalForceMagnitude = rigidBody.mass * rigidBody.gravity.y;
+      const frictionMagnitude = rigidBody.friction * normalForceMagnitude;
+
+      // The direction should be opposite to the velocity
+      const frictionForce = this.vectorPool
+        .acquire()
+        .assign(rigidBody.velocity)
+        .normalize()
+        .mulScalar(-frictionMagnitude);
+
+      totalForce.add(frictionForce);
+      this.pooledVectors.push(frictionForce);
     }
 
     // Apply acceleration
     rigidBody.applyForce(totalForce);
 
     // Update velocity
-    rigidBody.velocity.add(rigidBody.acceleration.clone().mulScalar(dt));
-
-    // Ensure velocity doesn't flip due to friction
-    if (rigidBody.velocity.dot(rigidBody.acceleration) < 0) {
-      rigidBody.velocity.set(0, 0);
-    }
+    const acceleration = this.vectorPool.acquire().assign(rigidBody.acceleration).mulScalar(dt);
+    rigidBody.velocity.add(acceleration);
+    this.pooledVectors.push(acceleration);
 
     // Update position
-    rigidBody.transform.position.add(rigidBody.velocity.mulScalar(dt));
+    const velocity = this.vectorPool.acquire().assign(rigidBody.velocity).mulScalar(dt);
+    rigidBody.transform.position.add(velocity);
+    this.pooledVectors.push(velocity);
 
     // Reset external forces to zero after applying
     rigidBody.acceleration.set(0, 0);
+
+    this.releasePooledVectors();
   }
 }

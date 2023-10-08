@@ -6,7 +6,7 @@ export class ObjectPool<T, Args extends any[]> {
   pool: T[];
   poolSize: number;
 
-  constructor(factory: IObjectFactory<T, Args>, onReuse?: (obj: T, ...args: Args) => void, size: number = 0) {
+  constructor(factory: IObjectFactory<T, Args>, onReuse?: (obj: T, ...args: Args) => void, size: number = 100) {
     this.factory = factory;
     this.onReuse = onReuse;
     this.pool = [];

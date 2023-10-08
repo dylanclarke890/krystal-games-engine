@@ -1,8 +1,8 @@
 import { InputKeys } from "../constants/enums.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
-import { Vector2 } from "../maths/vector-2d.js";
-import { Vector3D } from "../maths/vector-3d.js";
+import { Vector2 } from "../maths/vector2.js";
+import { Vector3 } from "../maths/vector3.js";
 import { UserAgent } from "../utils/user-agent.js";
 import { keyboardMap } from "../constants/keyboard-map.js";
 import { IEventManager } from "../types/common-interfaces.js";
@@ -19,7 +19,7 @@ export class InputManager {
   #using;
 
   mouse: Vector2;
-  accel: Vector3D;
+  accel: Vector3;
   eventManager: IEventManager;
 
   constructor(eventManager: IEventManager, viewport: Viewport) {
@@ -33,7 +33,7 @@ export class InputManager {
     this.#locks = new Map();
     this.#actions = new Map();
     this.mouse = new Vector2();
-    this.accel = new Vector3D();
+    this.accel = new Vector3();
     this.#using = {
       mouse: false,
       touch: false,
@@ -316,9 +316,9 @@ export class InputManager {
 
   onDeviceMotion(e: DeviceMotionEvent) {
     if (e.accelerationIncludingGravity !== null) {
-      this.accel.x = e.accelerationIncludingGravity.x ?? undefined;
-      this.accel.y = e.accelerationIncludingGravity.y ?? undefined;
-      this.accel.z = e.accelerationIncludingGravity.z ?? undefined;
+      this.accel.x = e.accelerationIncludingGravity.x ?? 0;
+      this.accel.y = e.accelerationIncludingGravity.y ?? 0;
+      this.accel.z = e.accelerationIncludingGravity.z ?? 0;
     }
   }
 
