@@ -1,9 +1,37 @@
-import { RigidBody } from "../../components/2d/rigid-body.js";
-import { CollisionResponseType } from "../../constants/enums.js";
-import { Collidable } from "../../types/common-types.js";
-import { BasePhysicsSystem } from "./base-physics-system.js";
+import { CollisionDetector, CollisionResolver } from "../physics/collision/index.js";
+import { IEntityManager, IEventManager, IQuadtree } from "../types/common-interfaces.js";
+import { Assert } from "../utils/assert.js";
+import { BaseSystem } from "./base-system.js";
+import { BaseComponent } from "../components/base.js";
+import { Collidable } from "../types/common-types.js";
+import { RigidBody } from "../components/2d/rigid-body.js";
+import { CollisionResponseType } from "../constants/enums.js";
 
-export class EulerPhysicsSystem extends BasePhysicsSystem {
+export class PhysicsSystem extends BaseSystem {
+  priority: number = 5;
+  name: string = "PhysicsSystem";
+  requiredComponents: string[] = ["rigidBody"];
+
+  quadtree: IQuadtree;
+  detector: CollisionDetector;
+  resolver: CollisionResolver;
+
+  constructor(
+    entityManager: IEntityManager,
+    eventManager: IEventManager,
+    quadtree: IQuadtree,
+    detector: CollisionDetector,
+    resolver: CollisionResolver
+  ) {
+    super(entityManager, eventManager);
+    Assert.instanceOf("detector", detector, CollisionDetector);
+    Assert.instanceOf("resolver", resolver, CollisionResolver);
+
+    this.quadtree = quadtree;
+    this.detector = detector;
+    this.resolver = resolver;
+  }
+
   update(dt: number, entities: Set<number>) {
     const em = this.entityManager;
     const collidables: Collidable[] = [];
@@ -52,5 +80,13 @@ export class EulerPhysicsSystem extends BasePhysicsSystem {
     // Detect/resolve collisions
     this.detector.detect(collidables);
     this.resolver.resolve(this.detector);
+  }
+
+  isInterestedInComponent(component: BaseComponent): boolean {
+    return component.type === "rigidBody";
+  }
+
+  belongsToSystem(entity: number): boolean {
+    return this.entityManager.hasComponent(entity, "rigidBody");
   }
 }
