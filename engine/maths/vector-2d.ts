@@ -1,5 +1,5 @@
 import { constrain, randomInt } from "./number.js";
-import { parseJSON } from "../string.js";
+import { parseJSON } from "../utils/string.js";
 import { calcHypotenuse } from "./triangles.js";
 
 export class Vector2D {

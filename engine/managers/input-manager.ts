@@ -1,8 +1,8 @@
 import { InputKeys } from "../constants/enums.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
-import { Vector2D } from "../utils/maths/vector-2d.js";
-import { Vector3D } from "../utils/maths/vector-3d.js";
+import { Vector2D } from "../maths/vector-2d.js";
+import { Vector3D } from "../maths/vector-3d.js";
 import { UserAgent } from "../utils/user-agent.js";
 import { keyboardMap } from "../constants/keyboard-map.js";
 import { IEventManager } from "../types/common-interfaces.js";

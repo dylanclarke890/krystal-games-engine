@@ -1,7 +1,7 @@
 import { Collider } from "../components/2d/collision.js";
 import { RigidBody } from "../components/2d/rigid-body.js";
 import { SideOfCollision } from "../constants/enums.js";
-import { Vector2D } from "../utils/maths/vector-2d.js";
+import { Vector2D } from "../maths/vector-2d.js";
 import { IEntityManager } from "./common-interfaces.js";
 
 export type Bounds = { position: Vector2D; size: Vector2D };

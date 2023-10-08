@@ -1,4 +1,4 @@
-import { Vector2D } from "../../utils/maths/vector-2d.js";
+import { Vector2D } from "../../maths/vector-2d.js";
 import { BaseComponent } from "../base.js";
 
 export class Transform extends BaseComponent {

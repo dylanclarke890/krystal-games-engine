@@ -4,7 +4,7 @@ import { KrystalGameEngine } from "../engine/engine.js";
 import { resolveViewportBounce } from "../engine/physics/collision/index.js";
 import { PhysicsSystem } from "../engine/systems/physics-system.js";
 import { ViewportCollisionEvent } from "../engine/types/common-types.js";
-import { Vector2D } from "../engine/utils/maths/vector-2d.js";
+import { Vector2D } from "../engine/maths/vector-2d.js";
 
 export class LargeEntityCountTest extends KrystalGameEngine {
   constructor() {

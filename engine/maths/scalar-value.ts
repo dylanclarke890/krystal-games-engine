@@ -1,5 +1,5 @@
 import { randomInt } from "./number.js";
-import { parseJSON } from "../string.js";
+import { parseJSON } from "../utils/string.js";
 
 export class ScalarValue {
   value: number;

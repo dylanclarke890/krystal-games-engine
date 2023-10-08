@@ -1,5 +1,5 @@
 import { Assert } from "../../utils/assert.js";
-import { arrayFromInterval } from "../../utils/maths/interval.js";
+import { arrayFromInterval } from "../../maths/interval.js";
 import { BaseComponent } from "../base.js";
 
 export class Animation extends BaseComponent {
