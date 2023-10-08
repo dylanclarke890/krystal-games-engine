@@ -1,8 +1,12 @@
 import { Viewport } from "../../../graphics/viewport.js";
 import { Assert } from "../../../utils/assert.js";
-import { rectVsRect } from "./detection-strategies.js";
+import { areRectsColliding } from "./detection-strategies.js";
 import { IEntityManager, IQuadtree } from "../../../types/common-interfaces.js";
 import { Collidable } from "../../../types/common-types.js";
+import { RigidBody } from "../../../components/2d/rigid-body.js";
+import { Collider } from "../../../components/2d/collision.js";
+import { ShapeType } from "../../../constants/enums.js";
+import { InvalidOperationError } from "../../../types/errors.js";
 
 export class CollisionDetector {
   entityManager: IEntityManager;
@@ -32,7 +36,7 @@ export class CollisionDetector {
     for (let i = 0; i < collidables.length; i++) {
       const [aId, aRigidBody, aCollider] = collidables[i];
 
-      if (this.viewportCollisionCheck(aRigidBody.position, aCollider.size)) {
+      if (this.viewportCollisionCheck(aRigidBody, aCollider)) {
         this.viewportCollisions.add(collidables[i]);
       }
 
@@ -45,7 +49,7 @@ export class CollisionDetector {
           continue;
         }
 
-        if (rectVsRect(aRigidBody.position, aCollider.size, bEntityNode.position, bEntityNode.size)) {
+        if (areRectsColliding(aRigidBody.transform.position, aCollider.size, bEntityNode.position, bEntityNode.size)) {
           this.entityCollisions.add([
             [aId, aRigidBody, aCollider],
             [bEntityNode.id, bEntityNode.rigidBody!, bEntityNode.collider!],
@@ -55,10 +59,27 @@ export class CollisionDetector {
     }
   }
 
-  viewportCollisionCheck(position: Vector, size: Vector): boolean {
-    const { x, y } = position;
-    if (x < 0 || x + size.x > this.viewport.width || y < 0 || y + size.y > this.viewport.height) {
-      return true;
+  viewportCollisionCheck(rigidBody: RigidBody, collider: Collider): boolean {
+    const pos = rigidBody.transform.position;
+    const size = collider.size;
+
+    switch (collider.shape) {
+      case ShapeType.Circle:
+        const rx = collider.size.x / 2;
+        const ry = collider.size.y / 2;
+        if (pos.x - rx < 0 || pos.x + rx > this.viewport.width || pos.y - rx < 0 || pos.y + ry > this.viewport.height) {
+          return true;
+        }
+        break;
+      case ShapeType.Rectangle:
+        if (pos.x < 0 || pos.x + size.x > this.viewport.width || pos.y < 0 || pos.y + size.y > this.viewport.height) {
+          return true;
+        }
+        break;
+      case ShapeType.Polygon:
+        break;
+      default:
+        throw new InvalidOperationError("Unknown collider shape type", collider);
     }
 
     return false;

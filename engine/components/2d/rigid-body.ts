@@ -1,6 +1,7 @@
 import { BaseComponent } from "../base.js";
 import { Vector2D } from "../../utils/maths/vector-2d.js";
 import { Collider } from "./collision.js";
+import { Transform } from "./transform.js";
 
 export class RigidBody extends BaseComponent {
   type = "rigidBody";
@@ -12,12 +13,12 @@ export class RigidBody extends BaseComponent {
   colliders: Collider[];
   friction?: Vector2D;
   gravity?: Vector2D;
-  position: Vector2D;
   mass: number;
+  transform: Transform;
   velocity: Vector2D;
 
   constructor(
-    position = new Vector2D(0, 0),
+    transform: Transform,
     velocity = new Vector2D(0, 0),
     acceleration = new Vector2D(0, 0),
     mass = 1,
@@ -25,13 +26,13 @@ export class RigidBody extends BaseComponent {
     isStatic = false
   ) {
     super();
-    this.position = position;
     this.velocity = velocity;
     this.acceleration = acceleration;
     this.mass = mass;
     this.bounciness = bounciness;
     this.isStatic = isStatic;
     this.colliders = [];
+    this.transform = transform;
   }
 
   applyForce(force: Vector2D): void {

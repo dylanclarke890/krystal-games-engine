@@ -53,10 +53,10 @@ export class CollisionResolver {
     const bHalfY = bCollider.size.y / 2;
 
     // Get midpoints
-    const aMidX = aRigidBody.position.x + aHalfX;
-    const aMidY = aRigidBody.position.y + aHalfY;
-    const bMidX = bRigidBody.position.x + bHalfX;
-    const bMidY = bRigidBody.position.y + bHalfY;
+    const aMidX = aRigidBody.transform.position.x + aHalfX;
+    const aMidY = aRigidBody.transform.position.y + aHalfY;
+    const bMidX = bRigidBody.transform.position.x + bHalfX;
+    const bMidY = bRigidBody.transform.position.y + bHalfY;
 
     // Find side of entry based on the normalized sides
     const dx = (aMidX - bMidX) / (aHalfX + bHalfX);
@@ -72,7 +72,7 @@ export class CollisionResolver {
 
   #resolveViewportCollisions(viewportCollisions: Set<Collidable>): void {
     viewportCollisions.forEach(([id, rigidBody, collider]) => {
-      const side = this.#findSideOfViewportCollision(rigidBody.position, collider.size);
+      const side = this.#findSideOfViewportCollision(rigidBody.transform.position, collider.size);
 
       if (side === SideOfCollision.None) {
         return;

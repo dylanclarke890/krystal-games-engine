@@ -55,9 +55,15 @@ export class Vector2D {
     return Math.atan2(other.y - this.y, other.x - this.x);
   }
 
-  set(other: Vector2D) {
-    this.x = other.x;
-    this.y = other.y;
+  set(other: Vector2D | number, y?: number) {
+    if (typeof other === "number") {
+      y ??= other;
+      this.x = other;
+      this.y = y;
+    } else {
+      this.x = other.x;
+      this.y = other.y;
+    }
     return this;
   }
 

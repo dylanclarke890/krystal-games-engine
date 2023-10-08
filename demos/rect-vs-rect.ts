@@ -1,6 +1,6 @@
 import { GameEvents } from "../engine/constants/enums.js";
-import { rectVsRect } from "../engine/physics/collision/detection/detection-strategies.js";
-import { RectCollider, Rectangle, RigidBody, RenderableShape } from "../engine/components/2d/index.js";
+import { areRectsColliding } from "../engine/physics/collision/detection/detection-strategies.js";
+import { RectCollider, Rectangle, RigidBody, RenderableShape, Transform } from "../engine/components/2d/index.js";
 import { KrystalGameEngine } from "../engine/engine.js";
 import { Vector2D } from "../engine/utils/maths/vector-2d.js";
 
@@ -12,25 +12,24 @@ export class RectVsRectTest extends KrystalGameEngine {
     this.eventManager.on(GameEvents.LOOP_STARTED, () => this.update());
     this.inputManager.enableMouse();
 
-    this.staticRectId = this.#createRect(
-      new Vector2D(250, 150),
-      new Vector2D(250, 150),
-      new Vector2D(50, 200),
-      "purple"
-    );
-
-    this.mouseRectId = this.#createRect(new Vector2D(), new Vector2D(), new Vector2D(50, 150), "orange");
+    this.staticRectId = this.#createRect(new Vector2D(250, 150), new Vector2D(50, 200), "purple");
+    this.mouseRectId = this.#createRect(new Vector2D(), new Vector2D(50, 150), "orange");
 
     this.start();
   }
 
-  #createRect(rigidPosition: Vector2D, shapePosition: Vector2D, size: Vector2D, color: string): number {
+  #createRect(position: Vector2D, size: Vector2D, color: string): number {
     const id = this.entityManager.createEntity();
 
-    const rigidBody = new RigidBody(rigidPosition);
-    rigidBody.addCollider(new RectCollider(size));
-    const renderable = new RenderableShape(shapePosition, new Rectangle(size, color));
+    const transform = new Transform();
+    transform.position = position;
 
+    const rigidBody = new RigidBody(transform);
+    rigidBody.addCollider(new RectCollider(size));
+
+    const renderable = new RenderableShape(transform, new Rectangle(size, color));
+
+    this.entityManager.addComponent(id, transform);
     this.entityManager.addComponent(id, rigidBody);
     this.entityManager.addComponent(id, renderable);
 
@@ -40,15 +39,20 @@ export class RectVsRectTest extends KrystalGameEngine {
   update() {
     const mouseRigidBody = this.entityManager.getComponent<RigidBody>(this.mouseRectId, "rigidBody")!;
     const mouseRectSize = mouseRigidBody.colliders[0].size;
-    mouseRigidBody.position.assign(this.inputManager.mouse).sub(mouseRectSize.clone().div(2));
-    const mouseRectShape = this.entityManager.getComponent<RenderableShape>(this.mouseRectId, "renderable")!;
-    mouseRectShape.position.assign(mouseRigidBody.position);
+    mouseRigidBody.transform.position.assign(this.inputManager.mouse).sub(mouseRectSize.clone().div(2));
 
     const staticRectRigidBody = this.entityManager.getComponent<RigidBody>(this.staticRectId, "rigidBody")!;
     const staticRectSize = staticRectRigidBody.colliders[0].size;
     const staticRectShape = this.entityManager.getComponent<RenderableShape>(this.staticRectId, "renderable")!;
 
-    if (rectVsRect(mouseRigidBody.position, mouseRectSize, staticRectRigidBody.position, staticRectSize)) {
+    if (
+      areRectsColliding(
+        mouseRigidBody.transform.position,
+        mouseRectSize,
+        staticRectRigidBody.transform.position,
+        staticRectSize
+      )
+    ) {
       staticRectShape.shape!.color = "green";
     } else {
       staticRectShape.shape!.color = "purple";

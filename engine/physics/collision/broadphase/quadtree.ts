@@ -35,7 +35,7 @@ export class Quadtree implements IQuadtree {
   }
 
   insert(id: number, rigidBody: RigidBody, collider: Collider): void {
-    const position = rigidBody.position.clone().add(collider.offset);
+    const position = rigidBody.transform.position.clone().add(collider.offset);
     const node = this.nodePool.acquire(id, position, collider.size, this.nodePool);
     node.rigidBody = rigidBody;
     node.collider = collider;
@@ -44,7 +44,7 @@ export class Quadtree implements IQuadtree {
   }
 
   retrieve(rigidBody: RigidBody, collider: Collider): IQuadtreeNode[] {
-    const position = rigidBody.position.clone().add(collider.offset);
+    const position = rigidBody.transform.position.clone().add(collider.offset);
     const node = this.nodePool.acquire(-1, position, collider.size, this.nodePool);
     const result = this.root.retrieve(node);
     this.nodePool.release(node);

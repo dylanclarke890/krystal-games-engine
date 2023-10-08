@@ -1,7 +1,7 @@
-import { Collider } from "../../../components/2d/collision.js";
-import { RigidBody } from "../../../components/2d/rigid-body.js";
 import { SideOfCollision } from "../../../constants/enums.js";
+import { COLLISION_ADJUSTMENT_BUFFER } from "../../../constants/global-constants.js";
 import { Viewport } from "../../../graphics/viewport.js";
+import { ViewportCollisionEvent } from "../../../types/common-types.js";
 import { ScalarValue } from "../../../utils/maths/scalar-value.js";
 import { Vector2D } from "../../../utils/maths/vector-2d.js";
 
@@ -42,27 +42,24 @@ export function inelastic2D(aVel: Vector2D, bVel: Vector2D, aMass: ScalarValue, 
   aVel.set(finalVel);
 }
 
-export function resolveViewportBounce(
-  rigidBody: RigidBody,
-  collider: Collider,
-  side: SideOfCollision,
-  viewport: Viewport
-) {
+export function resolveViewportBounce(event: ViewportCollisionEvent, viewport: Viewport) {
+  const { collider, rigidBody, side } = event;
+
   switch (side) {
     case SideOfCollision.Left:
-      rigidBody.position.x = collider.size.x;
+      rigidBody.transform.position.x = collider.size.x / 2 + COLLISION_ADJUSTMENT_BUFFER;
       rigidBody.velocity.x *= -rigidBody.bounciness;
       break;
     case SideOfCollision.Right:
-      rigidBody.position.x = viewport.width - collider.size.x;
+      rigidBody.transform.position.x = viewport.width - collider.size.x / 2 - COLLISION_ADJUSTMENT_BUFFER;
       rigidBody.velocity.x *= -rigidBody.bounciness;
       break;
     case SideOfCollision.Top:
-      rigidBody.position.y = collider.size.y;
+      rigidBody.transform.position.y = collider.size.y / 2 + COLLISION_ADJUSTMENT_BUFFER;
       rigidBody.velocity.y *= -rigidBody.bounciness;
       break;
-    case SideOfCollision.Left:
-      rigidBody.position.y = viewport.height - collider.size.y;
+    case SideOfCollision.Bottom:
+      rigidBody.transform.position.y = viewport.height - collider.size.y / 2 - COLLISION_ADJUSTMENT_BUFFER;
       rigidBody.velocity.y *= -rigidBody.bounciness;
       break;
     default:

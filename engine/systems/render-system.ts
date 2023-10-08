@@ -41,12 +41,12 @@ export class RenderSystem extends BaseSystem {
       }
 
       if (typeof entity.shape !== "undefined") {
-        this.drawShape(entity.shape, entity.position);
+        this.drawShape(entity.shape, entity.transform.position);
       }
 
       if (typeof entity.sprite !== "undefined") {
         if (typeof entity.animation === "undefined") {
-          this.drawSprite(entity.sprite, entity.position, 0, 0);
+          this.drawSprite(entity.sprite, entity.transform.position, 0, 0);
           continue;
         }
 
@@ -65,7 +65,7 @@ export class RenderSystem extends BaseSystem {
         const sourceX = currentColumn * width;
         const sourceY = currentRow * height;
 
-        this.drawSprite(entity.sprite, entity.position, sourceX, sourceY);
+        this.drawSprite(entity.sprite, entity.transform.position, sourceX, sourceY);
       }
     }
   }

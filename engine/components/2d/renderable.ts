@@ -1,32 +1,32 @@
-import { Vector2D } from "../../utils/maths/vector-2d.js";
 import { BaseComponent } from "../base.js";
-import { Animation, Shape, Sprite } from "./index.js";
+import { Animation, Shape, Sprite, Transform } from "./index.js";
+import {} from "./transform.js";
 
 export abstract class Renderable extends BaseComponent {
   type: string = "renderable";
 
-  position: Vector2D;
+  transform: Transform;
   sprite?: Sprite;
   animation?: Animation;
   shape?: Shape;
 
-  constructor(position: Vector2D) {
+  constructor(transform: Transform) {
     super();
-    this.position = position;
+    this.transform = transform;
   }
 }
 
 export class RenderableSprite extends Renderable {
-  constructor(position: Vector2D, sprite: Sprite, animation?: Animation) {
-    super(position);
+  constructor(transform: Transform, sprite: Sprite, animation?: Animation) {
+    super(transform);
     this.sprite = sprite;
     this.animation = animation;
   }
 }
 
 export class RenderableShape extends Renderable {
-  constructor(position: Vector2D, shape: Shape) {
-    super(position);
+  constructor(transform: Transform, shape: Shape) {
+    super(transform);
     this.shape = shape;
   }
 }

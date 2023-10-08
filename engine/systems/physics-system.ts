@@ -51,26 +51,30 @@ export class PhysicsSystem extends BaseSystem {
         continue;
       }
 
-      // Apply acceleration
+      // Friction
+      if (typeof rigidBody.friction !== "undefined") {
+        rigidBody.applyForce(rigidBody.friction.mul(dt));
+      }
+
+      // Gravity
+      if (typeof rigidBody.gravity !== "undefined") {
+        rigidBody.velocity.x += rigidBody.gravity.x * dt;
+        rigidBody.velocity.y += rigidBody.gravity.y * dt;
+      }
+
+      // Acceleration
       const changeInVelocity = rigidBody.acceleration.clone();
       changeInVelocity.div(rigidBody.mass).mul(dt);
       rigidBody.velocity.add(changeInVelocity);
+      
+      // Reset acceleration each frame after it's been applied
+      rigidBody.acceleration.set(0, 0);
 
-      // Apply friction
-      if (typeof rigidBody.friction !== "undefined") {
-        const frictionDrag = rigidBody.mass * dt;
-        rigidBody.velocity.x -= frictionDrag;
-        rigidBody.velocity.y -= frictionDrag;
-      }
+      // Position
+      rigidBody.transform.position.x += rigidBody.velocity.x * dt;
+      rigidBody.transform.position.y += rigidBody.velocity.y * dt;
 
-      if (typeof rigidBody.gravity !== "undefined") {
-        rigidBody.velocity.x = rigidBody.gravity.x * dt;
-        rigidBody.velocity.y = rigidBody.gravity.y * dt;
-      }
-
-      rigidBody.position.x += rigidBody.velocity.x * dt;
-      rigidBody.position.y += rigidBody.velocity.y * dt;
-
+      // Update colliders
       for (const collider of rigidBody.colliders) {
         if (collider.responseType === CollisionResponseType.None) {
           continue;
@@ -81,6 +85,7 @@ export class PhysicsSystem extends BaseSystem {
       }
     }
 
+    // Detect/resolve collisions
     this.detector.detect(collidables);
     this.resolver.resolve(this.detector);
   }
