@@ -2,6 +2,9 @@ import { RigidBody } from "../../components/2d/rigid-body.js";
 import { Vector2 } from "../../maths/vector2.js";
 import { BaseIntegrator } from "./base-integrator.js";
 
+/** 
+ * Semi-implicit Euler.
+ * @see https://en.wikipedia.org/wiki/Semi-implicit_Euler_method */
 export class EulerIntegrator extends BaseIntegrator {
   integrate(rigidBody: RigidBody, dt: number): void {
     const totalForce = this.vectorPool.acquire(0, 0);
