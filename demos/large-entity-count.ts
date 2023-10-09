@@ -8,6 +8,11 @@ export class LargeEntityCountTest extends KrystalGameEngine {
   constructor() {
     super("canvas1", 500, 500);
     this.context.events.on(GameEvents.LOOP_STARTED, this.update.bind(this));
+    // const integrator = this.context.world.integrator;
+    // this.context.events.on(GameEvents.VIEWPORT_COLLISION, (event: ViewportCollisionEvent) => {
+    //   integrator.bounceOffViewportBoundaries(event);
+    //   console.log(event);
+    // });
     this.start();
   }
 

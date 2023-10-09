@@ -1,7 +1,6 @@
 import { Enum } from "../utils/enum.js";
 
 export enum SideOfCollision {
-  NONE = 0,
   LEFT = 0x1,
   RIGHT = 0x2,
   TOP = 0x4,

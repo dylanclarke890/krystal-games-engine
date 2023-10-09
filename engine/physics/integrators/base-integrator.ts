@@ -1,4 +1,5 @@
 import { RigidBody } from "../../components/rigid-body.js";
+import { GameEvents } from "../../constants/enums.js";
 import { GameContext } from "../../core/context.js";
 import { Vector2 } from "../../maths/vector2.js";
 import { IObjectPool } from "../../types/common-interfaces.js";
@@ -12,11 +13,14 @@ export abstract class BaseIntegrator {
   epsilon = 1e-5;
   context: GameContext;
   frameRate: number;
+  adjustmentBuffer: number;
 
   constructor(context: GameContext, frameRate: number) {
     this.context = context;
     this.vectorPool = context.objectPools.create("vector2", Vector2, (vec, x, y) => vec.set(x ?? 0, y ?? 0));
+    this.context.events.on(GameEvents.VIEWPORT_COLLISION, this.bounceOffViewportBoundaries.bind(this));
     this.frameRate = frameRate;
+    this.adjustmentBuffer = context.config.getInt("collisionAdjustmentBuffer") ?? 0.1;
     this.pooledVectors = [];
   }
 

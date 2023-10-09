@@ -1,7 +1,6 @@
 import { RigidBody } from "../../components/rigid-body.js";
 import { VerletData } from "../../components/verlet-data.js";
 import { SideOfCollision } from "../../constants/enums.js";
-import { COLLISION_ADJUSTMENT_BUFFER } from "../../constants/global-constants.js";
 import { ViewportCollisionEvent } from "../../types/common-types.js";
 import { BaseIntegrator } from "./base-integrator.js";
 
@@ -45,23 +44,27 @@ export class VerletIntegrator extends BaseIntegrator {
     }
 
     if (sides.has(SideOfCollision.LEFT)) {
-      const overlapXLeft = collider.size.x / 2 + COLLISION_ADJUSTMENT_BUFFER - rigidBody.transform.position.x;
+      const overlapXLeft = collider.size.x / 2 + this.adjustmentBuffer - rigidBody.transform.position.x;
       rigidBody.transform.position.x += overlapXLeft;
       verletData.prevPosition.x += overlapXLeft;
-    } else if (sides.has(SideOfCollision.RIGHT)) {
+    }
+
+    if (sides.has(SideOfCollision.RIGHT)) {
       const overlapXRight =
-        rigidBody.transform.position.x + collider.size.x / 2 - (viewport.width - COLLISION_ADJUSTMENT_BUFFER);
+        rigidBody.transform.position.x + collider.size.x / 2 - (viewport.width - this.adjustmentBuffer);
       rigidBody.transform.position.x -= overlapXRight;
       verletData.prevPosition.x -= overlapXRight;
     }
 
     if (sides.has(SideOfCollision.TOP)) {
-      const overlapYTop = collider.size.y / 2 + COLLISION_ADJUSTMENT_BUFFER - rigidBody.transform.position.y;
+      const overlapYTop = collider.size.y / 2 + this.adjustmentBuffer - rigidBody.transform.position.y;
       rigidBody.transform.position.y += overlapYTop;
       verletData.prevPosition.y += overlapYTop;
-    } else if (sides.has(SideOfCollision.BOTTOM)) {
+    }
+
+    if (sides.has(SideOfCollision.BOTTOM)) {
       const overlapYBottom =
-        rigidBody.transform.position.y + collider.size.y / 2 - (viewport.height - COLLISION_ADJUSTMENT_BUFFER);
+        rigidBody.transform.position.y + collider.size.y / 2 - (viewport.height - this.adjustmentBuffer);
       rigidBody.transform.position.y -= overlapYBottom;
       verletData.prevPosition.y -= overlapYBottom;
     }

@@ -1,16 +1,20 @@
 import { Collider, RigidBody } from "../../../components/index.js";
-import { GameEvents, SideOfCollision } from "../../../constants/enums.js";
+import { GameEvents, ShapeType, SideOfCollision } from "../../../constants/enums.js";
 import { Vector2 } from "../../../maths/vector2.js";
-import { Collidable } from "../../../types/common-types.js";
+import { Collidable, ViewportCollisionEvent } from "../../../types/common-types.js";
 import { GameContext } from "../../../core/context.js";
+import { IObjectPool } from "../../../types/common-interfaces.js";
+import { BitwiseFlags } from "../../../utils/bitwise-flags.js";
 
 type ResolverData = { entityCollisions: Set<Pair<Collidable>>; viewportCollisions: Set<Collidable> };
 
 export class CollisionResolver {
   context: GameContext;
+  bitwiseFlagPool: IObjectPool<BitwiseFlags<SideOfCollision>>;
 
   constructor(context: GameContext) {
     this.context = context;
+    this.bitwiseFlagPool = context.objectPools.create("bitwiseFlags", BitwiseFlags, (flags) => flags.clear());
   }
 
   resolve(data: ResolverData) {
@@ -65,33 +69,48 @@ export class CollisionResolver {
 
   #resolveViewportCollisions(viewportCollisions: Set<Collidable>): void {
     viewportCollisions.forEach(([id, rigidBody, collider]) => {
-      const sides = this.#findSidesOfViewportCollision(rigidBody.transform.position, collider.size);
+      const sides = new BitwiseFlags<SideOfCollision>();
+      this.#findSidesOfViewportCollision(rigidBody.transform.position, collider, sides);
 
-      if (sides === SideOfCollision.NONE) {
+      if (!sides.isSet()) {
         return;
       }
 
-      this.context.events.trigger(GameEvents.VIEWPORT_COLLISION, { id, rigidBody, collider, side: sides });
+      const event: ViewportCollisionEvent = { id, rigidBody, collider, sides };
+      this.context.events.trigger(GameEvents.VIEWPORT_COLLISION, event);
     });
   }
 
-  #findSidesOfViewportCollision(position: Vector2, size: Vector2): SideOfCollision {
-    if (position.x < 0) {
-      return SideOfCollision.LEFT;
-    }
+  #findSidesOfViewportCollision(position: Vector2, collider: Collider, flags: BitwiseFlags<SideOfCollision>): void {
+    switch (collider.shape) {
+      case ShapeType.Circle: {
+        if (position.x - collider.size.x / 2 < 0) {
+          flags.add(SideOfCollision.LEFT);
+        } else if (position.x + collider.size.x / 2 > this.context.viewport.width) {
+          flags.add(SideOfCollision.RIGHT);
+        }
 
-    if (position.x + size.x > this.context.viewport.width) {
-      return SideOfCollision.RIGHT;
-    }
+        if (position.y - collider.size.y / 2 <0) {
+          flags.add(SideOfCollision.TOP);
+        } else if (position.y + collider.size.y / 2 > this.context.viewport.height) {
+          flags.add(SideOfCollision.BOTTOM);
+        }
+        break;
+      }
+      case ShapeType.Rectangle: {
+        if (position.x < 0) {
+          flags.add(SideOfCollision.LEFT);
+        } else if (position.x + collider.size.x > this.context.viewport.width) {
+          flags.add(SideOfCollision.RIGHT);
+        }
 
-    if (position.y < 0) {
-      return SideOfCollision.TOP;
+        if (position.y < 0) {
+          flags.add(SideOfCollision.TOP);
+        } else if (position.y + collider.size.y > this.context.viewport.height) {
+          flags.add(SideOfCollision.BOTTOM);
+        }
+        break;
+      }
     }
-
-    if (position.y + size.y > this.context.viewport.height) {
-      return SideOfCollision.BOTTOM;
-    }
-
-    return SideOfCollision.NONE;
   }
 }
