@@ -1,4 +1,5 @@
 import { RigidBody } from "../../components/2d/rigid-body.js";
+import { Vector2 } from "../../maths/vector2.js";
 import { BaseIntegrator } from "./base-integrator.js";
 
 export class EulerIntegrator extends BaseIntegrator {
@@ -12,7 +13,7 @@ export class EulerIntegrator extends BaseIntegrator {
     this.pooledVectors.push(gravitationalForce);
 
     // Friction (applied only if there's some velocity)
-    if (rigidBody.velocity.magnitude() > this.epsilon) {
+    if (rigidBody.velocity.magnitude() > 0) {
       const normalForceMagnitude = rigidBody.mass * rigidBody.gravity.y;
       const frictionMagnitude = rigidBody.friction * normalForceMagnitude;
 
@@ -33,6 +34,9 @@ export class EulerIntegrator extends BaseIntegrator {
     // Update velocity
     const acceleration = this.vectorPool.acquire().assign(rigidBody.acceleration).mulScalar(dt);
     rigidBody.velocity.add(acceleration);
+    if (rigidBody.velocity.magnitude() <= this.epsilon) {
+      rigidBody.velocity.assign(Vector2.zero);
+    }
     this.pooledVectors.push(acceleration);
 
     // Update position
