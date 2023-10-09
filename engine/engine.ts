@@ -10,10 +10,12 @@ import { GameLoop } from "./time/game-loop.js";
 import { IConfigManager, IEntityManager, IEventManager, ILoop, IObjectPoolManager } from "./types/common-interfaces.js";
 import { ObjectPoolManager } from "./managers/object-pool-manager.js";
 import { ConfigManager } from "./managers/config-manager.js";
-import { EulerIntegrator } from "./physics/integrators/euler-integrator.js";
+import { SemiImplicitEulerIntegrator } from "./physics/integrators/euler-integrator.js";
+import { World } from "./physics/world.js";
 
 export class KrystalGameEngine {
   viewport: Viewport;
+  world: World;
   loop: ILoop;
 
   eventManager!: IEventManager;
@@ -30,6 +32,7 @@ export class KrystalGameEngine {
    */
   constructor(canvasId: Nullable<string>, width: number, height: number) {
     this.viewport = new Viewport(width, height, canvasId);
+    this.world = new World();
     this.#setupManagers();
     this.#setupSystems();
     this.loop = new GameLoop(this.eventManager, this.configManager.getInt("frameRate") ?? 60);
@@ -55,10 +58,12 @@ export class KrystalGameEngine {
     });
     const detector = new CollisionDetector(entityManager, this.viewport, quadtree);
     const resolver = new CollisionResolver(entityManager, eventManager, this.viewport);
-    const integrator = new EulerIntegrator(this.objectPoolManager);
-    
+    const integrator = new SemiImplicitEulerIntegrator(this.objectPoolManager);
+
     systemManager.addSystem(new InputSystem(entityManager, eventManager, this.inputManager));
-    systemManager.addSystem(new PhysicsSystem(entityManager, eventManager, quadtree, detector, resolver, integrator));
+    systemManager.addSystem(
+      new PhysicsSystem(entityManager, eventManager, quadtree, detector, resolver, integrator, this.world)
+    );
     systemManager.addSystem(new RenderSystem(entityManager, eventManager, this.viewport));
   }
 

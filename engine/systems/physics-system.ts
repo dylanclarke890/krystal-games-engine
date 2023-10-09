@@ -7,6 +7,7 @@ import { Collidable } from "../types/common-types.js";
 import { RigidBody } from "../components/2d/rigid-body.js";
 import { CollisionResponseType } from "../constants/enums.js";
 import { BaseIntegrator } from "../physics/integrators/base-integrator.js";
+import { World } from "../physics/world.js";
 
 export class PhysicsSystem extends BaseSystem {
   priority: number = 5;
@@ -17,6 +18,7 @@ export class PhysicsSystem extends BaseSystem {
   detector: CollisionDetector;
   resolver: CollisionResolver;
   integrator: BaseIntegrator;
+  world: World;
 
   constructor(
     entityManager: IEntityManager,
@@ -24,7 +26,8 @@ export class PhysicsSystem extends BaseSystem {
     quadtree: IQuadtree,
     detector: CollisionDetector,
     resolver: CollisionResolver,
-    integrator: BaseIntegrator
+    integrator: BaseIntegrator,
+    world: World
   ) {
     super(entityManager, eventManager);
     Assert.instanceOf("detector", detector, CollisionDetector);
@@ -34,6 +37,7 @@ export class PhysicsSystem extends BaseSystem {
     this.detector = detector;
     this.resolver = resolver;
     this.integrator = integrator;
+    this.world = world;
   }
 
   update(dt: number, entities: Set<number>) {
@@ -46,6 +50,8 @@ export class PhysicsSystem extends BaseSystem {
       if (typeof rigidBody === "undefined" || rigidBody.isStatic) {
         continue;
       }
+
+      rigidBody.applyForce(this.world.gravity.clone().mulScalar(rigidBody.mass));
 
       this.integrator.integrate(rigidBody, dt);
 
@@ -61,6 +67,15 @@ export class PhysicsSystem extends BaseSystem {
 
     this.detector.detect(collidables);
     this.resolver.resolve(this.detector);
+
+    // Reset forces back to zero
+    for (const id of entities) {
+      const rigidBody = em.getComponent<RigidBody>(id, "rigidBody");
+      if (typeof rigidBody === "undefined" || rigidBody.isStatic) {
+        continue;
+      }
+      rigidBody.force.set(0, 0);
+    }
   }
 
   isInterestedInComponent(component: BaseComponent): boolean {

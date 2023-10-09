@@ -8,11 +8,10 @@ export class RigidBody extends BaseComponent {
 
   /** Indicates whether this rigid body should move or not. */
   isStatic: boolean;
-  acceleration: Vector2;
+  force: Vector2;
   bounciness: number;
   colliders: Collider[];
   friction: number;
-  gravity: Vector2;
   mass: number;
   transform: Transform;
   velocity: Vector2;
@@ -20,7 +19,7 @@ export class RigidBody extends BaseComponent {
   constructor(
     transform: Transform,
     velocity = new Vector2(0, 0),
-    acceleration = new Vector2(0, 0),
+    force = new Vector2(0, 0),
     mass = 1,
     bounciness = 1,
     isStatic = false
@@ -28,10 +27,9 @@ export class RigidBody extends BaseComponent {
     super();
     this.transform = transform;
     this.velocity = velocity;
-    this.acceleration = acceleration;
+    this.force = force;
     this.mass = mass;
     this.bounciness = bounciness;
-    this.gravity = Vector2.zero;
     this.friction = 0;
     this.isStatic = isStatic;
     this.colliders = [];
@@ -41,7 +39,7 @@ export class RigidBody extends BaseComponent {
     if (!this.isStatic) {
       const forceCopy = force.clone();
       forceCopy.divScalar(this.mass);
-      this.acceleration.add(forceCopy);
+      this.force.add(forceCopy);
     }
   }
 

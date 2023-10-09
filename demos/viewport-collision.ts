@@ -29,7 +29,6 @@ export class ViewportCollisionTest extends KrystalGameEngine {
 
     const rigidBody = new RigidBody(transform);
     rigidBody.velocity = new Vector2(5, 10);
-    rigidBody.gravity = new Vector2(0, 9.81);
     rigidBody.colliders.push(new CircleCollider(3));
 
     em.addComponent(newEntity, transform);

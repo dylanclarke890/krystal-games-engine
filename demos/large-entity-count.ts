@@ -25,8 +25,7 @@ export class LargeEntityCountTest extends KrystalGameEngine {
       transform.position = new Vector2(50, 100);
 
       const rigidBody = new RigidBody(transform);
-      rigidBody.velocity = new Vector2(5, 10);
-      rigidBody.gravity = new Vector2(0, 9.81);
+      rigidBody.velocity = new Vector2(10, 0);
       rigidBody.colliders.push(new CircleCollider(3));
 
       em.addComponent(newEntity, transform);
