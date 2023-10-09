@@ -72,17 +72,17 @@ export class CollisionResolver {
 
   #resolveViewportCollisions(viewportCollisions: Set<Collidable>): void {
     viewportCollisions.forEach(([id, rigidBody, collider]) => {
-      const side = this.#findSideOfViewportCollision(rigidBody.transform.position, collider.size);
+      const sides = this.#findSidesOfViewportCollision(rigidBody.transform.position, collider.size);
 
-      if (side === SideOfCollision.None) {
+      if (sides === SideOfCollision.None) {
         return;
       }
 
-      this.eventManager.trigger(GameEvents.VIEWPORT_COLLISION, { id, rigidBody, collider, side });
+      this.eventManager.trigger(GameEvents.VIEWPORT_COLLISION, { id, rigidBody, collider, side: sides });
     });
   }
 
-  #findSideOfViewportCollision(position: Vector2, size: Vector2): SideOfCollision {
+  #findSidesOfViewportCollision(position: Vector2, size: Vector2): SideOfCollision {
     if (position.x < 0) {
       return SideOfCollision.Left;
     }

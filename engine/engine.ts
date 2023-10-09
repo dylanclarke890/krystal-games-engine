@@ -12,6 +12,7 @@ import { ObjectPoolManager } from "./managers/object-pool-manager.js";
 import { ConfigManager } from "./managers/config-manager.js";
 import { World } from "./physics/world.js";
 import { VerletIntegrator } from "./physics/integrators/verlet-integrator.js";
+import { SemiImplicitEulerIntegrator } from "./physics/integrators/euler-integrator.js";
 
 export class KrystalGameEngine {
   viewport: Viewport;
@@ -59,7 +60,13 @@ export class KrystalGameEngine {
     });
     const detector = new CollisionDetector(entityManager, this.viewport, quadtree);
     const resolver = new CollisionResolver(entityManager, eventManager, this.viewport);
-    const integrator = new VerletIntegrator(entityManager, this.objectPoolManager, this.viewport, this.frameRate);
+    const integrator = new SemiImplicitEulerIntegrator(
+      entityManager,
+      this.objectPoolManager,
+      this.viewport,
+      this.frameRate
+    );
+    new VerletIntegrator(entityManager, this.objectPoolManager, this.viewport, this.frameRate);
     this.world = new World(integrator);
 
     systemManager.addSystem(new InputSystem(entityManager, eventManager, this.inputManager));

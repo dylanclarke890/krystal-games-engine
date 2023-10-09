@@ -43,7 +43,7 @@ export function inelastic2D(aVel: Vector2, bVel: Vector2, aMass: ScalarValue, bM
 }
 
 export function bounceOffViewportBoundaries(event: ViewportCollisionEvent, viewport: Viewport) {
-  const { collider, rigidBody, side } = event;
+  const { collider, rigidBody, sides: side } = event;
 
   switch (side) {
     case SideOfCollision.Left:

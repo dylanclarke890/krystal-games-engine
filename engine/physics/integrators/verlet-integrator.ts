@@ -37,38 +37,32 @@ export class VerletIntegrator extends BaseIntegrator {
   }
 
   bounceOffViewportBoundaries(event: ViewportCollisionEvent): void {
-    const { id, side, rigidBody, collider } = event;
+    const { id, sides, rigidBody, collider } = event;
     const verletData = this.entityManager.getComponent<VerletData>(id, "verletData");
     if (typeof verletData === "undefined") {
       return;
     }
 
-    switch (side) {
-      case SideOfCollision.Left:
-        const overlapXLeft = collider.size.x / 2 + COLLISION_ADJUSTMENT_BUFFER - rigidBody.transform.position.x;
-        rigidBody.transform.position.x += overlapXLeft;
-        verletData.prevPosition.x += overlapXLeft;
-        break;
+    if (sides.has(SideOfCollision.LEFT)) {
+      const overlapXLeft = collider.size.x / 2 + COLLISION_ADJUSTMENT_BUFFER - rigidBody.transform.position.x;
+      rigidBody.transform.position.x += overlapXLeft;
+      verletData.prevPosition.x += overlapXLeft;
+    } else if (sides.has(SideOfCollision.RIGHT)) {
+      const overlapXRight =
+        rigidBody.transform.position.x + collider.size.x / 2 - (this.viewport.width - COLLISION_ADJUSTMENT_BUFFER);
+      rigidBody.transform.position.x -= overlapXRight;
+      verletData.prevPosition.x -= overlapXRight;
+    }
 
-      case SideOfCollision.Right:
-        const overlapXRight =
-          rigidBody.transform.position.x + collider.size.x / 2 - (this.viewport.width - COLLISION_ADJUSTMENT_BUFFER);
-        rigidBody.transform.position.x -= overlapXRight;
-        verletData.prevPosition.x -= overlapXRight;
-        break;
-
-      case SideOfCollision.Top:
-        const overlapYTop = collider.size.y / 2 + COLLISION_ADJUSTMENT_BUFFER - rigidBody.transform.position.y;
-        rigidBody.transform.position.y += overlapYTop;
-        verletData.prevPosition.y += overlapYTop;
-        break;
-
-      case SideOfCollision.Bottom:
-        const overlapYBottom =
-          rigidBody.transform.position.y + collider.size.y / 2 - (this.viewport.height - COLLISION_ADJUSTMENT_BUFFER);
-        rigidBody.transform.position.y -= overlapYBottom;
-        verletData.prevPosition.y -= overlapYBottom;
-        break;
+    if (sides.has(SideOfCollision.TOP)) {
+      const overlapYTop = collider.size.y / 2 + COLLISION_ADJUSTMENT_BUFFER - rigidBody.transform.position.y;
+      rigidBody.transform.position.y += overlapYTop;
+      verletData.prevPosition.y += overlapYTop;
+    } else if (sides.has(SideOfCollision.BOTTOM)) {
+      const overlapYBottom =
+        rigidBody.transform.position.y + collider.size.y / 2 - (this.viewport.height - COLLISION_ADJUSTMENT_BUFFER);
+      rigidBody.transform.position.y -= overlapYBottom;
+      verletData.prevPosition.y -= overlapYBottom;
     }
   }
 }

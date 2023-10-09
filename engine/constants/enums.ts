@@ -1,15 +1,11 @@
 import { Enum } from "../utils/enum.js";
 
-export class SideOfCollision extends Enum {
-  static None = new SideOfCollision();
-  static Left = new SideOfCollision();
-  static Right = new SideOfCollision();
-  static Top = new SideOfCollision();
-  static Bottom = new SideOfCollision();
-
-  static {
-    this.freeze();
-  }
+export enum SideOfCollision {
+  NONE = 0,
+  LEFT = 0x1,
+  RIGHT = 0x2,
+  TOP = 0x4,
+  BOTTOM = 0x8,
 }
 
 export class GameEvents extends Enum {

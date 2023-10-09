@@ -27,27 +27,22 @@ export class SemiImplicitEulerIntegrator extends BaseIntegrator {
   }
 
   bounceOffViewportBoundaries(event: ViewportCollisionEvent) {
-    const { collider, rigidBody, side } = event;
+    const { collider, rigidBody, sides } = event;
 
-    switch (side) {
-      case SideOfCollision.Left:
-        rigidBody.transform.position.x = collider.size.x / 2 + COLLISION_ADJUSTMENT_BUFFER;
-        rigidBody.velocity.x *= -rigidBody.bounciness;
-        break;
-      case SideOfCollision.Right:
-        rigidBody.transform.position.x = this.viewport.width - collider.size.x / 2 - COLLISION_ADJUSTMENT_BUFFER;
-        rigidBody.velocity.x *= -rigidBody.bounciness;
-        break;
-      case SideOfCollision.Top:
-        rigidBody.transform.position.y = collider.size.y / 2 + COLLISION_ADJUSTMENT_BUFFER;
-        rigidBody.velocity.y *= -rigidBody.bounciness;
-        break;
-      case SideOfCollision.Bottom:
-        rigidBody.transform.position.y = this.viewport.height - collider.size.y / 2 - COLLISION_ADJUSTMENT_BUFFER;
-        rigidBody.velocity.y *= -rigidBody.bounciness;
-        break;
-      default:
-        return;
+    if (sides.has(SideOfCollision.LEFT)) {
+      rigidBody.transform.position.x = collider.size.x / 2 + COLLISION_ADJUSTMENT_BUFFER;
+      rigidBody.velocity.x *= -rigidBody.bounciness;
+    } else if (sides.has(SideOfCollision.RIGHT)) {
+      rigidBody.transform.position.x = this.viewport.width - collider.size.x / 2 - COLLISION_ADJUSTMENT_BUFFER;
+      rigidBody.velocity.x *= -rigidBody.bounciness;
+    }
+
+    if (sides.has(SideOfCollision.TOP)) {
+      rigidBody.transform.position.y = collider.size.y / 2 + COLLISION_ADJUSTMENT_BUFFER;
+      rigidBody.velocity.y *= -rigidBody.bounciness;
+    } else if (sides.has(SideOfCollision.BOTTOM)) {
+      rigidBody.transform.position.y = this.viewport.height - collider.size.y / 2 - COLLISION_ADJUSTMENT_BUFFER;
+      rigidBody.velocity.y *= -rigidBody.bounciness;
     }
   }
 }

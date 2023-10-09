@@ -1,40 +1,19 @@
-import { Enum } from "./enum.js";
-
-export class BitwiseFlags<TFlags extends Record<string, number>> {
-  // TODO: do we need this?
-  static create<T extends Record<string, number> | typeof Enum>(obj: T): BitwiseFlags<Record<string, number>> {
-    const instance = new BitwiseFlags<Record<string, number>>();
-
-    if (obj.prototype instanceof Enum) {
-      for (const enumInstance of (obj as typeof Enum).enumValues) {
-        instance.add(enumInstance.valueOf());
-      }
-    } else {
-      for (const key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
-          instance.add(obj[key] as number);
-        }
-      }
-    }
-
-    return instance;
-  }
-
+export class BitwiseFlags<T extends number> {
   flags: number;
 
   constructor() {
     this.flags = 0;
   }
 
-  add<TKey extends keyof TFlags>(flag: TFlags[TKey]) {
+  add(flag: T) {
     this.flags |= flag;
   }
 
-  remove<TKey extends keyof TFlags>(flag: TFlags[TKey]) {
+  remove(flag: T) {
     this.flags &= ~flag;
   }
 
-  has<TKey extends keyof TFlags>(flag: TFlags[TKey]) {
+  has(flag: T) {
     return (this.flags & flag) === flag;
   }
 
