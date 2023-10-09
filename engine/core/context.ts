@@ -1,6 +1,5 @@
 import { Viewport } from "../graphics/viewport.js";
-import { InputManager } from "../managers/input-manager.js";
-import { SystemManager } from "../managers/system-manager.js";
+import { InputManager, SystemManager } from "../managers/index.js";
 import { World } from "../physics/world.js";
 import { IConfigManager, IEntityManager, IEventManager, IObjectPoolManager } from "../types/common-interfaces.js";
 import { GameConfig } from "./config.js";

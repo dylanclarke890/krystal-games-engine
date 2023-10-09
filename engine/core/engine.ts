@@ -1,18 +1,20 @@
-import { config } from "./config.js";
 import { CollisionDetector, CollisionResolver } from "../physics/collision/index.js";
-import { EntityManager } from "../managers/entity-manager.js";
+import {
+  EntityManager,
+  EventManager,
+  InputManager,
+  SystemManager,
+  ObjectPoolManager,
+  ConfigManager,
+} from "../managers/index.js";
 import { Quadtree } from "../physics/collision/broadphase/quadtree.js";
-import { EventManager } from "../managers/event-manager.js";
 import { Viewport } from "../graphics/viewport.js";
-import { InputManager } from "../managers/input-manager.js";
-import { InputSystem, RenderSystem, SystemManager, PhysicsSystem } from "../systems/index.js";
+import { InputSystem, RenderSystem, PhysicsSystem } from "../systems/index.js";
 import { GameLoop } from "../time/game-loop.js";
 import { ILoop } from "../types/common-interfaces.js";
-import { ObjectPoolManager } from "../managers/object-pool-manager.js";
-import { ConfigManager } from "../managers/config-manager.js";
 import { World } from "../physics/world.js";
-import { VerletIntegrator } from "../physics/integrators/verlet-integrator.js";
-import { SemiImplicitEulerIntegrator } from "../physics/integrators/euler-integrator.js";
+import { VerletIntegrator, SemiImplicitEulerIntegrator } from "../physics/integrators/index.js";
+import { config } from "./config.js";
 import { GameContext } from "./context.js";
 
 export class KrystalGameEngine {
