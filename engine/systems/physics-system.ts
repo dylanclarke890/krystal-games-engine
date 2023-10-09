@@ -53,7 +53,7 @@ export class PhysicsSystem extends BaseSystem {
 
       rigidBody.applyForce(this.world.gravity.clone().mulScalar(rigidBody.mass));
 
-      this.integrator.integrate(rigidBody, dt);
+      this.integrator.integrate(id, rigidBody, dt);
 
       for (const collider of rigidBody.colliders) {
         if (collider.responseType === CollisionResponseType.None) {

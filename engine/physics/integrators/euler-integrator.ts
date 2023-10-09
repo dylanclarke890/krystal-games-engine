@@ -6,7 +6,7 @@ import { BaseIntegrator } from "./base-integrator.js";
  * Semi-implicit Euler.
  * @see https://en.wikipedia.org/wiki/Semi-implicit_Euler_method */
 export class SemiImplicitEulerIntegrator extends BaseIntegrator {
-  integrate(rigidBody: RigidBody, dt: number): void {
+  integrate(_entityId: number, rigidBody: RigidBody, dt: number): void {
     // Update velocity
     const acceleration = this.vectorPool.acquire().assign(rigidBody.force).mulScalar(dt);
     rigidBody.velocity.add(acceleration);
