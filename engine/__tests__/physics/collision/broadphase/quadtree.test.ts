@@ -1,9 +1,10 @@
-import { Vector2D } from "../../utils/maths/vector-2d";
-import { Quadtree } from "../../physics/collision/broadphase/quadtree";
-import { RigidBody } from "../../components/2d/rigid-body";
-import { ObjectPoolManager } from "../../managers/object-pool-manager";
-import { RectCollider } from "../../components/2d/collision";
-import { Viewport } from "../../graphics/viewport";
+import { Vector2 } from "../../../../maths/vector2";
+import { Quadtree } from "../../../../physics/collision/broadphase/quadtree";
+import { RigidBody } from "../../../../components/2d/rigid-body";
+import { ObjectPoolManager } from "../../../../managers/object-pool-manager";
+import { RectCollider } from "../../../../components/2d/collision";
+import { Viewport } from "../../../../graphics/viewport";
+import { Transform } from "../../../../components/2d/transform.js";
 
 it("Quadtree handles nodes correctly", () => {
   // Setup
@@ -11,12 +12,16 @@ it("Quadtree handles nodes correctly", () => {
   const viewport = new Viewport(200, 200);
   const quadtree = new Quadtree(viewport, new ObjectPoolManager(), { maxChildren: 1 });
 
-  const aRigidBody = new RigidBody(new Vector2D(10, 10));
-  const aCollider = new RectCollider(new Vector2D(10, 10));
+  const aTransform = new Transform();
+  aTransform.position = new Vector2(10, 10);
+  const aRigidBody = new RigidBody(aTransform);
+  const aCollider = new RectCollider(new Vector2(10, 10));
   aRigidBody.addCollider(aCollider);
 
-  const bRigidBody = new RigidBody(new Vector2D(180, 110));
-  const bCollider = new RectCollider(new Vector2D(10, 10));
+  const bTransform = new Transform();
+  bTransform.position = new Vector2(180, 110);
+  const bRigidBody = new RigidBody(bTransform);
+  const bCollider = new RectCollider(new Vector2(10, 10));
   bRigidBody.addCollider(bCollider);
 
   // Inserts nodes correctly

@@ -1,6 +1,6 @@
-import { elastic1D, inelastic1D, inelastic2D } from "../../physics/collision/resolution/resolution-strategies";
-import { ScalarValue } from "../../utils/maths/scalar-value";
-import { Vector2D } from "../../utils/maths/vector-2d";
+import { elastic1D, inelastic1D, inelastic2D } from "../../../../physics/collision/resolution/resolution-strategies";
+import { ScalarValue } from "../../../../maths/scalar-value";
+import { Vector2 } from "../../../../maths/vector2";
 
 describe("elastic1D", () => {
   it("equal masses", () => {
@@ -60,10 +60,10 @@ describe("inelastic1D", () => {
 
 describe("inelastic2D", () => {
   it("equal masses", () => {
-    const aVel = new Vector2D(20, 30);
+    const aVel = new Vector2(20, 30);
     const aMass = new ScalarValue(14);
 
-    const bVel = new Vector2D(-10, -40);
+    const bVel = new Vector2(-10, -40);
     const bMass = new ScalarValue(14);
 
     inelastic2D(aVel, bVel, aMass, bMass);
@@ -75,10 +75,10 @@ describe("inelastic2D", () => {
   });
 
   it("different masses", () => {
-    const aVel = new Vector2D(40, 20);
+    const aVel = new Vector2(40, 20);
     const aMass = new ScalarValue(8);
 
-    const bVel = new Vector2D(-10, -30);
+    const bVel = new Vector2(-10, -30);
     const bMass = new ScalarValue(12);
 
     inelastic2D(aVel, bVel, aMass, bMass);
