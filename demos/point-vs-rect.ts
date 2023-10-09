@@ -1,5 +1,5 @@
 import { RectCollider, Rectangle, RigidBody, RenderableShape, Transform } from "../engine/components/index.js";
-import { KrystalGameEngine } from "../engine/engine.js";
+import { KrystalGameEngine } from "../engine/core/engine.js";
 import { Vector2 } from "../engine/maths/vector2.js";
 import { GameEvents } from "../engine/constants/enums.js";
 import { isPointCollidingWithRect } from "../engine/physics/collision/index.js";
