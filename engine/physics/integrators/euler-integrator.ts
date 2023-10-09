@@ -1,8 +1,8 @@
-import { RigidBody } from "../../components/2d/rigid-body.js";
+import { RigidBody } from "../../components/rigid-body.js";
 import { Vector2 } from "../../maths/vector2.js";
 import { BaseIntegrator } from "./base-integrator.js";
 
-/** 
+/**
  * Semi-implicit Euler.
  * @see https://en.wikipedia.org/wiki/Semi-implicit_Euler_method */
 export class SemiImplicitEulerIntegrator extends BaseIntegrator {

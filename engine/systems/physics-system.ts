@@ -4,7 +4,7 @@ import { Assert } from "../utils/assert.js";
 import { BaseSystem } from "./base-system.js";
 import { BaseComponent } from "../components/base.js";
 import { Collidable } from "../types/common-types.js";
-import { RigidBody } from "../components/2d/rigid-body.js";
+import { RigidBody } from "../components/rigid-body.js";
 import { CollisionResponseType } from "../constants/enums.js";
 import { BaseIntegrator } from "../physics/integrators/base-integrator.js";
 import { World } from "../physics/world.js";

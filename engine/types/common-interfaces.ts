@@ -1,5 +1,5 @@
-import { Collider } from "../components/2d/collision.js";
-import { RigidBody } from "../components/2d/rigid-body.js";
+import { Collider } from "../components/collision.js";
+import { RigidBody } from "../components/rigid-body.js";
 import { BaseComponent } from "../components/base.js";
 import { PriorityLevel, Quadrant } from "../constants/enums.js";
 import { Vector2 } from "../maths/vector2.js";

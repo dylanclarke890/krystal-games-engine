@@ -1,5 +1,5 @@
-import { BaseComponent } from "../base.js";
-import { Vector2 } from "../../maths/vector2.js";
+import { BaseComponent } from "./base.js";
+import { Vector2 } from "../maths/vector2.js";
 import { Collider } from "./collision.js";
 import { Transform } from "./transform.js";
 

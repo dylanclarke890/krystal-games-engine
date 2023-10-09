@@ -1,4 +1,4 @@
-import { Collider, RigidBody } from "../../../components/2d/index.js";
+import { Collider, RigidBody } from "../../../components/index.js";
 import { GameEvents, SideOfCollision } from "../../../constants/enums.js";
 import { Viewport } from "../../../graphics/viewport.js";
 import { Assert } from "../../../utils/assert.js";

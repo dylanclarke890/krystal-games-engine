@@ -3,7 +3,7 @@ import { Assert } from "../utils/assert.js";
 import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
 import { BaseSystem } from "./base-system.js";
 import { BaseComponent } from "../components/base.js";
-import { Input } from "../components/2d/input.js";
+import { Input } from "../components/input.js";
 
 export class InputSystem extends BaseSystem {
   name: string = "InputSystem";

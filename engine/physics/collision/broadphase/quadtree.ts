@@ -1,5 +1,5 @@
-import { Collider } from "../../../components/2d/collision.js";
-import { RigidBody } from "../../../components/2d/rigid-body.js";
+import { Collider } from "../../../components/collision.js";
+import { RigidBody } from "../../../components/rigid-body.js";
 import { Quadrant } from "../../../constants/enums.js";
 import { Viewport } from "../../../graphics/viewport.js";
 import { IObjectPool, IObjectPoolManager, IQuadtree, IQuadtreeNode } from "../../../types/common-interfaces.js";

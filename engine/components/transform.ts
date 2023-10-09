@@ -1,5 +1,5 @@
-import { Vector2 } from "../../maths/vector2.js";
-import { BaseComponent } from "../base.js";
+import { Vector2 } from "../maths/vector2.js";
+import { BaseComponent } from "./base.js";
 
 export class Transform extends BaseComponent {
   type: string = "transform";

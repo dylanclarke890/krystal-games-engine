@@ -1,4 +1,4 @@
-import { BaseComponent } from "../base.js";
+import { BaseComponent } from "./base.js";
 import { Animation, Shape, Sprite, Transform } from "./index.js";
 import {} from "./transform.js";
 

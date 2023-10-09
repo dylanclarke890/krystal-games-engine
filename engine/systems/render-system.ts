@@ -1,11 +1,11 @@
-import { Sprite, Shape } from "../components/2d/index.js";
+import { Sprite, Shape } from "../components/index.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Assert } from "../utils/assert.js";
 import { InvalidOperationError } from "../types/errors.js";
 import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
 import { BaseSystem } from "./base-system.js";
 import { BaseComponent } from "../components/base.js";
-import { Renderable } from "../components/2d/renderable.js";
+import { Renderable } from "../components/renderable.js";
 import { ShapeType } from "../constants/enums.js";
 import { Vector2 } from "../maths/vector2.js";
 

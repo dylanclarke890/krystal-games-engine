@@ -1,4 +1,4 @@
-import { BaseComponent } from "../base.js";
+import { BaseComponent } from "./base.js";
 
 export class Sprite extends BaseComponent {
   type: string = "sprite";

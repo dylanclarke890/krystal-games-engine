@@ -1,5 +1,5 @@
-import { InputBindings } from "../../types/common-types.js";
-import { BaseComponent } from "../base.js";
+import { InputBindings } from "../types/common-types.js";
+import { BaseComponent } from "./base.js";
 
 export class Input extends BaseComponent {
   type: string = "Input";

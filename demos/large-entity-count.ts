@@ -1,4 +1,4 @@
-import { Circle, CircleCollider, RenderableShape, RigidBody, Transform } from "../engine/components/2d/index.js";
+import { Circle, CircleCollider, RenderableShape, RigidBody, Transform } from "../engine/components/index.js";
 import { GameEvents } from "../engine/constants/enums.js";
 import { KrystalGameEngine } from "../engine/engine.js";
 import { resolveViewportBounce } from "../engine/physics/collision/index.js";

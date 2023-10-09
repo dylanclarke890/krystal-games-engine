@@ -3,8 +3,8 @@ import { Assert } from "../../../utils/assert.js";
 import { areRectsColliding } from "./detection-strategies.js";
 import { IEntityManager, IQuadtree } from "../../../types/common-interfaces.js";
 import { Collidable } from "../../../types/common-types.js";
-import { RigidBody } from "../../../components/2d/rigid-body.js";
-import { Collider } from "../../../components/2d/collision.js";
+import { RigidBody } from "../../../components/rigid-body.js";
+import { Collider } from "../../../components/collision.js";
 import { ShapeType } from "../../../constants/enums.js";
 import { InvalidOperationError } from "../../../types/errors.js";
 
