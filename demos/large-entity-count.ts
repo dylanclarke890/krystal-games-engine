@@ -1,7 +1,7 @@
 import { Circle, CircleCollider, RenderableShape, RigidBody, Transform } from "../engine/components/index.js";
 import { GameEvents } from "../engine/constants/enums.js";
 import { KrystalGameEngine } from "../engine/engine.js";
-import { resolveViewportBounce } from "../engine/physics/collision/index.js";
+import { bounceOffViewportBoundaries } from "../engine/physics/collision/index.js";
 import { PhysicsSystem } from "../engine/systems/physics-system.js";
 import { ViewportCollisionEvent } from "../engine/types/common-types.js";
 import { Vector2 } from "../engine/maths/vector2.js";
@@ -11,7 +11,7 @@ export class LargeEntityCountTest extends KrystalGameEngine {
     super("canvas1", 500, 500);
     this.eventManager.on(GameEvents.LOOP_STARTED, this.update.bind(this));
     this.eventManager.on(GameEvents.VIEWPORT_COLLISION, (event: ViewportCollisionEvent) => {
-      resolveViewportBounce(event, this.viewport);
+      bounceOffViewportBoundaries(event, this.viewport);
     });
     this.start();
   }

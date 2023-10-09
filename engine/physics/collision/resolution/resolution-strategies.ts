@@ -42,7 +42,7 @@ export function inelastic2D(aVel: Vector2, bVel: Vector2, aMass: ScalarValue, bM
   aVel.assign(finalVel);
 }
 
-export function resolveViewportBounce(event: ViewportCollisionEvent, viewport: Viewport) {
+export function bounceOffViewportBoundaries(event: ViewportCollisionEvent, viewport: Viewport) {
   const { collider, rigidBody, side } = event;
 
   switch (side) {

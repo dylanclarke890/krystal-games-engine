@@ -10,13 +10,14 @@ import { GameLoop } from "./time/game-loop.js";
 import { IConfigManager, IEntityManager, IEventManager, ILoop, IObjectPoolManager } from "./types/common-interfaces.js";
 import { ObjectPoolManager } from "./managers/object-pool-manager.js";
 import { ConfigManager } from "./managers/config-manager.js";
-import { SemiImplicitEulerIntegrator } from "./physics/integrators/euler-integrator.js";
 import { World } from "./physics/world.js";
+import { VerletIntegrator } from "./physics/integrators/verlet-integrator.js";
 
 export class KrystalGameEngine {
   viewport: Viewport;
-  world: World;
+  world!: World;
   loop: ILoop;
+  frameRate: number;
 
   eventManager!: IEventManager;
   systemManager!: SystemManager;
@@ -32,10 +33,10 @@ export class KrystalGameEngine {
    */
   constructor(canvasId: Nullable<string>, width: number, height: number) {
     this.viewport = new Viewport(width, height, canvasId);
-    this.world = new World();
     this.#setupManagers();
+    this.frameRate = this.configManager.getInt("frameRate") ?? 60;
     this.#setupSystems();
-    this.loop = new GameLoop(this.eventManager, this.configManager.getInt("frameRate") ?? 60);
+    this.loop = new GameLoop(this.eventManager, this.frameRate);
   }
 
   #setupManagers() {
@@ -58,7 +59,8 @@ export class KrystalGameEngine {
     });
     const detector = new CollisionDetector(entityManager, this.viewport, quadtree);
     const resolver = new CollisionResolver(entityManager, eventManager, this.viewport);
-    const integrator = new SemiImplicitEulerIntegrator(this.entityManager, this.objectPoolManager);
+    const integrator = new VerletIntegrator(entityManager, this.objectPoolManager, this.viewport, this.frameRate);
+    this.world = new World(integrator);
 
     systemManager.addSystem(new InputSystem(entityManager, eventManager, this.inputManager));
     systemManager.addSystem(
