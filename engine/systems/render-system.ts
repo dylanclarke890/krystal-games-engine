@@ -1,13 +1,11 @@
 import { Sprite, Shape } from "../components/index.js";
-import { Viewport } from "../graphics/viewport.js";
-import { Assert } from "../utils/assert.js";
 import { InvalidOperationError } from "../types/errors.js";
-import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
 import { BaseSystem } from "./base-system.js";
 import { BaseComponent } from "../components/base.js";
 import { Renderable } from "../components/renderable.js";
 import { ShapeType } from "../constants/enums.js";
 import { Vector2 } from "../maths/vector2.js";
+import { GameContext } from "../core/context.js";
 
 export class RenderSystem extends BaseSystem {
   name = "RenderSystem";
@@ -15,12 +13,8 @@ export class RenderSystem extends BaseSystem {
   requiredComponents: string[] = ["Position"];
   components: string[] = [...this.requiredComponents, "Sprite", "Animation", "Shape"];
 
-  viewport: Viewport;
-
-  constructor(entityManager: IEntityManager, eventManager: IEventManager, viewport: Viewport) {
-    super(entityManager, eventManager);
-    Assert.instanceOf("viewport", viewport, Viewport);
-    this.viewport = viewport;
+  constructor(context: GameContext) {
+    super(context);
   }
 
   isInterestedInComponent(component: BaseComponent): boolean {
@@ -28,15 +22,15 @@ export class RenderSystem extends BaseSystem {
   }
 
   belongsToSystem(entity: number): boolean {
-    const renderable = this.entityManager.getComponent<Renderable>(entity, "renderable");
+    const renderable = this.context.entities.getComponent<Renderable>(entity, "renderable");
     return typeof renderable !== "undefined";
   }
 
   update(dt: number, entities: Set<number>) {
-    this.viewport.clear();
+    this.context.viewport.clear();
 
     for (const id of entities) {
-      const entity = this.entityManager.getComponent<Renderable>(id, "renderable");
+      const entity = this.context.entities.getComponent<Renderable>(id, "renderable");
       if (typeof entity === "undefined") {
         continue;
       }
@@ -74,22 +68,23 @@ export class RenderSystem extends BaseSystem {
   drawSprite(sprite: Sprite, position: Vector2, sourceX: number, sourceY: number): void {
     const { x, y } = position;
     const { width, height, image } = sprite;
-    this.viewport.ctx.drawImage(image, sourceX, sourceY, width, height, x, y, width, height);
+    this.context.viewport.ctx.drawImage(image, sourceX, sourceY, width, height, x, y, width, height);
   }
 
   drawShape(shape: Shape, position: Vector2) {
     const { x, y } = position;
-    this.viewport.ctx.fillStyle = shape.color;
+    const viewport = this.context.viewport;
+    viewport.ctx.fillStyle = shape.color;
 
     switch (shape.shapeType) {
       case ShapeType.Rectangle: {
-        this.viewport.ctx.fillRect(x, y, shape.size?.x || 0, shape.size?.y || 0);
+        viewport.ctx.fillRect(x, y, shape.size?.x || 0, shape.size?.y || 0);
         break;
       }
       case ShapeType.Circle: {
-        this.viewport.ctx.beginPath();
-        this.viewport.ctx.arc(x, y, shape.radius || 0, 0, Math.PI * 2);
-        this.viewport.ctx.fill();
+        viewport.ctx.beginPath();
+        viewport.ctx.arc(x, y, shape.radius || 0, 0, Math.PI * 2);
+        viewport.ctx.fill();
         break;
       }
       default: {

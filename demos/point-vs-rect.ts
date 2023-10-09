@@ -10,15 +10,16 @@ export class PointVsRectTest extends KrystalGameEngine {
   constructor() {
     super("canvas1", 500, 500);
 
-    this.inputManager.enableMouse();
-    this.eventManager.on(GameEvents.LOOP_STARTED, () => this.update());
+    this.context.input.enableMouse();
+    this.context.events.on(GameEvents.LOOP_STARTED, () => this.update());
 
     this.#createRect();
     this.start();
   }
 
   #createRect() {
-    const id = this.entityManager.createEntity();
+    const em = this.context.entities;
+    const id = em.createEntity();
     const size = new Vector2(50, 200);
 
     const transform = new Transform();
@@ -28,17 +29,17 @@ export class PointVsRectTest extends KrystalGameEngine {
     rigidBody.addCollider(new RectCollider(size));
 
     this.rectId = id;
-    this.entityManager.addComponent(id, transform);
-    this.entityManager.addComponent(id, rigidBody);
-    this.entityManager.addComponent(id, new RenderableShape(transform, new Rectangle(size, "purple")));
+    em.addComponent(id, transform);
+    em.addComponent(id, rigidBody);
+    em.addComponent(id, new RenderableShape(transform, new Rectangle(size, "purple")));
   }
 
   update(): void {
-    const rectRigidBody = this.entityManager.getComponent<RigidBody>(this.rectId, "rigidBody");
+    const rectRigidBody = this.context.entities.getComponent<RigidBody>(this.rectId, "rigidBody");
     const rectCollider = rectRigidBody!.colliders[0];
-    const rectShape = this.entityManager.getComponent<RenderableShape>(this.rectId, "renderable");
+    const rectShape = this.context.entities.getComponent<RenderableShape>(this.rectId, "renderable");
 
-    if (isPointCollidingWithRect(this.inputManager.mouse, rectRigidBody!.transform.position, rectCollider!.size)) {
+    if (isPointCollidingWithRect(this.context.input.mouse, rectRigidBody!.transform.position, rectCollider!.size)) {
       rectShape!.shape!.color = "green";
     } else {
       rectShape!.shape!.color = "purple";

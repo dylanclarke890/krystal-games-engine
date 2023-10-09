@@ -1,7 +1,7 @@
 import { RigidBody } from "../../components/rigid-body.js";
-import { Viewport } from "../../graphics/viewport.js";
+import { GameContext } from "../../core/context.js";
 import { Vector2 } from "../../maths/vector2.js";
-import { IEntityManager, IObjectPool, IObjectPoolManager } from "../../types/common-interfaces.js";
+import { IObjectPool } from "../../types/common-interfaces.js";
 import { ViewportCollisionEvent } from "../../types/common-types.js";
 
 export abstract class BaseIntegrator {
@@ -10,19 +10,12 @@ export abstract class BaseIntegrator {
   /** Accumulates vectors used during calculations so that they get released at once. */
   pooledVectors: Vector2[];
   epsilon = 1e-5;
-  entityManager: IEntityManager;
-  viewport: Viewport;
+  context: GameContext;
   frameRate: number;
 
-  constructor(
-    entityManager: IEntityManager,
-    objectPoolManager: IObjectPoolManager,
-    viewport: Viewport,
-    frameRate: number
-  ) {
-    this.entityManager = entityManager;
-    this.vectorPool = objectPoolManager.create("vector2", Vector2, (vec, x, y) => vec.set(x ?? 0, y ?? 0));
-    this.viewport = viewport;
+  constructor(context: GameContext, frameRate: number) {
+    this.context = context;
+    this.vectorPool = context.objectPools.create("vector2", Vector2, (vec, x, y) => vec.set(x ?? 0, y ?? 0));
     this.frameRate = frameRate;
     this.pooledVectors = [];
   }

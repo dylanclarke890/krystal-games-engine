@@ -1,13 +1,12 @@
 import { CollisionDetector, CollisionResolver } from "../physics/collision/index.js";
-import { IEntityManager, IEventManager, IQuadtree } from "../types/common-interfaces.js";
+import { IQuadtree } from "../types/common-interfaces.js";
 import { Assert } from "../utils/assert.js";
 import { BaseSystem } from "./base-system.js";
 import { BaseComponent } from "../components/base.js";
 import { Collidable } from "../types/common-types.js";
 import { RigidBody } from "../components/rigid-body.js";
 import { CollisionResponseType } from "../constants/enums.js";
-import { BaseIntegrator } from "../physics/integrators/base-integrator.js";
-import { World } from "../physics/world.js";
+import { GameContext } from "../core/context.js";
 
 export class PhysicsSystem extends BaseSystem {
   priority: number = 5;
@@ -17,31 +16,20 @@ export class PhysicsSystem extends BaseSystem {
   quadtree: IQuadtree;
   detector: CollisionDetector;
   resolver: CollisionResolver;
-  integrator: BaseIntegrator;
-  world: World;
 
-  constructor(
-    entityManager: IEntityManager,
-    eventManager: IEventManager,
-    quadtree: IQuadtree,
-    detector: CollisionDetector,
-    resolver: CollisionResolver,
-    integrator: BaseIntegrator,
-    world: World
-  ) {
-    super(entityManager, eventManager);
+  constructor(context: GameContext, quadtree: IQuadtree, detector: CollisionDetector, resolver: CollisionResolver) {
+    super(context);
     Assert.instanceOf("detector", detector, CollisionDetector);
     Assert.instanceOf("resolver", resolver, CollisionResolver);
 
     this.quadtree = quadtree;
     this.detector = detector;
     this.resolver = resolver;
-    this.integrator = integrator;
-    this.world = world;
   }
 
   update(dt: number, entities: Set<number>) {
-    const em = this.entityManager;
+    const em = this.context.entities;
+    const world = this.context.world;
     const collidables: Collidable[] = [];
     this.quadtree.clear();
 
@@ -51,9 +39,9 @@ export class PhysicsSystem extends BaseSystem {
         continue;
       }
 
-      rigidBody.applyForce(this.world.gravity.clone().mulScalar(rigidBody.mass));
+      rigidBody.applyForce(world.gravity.clone().mulScalar(rigidBody.mass));
 
-      this.integrator.integrate(id, rigidBody, dt);
+      world.integrator.integrate(id, rigidBody, dt);
 
       for (const collider of rigidBody.colliders) {
         if (collider.responseType === CollisionResponseType.None) {
@@ -83,6 +71,6 @@ export class PhysicsSystem extends BaseSystem {
   }
 
   belongsToSystem(entity: number): boolean {
-    return this.entityManager.hasComponent(entity, "rigidBody");
+    return this.context.entities.hasComponent(entity, "rigidBody");
   }
 }

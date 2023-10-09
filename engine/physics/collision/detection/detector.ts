@@ -1,26 +1,21 @@
-import { Viewport } from "../../../graphics/viewport.js";
-import { Assert } from "../../../utils/assert.js";
 import { areRectsColliding } from "./detection-strategies.js";
-import { IEntityManager, IQuadtree } from "../../../types/common-interfaces.js";
+import { IQuadtree } from "../../../types/common-interfaces.js";
 import { Collidable } from "../../../types/common-types.js";
 import { RigidBody } from "../../../components/rigid-body.js";
 import { Collider } from "../../../components/collision.js";
 import { ShapeType } from "../../../constants/enums.js";
 import { InvalidOperationError } from "../../../types/errors.js";
+import { GameContext } from "../../../core/context.js";
 
 export class CollisionDetector {
-  entityManager: IEntityManager;
-  viewport: Viewport;
+  context: GameContext;
   quadtree: IQuadtree;
   entityCollisions: Set<Pair<Collidable>>;
   viewportCollisions: Set<Collidable>;
   collisionChecks: number;
 
-  constructor(entityManager: IEntityManager, viewport: Viewport, quadtree: IQuadtree) {
-    Assert.instanceOf("viewport", viewport, Viewport);
-
-    this.entityManager = entityManager;
-    this.viewport = viewport;
+  constructor(context: GameContext, quadtree: IQuadtree) {
+    this.context = context;
     this.quadtree = quadtree;
 
     this.entityCollisions = new Set();
@@ -62,17 +57,18 @@ export class CollisionDetector {
   viewportCollisionCheck(rigidBody: RigidBody, collider: Collider): boolean {
     const pos = rigidBody.transform.position;
     const size = collider.size;
+    const viewport = this.context.viewport;
 
     switch (collider.shape) {
       case ShapeType.Circle:
         const rx = collider.size.x / 2;
         const ry = collider.size.y / 2;
-        if (pos.x - rx < 0 || pos.x + rx > this.viewport.width || pos.y - rx < 0 || pos.y + ry > this.viewport.height) {
+        if (pos.x - rx < 0 || pos.x + rx > viewport.width || pos.y - rx < 0 || pos.y + ry > viewport.height) {
           return true;
         }
         break;
       case ShapeType.Rectangle:
-        if (pos.x < 0 || pos.x + size.x > this.viewport.width || pos.y < 0 || pos.y + size.y > this.viewport.height) {
+        if (pos.x < 0 || pos.x + size.x > viewport.width || pos.y < 0 || pos.y + size.y > viewport.height) {
           return true;
         }
         break;

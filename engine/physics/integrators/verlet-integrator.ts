@@ -7,7 +7,7 @@ import { BaseIntegrator } from "./base-integrator.js";
 
 export class VerletIntegrator extends BaseIntegrator {
   integrate(entityId: number, rigidBody: RigidBody, dt: number): void {
-    let verletData = this.entityManager.getComponent<VerletData>(entityId, "verletData");
+    let verletData = this.context.entities.getComponent<VerletData>(entityId, "verletData");
     const position = rigidBody.transform.position;
 
     if (typeof verletData === "undefined") {
@@ -16,7 +16,7 @@ export class VerletIntegrator extends BaseIntegrator {
         .assign(rigidBody.velocity)
         .divScalar(1000 / this.frameRate);
       verletData = new VerletData(position.clone().sub(velocity));
-      this.entityManager.addComponent(entityId, verletData);
+      this.context.entities.addComponent(entityId, verletData);
       this.pooledVectors.push(velocity);
     }
 
@@ -38,7 +38,8 @@ export class VerletIntegrator extends BaseIntegrator {
 
   bounceOffViewportBoundaries(event: ViewportCollisionEvent): void {
     const { id, sides, rigidBody, collider } = event;
-    const verletData = this.entityManager.getComponent<VerletData>(id, "verletData");
+    const viewport = this.context.viewport;
+    const verletData = this.context.entities.getComponent<VerletData>(id, "verletData");
     if (typeof verletData === "undefined") {
       return;
     }
@@ -49,7 +50,7 @@ export class VerletIntegrator extends BaseIntegrator {
       verletData.prevPosition.x += overlapXLeft;
     } else if (sides.has(SideOfCollision.RIGHT)) {
       const overlapXRight =
-        rigidBody.transform.position.x + collider.size.x / 2 - (this.viewport.width - COLLISION_ADJUSTMENT_BUFFER);
+        rigidBody.transform.position.x + collider.size.x / 2 - (viewport.width - COLLISION_ADJUSTMENT_BUFFER);
       rigidBody.transform.position.x -= overlapXRight;
       verletData.prevPosition.x -= overlapXRight;
     }
@@ -60,7 +61,7 @@ export class VerletIntegrator extends BaseIntegrator {
       verletData.prevPosition.y += overlapYTop;
     } else if (sides.has(SideOfCollision.BOTTOM)) {
       const overlapYBottom =
-        rigidBody.transform.position.y + collider.size.y / 2 - (this.viewport.height - COLLISION_ADJUSTMENT_BUFFER);
+        rigidBody.transform.position.y + collider.size.y / 2 - (viewport.height - COLLISION_ADJUSTMENT_BUFFER);
       rigidBody.transform.position.y -= overlapYBottom;
       verletData.prevPosition.y -= overlapYBottom;
     }

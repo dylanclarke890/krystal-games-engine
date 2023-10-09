@@ -1,8 +1,6 @@
 import { Circle, CircleCollider, RenderableShape, RigidBody, Transform } from "../engine/components/index.js";
 import { GameEvents } from "../engine/constants/enums.js";
 import { KrystalGameEngine } from "../engine/core/engine.js";
-import { bounceOffViewportBoundaries } from "../engine/physics/collision/index.js";
-import { ViewportCollisionEvent } from "../engine/types/common-types.js";
 import { Vector2 } from "../engine/maths/vector2.js";
 
 export class ViewportCollisionTest extends KrystalGameEngine {
@@ -10,17 +8,13 @@ export class ViewportCollisionTest extends KrystalGameEngine {
 
   constructor() {
     super("canvas1", 500, 500);
-    this.eventManager.on(GameEvents.LOOP_STARTED, this.update.bind(this));
-    this.eventManager.on(GameEvents.VIEWPORT_COLLISION, (event: ViewportCollisionEvent) => {
-      bounceOffViewportBoundaries(event, this.viewport);
-    });
-
+    this.context.events.on(GameEvents.LOOP_STARTED, this.update.bind(this));
     this.createTestEntity();
     this.start();
   }
 
   createTestEntity() {
-    const em = this.entityManager;
+    const em = this.context.entities;
     const newEntity = em.createEntity();
     this.testEntityId = newEntity;
 
@@ -37,12 +31,12 @@ export class ViewportCollisionTest extends KrystalGameEngine {
   }
 
   update() {
-    const rigidBody = this.entityManager.getComponent<RigidBody>(this.testEntityId, "rigidBody")!;
+    const rigidBody = this.context.entities.getComponent<RigidBody>(this.testEntityId, "rigidBody")!;
     const pos = rigidBody.transform.position;
     const vel = rigidBody.velocity;
 
-    this.viewport.drawText(`position - x: ${pos.x}, y: ${pos.y}`, 10, 20);
-    this.viewport.drawText(`velocity - x: ${vel.x}, y: ${vel.y}`, 10, 40);
+    this.context.viewport.drawText(`position - x: ${pos.x}, y: ${pos.y}`, 10, 20);
+    this.context.viewport.drawText(`velocity - x: ${vel.x}, y: ${vel.y}`, 10, 40);
   }
 }
 

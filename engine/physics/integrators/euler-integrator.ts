@@ -28,12 +28,13 @@ export class SemiImplicitEulerIntegrator extends BaseIntegrator {
 
   bounceOffViewportBoundaries(event: ViewportCollisionEvent) {
     const { collider, rigidBody, sides } = event;
+    const viewport = this.context.viewport;
 
     if (sides.has(SideOfCollision.LEFT)) {
       rigidBody.transform.position.x = collider.size.x / 2 + COLLISION_ADJUSTMENT_BUFFER;
       rigidBody.velocity.x *= -rigidBody.bounciness;
     } else if (sides.has(SideOfCollision.RIGHT)) {
-      rigidBody.transform.position.x = this.viewport.width - collider.size.x / 2 - COLLISION_ADJUSTMENT_BUFFER;
+      rigidBody.transform.position.x = viewport.width - collider.size.x / 2 - COLLISION_ADJUSTMENT_BUFFER;
       rigidBody.velocity.x *= -rigidBody.bounciness;
     }
 
@@ -41,7 +42,7 @@ export class SemiImplicitEulerIntegrator extends BaseIntegrator {
       rigidBody.transform.position.y = collider.size.y / 2 + COLLISION_ADJUSTMENT_BUFFER;
       rigidBody.velocity.y *= -rigidBody.bounciness;
     } else if (sides.has(SideOfCollision.BOTTOM)) {
-      rigidBody.transform.position.y = this.viewport.height - collider.size.y / 2 - COLLISION_ADJUSTMENT_BUFFER;
+      rigidBody.transform.position.y = viewport.height - collider.size.y / 2 - COLLISION_ADJUSTMENT_BUFFER;
       rigidBody.velocity.y *= -rigidBody.bounciness;
     }
   }

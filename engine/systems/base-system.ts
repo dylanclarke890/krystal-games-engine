@@ -1,5 +1,5 @@
 import { BaseComponent } from "../components/base.js";
-import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
+import { GameContext } from "../core/context.js";
 
 export abstract class BaseSystem {
   /** The name of this system.*/
@@ -16,13 +16,11 @@ export abstract class BaseSystem {
   abstract isInterestedInComponent(component: BaseComponent): boolean;
   abstract belongsToSystem(entity: number): boolean;
 
-  entityManager: IEntityManager;
-  eventManager: IEventManager;
+  context: GameContext;
   enabled: boolean;
 
-  constructor(entityManager: IEntityManager, eventManager: IEventManager, enabled?: boolean) {
-    this.entityManager = entityManager;
-    this.eventManager = eventManager;
+  constructor(context: GameContext, enabled?: boolean) {
+    this.context = context;
     this.enabled = enabled ?? true;
   }
 

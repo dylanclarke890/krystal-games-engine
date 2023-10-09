@@ -1,25 +1,25 @@
 import { Collider } from "../../../components/collision.js";
 import { RigidBody } from "../../../components/rigid-body.js";
 import { Quadrant } from "../../../constants/enums.js";
-import { Viewport } from "../../../graphics/viewport.js";
-import { IObjectPool, IObjectPoolManager, IQuadtree, IQuadtreeNode } from "../../../types/common-interfaces.js";
+import { IObjectPool, IQuadtree, IQuadtreeNode } from "../../../types/common-interfaces.js";
 import { Vector2 } from "../../../maths/vector2.js";
+import { GameContext } from "../../../core/context.js";
 
 export class Quadtree implements IQuadtree {
   /** The node representing the entire viewport/bounds. */
   root: IQuadtreeNode;
   size: number;
-  viewport: Viewport;
   nodePool: IObjectPool<IQuadtreeNode, ConstructorParameters<typeof QuadtreeNode>>;
+  context: GameContext;
 
   /**
    * @param maxDepth The maximum number of levels that the quadtree will create. Default is 4.
    * @param maxChildren The maximum number of items per quadrant before subdividing. Default is 4.
    **/
-  constructor(viewport: Viewport, objectPoolManager: IObjectPoolManager, { maxDepth = 4, maxChildren = 4 } = {}) {
+  constructor(context: GameContext, { maxDepth = 4, maxChildren = 4 } = {}) {
     this.size = 0;
-    this.viewport = viewport;
-    this.nodePool = objectPoolManager.create(
+    this.context = context;
+    this.nodePool = context.objectPools.create(
       "quadtreeNodes",
       QuadtreeNode,
       (node, id, pos, size, nodePool, depth, maxDepth, maxChildren) => {
@@ -30,7 +30,7 @@ export class Quadtree implements IQuadtree {
     );
 
     const pos = new Vector2(0, 0);
-    const size = new Vector2(viewport.width, viewport.height);
+    const size = new Vector2(context.viewport.width, context.viewport.height);
     this.root = this.nodePool.acquire(-1, pos, size, this.nodePool, 0, maxDepth, maxChildren);
   }
 
@@ -77,7 +77,7 @@ export class Quadtree implements IQuadtree {
   }
 
   drawBoundaries(color?: string) {
-    this.viewport.ctx.fillStyle = color ?? "white";
+    this.context.viewport.ctx.fillStyle = color ?? "white";
   }
 
   removeById(id: number, node: IQuadtreeNode = this.root): boolean {

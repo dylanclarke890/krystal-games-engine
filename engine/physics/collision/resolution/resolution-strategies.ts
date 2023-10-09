@@ -1,7 +1,3 @@
-import { SideOfCollision } from "../../../constants/enums.js";
-import { COLLISION_ADJUSTMENT_BUFFER } from "../../../constants/global-constants.js";
-import { Viewport } from "../../../graphics/viewport.js";
-import { ViewportCollisionEvent } from "../../../types/common-types.js";
 import { ScalarValue } from "../../../maths/scalar-value.js";
 import { Vector2 } from "../../../maths/vector2.js";
 
@@ -40,29 +36,4 @@ export function inelastic2D(aVel: Vector2, bVel: Vector2, aMass: ScalarValue, bM
 
   bVel.assign(finalVel);
   aVel.assign(finalVel);
-}
-
-export function bounceOffViewportBoundaries(event: ViewportCollisionEvent, viewport: Viewport) {
-  const { collider, rigidBody, sides: side } = event;
-
-  switch (side) {
-    case SideOfCollision.Left:
-      rigidBody.transform.position.x = collider.size.x / 2 + COLLISION_ADJUSTMENT_BUFFER;
-      rigidBody.velocity.x *= -rigidBody.bounciness;
-      break;
-    case SideOfCollision.Right:
-      rigidBody.transform.position.x = viewport.width - collider.size.x / 2 - COLLISION_ADJUSTMENT_BUFFER;
-      rigidBody.velocity.x *= -rigidBody.bounciness;
-      break;
-    case SideOfCollision.Top:
-      rigidBody.transform.position.y = collider.size.y / 2 + COLLISION_ADJUSTMENT_BUFFER;
-      rigidBody.velocity.y *= -rigidBody.bounciness;
-      break;
-    case SideOfCollision.Bottom:
-      rigidBody.transform.position.y = viewport.height - collider.size.y / 2 - COLLISION_ADJUSTMENT_BUFFER;
-      rigidBody.velocity.y *= -rigidBody.bounciness;
-      break;
-    default:
-      return;
-  }
 }

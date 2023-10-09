@@ -9,8 +9,8 @@ export class RectVsRectTest extends KrystalGameEngine {
   staticRectId: number;
   constructor() {
     super("canvas1", 500, 500);
-    this.eventManager.on(GameEvents.LOOP_STARTED, () => this.update());
-    this.inputManager.enableMouse();
+    this.context.events.on(GameEvents.LOOP_STARTED, () => this.update());
+    this.context.input.enableMouse();
 
     this.staticRectId = this.#createRect(new Vector2(250, 150), new Vector2(50, 200), "purple");
     this.mouseRectId = this.#createRect(new Vector2(), new Vector2(50, 150), "orange");
@@ -19,7 +19,8 @@ export class RectVsRectTest extends KrystalGameEngine {
   }
 
   #createRect(position: Vector2, size: Vector2, color: string): number {
-    const id = this.entityManager.createEntity();
+    const em = this.context.entities;
+    const id = em.createEntity();
 
     const transform = new Transform();
     transform.position = position;
@@ -29,21 +30,23 @@ export class RectVsRectTest extends KrystalGameEngine {
 
     const renderable = new RenderableShape(transform, new Rectangle(size, color));
 
-    this.entityManager.addComponent(id, transform);
-    this.entityManager.addComponent(id, rigidBody);
-    this.entityManager.addComponent(id, renderable);
+    em.addComponent(id, transform);
+    em.addComponent(id, rigidBody);
+    em.addComponent(id, renderable);
 
     return id;
   }
 
   update() {
-    const mouseRigidBody = this.entityManager.getComponent<RigidBody>(this.mouseRectId, "rigidBody")!;
-    const mouseRectSize = mouseRigidBody.colliders[0].size;
-    mouseRigidBody.transform.position.assign(this.inputManager.mouse).sub(mouseRectSize.clone().divScalar(2));
+    const em = this.context.entities;
 
-    const staticRectRigidBody = this.entityManager.getComponent<RigidBody>(this.staticRectId, "rigidBody")!;
+    const mouseRigidBody = em.getComponent<RigidBody>(this.mouseRectId, "rigidBody")!;
+    const mouseRectSize = mouseRigidBody.colliders[0].size;
+    mouseRigidBody.transform.position.assign(this.context.input.mouse).sub(mouseRectSize.clone().divScalar(2));
+
+    const staticRectRigidBody = em.getComponent<RigidBody>(this.staticRectId, "rigidBody")!;
     const staticRectSize = staticRectRigidBody.colliders[0].size;
-    const staticRectShape = this.entityManager.getComponent<RenderableShape>(this.staticRectId, "renderable")!;
+    const staticRectShape = em.getComponent<RenderableShape>(this.staticRectId, "renderable")!;
 
     if (
       areRectsColliding(

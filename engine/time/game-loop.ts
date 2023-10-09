@@ -1,21 +1,21 @@
 import { GameEvents } from "../constants/enums.js";
 import { Assert } from "../utils/assert.js";
 import { Timer } from "./timer.js";
-import { IEventManager, ILoop } from "../types/common-interfaces.js";
+import { ILoop } from "../types/common-interfaces.js";
+import { GameContext } from "../core/context.js";
 
 export class GameLoop implements ILoop {
   #lastFrame: number;
   #requestAnimationFrameId: number;
-  eventManager: IEventManager;
+  context: GameContext;
   clock: Timer;
   fpsInterval: number;
   targetFps: number;
   stopped: boolean;
 
-  constructor(eventManager: IEventManager, targetFps: number) {
+  constructor(context: GameContext, targetFps: number) {
     Assert.number("targetFps", targetFps);
-
-    this.eventManager = eventManager;
+    this.context = context;
     this.clock = new Timer();
     this.targetFps = targetFps;
     this.fpsInterval = 1000 / targetFps;
@@ -44,11 +44,11 @@ export class GameLoop implements ILoop {
     }
 
     this.#lastFrame = timestamp - (elapsed % this.fpsInterval);
-    this.eventManager.trigger(GameEvents.LOOP_STARTED, this.clock.tick());
+    this.context.events.trigger(GameEvents.LOOP_STARTED, this.clock.tick());
   }
 
   stop(unloadAssets?: boolean): void {
     this.stopped = true;
-    this.eventManager.trigger(GameEvents.LOOP_STOPPED, !!unloadAssets);
+    this.context.events.trigger(GameEvents.LOOP_STOPPED, !!unloadAssets);
   }
 }

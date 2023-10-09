@@ -1,23 +1,16 @@
 import { Collider, RigidBody } from "../../../components/index.js";
 import { GameEvents, SideOfCollision } from "../../../constants/enums.js";
-import { Viewport } from "../../../graphics/viewport.js";
-import { Assert } from "../../../utils/assert.js";
-import { IEntityManager, IEventManager } from "../../../types/common-interfaces.js";
 import { Vector2 } from "../../../maths/vector2.js";
 import { Collidable } from "../../../types/common-types.js";
+import { GameContext } from "../../../core/context.js";
 
 type ResolverData = { entityCollisions: Set<Pair<Collidable>>; viewportCollisions: Set<Collidable> };
 
 export class CollisionResolver {
-  entityManager: IEntityManager;
-  eventManager: IEventManager;
-  viewport: Viewport;
+  context: GameContext;
 
-  constructor(entityManager: IEntityManager, eventManager: IEventManager, viewport: Viewport) {
-    Assert.instanceOf("viewport", viewport, Viewport);
-    this.entityManager = entityManager;
-    this.eventManager = eventManager;
-    this.viewport = viewport;
+  constructor(context: GameContext) {
+    this.context = context;
   }
 
   resolve(data: ResolverData) {
@@ -32,7 +25,7 @@ export class CollisionResolver {
       }
 
       const side = this.#findSideOfEntityCollision(aRigidBody, aCollider, bRigidBody, bCollider);
-      this.eventManager.trigger(GameEvents.ENTITY_COLLIDED, {
+      this.context.events.trigger(GameEvents.ENTITY_COLLIDED, {
         a: { id: aId, rigidBody: aRigidBody },
         b: { id: bId, rigidBody: bRigidBody },
         side,
@@ -65,40 +58,40 @@ export class CollisionResolver {
     const absDY = Math.abs(dy);
 
     if (absDX > absDY) {
-      return dx > 0 ? SideOfCollision.Right : SideOfCollision.Left;
+      return dx > 0 ? SideOfCollision.RIGHT : SideOfCollision.LEFT;
     }
-    return dy > 0 ? SideOfCollision.Bottom : SideOfCollision.Top;
+    return dy > 0 ? SideOfCollision.BOTTOM : SideOfCollision.TOP;
   }
 
   #resolveViewportCollisions(viewportCollisions: Set<Collidable>): void {
     viewportCollisions.forEach(([id, rigidBody, collider]) => {
       const sides = this.#findSidesOfViewportCollision(rigidBody.transform.position, collider.size);
 
-      if (sides === SideOfCollision.None) {
+      if (sides === SideOfCollision.NONE) {
         return;
       }
 
-      this.eventManager.trigger(GameEvents.VIEWPORT_COLLISION, { id, rigidBody, collider, side: sides });
+      this.context.events.trigger(GameEvents.VIEWPORT_COLLISION, { id, rigidBody, collider, side: sides });
     });
   }
 
   #findSidesOfViewportCollision(position: Vector2, size: Vector2): SideOfCollision {
     if (position.x < 0) {
-      return SideOfCollision.Left;
+      return SideOfCollision.LEFT;
     }
 
-    if (position.x + size.x > this.viewport.width) {
-      return SideOfCollision.Right;
+    if (position.x + size.x > this.context.viewport.width) {
+      return SideOfCollision.RIGHT;
     }
 
     if (position.y < 0) {
-      return SideOfCollision.Top;
+      return SideOfCollision.TOP;
     }
 
-    if (position.y + size.y > this.viewport.height) {
-      return SideOfCollision.Bottom;
+    if (position.y + size.y > this.context.viewport.height) {
+      return SideOfCollision.BOTTOM;
     }
 
-    return SideOfCollision.None;
+    return SideOfCollision.NONE;
   }
 }
