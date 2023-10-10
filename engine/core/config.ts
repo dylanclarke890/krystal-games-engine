@@ -4,7 +4,7 @@ export const config: GameConfig = {
   trackObjectCreation: true,
   collisionAdjustmentBuffer: 0.1,
   handleViewportCollisions: true,
-  physicsIntegrator: "euler",
+  physicsIntegrator: "verlet",
 };
 
 export type GameConfig = {

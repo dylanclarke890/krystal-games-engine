@@ -1,16 +1,12 @@
 import { Vector2 } from "../../../../maths/vector2";
 import { Quadtree } from "../../../../physics/collision/broadphase/quadtree";
-import { RigidBody } from "../../../../components/2d/rigid-body";
-import { ObjectPoolManager } from "../../../../managers/object-pool-manager";
-import { RectCollider } from "../../../../components/2d/collision";
-import { Viewport } from "../../../../graphics/viewport";
-import { Transform } from "../../../../components/2d/transform.js";
+import { RigidBody, RectCollider, Transform } from "../../../../components/index";
+import { MockContext } from "../../../test-context.js";
 
 it("Quadtree handles nodes correctly", () => {
   // Setup
-  HTMLCanvasElement.prototype.getContext = jest.fn();
-  const viewport = new Viewport(200, 200);
-  const quadtree = new Quadtree(viewport, new ObjectPoolManager(), { maxChildren: 1 });
+  const context = new MockContext();
+  const quadtree = new Quadtree(context, { maxChildren: 1 });
 
   const aTransform = new Transform();
   aTransform.position = new Vector2(10, 10);
