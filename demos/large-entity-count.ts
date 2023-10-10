@@ -5,20 +5,16 @@ import { PhysicsSystem } from "../engine/systems/physics-system.js";
 import { Vector2 } from "../engine/maths/vector2.js";
 
 export class LargeEntityCountTest extends KrystalGameEngine {
+  static MAX_ENTITIES = 500;
   constructor() {
     super("canvas1", 500, 500);
     this.context.events.on(GameEvents.LOOP_STARTED, this.update.bind(this));
-    // const integrator = this.context.world.integrator;
-    // this.context.events.on(GameEvents.VIEWPORT_COLLISION, (event: ViewportCollisionEvent) => {
-    //   integrator.bounceOffViewportBoundaries(event);
-    //   console.log(event);
-    // });
     this.start();
   }
 
   update() {
     const em = this.context.entities;
-    if (em.entities.size < 500) {
+    if (em.entities.size < LargeEntityCountTest.MAX_ENTITIES) {
       const newEntity = em.createEntity();
 
       const transform = new Transform();

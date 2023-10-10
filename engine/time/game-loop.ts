@@ -7,6 +7,7 @@ import { GameContext } from "../core/context.js";
 export class GameLoop implements ILoop {
   #lastFrame: number;
   #requestAnimationFrameId: number;
+  #accumulator: number;
   context: GameContext;
   clock: Timer;
   fpsInterval: number;
@@ -21,6 +22,7 @@ export class GameLoop implements ILoop {
     this.fpsInterval = 1000 / targetFps;
     this.#lastFrame = -1;
     this.#requestAnimationFrameId = -1;
+    this.#accumulator = 0;
     this.stopped = false;
   }
 
@@ -39,12 +41,15 @@ export class GameLoop implements ILoop {
     Timer.step();
 
     const elapsed = timestamp - this.#lastFrame;
-    if (elapsed < this.fpsInterval) {
-      return;
-    }
+    this.#lastFrame = timestamp;
 
-    this.#lastFrame = timestamp - (elapsed % this.fpsInterval);
-    this.context.events.trigger(GameEvents.LOOP_STARTED, this.clock.tick());
+    this.#accumulator += elapsed;
+
+    // If it's been enough time, update the game logic and reduce the accumulator
+    while (this.#accumulator >= this.fpsInterval) {
+      this.context.events.trigger(GameEvents.LOOP_STARTED, this.fpsInterval / 1000);
+      this.#accumulator -= this.fpsInterval;
+    }
   }
 
   stop(unloadAssets?: boolean): void {
