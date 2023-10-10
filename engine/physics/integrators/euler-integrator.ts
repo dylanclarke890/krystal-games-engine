@@ -9,6 +9,8 @@ import { BaseIntegrator } from "./base-integrator.js";
  * @see https://en.wikipedia.org/wiki/Semi-implicit_Euler_method */
 export class SemiImplicitEulerIntegrator extends BaseIntegrator {
   integrate(_entityId: number, rigidBody: RigidBody, dt: number): void {
+    rigidBody.applyForce(this.context.world.gravity.clone().mulScalar(rigidBody.mass));
+
     // Update velocity
     const acceleration = this.vectorPool.acquire().assign(rigidBody.force).mulScalar(dt);
     rigidBody.velocity.add(acceleration);

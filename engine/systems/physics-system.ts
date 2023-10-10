@@ -39,8 +39,6 @@ export class PhysicsSystem extends BaseSystem {
         continue;
       }
 
-      rigidBody.applyForce(world.gravity.clone().mulScalar(rigidBody.mass));
-
       world.integrator.integrate(id, rigidBody, dt);
 
       for (const collider of rigidBody.colliders) {
