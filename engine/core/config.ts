@@ -3,7 +3,8 @@ export const config: GameConfig = {
   quadtreeMaxDepth: 20,
   trackObjectCreation: true,
   collisionAdjustmentBuffer: 0.1,
-  handleViewportCollisions: true
+  handleViewportCollisions: true,
+  physicsIntegrator: "euler",
 };
 
 export type GameConfig = {
@@ -12,4 +13,5 @@ export type GameConfig = {
   trackObjectCreation: boolean;
   collisionAdjustmentBuffer: number;
   handleViewportCollisions: boolean;
+  physicsIntegrator: "euler" | "rk4" | "verlet";
 };

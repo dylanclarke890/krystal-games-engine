@@ -13,9 +13,10 @@ import { InputSystem, RenderSystem, PhysicsSystem } from "../systems/index.js";
 import { GameLoop } from "../time/game-loop.js";
 import { ILoop } from "../types/common-interfaces.js";
 import { World } from "../physics/world.js";
-import { VerletIntegrator, SemiImplicitEulerIntegrator } from "../physics/integrators/index.js";
+import { VerletIntegrator, SemiImplicitEulerIntegrator, BaseIntegrator } from "../physics/integrators/index.js";
 import { config } from "./config.js";
 import { GameContext } from "./context.js";
+import { InvalidOperationError } from "../types/errors.js";
 
 export class KrystalGameEngine {
   context: GameContext;
@@ -45,14 +46,26 @@ export class KrystalGameEngine {
     const quadtree = new Quadtree(this.context, { maxDepth });
     const detector = new CollisionDetector(this.context, quadtree);
     const resolver = new CollisionResolver(this.context);
-    const integrator = new SemiImplicitEulerIntegrator(this.context, frameRate);
-    new VerletIntegrator(this.context, frameRate);
+    const integrator = this.#getIntegrator(frameRate);
 
     this.context.world = new World(integrator);
     this.context.systems.addSystem(new InputSystem(this.context));
     this.context.systems.addSystem(new PhysicsSystem(this.context, quadtree, detector, resolver));
     this.context.systems.addSystem(new RenderSystem(this.context));
     this.loop = new GameLoop(this.context, frameRate);
+  }
+
+  #getIntegrator(frameRate: number): BaseIntegrator {
+    const integratorType = this.context.config.getString("physicsIntegrator") ?? "euler";
+    switch (integratorType) {
+      case "euler":
+        return new SemiImplicitEulerIntegrator(this.context, frameRate); 
+      case "verlet":
+        return new VerletIntegrator(this.context, frameRate); 
+      case "rk4":
+      default:
+        throw new InvalidOperationError("Invalid type specified for 'physicsIntegrator'.")
+    }
   }
 
   start() {
