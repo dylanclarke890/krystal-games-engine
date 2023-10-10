@@ -42,7 +42,6 @@ export class ConfigManager<T> implements IConfigManager<T> {
   }
 
   getValue<TValue>(key: string): Nullable<TValue> {
-    // Updated regex to split correctly for array indexes
     const keys = key.split(/\.|\[(?=\d+\])/).map((segment) => segment.replace(/\]$/, ""));
     return this.#navigateConfig(keys, this.config);
   }
@@ -69,7 +68,7 @@ export class ConfigManager<T> implements IConfigManager<T> {
 
   getObject<TObj>(key: string): Nullable<TObj> {
     const value = this.getValue<unknown>(key);
-    return typeof value === "object" && value !== null && !Array.isArray(value) ? value as TObj : undefined;
+    return typeof value === "object" && value !== null && !Array.isArray(value) ? (value as TObj) : undefined;
   }
 
   getArray<TItem>(key: string): Nullable<TItem[]> {
