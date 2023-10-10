@@ -10,16 +10,16 @@ export abstract class BaseIntegrator {
   vectorPool: IObjectPool<Vector2>;
   /** Accumulates vectors used during calculations so that they get released at once. */
   pooledVectors: Vector2[];
-  epsilon = 1e-5;
-  context: GameContext;
-  frameRate: number;
+  /** Velocity magnitudes within this range are set to zero to prevent jittering. */
+  velocityEpsilon = 1e-5;
+  /** Resolved collisions adjust positions by this amount to prevent erroneous detections the following frame. */
   adjustmentBuffer: number;
+  context: GameContext;
 
-  constructor(context: GameContext, frameRate: number) {
+  constructor(context: GameContext) {
     this.context = context;
     this.vectorPool = context.objectPools.create("vector2", Vector2, (vec, x, y) => vec.set(x ?? 0, y ?? 0));
     this.context.events.on(GameEvents.VIEWPORT_COLLISION, this.bounceOffViewportBoundaries.bind(this));
-    this.frameRate = frameRate;
     this.adjustmentBuffer = context.config.getInt("collisionAdjustmentBuffer") ?? 0.1;
     this.pooledVectors = [];
   }

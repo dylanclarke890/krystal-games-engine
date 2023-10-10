@@ -5,7 +5,6 @@ class GameError<T> extends Error {
     super(message);
     this.name = name + "Error";
     this.data = data;
-    this.stack = new Error().stack;
   }
 }
 

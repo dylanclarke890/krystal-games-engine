@@ -12,7 +12,7 @@ export class SemiImplicitEulerIntegrator extends BaseIntegrator {
     // Update velocity
     const acceleration = this.vectorPool.acquire().assign(rigidBody.force).mulScalar(dt);
     rigidBody.velocity.add(acceleration);
-    if (rigidBody.velocity.magnitude() <= this.epsilon) {
+    if (rigidBody.velocity.magnitude() <= this.velocityEpsilon) {
       rigidBody.velocity.assign(Vector2.zero);
     }
     this.pooledVectors.push(acceleration);

@@ -36,7 +36,7 @@ describe("EulerIntegrator", () => {
       objectPoolManager,
       viewport
     );
-    integrator = new SemiImplicitEulerIntegrator(context, 60);
+    integrator = new SemiImplicitEulerIntegrator(context);
     context.world = new World(integrator, new Vector2(0, 9.8));
     rigidBody = new RigidBody(new Transform());
   });
