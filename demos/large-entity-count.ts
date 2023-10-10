@@ -3,13 +3,19 @@ import { GameEvents } from "../engine/constants/enums.js";
 import { KrystalGameEngine } from "../engine/core/engine.js";
 import { PhysicsSystem } from "../engine/systems/physics-system.js";
 import { Vector2 } from "../engine/maths/vector2.js";
+import { EntityCollisionEvent } from "../engine/types/events.js";
 
 export class LargeEntityCountTest extends KrystalGameEngine {
   static MAX_ENTITIES = 500;
   constructor() {
     super("canvas1", 500, 500);
     this.context.events.on(GameEvents.LOOP_STARTED, this.update.bind(this));
+    this.context.events.on(GameEvents.ENTITY_COLLIDED, this.onEntityCollision.bind(this));
     this.start();
+  }
+
+  onEntityCollision(event: EntityCollisionEvent) {
+    console.log(event);
   }
 
   update() {

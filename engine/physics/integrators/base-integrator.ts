@@ -3,7 +3,7 @@ import { GameEvents } from "../../constants/enums.js";
 import { GameContext } from "../../core/context.js";
 import { Vector2 } from "../../maths/vector2.js";
 import { IObjectPool } from "../../types/common-interfaces.js";
-import { ViewportCollisionEvent } from "../../types/common-types.js";
+import { ViewportCollisionEvent } from "../../types/events.js";
 
 export abstract class BaseIntegrator {
   /** Object pool for vectors used during calculations. */

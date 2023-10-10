@@ -50,7 +50,7 @@ export class KrystalGameEngine {
     this.context.systems.addSystem(new InputSystem(this.context));
     this.context.systems.addSystem(new PhysicsSystem(this.context, quadtree, detector, resolver));
     this.context.systems.addSystem(new RenderSystem(this.context));
-    this.loop = new GameLoop(this.context, configManager.getInt("frameRate") ?? 60);
+    this.loop = new GameLoop(this.context);
   }
 
   #getIntegrator(): BaseIntegrator {

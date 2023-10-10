@@ -1,7 +1,7 @@
 import { RigidBody } from "../../components/rigid-body.js";
 import { SideOfCollision } from "../../constants/enums.js";
 import { Vector2 } from "../../maths/vector2.js";
-import { ViewportCollisionEvent } from "../../types/common-types.js";
+import { ViewportCollisionEvent } from "../../types/events.js";
 import { BaseIntegrator } from "./base-integrator.js";
 
 /**

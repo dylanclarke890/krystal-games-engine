@@ -1,10 +1,11 @@
 import { Collider, RigidBody } from "../../../components/index.js";
 import { GameEvents, ShapeType, SideOfCollision } from "../../../constants/enums.js";
 import { Vector2 } from "../../../maths/vector2.js";
-import { Collidable, ViewportCollisionEvent } from "../../../types/common-types.js";
+import { Collidable } from "../../../types/common-types.js";
 import { GameContext } from "../../../core/context.js";
 import { IObjectPool } from "../../../types/common-interfaces.js";
 import { BitwiseFlags } from "../../../utils/bitwise-flags.js";
+import { EntityCollisionEvent, ViewportCollisionEvent } from "../../../types/events.js";
 
 type ResolverData = { entityCollisions: Set<Pair<Collidable>>; viewportCollisions: Set<Collidable> };
 
@@ -33,21 +34,29 @@ export class CollisionResolver {
         return;
       }
 
-      const side = this.#findSideOfEntityCollision(aRigidBody, aCollider, bRigidBody, bCollider);
-      this.context.events.trigger(GameEvents.ENTITY_COLLIDED, {
+      const sides = new BitwiseFlags<SideOfCollision>();
+      this.#findSidesOfEntityCollision(aRigidBody, aCollider, bRigidBody, bCollider, sides);
+
+      if (!sides.isSet()) {
+        return;
+      }
+
+      const event: EntityCollisionEvent = {
         a: { id: aId, rigidBody: aRigidBody },
         b: { id: bId, rigidBody: bRigidBody },
-        side,
-      });
+        sides,
+      };
+      this.context.events.trigger(GameEvents.ENTITY_COLLIDED, event);
     });
   }
 
-  #findSideOfEntityCollision(
+  #findSidesOfEntityCollision(
     aRigidBody: RigidBody,
     aCollider: Collider,
     bRigidBody: RigidBody,
-    bCollider: Collider
-  ): SideOfCollision {
+    bCollider: Collider,
+    flags: BitwiseFlags<SideOfCollision>
+  ): void {
     const aHalfX = aCollider.size.x / 2;
     const bHalfX = bCollider.size.x / 2;
 
@@ -60,16 +69,18 @@ export class CollisionResolver {
     const bMidX = bRigidBody.transform.position.x + bHalfX;
     const bMidY = bRigidBody.transform.position.y + bHalfY;
 
-    // Find side of entry based on the normalized sides
-    const dx = (aMidX - bMidX) / (aHalfX + bHalfX);
-    const dy = (aMidY - bMidY) / (aHalfY + bHalfY);
-    const absDX = Math.abs(dx);
-    const absDY = Math.abs(dy);
-
-    if (absDX > absDY) {
-      return dx > 0 ? SideOfCollision.RIGHT : SideOfCollision.LEFT;
+    // Determine sides of collision
+    if (aMidX < bMidX) {
+      flags.add(SideOfCollision.LEFT);
+    } else {
+      flags.add(SideOfCollision.RIGHT);
     }
-    return dy > 0 ? SideOfCollision.BOTTOM : SideOfCollision.TOP;
+
+    if (aMidY < bMidY) {
+      flags.add(SideOfCollision.TOP);
+    } else {
+      flags.add(SideOfCollision.BOTTOM);
+    }
   }
 
   #resolveViewportCollisions(viewportCollisions: Set<Collidable>): void {
@@ -91,17 +102,13 @@ export class CollisionResolver {
       case ShapeType.Circle: {
         if (position.x - collider.size.x / 2 < 0) {
           flags.add(SideOfCollision.LEFT);
-        }
-        
-        if (position.x + collider.size.x / 2 > this.context.viewport.width) {
+        } else if (position.x + collider.size.x / 2 > this.context.viewport.width) {
           flags.add(SideOfCollision.RIGHT);
         }
 
-        if (position.y - collider.size.y / 2 <0) {
+        if (position.y - collider.size.y / 2 < 0) {
           flags.add(SideOfCollision.TOP);
-        }
-        
-        if (position.y + collider.size.y / 2 > this.context.viewport.height) {
+        } else if (position.y + collider.size.y / 2 > this.context.viewport.height) {
           flags.add(SideOfCollision.BOTTOM);
         }
         break;
@@ -110,7 +117,7 @@ export class CollisionResolver {
         if (position.x < 0) {
           flags.add(SideOfCollision.LEFT);
         }
-        
+
         if (position.x + collider.size.x > this.context.viewport.width) {
           flags.add(SideOfCollision.RIGHT);
         }
@@ -118,7 +125,7 @@ export class CollisionResolver {
         if (position.y < 0) {
           flags.add(SideOfCollision.TOP);
         }
-        
+
         if (position.y + collider.size.y > this.context.viewport.height) {
           flags.add(SideOfCollision.BOTTOM);
         }
