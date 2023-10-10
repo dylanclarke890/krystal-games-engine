@@ -48,32 +48,32 @@ export class ConfigManager<T> implements IConfigManager<T> {
   }
 
   getString(key: string): Nullable<string> {
-    const value = this.getValue<any>(key);
+    const value = this.getValue<unknown>(key);
     return typeof value === "string" ? value : undefined;
   }
 
   getInt(key: string): Nullable<number> {
-    const value = this.getValue<any>(key);
+    const value = this.getValue<unknown>(key);
     return typeof value === "number" ? value : undefined;
   }
 
   getBool(key: string): Nullable<boolean> {
-    const value = this.getValue<any>(key);
+    const value = this.getValue<unknown>(key);
     return typeof value === "boolean" ? value : undefined;
   }
 
   getDate(key: string): Nullable<Date> {
-    const value = this.getValue<any>(key);
+    const value = this.getValue<unknown>(key);
     return value instanceof Date ? value : undefined;
   }
 
   getObject<TObj>(key: string): Nullable<TObj> {
-    const value = this.getValue<any>(key);
-    return typeof value === "object" && !Array.isArray(value) ? value : undefined;
+    const value = this.getValue<unknown>(key);
+    return typeof value === "object" && value !== null && !Array.isArray(value) ? value as TObj : undefined;
   }
 
   getArray<TItem>(key: string): Nullable<TItem[]> {
-    const value = this.getValue<any>(key);
+    const value = this.getValue<unknown>(key);
     return Array.isArray(value) ? value : undefined;
   }
 }
