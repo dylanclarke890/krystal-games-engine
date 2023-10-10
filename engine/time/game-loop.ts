@@ -1,25 +1,24 @@
 import { GameEvents } from "../constants/enums.js";
-import { Assert } from "../utils/assert.js";
-import { Timer } from "./timer.js";
 import { ILoop } from "../types/common-interfaces.js";
 import { GameContext } from "../core/context.js";
+import { LoopSettings } from "../core/config.js";
 
 export class GameLoop implements ILoop {
   #lastFrame: number;
   #requestAnimationFrameId: number;
   #accumulator: number;
   context: GameContext;
-  clock: Timer;
   fpsInterval: number;
   targetFps: number;
   stopped: boolean;
+  maxFrameTime: number;
 
-  constructor(context: GameContext, targetFps: number) {
-    Assert.number("targetFps", targetFps);
+  constructor(context: GameContext) {
     this.context = context;
-    this.clock = new Timer();
-    this.targetFps = targetFps;
-    this.fpsInterval = 1000 / targetFps;
+    const loopSettings = context.config.getObject<LoopSettings>("loop");
+    this.targetFps = loopSettings?.targetFps ?? 60;
+    this.maxFrameTime = loopSettings?.maxFrameTime ?? 100;
+    this.fpsInterval = 1000 / this.targetFps;
     this.#lastFrame = -1;
     this.#requestAnimationFrameId = -1;
     this.#accumulator = 0;
@@ -38,12 +37,13 @@ export class GameLoop implements ILoop {
     }
 
     this.#requestAnimationFrameId = requestAnimationFrame((t) => this.main(t));
-    Timer.step();
-
     const elapsed = timestamp - this.#lastFrame;
     this.#lastFrame = timestamp;
-
     this.#accumulator += elapsed;
+
+    if (this.#accumulator > this.maxFrameTime) {
+      this.#accumulator = this.maxFrameTime;
+    }
 
     // If it's been enough time, update the game logic and reduce the accumulator
     while (this.#accumulator >= this.fpsInterval) {

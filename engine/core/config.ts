@@ -1,6 +1,6 @@
 export const config: GameConfig = {
   loop: {
-    frameRate: 60,
+    targetFps: 60,
     maxFrameTime: 100,
   },
   quadtreeMaxDepth: 20,
@@ -10,13 +10,15 @@ export const config: GameConfig = {
   physicsIntegrator: "euler",
 };
 
+export type LoopSettings = {
+  /** Frames per second. */
+  targetFps: number;
+  /** In milliseconds. */
+  maxFrameTime: number;
+};
+
 export type GameConfig = {
-  loop: {
-    /** Frames per second. */
-    frameRate: number;
-    /** In milliseconds. */
-    maxFrameTime: number;
-  };
+  loop: LoopSettings;
   quadtreeMaxDepth: number;
   trackObjectCreation: boolean;
   collisionAdjustmentBuffer: number;
