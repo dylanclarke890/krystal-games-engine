@@ -3,6 +3,7 @@ export const config: GameConfig = {
   quadtreeMaxDepth: 20,
   trackObjectCreation: true,
   collisionAdjustmentBuffer: 0.1,
+  handleViewportCollisions: true
 };
 
 export type GameConfig = {
@@ -10,4 +11,5 @@ export type GameConfig = {
   quadtreeMaxDepth: number;
   trackObjectCreation: boolean;
   collisionAdjustmentBuffer: number;
+  handleViewportCollisions: boolean;
 };

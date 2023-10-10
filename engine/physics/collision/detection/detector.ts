@@ -11,34 +11,36 @@ export class CollisionDetector {
   context: GameContext;
   quadtree: IQuadtree;
   entityCollisions: Set<Pair<Collidable>>;
+  checkForCollisionsWithViewport: boolean;
   viewportCollisions: Set<Collidable>;
-  collisionChecks: number;
+  collisionChecksThisFrame: number;
 
   constructor(context: GameContext, quadtree: IQuadtree) {
     this.context = context;
     this.quadtree = quadtree;
 
+    this.checkForCollisionsWithViewport = context.config.getBool("handleViewportCollisions") ?? false;
     this.entityCollisions = new Set();
     this.viewportCollisions = new Set();
-    this.collisionChecks = 0;
+    this.collisionChecksThisFrame = 0;
   }
 
   detect(collidables: Collidable[]) {
     this.entityCollisions.clear();
     this.viewportCollisions.clear();
-    this.collisionChecks = 0;
+    this.collisionChecksThisFrame = 0;
 
     for (let i = 0; i < collidables.length; i++) {
       const [aId, aRigidBody, aCollider] = collidables[i];
 
-      if (this.viewportCollisionCheck(aRigidBody, aCollider)) {
+      if (this.checkForCollisionsWithViewport && this.viewportCollisionCheck(aRigidBody, aCollider)) {
         this.viewportCollisions.add(collidables[i]);
       }
 
       const possibleCollisions = this.quadtree.retrieve(aRigidBody, aCollider);
 
       for (let j = 0; j < possibleCollisions.length; j++) {
-        this.collisionChecks++;
+        this.collisionChecksThisFrame++;
         const bEntityNode = possibleCollisions[j];
         if (aId === bEntityNode.id) {
           continue;

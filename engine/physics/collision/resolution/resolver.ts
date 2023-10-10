@@ -11,15 +11,20 @@ type ResolverData = { entityCollisions: Set<Pair<Collidable>>; viewportCollision
 export class CollisionResolver {
   context: GameContext;
   bitwiseFlagPool: IObjectPool<BitwiseFlags<SideOfCollision>>;
+  handleViewportCollisions: boolean;
 
   constructor(context: GameContext) {
     this.context = context;
+    this.handleViewportCollisions = context.config.getBool("handleViewportCollisions") ?? false;
     this.bitwiseFlagPool = context.objectPools.create("bitwiseFlags", BitwiseFlags, (flags) => flags.clear());
   }
 
   resolve(data: ResolverData) {
     this.#resolveEntityCollisions(data.entityCollisions);
-    this.#resolveViewportCollisions(data.viewportCollisions);
+
+    if (this.handleViewportCollisions) {
+      this.#resolveViewportCollisions(data.viewportCollisions);
+    }
   }
 
   #resolveEntityCollisions(entityCollisions: Set<Pair<Collidable>>): void {
@@ -86,13 +91,17 @@ export class CollisionResolver {
       case ShapeType.Circle: {
         if (position.x - collider.size.x / 2 < 0) {
           flags.add(SideOfCollision.LEFT);
-        } else if (position.x + collider.size.x / 2 > this.context.viewport.width) {
+        }
+        
+        if (position.x + collider.size.x / 2 > this.context.viewport.width) {
           flags.add(SideOfCollision.RIGHT);
         }
 
         if (position.y - collider.size.y / 2 <0) {
           flags.add(SideOfCollision.TOP);
-        } else if (position.y + collider.size.y / 2 > this.context.viewport.height) {
+        }
+        
+        if (position.y + collider.size.y / 2 > this.context.viewport.height) {
           flags.add(SideOfCollision.BOTTOM);
         }
         break;
@@ -100,13 +109,17 @@ export class CollisionResolver {
       case ShapeType.Rectangle: {
         if (position.x < 0) {
           flags.add(SideOfCollision.LEFT);
-        } else if (position.x + collider.size.x > this.context.viewport.width) {
+        }
+        
+        if (position.x + collider.size.x > this.context.viewport.width) {
           flags.add(SideOfCollision.RIGHT);
         }
 
         if (position.y < 0) {
           flags.add(SideOfCollision.TOP);
-        } else if (position.y + collider.size.y > this.context.viewport.height) {
+        }
+        
+        if (position.y + collider.size.y > this.context.viewport.height) {
           flags.add(SideOfCollision.BOTTOM);
         }
         break;
