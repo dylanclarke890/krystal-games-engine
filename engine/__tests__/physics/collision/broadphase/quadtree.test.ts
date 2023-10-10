@@ -1,11 +1,36 @@
 import { Vector2 } from "../../../../maths/vector2";
 import { Quadtree } from "../../../../physics/collision/broadphase/quadtree";
 import { RigidBody, RectCollider, Transform } from "../../../../components/index";
-import { MockContext } from "../../../test-context.js";
+import {
+  EventManager,
+  EntityManager,
+  SystemManager,
+  InputManager,
+  ObjectPoolManager,
+  ConfigManager,
+} from "../../../../managers/index";
+import { Viewport } from "../../../../graphics/viewport.js";
+import { GameContext } from "../../../../core/context.js";
+import { config } from "../../../../core/config.js";
 
 it("Quadtree handles nodes correctly", () => {
   // Setup
-  const context = new MockContext();
+  HTMLCanvasElement.prototype.getContext = jest.fn();
+  const eventManager = new EventManager();
+  const entityManager = new EntityManager(eventManager);
+  const systemManager = new SystemManager(entityManager, eventManager);
+  const viewport = new Viewport(500, 500, "canvasId");
+  const inputManager = new InputManager(eventManager, viewport);
+  const objectPoolManager = new ObjectPoolManager();
+  const context = new GameContext(
+    eventManager,
+    entityManager,
+    systemManager,
+    inputManager,
+    new ConfigManager(config),
+    objectPoolManager,
+    viewport
+  );
   const quadtree = new Quadtree(context, { maxChildren: 1 });
 
   const aTransform = new Transform();
