@@ -36,7 +36,7 @@ export class GameLoop implements ILoop {
       return;
     }
 
-    this.#requestAnimationFrameId = requestAnimationFrame((t) => this.main(t));
+    this.#requestAnimationFrameId = requestAnimationFrame(this.main.bind(this));
     const elapsed = timestamp - this.#lastFrame;
     this.#lastFrame = timestamp;
     this.#accumulator += elapsed;
