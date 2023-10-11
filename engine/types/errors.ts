@@ -37,3 +37,9 @@ export class SystemError<T> extends GameError<T> {
     super("System", message, data);
   }
 }
+
+export class EntityCreationError<T> extends GameError<T> {
+  constructor(message: string, data?: T) {
+    super("EntityCreation", message, data);
+  }
+}

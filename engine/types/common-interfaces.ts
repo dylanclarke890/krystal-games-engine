@@ -4,6 +4,7 @@ import { BaseComponent } from "../components/base.js";
 import { PriorityLevel, Quadrant } from "../constants/enums.js";
 import { Vector2 } from "../maths/vector2.js";
 import { Enum } from "../utils/enum.js";
+import { EntityTemplate } from "./common-types.js";
 
 export interface IConfigManager<T> {
   config: T;
@@ -45,6 +46,12 @@ export interface IEntityManager {
 
   /** Destroy an entity and remove all of its components. */
   destroyEntity(id: number): void;
+
+  /** Register a template to use instead of creating entities and manually assigning components. */
+  registerEntityTemplate(name: string, template: EntityTemplate): void;
+
+  /** Creates an entity with components from a pre-defined template. Throws an `EntityCreationError` if the template does not exist. */
+  createEntityFromTemplate(templateName: string): number;
 
   /**
    * Adds a component to an entity.

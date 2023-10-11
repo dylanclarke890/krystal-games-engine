@@ -1,6 +1,8 @@
 import { BaseComponent } from "../components/base.js";
 import { GameEvents } from "../constants/enums.js";
 import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
+import { EntityTemplate } from "../types/common-types.js";
+import { EntityCreationError } from "../types/errors.js";
 
 export class EntityManager implements IEntityManager {
   static #emptySet: Set<number> = new Set();
@@ -13,6 +15,8 @@ export class EntityManager implements IEntityManager {
   #componentTypeToEntities: Map<string, Set<number>>;
   #components: Map<string, BaseComponent>;
 
+  #entityTemplates: Map<string, EntityTemplate>;
+
   constructor(eventManager: IEventManager) {
     this.eventManager = eventManager;
 
@@ -20,8 +24,13 @@ export class EntityManager implements IEntityManager {
     this.#entityMasks = new Map();
     this.#componentTypeToEntities = new Map();
     this.#components = new Map();
+    this.#entityTemplates = new Map();
 
     this.#nextEntityId = 1;
+  }
+
+  registerEntityTemplate(name: string, template: EntityTemplate): void {
+    this.#entityTemplates.set(name, template);
   }
 
   createEntity() {
@@ -29,6 +38,24 @@ export class EntityManager implements IEntityManager {
 
     this.entities.add(entity);
     this.eventManager.trigger(GameEvents.ENTITY_CREATED, entity);
+
+    return entity;
+  }
+
+  createEntityFromTemplate(templateName: string): number {
+    const template = this.#entityTemplates.get(templateName);
+    if (!template) {
+      throw new EntityCreationError(`Template was not found`, template);
+    }
+
+    const entity = this.createEntity();
+    for (const componentType in template) {
+      const component = Object.assign(
+        Object.create(Object.getPrototypeOf(template[componentType])),
+        template[componentType]
+      );
+      this.addComponent(entity, component);
+    }
 
     return entity;
   }
