@@ -40,13 +40,13 @@ export class RectVsRectTest extends KrystalGameEngine {
   update() {
     const em = this.context.entities;
 
-    const mouseRigidBody = em.getComponent<RigidBody>(this.mouseRectId, "rigidBody")!;
+    const mouseRigidBody = em.getComponent(this.mouseRectId, "rigid-body")!;
     const mouseRectSize = mouseRigidBody.colliders[0].size;
     mouseRigidBody.transform.position.assign(this.context.input.mouse).sub(mouseRectSize.clone().divScalar(2));
 
-    const staticRectRigidBody = em.getComponent<RigidBody>(this.staticRectId, "rigidBody")!;
+    const staticRectRigidBody = em.getComponent(this.staticRectId, "rigid-body")!;
     const staticRectSize = staticRectRigidBody.colliders[0].size;
-    const staticRectShape = em.getComponent<RenderableShape>(this.staticRectId, "renderable")!;
+    const staticRectShape = em.getComponent(this.staticRectId, "renderable")!;
 
     if (
       areRectsColliding(

@@ -1,4 +1,4 @@
-import { Collider } from "../../../components/collision.js";
+import { Collider } from "../../../components/collider.js";
 import { RigidBody } from "../../../components/rigid-body.js";
 import { Quadrant } from "../../../constants/enums.js";
 import { IObjectPool, IQuadtree, IQuadtreeNode } from "../../../types/common-interfaces.js";

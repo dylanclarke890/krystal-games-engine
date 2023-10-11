@@ -1,4 +1,4 @@
-import { Collider } from "../components/collision.js";
+import { Collider } from "../components/collider.js";
 import { RigidBody } from "../components/rigid-body.js";
 import { SideOfCollision } from "../constants/enums.js";
 import { BitwiseFlags } from "../utils/bitwise-flags.js";

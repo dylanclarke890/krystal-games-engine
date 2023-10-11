@@ -31,7 +31,7 @@ export class ViewportCollisionTest extends KrystalGameEngine {
   }
 
   update() {
-    const rigidBody = this.context.entities.getComponent<RigidBody>(this.testEntityId, "rigidBody")!;
+    const rigidBody = this.context.entities.getComponent(this.testEntityId, "rigid-body")!;
     const pos = rigidBody.transform.position;
     const vel = rigidBody.velocity;
 

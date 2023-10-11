@@ -3,7 +3,6 @@ import { IQuadtree } from "../types/common-interfaces.js";
 import { BaseSystem } from "./base-system.js";
 import { BaseComponent } from "../components/base.js";
 import { Collidable } from "../types/common-types.js";
-import { RigidBody } from "../components/rigid-body.js";
 import { CollisionResponseType } from "../constants/enums.js";
 import { GameContext } from "../core/context.js";
 import { BaseIntegrator } from "../physics/integrators/base-integrator.js";
@@ -37,7 +36,7 @@ export class PhysicsSystem extends BaseSystem {
     this.quadtree.clear();
 
     for (const id of entities) {
-      const rigidBody = em.getComponent<RigidBody>(id, "rigidBody");
+      const rigidBody = em.getComponent(id, "rigid-body");
       if (typeof rigidBody === "undefined" || rigidBody.isStatic) {
         continue;
       }
@@ -59,7 +58,7 @@ export class PhysicsSystem extends BaseSystem {
 
     // Reset forces back to zero
     for (const id of entities) {
-      const rigidBody = em.getComponent<RigidBody>(id, "rigidBody");
+      const rigidBody = em.getComponent(id, "rigid-body");
       if (typeof rigidBody === "undefined" || rigidBody.isStatic) {
         continue;
       }
@@ -68,10 +67,10 @@ export class PhysicsSystem extends BaseSystem {
   }
 
   isInterestedInComponent(component: BaseComponent): boolean {
-    return component.type === "rigidBody";
+    return component.type === "rigid-body";
   }
 
   belongsToSystem(entity: number): boolean {
-    return this.context.entities.hasComponent(entity, "rigidBody");
+    return this.context.entities.hasComponent(entity, "rigid-body");
   }
 }

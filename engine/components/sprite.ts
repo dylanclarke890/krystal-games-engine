@@ -1,7 +1,8 @@
-import { BaseComponent } from "./base.js";
+import { ComponentType } from "../types/common-types.js";
+import { BaseComponent } from "./index.js";
 
 export class Sprite extends BaseComponent {
-  type: string = "sprite";
+  type: ComponentType = "sprite";
 
   image: HTMLImageElement;
   width: number;

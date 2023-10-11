@@ -1,8 +1,8 @@
-import { InputBindings } from "../types/common-types.js";
+import { ComponentType, InputBindings } from "../types/common-types.js";
 import { BaseComponent } from "./base.js";
 
 export class Input extends BaseComponent {
-  type: string = "Input";
+  type: ComponentType = "input";
   actions: Map<string, InputBindings>;
 
   constructor(bindings?: Map<string, InputBindings>) {

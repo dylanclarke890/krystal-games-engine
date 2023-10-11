@@ -1,9 +1,10 @@
 import { Assert } from "../utils/assert.js";
 import { arrayFromInterval } from "../maths/interval.js";
+import { ComponentType } from "../types/common-types.js";
 import { BaseComponent } from "./base.js";
 
 export class Animation extends BaseComponent {
-  type = "animation";
+  type: ComponentType = "animation";
   sequence: number[];
   frameDuration: number;
   frame: number;

@@ -35,9 +35,9 @@ export class PointVsRectTest extends KrystalGameEngine {
   }
 
   update(): void {
-    const rectRigidBody = this.context.entities.getComponent<RigidBody>(this.rectId, "rigidBody");
+    const rectRigidBody = this.context.entities.getComponent(this.rectId, "rigid-body");
     const rectCollider = rectRigidBody!.colliders[0];
-    const rectShape = this.context.entities.getComponent<RenderableShape>(this.rectId, "renderable");
+    const rectShape = this.context.entities.getComponent(this.rectId, "renderable");
 
     if (isPointCollidingWithRect(this.context.input.mouse, rectRigidBody!.transform.position, rectCollider!.size)) {
       rectShape!.shape!.color = "green";

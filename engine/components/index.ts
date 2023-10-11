@@ -1,5 +1,6 @@
 export * from "./animation.js";
-export * from "./collision.js";
+export * from "./base.js";
+export * from "./collider.js";
 export * from "./input.js";
 export * from "./renderable.js";
 export * from "./rigid-body.js";

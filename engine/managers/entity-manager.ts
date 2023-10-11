@@ -1,7 +1,7 @@
 import { BaseComponent } from "../components/base.js";
 import { GameEvents } from "../constants/enums.js";
 import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
-import { EntityTemplate } from "../types/common-types.js";
+import { ComponentMap, ComponentType, EntityTemplate } from "../types/common-types.js";
 import { EntityCreationError } from "../types/errors.js";
 
 export class EntityManager implements IEntityManager {
@@ -11,8 +11,8 @@ export class EntityManager implements IEntityManager {
   entities: Set<number>;
 
   #nextEntityId: number;
-  #entityMasks: Map<number, Set<string>>;
-  #componentTypeToEntities: Map<string, Set<number>>;
+  #entityMasks: Map<number, Set<ComponentType>>;
+  #componentTypeToEntities: Map<ComponentType, Set<number>>;
   #components: Map<string, BaseComponent>;
 
   #entityTemplates: Map<string, EntityTemplate>;
@@ -29,33 +29,11 @@ export class EntityManager implements IEntityManager {
     this.#nextEntityId = 1;
   }
 
-  registerEntityTemplate(name: string, template: EntityTemplate): void {
-    this.#entityTemplates.set(name, template);
-  }
-
   createEntity() {
     const entity = this.#nextEntityId++;
 
     this.entities.add(entity);
     this.eventManager.trigger(GameEvents.ENTITY_CREATED, entity);
-
-    return entity;
-  }
-
-  createEntityFromTemplate(templateName: string): number {
-    const template = this.#entityTemplates.get(templateName);
-    if (!template) {
-      throw new EntityCreationError(`Template was not found`, template);
-    }
-
-    const entity = this.createEntity();
-    for (const componentType in template) {
-      const component = Object.assign(
-        Object.create(Object.getPrototypeOf(template[componentType])),
-        template[componentType]
-      );
-      this.addComponent(entity, component);
-    }
 
     return entity;
   }
@@ -77,6 +55,28 @@ export class EntityManager implements IEntityManager {
     this.eventManager.trigger(GameEvents.ENTITY_DESTROYED, id);
   }
 
+  registerEntityTemplate(name: string, template: EntityTemplate): void {
+    this.#entityTemplates.set(name, template);
+  }
+
+  createEntityFromTemplate(templateName: string): number {
+    const template = this.#entityTemplates.get(templateName);
+    if (!template) {
+      throw new EntityCreationError(`Template was not found`, template);
+    }
+
+    const entity = this.createEntity();
+    for (const componentType in template) {
+      const component = Object.assign(
+        Object.create(Object.getPrototypeOf(template[componentType])),
+        template[componentType]
+      );
+      this.addComponent(entity, component);
+    }
+
+    return entity;
+  }
+
   addComponent(entity: number, component: BaseComponent): void {
     const componentType = component.type;
     this.#components.set(entity + componentType, component);
@@ -94,7 +94,7 @@ export class EntityManager implements IEntityManager {
     this.eventManager.trigger(GameEvents.COMPONENT_ADDED, { entity, component });
   }
 
-  removeComponent(entity: number, type: string): void {
+  removeComponent(entity: number, type: ComponentType): void {
     const componentMapKey = entity + type;
     const component = this.#components.get(componentMapKey);
     if (typeof component === "undefined") {
@@ -106,11 +106,11 @@ export class EntityManager implements IEntityManager {
     this.eventManager.trigger(GameEvents.COMPONENT_REMOVED, { entity, component });
   }
 
-  getComponent<T extends BaseComponent>(entity: number, type: string): T | undefined {
-    return this.#components.get(entity + type) as T | undefined;
+  getComponent<T extends ComponentType>(entity: number, type: T): ComponentMap[T] | undefined {
+    return this.#components.get(entity + type) as ComponentMap[T] | undefined;
   }
 
-  getComponents(entity: number, types: string[]): { [x: string]: BaseComponent | undefined } {
+  getComponents(entity: number, types: ComponentType[]): { [x: string]: BaseComponent | undefined } {
     const components: { [x: string]: BaseComponent | undefined } = {};
 
     types.forEach((componentType) => {
@@ -120,7 +120,7 @@ export class EntityManager implements IEntityManager {
     return components;
   }
 
-  hasComponent(entity: number, type: string): boolean {
+  hasComponent(entity: number, type: ComponentType): boolean {
     const mask = this.#entityMasks.get(entity);
     if (typeof mask === "undefined") {
       return false;
@@ -128,7 +128,7 @@ export class EntityManager implements IEntityManager {
     return mask.has(type);
   }
 
-  hasComponents(entity: number, types: string[]) {
+  hasComponents(entity: number, types: ComponentType[]) {
     const mask = this.#entityMasks.get(entity);
     if (typeof mask === "undefined") {
       return false;
@@ -136,11 +136,11 @@ export class EntityManager implements IEntityManager {
     return types.every((componentType) => mask.has(componentType));
   }
 
-  hasComponentType(type: string) {
+  hasComponentType(type: ComponentType) {
     return this.#componentTypeToEntities.has(type);
   }
 
-  getEntitiesWithComponents(types: string[]): Set<number> {
+  getEntitiesWithComponents(types: ComponentType[]): Set<number> {
     const entities = new Set<number>();
     const firstComponentType = types[0];
 

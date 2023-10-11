@@ -1,6 +1,5 @@
 import { BaseSystem } from "./base-system.js";
 import { BaseComponent } from "../components/base.js";
-import { Input } from "../components/input.js";
 import { GameContext } from "../core/context.js";
 
 export class InputSystem extends BaseSystem {
@@ -17,7 +16,7 @@ export class InputSystem extends BaseSystem {
   }
 
   belongsToSystem(entity: number): boolean {
-    return typeof this.context.entities.getComponent<Input>(entity, "input") !== "undefined";
+    return typeof this.context.entities.getComponent(entity, "input") !== "undefined";
   }
 
   update(dt: number, entities: Set<number>) {
@@ -25,7 +24,7 @@ export class InputSystem extends BaseSystem {
     this.context.input.clearPressed();
 
     for (const id of entities) {
-      const input = em.getComponent<Input>(id, "input");
+      const input = em.getComponent(id, "input");
       if (typeof input === "undefined") {
         continue;
       }

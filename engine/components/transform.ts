@@ -1,8 +1,9 @@
 import { Vector2 } from "../maths/vector2.js";
-import { BaseComponent } from "./base.js";
+import { ComponentType } from "../types/common-types.js";
+import { BaseComponent } from "./index.js";
 
 export class Transform extends BaseComponent {
-  type: string = "transform";
+  type: ComponentType = "transform";
 
   position: Vector2;
   rotation: number;

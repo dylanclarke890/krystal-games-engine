@@ -2,7 +2,7 @@ import { areRectsColliding } from "./detection-strategies.js";
 import { IQuadtree } from "../../../types/common-interfaces.js";
 import { Collidable } from "../../../types/common-types.js";
 import { RigidBody } from "../../../components/rigid-body.js";
-import { Collider } from "../../../components/collision.js";
+import { Collider } from "../../../components/collider.js";
 import { ShapeType } from "../../../constants/enums.js";
 import { InvalidOperationError } from "../../../types/errors.js";
 import { GameContext } from "../../../core/context.js";

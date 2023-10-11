@@ -1,10 +1,8 @@
-import { Collider } from "../components/collision.js";
-import { RigidBody } from "../components/rigid-body.js";
-import { BaseComponent } from "../components/base.js";
+import { BaseComponent, Collider, RigidBody } from "../components/index.js";
 import { PriorityLevel, Quadrant } from "../constants/enums.js";
 import { Vector2 } from "../maths/vector2.js";
 import { Enum } from "../utils/enum.js";
-import { EntityTemplate } from "./common-types.js";
+import { ComponentMap, ComponentType, EntityTemplate } from "./common-types.js";
 
 export interface IConfigManager<T> {
   config: T;
@@ -65,31 +63,31 @@ export interface IEntityManager {
    * @param id entity id.
    * @param type type of component to remove
    */
-  removeComponent(id: number, type: string): void;
+  removeComponent(id: number, type: ComponentType): void;
 
-  getComponent<T extends BaseComponent>(entity: number, type: string): T | undefined;
-  getComponents(entity: number, types: string[]): { [x: string]: BaseComponent | undefined };
+  getComponent<T extends ComponentType>(entity: number, type: T): ComponentMap[T] | undefined;
+  getComponents(entity: number, types: ComponentType[]): { [x: string]: BaseComponent | undefined };
 
   /** Get all entities that have a set of components. */
-  getEntitiesWithComponents(types: string[]): Set<number>;
+  getEntitiesWithComponents(types: ComponentType[]): Set<number>;
 
   /**
    * Check if any entity has a specific component.
    * @param type the component type to check.
    */
-  hasComponentType(type: string): boolean;
+  hasComponentType(type: ComponentType): boolean;
 
   /**
    * Check if an entity has a particular component type.
    * @param type the type to check.
    */
-  hasComponent(entity: number, type: string): boolean;
+  hasComponent(entity: number, type: ComponentType): boolean;
 
   /**
    * Check if an entity has a range of component types.
    * @param types the component types to check.
    */
-  hasComponents(entity: number, types: string[]): boolean;
+  hasComponents(entity: number, types: ComponentType[]): boolean;
 }
 
 export interface ILoop {

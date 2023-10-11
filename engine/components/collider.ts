@@ -1,10 +1,11 @@
 import { CollisionResponseType, ShapeType } from "../constants/enums.js";
 import { InvalidOperationError } from "../types/errors.js";
 import { Vector2 } from "../maths/vector2.js";
-import { BaseComponent } from "./base.js";
+import { ComponentType } from "../types/common-types.js";
+import { BaseComponent } from "./index.js";
 
 export abstract class Collider extends BaseComponent {
-  type = "collision";
+  type: ComponentType = "collider";
 
   // Bounding box
   shape: ShapeType;
