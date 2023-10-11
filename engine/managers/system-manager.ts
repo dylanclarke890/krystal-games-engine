@@ -108,13 +108,7 @@ export class SystemManager {
   update(dt: number): void {
     this.executionQueue.forEach((system) => {
       if (system.enabled) {
-        const relevantEntities = new Set<number>();
-        this.entityManager.entities.forEach((entity) => {
-          if (system.belongsToSystem(entity)) {
-            relevantEntities.add(entity);
-          }
-        });
-        system.update(dt, relevantEntities);
+        system.update(dt, this.systemEntities.get(system.name)!);
       }
     });
   }
