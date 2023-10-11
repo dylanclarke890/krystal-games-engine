@@ -20,7 +20,7 @@ export class InputSystem extends BaseSystem {
     return typeof this.context.entities.getComponent(entity, "input") !== "undefined";
   }
 
-  update(dt: number, entities: Set<number>) {
+  update(_dt: number, entities: Set<number>) {
     const em = this.context.entities;
     this.context.input.clearPressed();
 
@@ -30,11 +30,8 @@ export class InputSystem extends BaseSystem {
         continue;
       }
 
-      for (const [action, { pressed, held, released }] of input.actions) {
-        const state = this.context.input.state(action);
-        if (state.pressed && typeof pressed === "function") pressed(id, em, dt);
-        if (state.held && typeof held === "function") held(id, em, dt);
-        if (state.released && typeof released === "function") released(id, em, dt);
+      for (const action of input.actions) {
+        input.setState(action, this.context.input.getState(action))!;
       }
     }
   }

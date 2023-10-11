@@ -10,15 +10,12 @@ import {
   Animation,
 } from "../components/index.js";
 import { Vector2 } from "../maths/vector2.js";
-import { InputSystem } from "../systems/input-system.js";
-import { PhysicsSystem } from "../systems/physics-system.js";
-import { RenderSystem } from "../systems/render-system.js";
-import { IEntityManager } from "./common-interfaces.js";
+import { InputSystem, PhysicsSystem, RenderSystem } from "../systems/index.js";
 
 export type Bounds = { position: Vector2; size: Vector2 };
-export type InputBindingFn = (entityId: number, entityManager: IEntityManager, dt: number) => void;
-export type InputBindingType = "held" | "pressed" | "released";
-export type InputBindings = { [K in InputBindingType]?: InputBindingFn };
+
+export type InputAction = "held" | "pressed" | "released";
+export type InputActionStatus = { [K in InputAction]: boolean };
 
 export type CollisionLayer = "DEFAULT" | "PLAYER" | "ENEMY";
 export type Collidable = [number, RigidBody, Collider];

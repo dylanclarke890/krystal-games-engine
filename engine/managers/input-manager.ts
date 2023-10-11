@@ -6,7 +6,7 @@ import { Vector3 } from "../maths/vector3.js";
 import { UserAgent } from "../utils/user-agent.js";
 import { keyboardMap } from "../constants/keyboard-map.js";
 import { IEventManager } from "../types/common-interfaces.js";
-import { InputBindingType } from "../types/common-types.js";
+import { InputActionStatus } from "../types/common-types.js";
 
 export class InputManager {
   viewport: Viewport;
@@ -125,7 +125,9 @@ export class InputManager {
    * @param {string} action
    */
   bind(key: InputKeys, action: string) {
-    if (this.#bindings.has(key)) console.warn(`${key} was already bound to action ${this.#bindings.get(key)}`);
+    if (this.#bindings.has(key)) {
+      console.warn(`${key} was already bound to action ${this.#bindings.get(key)}`);
+    }
     this.#bindings.set(key, action);
     this.#initInputTypeEvents(key);
   }
@@ -163,7 +165,7 @@ export class InputManager {
   }
 
   /** Returns the current state of the action (pressed, held, released). */
-  state(action: string): { [K in InputBindingType]?: boolean } {
+  getState(action: string): InputActionStatus {
     return {
       pressed: !!this.#pressed.get(action),
       held: !!this.#actions.get(action),
