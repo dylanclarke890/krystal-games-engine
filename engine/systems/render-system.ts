@@ -1,13 +1,13 @@
-import { Sprite, Shape } from "../components/index.js";
+import { Sprite, Shape, BaseComponent } from "../components/index.js";
 import { InvalidOperationError } from "../types/errors.js";
 import { BaseSystem } from "./base-system.js";
-import { BaseComponent } from "../components/base.js";
 import { ShapeType } from "../constants/enums.js";
 import { Vector2 } from "../maths/vector2.js";
 import { GameContext } from "../core/context.js";
+import { SystemType } from "../types/common-types.js";
 
 export class RenderSystem extends BaseSystem {
-  name = "RenderSystem";
+  name: SystemType = "render";
   priority: number = 10;
 
   constructor(context: GameContext) {

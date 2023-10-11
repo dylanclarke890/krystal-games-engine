@@ -1,7 +1,6 @@
 import { Circle, CircleCollider, RenderableShape, RigidBody, Transform } from "../engine/components/index.js";
 import { GameEvents } from "../engine/constants/enums.js";
 import { KrystalGameEngine } from "../engine/core/engine.js";
-import { PhysicsSystem } from "../engine/systems/physics-system.js";
 import { Vector2 } from "../engine/maths/vector2.js";
 
 export class LargeEntityCountTest extends KrystalGameEngine {
@@ -29,7 +28,7 @@ export class LargeEntityCountTest extends KrystalGameEngine {
       em.addComponent(newEntity, new RenderableShape(transform, new Circle(3, "yellow")));
     }
 
-    const collisionDetector = this.context.systems.getSystem<PhysicsSystem>("PhysicsSystem")!.detector;
+    const collisionDetector = this.context.systems.getSystem("physics")!.detector;
     const viewport = this.context.viewport;
     viewport.drawText(`${em.entities.size} objects`, 10, 20);
     viewport.drawText(`${collisionDetector.collisionChecksThisFrame} entity collisions checked`, 10, 40);

@@ -2,6 +2,7 @@ import { BaseComponent } from "../components/base.js";
 import { GameEvents } from "../constants/enums.js";
 import { BaseSystem } from "../systems/base-system.js";
 import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
+import { SystemMap, SystemType } from "../types/common-types.js";
 import { SystemError } from "../types/errors.js";
 import { PriorityQueue } from "../utils/priority-queue.js";
 
@@ -9,8 +10,8 @@ export class SystemManager {
   entityManager: IEntityManager;
   eventManager: IEventManager;
   executionQueue: PriorityQueue<BaseSystem>;
-  systems: Map<string, BaseSystem>;
-  systemEntities: Map<string, Set<number>>;
+  systems: Map<SystemType, SystemMap[SystemType]>;
+  systemEntities: Map<SystemType, Set<number>>;
 
   constructor(entityManager: IEntityManager, eventManager: IEventManager) {
     this.entityManager = entityManager;
@@ -78,15 +79,15 @@ export class SystemManager {
     this.eventManager.trigger(GameEvents.SYSTEM_ADDED);
   }
 
-  getSystem<T extends BaseSystem>(name: string): T | undefined {
-    return this.systems.get(name) as T | undefined;
+  getSystem<T extends SystemType>(name: T): SystemMap[T] | undefined {
+    return this.systems.get(name) as SystemMap[T] | undefined;
   }
 
   /**
    * Unregister a system.
    * @param systemName The name of the system to unregister.
    */
-  removeSystem(systemName: string): void {
+  removeSystem(systemName: SystemType): void {
     const system = this.systems.get(systemName);
     if (typeof system === "undefined") {
       return;
@@ -123,7 +124,7 @@ export class SystemManager {
    * @param systemName The name of the system.
    * @param enabled Whether the system should be enabled or disabled.
    */
-  setSystemEnabled(systemName: string, enabled: boolean): void {
+  setSystemEnabled(systemName: SystemType, enabled: boolean): void {
     const system = this.systems.get(systemName);
     if (typeof system === "undefined") {
       return;

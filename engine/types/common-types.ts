@@ -10,6 +10,9 @@ import {
   Animation,
 } from "../components/index.js";
 import { Vector2 } from "../maths/vector2.js";
+import { InputSystem } from "../systems/input-system.js";
+import { PhysicsSystem } from "../systems/physics-system.js";
+import { RenderSystem } from "../systems/render-system.js";
 import { IEntityManager } from "./common-interfaces.js";
 
 export type Bounds = { position: Vector2; size: Vector2 };
@@ -40,7 +43,12 @@ export type ComponentMap = {
   animation: Animation;
 };
 
-export type SystemType = "physics" | "render" | "input";
+export type SystemType = "input" | "physics" | "render";
+export type SystemMap = {
+  input: InputSystem;
+  physics: PhysicsSystem;
+  render: RenderSystem;
+};
 
 export type EntityTemplate = {
   [componentType: string]: BaseComponent;

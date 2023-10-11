@@ -1,9 +1,10 @@
-import { BaseComponent } from "../components/base.js";
+import { BaseComponent } from "../components/index.js";
 import { GameContext } from "../core/context.js";
+import { SystemType } from "../types/common-types.js";
 
 export abstract class BaseSystem {
   /** The name of this system.*/
-  abstract name: string;
+  abstract name: SystemType;
   /** Priority rating for order of execution when updating systems.*/
   abstract priority: number;
   /** Components that an entity should have for this system to process it. */

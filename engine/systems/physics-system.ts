@@ -1,15 +1,15 @@
 import { CollisionDetector, CollisionResolver } from "../physics/collision/index.js";
 import { IQuadtree } from "../types/common-interfaces.js";
 import { BaseSystem } from "./base-system.js";
-import { BaseComponent } from "../components/base.js";
-import { Collidable } from "../types/common-types.js";
+import { BaseComponent } from "../components/index.js";
+import { Collidable, SystemType } from "../types/common-types.js";
 import { CollisionResponseType } from "../constants/enums.js";
 import { GameContext } from "../core/context.js";
 import { BaseIntegrator } from "../physics/integrators/base-integrator.js";
 
 export class PhysicsSystem extends BaseSystem {
   priority: number = 5;
-  name: string = "PhysicsSystem";
+  name: SystemType = "physics";
 
   quadtree: IQuadtree;
   detector: CollisionDetector;
