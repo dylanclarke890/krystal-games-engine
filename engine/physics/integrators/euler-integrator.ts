@@ -32,23 +32,23 @@ export class SemiImplicitEulerIntegrator extends BaseIntegrator {
     const viewport = this.context.viewport;
 
     if (sides.has(SideOfCollision.LEFT)) {
-      rigidBody.transform.position.x = collider.size.x / 2 + this.adjustmentBuffer;
-      rigidBody.velocity.x *= -rigidBody.bounciness;
+      rigidBody.transform.position.x = collider.boundsSize.x / 2 + this.adjustmentBuffer;
+      rigidBody.velocity.x *= -collider.material.bounciness;
     }
 
     if (sides.has(SideOfCollision.RIGHT)) {
-      rigidBody.transform.position.x = viewport.width - collider.size.x / 2 - this.adjustmentBuffer;
-      rigidBody.velocity.x *= -rigidBody.bounciness;
+      rigidBody.transform.position.x = viewport.width - collider.boundsSize.x / 2 - this.adjustmentBuffer;
+      rigidBody.velocity.x *= -collider.material.bounciness;
     }
 
     if (sides.has(SideOfCollision.TOP)) {
-      rigidBody.transform.position.y = collider.size.y / 2 + this.adjustmentBuffer;
-      rigidBody.velocity.y *= -rigidBody.bounciness;
+      rigidBody.transform.position.y = collider.boundsSize.y / 2 + this.adjustmentBuffer;
+      rigidBody.velocity.y *= -collider.material.bounciness;
     }
 
     if (sides.has(SideOfCollision.BOTTOM)) {
-      rigidBody.transform.position.y = viewport.height - collider.size.y / 2 - this.adjustmentBuffer;
-      rigidBody.velocity.y *= -rigidBody.bounciness;
+      rigidBody.transform.position.y = viewport.height - collider.boundsSize.y / 2 - this.adjustmentBuffer;
+      rigidBody.velocity.y *= -collider.material.bounciness;
     }
   }
 }

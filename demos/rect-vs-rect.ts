@@ -3,6 +3,7 @@ import { areRectsColliding } from "../engine/physics/collision/detection/detecti
 import { RectCollider, Rectangle, RigidBody, RenderableShape, Transform } from "../engine/components/index.js";
 import { KrystalGameEngine } from "../engine/core/engine.js";
 import { Vector2 } from "../engine/maths/vector2.js";
+import { PhysicsMaterial } from "../engine/components/physics-material.js";
 
 export class RectVsRectTest extends KrystalGameEngine {
   mouseRectId: number;
@@ -26,7 +27,7 @@ export class RectVsRectTest extends KrystalGameEngine {
     transform.position = position;
 
     const rigidBody = new RigidBody(transform);
-    rigidBody.addCollider(new RectCollider(size));
+    rigidBody.addCollider(new RectCollider(new PhysicsMaterial(), size));
 
     const renderable = new RenderableShape(transform, new Rectangle(size, color));
 
@@ -41,11 +42,11 @@ export class RectVsRectTest extends KrystalGameEngine {
     const em = this.context.entities;
 
     const mouseRigidBody = em.getComponent(this.mouseRectId, "rigid-body")!;
-    const mouseRectSize = mouseRigidBody.colliders[0].size;
+    const mouseRectSize = mouseRigidBody.colliders[0].boundsSize;
     mouseRigidBody.transform.position.assign(this.context.input.mouse).sub(mouseRectSize.clone().divScalar(2));
 
     const staticRectRigidBody = em.getComponent(this.staticRectId, "rigid-body")!;
-    const staticRectSize = staticRectRigidBody.colliders[0].size;
+    const staticRectSize = staticRectRigidBody.colliders[0].boundsSize;
     const staticRectShape = em.getComponent(this.staticRectId, "renderable")!;
 
     if (

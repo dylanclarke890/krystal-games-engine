@@ -3,6 +3,7 @@ import { KrystalGameEngine } from "../engine/core/engine.js";
 import { Vector2 } from "../engine/maths/vector2.js";
 import { GameEvents } from "../engine/constants/enums.js";
 import { isPointCollidingWithRect } from "../engine/physics/collision/index.js";
+import { PhysicsMaterial } from "../engine/components/physics-material.js";
 
 export class PointVsRectTest extends KrystalGameEngine {
   rectId!: number;
@@ -26,7 +27,7 @@ export class PointVsRectTest extends KrystalGameEngine {
     transform.position = new Vector2(200, 200);
 
     const rigidBody = new RigidBody(transform);
-    rigidBody.addCollider(new RectCollider(size));
+    rigidBody.addCollider(new RectCollider(new PhysicsMaterial(), size));
 
     this.rectId = id;
     em.addComponent(id, transform);
@@ -39,7 +40,9 @@ export class PointVsRectTest extends KrystalGameEngine {
     const rectCollider = rectRigidBody!.colliders[0];
     const rectShape = this.context.entities.getComponent(this.rectId, "renderable");
 
-    if (isPointCollidingWithRect(this.context.input.mouse, rectRigidBody!.transform.position, rectCollider!.size)) {
+    if (
+      isPointCollidingWithRect(this.context.input.mouse, rectRigidBody!.transform.position, rectCollider!.boundsSize)
+    ) {
       rectShape!.shape!.color = "green";
     } else {
       rectShape!.shape!.color = "purple";

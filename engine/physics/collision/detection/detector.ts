@@ -46,7 +46,7 @@ export class CollisionDetector {
           continue;
         }
 
-        if (areRectsColliding(aRigidBody.transform.position, aCollider.size, bEntityNode.position, bEntityNode.size)) {
+        if (areRectsColliding(aRigidBody.transform.position, aCollider.boundsSize, bEntityNode.position, bEntityNode.size)) {
           this.entityCollisions.add([
             [aId, aRigidBody, aCollider],
             [bEntityNode.id, bEntityNode.rigidBody!, bEntityNode.collider!],
@@ -58,13 +58,13 @@ export class CollisionDetector {
 
   viewportCollisionCheck(rigidBody: RigidBody, collider: Collider): boolean {
     const pos = rigidBody.transform.position;
-    const size = collider.size;
+    const size = collider.boundsSize;
     const viewport = this.context.viewport;
 
     switch (collider.shape) {
       case ShapeType.Circle:
-        const rx = collider.size.x / 2;
-        const ry = collider.size.y / 2;
+        const rx = collider.boundsSize.x / 2;
+        const ry = collider.boundsSize.y / 2;
         if (pos.x - rx < 0 || pos.x + rx > viewport.width || pos.y - rx < 0 || pos.y + ry > viewport.height) {
           return true;
         }

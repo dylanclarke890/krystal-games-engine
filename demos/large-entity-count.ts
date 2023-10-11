@@ -1,4 +1,5 @@
 import { Circle, CircleCollider, RenderableShape, RigidBody, Transform } from "../engine/components/index.js";
+import { PhysicsMaterial } from "../engine/components/physics-material.js";
 import { GameEvents } from "../engine/constants/enums.js";
 import { KrystalGameEngine } from "../engine/core/engine.js";
 import { Vector2 } from "../engine/maths/vector2.js";
@@ -21,7 +22,7 @@ export class LargeEntityCountTest extends KrystalGameEngine {
 
       const rigidBody = new RigidBody(transform);
       rigidBody.velocity = new Vector2(10, 0);
-      rigidBody.colliders.push(new CircleCollider(3));
+      rigidBody.colliders.push(new CircleCollider(new PhysicsMaterial(), 3));
 
       em.addComponent(newEntity, transform);
       em.addComponent(newEntity, rigidBody);

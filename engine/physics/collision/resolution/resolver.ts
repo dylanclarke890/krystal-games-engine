@@ -57,11 +57,11 @@ export class CollisionResolver {
     bCollider: Collider,
     flags: BitwiseFlags<SideOfCollision>
   ): void {
-    const aHalfX = aCollider.size.x / 2;
-    const bHalfX = bCollider.size.x / 2;
+    const aHalfX = aCollider.boundsSize.x / 2;
+    const bHalfX = bCollider.boundsSize.x / 2;
 
-    const aHalfY = aCollider.size.y / 2;
-    const bHalfY = bCollider.size.y / 2;
+    const aHalfY = aCollider.boundsSize.y / 2;
+    const bHalfY = bCollider.boundsSize.y / 2;
 
     // Get midpoints
     const aMidX = aRigidBody.transform.position.x + aHalfX;
@@ -100,15 +100,15 @@ export class CollisionResolver {
   #findSidesOfViewportCollision(position: Vector2, collider: Collider, flags: BitwiseFlags<SideOfCollision>): void {
     switch (collider.shape) {
       case ShapeType.Circle: {
-        if (position.x - collider.size.x / 2 < 0) {
+        if (position.x - collider.boundsSize.x / 2 < 0) {
           flags.add(SideOfCollision.LEFT);
-        } else if (position.x + collider.size.x / 2 > this.context.viewport.width) {
+        } else if (position.x + collider.boundsSize.x / 2 > this.context.viewport.width) {
           flags.add(SideOfCollision.RIGHT);
         }
 
-        if (position.y - collider.size.y / 2 < 0) {
+        if (position.y - collider.boundsSize.y / 2 < 0) {
           flags.add(SideOfCollision.TOP);
-        } else if (position.y + collider.size.y / 2 > this.context.viewport.height) {
+        } else if (position.y + collider.boundsSize.y / 2 > this.context.viewport.height) {
           flags.add(SideOfCollision.BOTTOM);
         }
         break;
@@ -118,7 +118,7 @@ export class CollisionResolver {
           flags.add(SideOfCollision.LEFT);
         }
 
-        if (position.x + collider.size.x > this.context.viewport.width) {
+        if (position.x + collider.boundsSize.x > this.context.viewport.width) {
           flags.add(SideOfCollision.RIGHT);
         }
 
@@ -126,7 +126,7 @@ export class CollisionResolver {
           flags.add(SideOfCollision.TOP);
         }
 
-        if (position.y + collider.size.y > this.context.viewport.height) {
+        if (position.y + collider.boundsSize.y > this.context.viewport.height) {
           flags.add(SideOfCollision.BOTTOM);
         }
         break;
