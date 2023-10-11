@@ -1,8 +1,9 @@
 import { BaseComponent, Collider, RigidBody } from "../components/index.js";
 import { PriorityLevel, Quadrant } from "../constants/enums.js";
 import { Vector2 } from "../maths/vector2.js";
+import { BaseSystem } from "../systems/base-system.js";
 import { Enum } from "../utils/enum.js";
-import { ComponentMap, ComponentType, EntityTemplate } from "./common-types.js";
+import { ComponentMap, ComponentType, EntityTemplate, SystemMap, SystemType } from "./common-types.js";
 
 export interface IConfigManager<T> {
   config: T;
@@ -90,12 +91,6 @@ export interface IEntityManager {
   hasComponents(entity: number, types: ComponentType[]): boolean;
 }
 
-export interface ILoop {
-  start(): void;
-  main(timestamp: number): void;
-  stop(unloadAssets?: boolean): void;
-}
-
 export interface IObjectPoolManager {
   get<T, Args extends any[] = any[]>(name: string): IObjectPool<T, Args> | undefined;
   has(name: string): boolean;
@@ -107,6 +102,45 @@ export interface IObjectPoolManager {
   ): IObjectPool<T, Args>;
   clear(name: string): void;
   clearAll(): void;
+}
+
+export interface ISystemManager {
+  /**
+   * Update all registered systems in the order of their priority.
+   * @param dt Time since the last frame.
+   */
+  update(dt: number): void;
+
+  /**
+   * Register a system for updates.
+   * @param system The system to register.
+   */
+  addSystem(system: BaseSystem): void;
+
+  /**
+   * Unregister a system.
+   * @param systemName The name of the system to unregister.
+   */
+  removeSystem(systemName: SystemType): void;
+
+  /**
+   * Fetch a system by it's name.
+   * @param name The name of the system.
+   */
+  getSystem<T extends SystemType>(name: T): SystemMap[T] | undefined;
+
+  /**
+   * Enable or disable a system.
+   * @param name The name of the system.
+   * @param enabled Whether the system should be enabled or disabled.
+   */
+  setSystemEnabled(name: SystemType, enabled: boolean): void;
+}
+
+export interface ILoop {
+  start(): void;
+  main(timestamp: number): void;
+  stop(unloadAssets?: boolean): void;
 }
 
 export interface IObjectFactory<T, Args extends any[] = any[]> {

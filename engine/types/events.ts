@@ -1,3 +1,4 @@
+import { BaseComponent } from "../components/base.js";
 import { Collider } from "../components/collider.js";
 import { RigidBody } from "../components/rigid-body.js";
 import { SideOfCollision } from "../constants/enums.js";
@@ -14,4 +15,9 @@ export type EntityCollisionEvent = {
   a: { id: number; rigidBody: RigidBody };
   b: { id: number; rigidBody: RigidBody };
   sides: BitwiseFlags<SideOfCollision>;
+};
+
+export type ComponentEvent = {
+  entity: number;
+  component: BaseComponent;
 };

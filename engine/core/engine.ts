@@ -16,6 +16,7 @@ import { SemiImplicitEulerIntegrator, BaseIntegrator } from "../physics/integrat
 import { config } from "./config.js";
 import { GameContext } from "./context.js";
 import { InvalidOperationError } from "../types/errors.js";
+import { GameEvents } from "../constants/enums.js";
 
 export class KrystalGameEngine {
   context: GameContext;
@@ -45,6 +46,7 @@ export class KrystalGameEngine {
     const resolver = new CollisionResolver(this.context);
     const integrator = this.#getIntegrator();
 
+    this.context.events.on(GameEvents.LOOP_STARTED, this.context.systems.update.bind(this.context.systems));
     this.context.systems.addSystem(new InputSystem(this.context));
     this.context.systems.addSystem(new PhysicsSystem(this.context, quadtree, detector, resolver, integrator));
     this.context.systems.addSystem(new RenderSystem(this.context));

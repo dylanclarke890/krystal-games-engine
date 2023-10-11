@@ -1,13 +1,19 @@
 import { Viewport } from "../graphics/viewport.js";
-import { InputManager, SystemManager } from "../managers/index.js";
+import { InputManager } from "../managers/index.js";
 import { World } from "../physics/world.js";
-import { IConfigManager, IEntityManager, IEventManager, IObjectPoolManager } from "../types/common-interfaces.js";
+import {
+  IConfigManager,
+  IEntityManager,
+  IEventManager,
+  IObjectPoolManager,
+  ISystemManager,
+} from "../types/common-interfaces.js";
 import { GameConfig } from "./config.js";
 
 export class GameContext {
   events: IEventManager;
   entities: IEntityManager;
-  systems: SystemManager;
+  systems: ISystemManager;
   input: InputManager;
   config: IConfigManager<GameConfig>;
   objectPools: IObjectPoolManager;
@@ -17,7 +23,7 @@ export class GameContext {
   constructor(
     eventManager: IEventManager,
     entityManager: IEntityManager,
-    systemManager: SystemManager,
+    systemManager: ISystemManager,
     inputManager: InputManager,
     configManager: IConfigManager<GameConfig>,
     objectPoolManager: IObjectPoolManager,
