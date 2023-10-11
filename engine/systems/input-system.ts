@@ -5,8 +5,6 @@ import { GameContext } from "../core/context.js";
 
 export class InputSystem extends BaseSystem {
   name: string = "InputSystem";
-  requiredComponents: string[] = ["Input"];
-  components: string[] = [...this.requiredComponents];
   priority: number = 0;
 
   constructor(context: GameContext) {
@@ -14,12 +12,12 @@ export class InputSystem extends BaseSystem {
   }
 
   isInterestedInComponent(component: BaseComponent): boolean {
-    if (component.type === "Input") return true;
+    if (component.type === "input") return true;
     return false;
   }
 
   belongsToSystem(entity: number): boolean {
-    return typeof this.context.entities.getComponents(entity, this.requiredComponents).Input !== "undefined";
+    return typeof this.context.entities.getComponent<Input>(entity, "input") !== "undefined";
   }
 
   update(dt: number, entities: Set<number>) {
@@ -27,12 +25,12 @@ export class InputSystem extends BaseSystem {
     this.context.input.clearPressed();
 
     for (const id of entities) {
-      const components = em.getComponents(id, this.components);
-      if (typeof components.Input === "undefined") {
+      const input = em.getComponent<Input>(id, "input");
+      if (typeof input === "undefined") {
         continue;
       }
 
-      for (const [action, { pressed, held, released }] of (components.Input as Input).actions) {
+      for (const [action, { pressed, held, released }] of input.actions) {
         const state = this.context.input.state(action);
         if (state.pressed && typeof pressed === "function") pressed(id, em, dt);
         if (state.held && typeof held === "function") held(id, em, dt);

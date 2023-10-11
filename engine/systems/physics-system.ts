@@ -11,7 +11,6 @@ import { BaseIntegrator } from "../physics/integrators/base-integrator.js";
 export class PhysicsSystem extends BaseSystem {
   priority: number = 5;
   name: string = "PhysicsSystem";
-  requiredComponents: string[] = ["rigidBody"];
 
   quadtree: IQuadtree;
   detector: CollisionDetector;

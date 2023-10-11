@@ -10,8 +10,6 @@ import { GameContext } from "../core/context.js";
 export class RenderSystem extends BaseSystem {
   name = "RenderSystem";
   priority: number = 10;
-  requiredComponents: string[] = ["Position"];
-  components: string[] = [...this.requiredComponents, "Sprite", "Animation", "Shape"];
 
   constructor(context: GameContext) {
     super(context);

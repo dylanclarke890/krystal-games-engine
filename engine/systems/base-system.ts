@@ -7,7 +7,6 @@ export abstract class BaseSystem {
   /** Priority rating for order of execution when updating systems.*/
   abstract priority: number;
   /** Components that an entity should have for this system to process it. */
-  abstract requiredComponents: string[];
   /**
    * @param dt Delta time since last frame.
    * @param entities Entities for the system to update.
