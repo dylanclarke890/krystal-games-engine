@@ -12,7 +12,7 @@ export class GameContext {
   config: IConfigManager<GameConfig>;
   objectPools: IObjectPoolManager;
   viewport: Viewport;
-  world!: World;
+  world: World;
 
   constructor(
     eventManager: IEventManager,
@@ -30,5 +30,6 @@ export class GameContext {
     this.config = configManager;
     this.objectPools = objectPoolManager;
     this.viewport = viewport;
+    this.world = new World();
   }
 }

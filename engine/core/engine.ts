@@ -12,7 +12,6 @@ import { Viewport } from "../graphics/viewport.js";
 import { InputSystem, RenderSystem, PhysicsSystem } from "../systems/index.js";
 import { GameLoop } from "../time/game-loop.js";
 import { ILoop } from "../types/common-interfaces.js";
-import { World } from "../physics/world.js";
 import { SemiImplicitEulerIntegrator, BaseIntegrator } from "../physics/integrators/index.js";
 import { config } from "./config.js";
 import { GameContext } from "./context.js";
@@ -46,9 +45,8 @@ export class KrystalGameEngine {
     const resolver = new CollisionResolver(this.context);
     const integrator = this.#getIntegrator();
 
-    this.context.world = new World(integrator);
     this.context.systems.addSystem(new InputSystem(this.context));
-    this.context.systems.addSystem(new PhysicsSystem(this.context, quadtree, detector, resolver));
+    this.context.systems.addSystem(new PhysicsSystem(this.context, quadtree, detector, resolver, integrator));
     this.context.systems.addSystem(new RenderSystem(this.context));
     this.loop = new GameLoop(this.context);
   }

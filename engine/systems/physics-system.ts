@@ -1,12 +1,12 @@
 import { CollisionDetector, CollisionResolver } from "../physics/collision/index.js";
 import { IQuadtree } from "../types/common-interfaces.js";
-import { Assert } from "../utils/assert.js";
 import { BaseSystem } from "./base-system.js";
 import { BaseComponent } from "../components/base.js";
 import { Collidable } from "../types/common-types.js";
 import { RigidBody } from "../components/rigid-body.js";
 import { CollisionResponseType } from "../constants/enums.js";
 import { GameContext } from "../core/context.js";
+import { BaseIntegrator } from "../physics/integrators/base-integrator.js";
 
 export class PhysicsSystem extends BaseSystem {
   priority: number = 5;
@@ -16,12 +16,17 @@ export class PhysicsSystem extends BaseSystem {
   quadtree: IQuadtree;
   detector: CollisionDetector;
   resolver: CollisionResolver;
+  integrator: BaseIntegrator;
 
-  constructor(context: GameContext, quadtree: IQuadtree, detector: CollisionDetector, resolver: CollisionResolver) {
+  constructor(
+    context: GameContext,
+    quadtree: IQuadtree,
+    detector: CollisionDetector,
+    resolver: CollisionResolver,
+    integrator: BaseIntegrator
+  ) {
     super(context);
-    Assert.instanceOf("detector", detector, CollisionDetector);
-    Assert.instanceOf("resolver", resolver, CollisionResolver);
-
+    this.integrator = integrator;
     this.quadtree = quadtree;
     this.detector = detector;
     this.resolver = resolver;
@@ -29,7 +34,6 @@ export class PhysicsSystem extends BaseSystem {
 
   update(dt: number, entities: Set<number>) {
     const em = this.context.entities;
-    const world = this.context.world;
     const collidables: Collidable[] = [];
     this.quadtree.clear();
 
@@ -39,7 +43,7 @@ export class PhysicsSystem extends BaseSystem {
         continue;
       }
 
-      world.integrator.integrate(id, rigidBody, dt);
+      this.integrator.integrate(id, rigidBody, dt);
 
       for (const collider of rigidBody.colliders) {
         if (collider.responseType === CollisionResponseType.None) {
