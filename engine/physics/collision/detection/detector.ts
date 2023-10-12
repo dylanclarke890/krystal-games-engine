@@ -37,7 +37,8 @@ export class CollisionDetector {
         this.viewportCollisions.add(collidables[i]);
       }
 
-      const possibleCollisions = this.quadtree.retrieve(aRigidBody, aCollider);
+      const position = aRigidBody.transform.position.clone().add(aCollider.transform.position);
+      const possibleCollisions = this.quadtree.retrieve(position, aCollider.bounds);
 
       for (let j = 0; j < possibleCollisions.length; j++) {
         this.collisionChecksThisFrame++;
@@ -46,7 +47,8 @@ export class CollisionDetector {
           continue;
         }
 
-        if (areRectsColliding(aRigidBody.transform.position, aCollider.boundsSize, bEntityNode.position, bEntityNode.size)) {
+        if (areRectsColliding(aRigidBody.transform.position, aCollider.bounds, bEntityNode.position, bEntityNode.size)) {
+          const bRigidBody = this.context.entities.getComponent(bEntityNode.id, "rigid-body")
           this.entityCollisions.add([
             [aId, aRigidBody, aCollider],
             [bEntityNode.id, bEntityNode.rigidBody!, bEntityNode.collider!],
@@ -58,13 +60,13 @@ export class CollisionDetector {
 
   viewportCollisionCheck(rigidBody: RigidBody, collider: Collider): boolean {
     const pos = rigidBody.transform.position;
-    const size = collider.boundsSize;
+    const size = collider.bounds;
     const viewport = this.context.viewport;
 
     switch (collider.shape) {
       case ShapeType.Circle:
-        const rx = collider.boundsSize.x / 2;
-        const ry = collider.boundsSize.y / 2;
+        const rx = collider.bounds.x / 2;
+        const ry = collider.bounds.y / 2;
         if (pos.x - rx < 0 || pos.x + rx > viewport.width || pos.y - rx < 0 || pos.y + ry > viewport.height) {
           return true;
         }

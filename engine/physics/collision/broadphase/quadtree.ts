@@ -1,5 +1,3 @@
-import { Collider } from "../../../components/collider.js";
-import { RigidBody } from "../../../components/rigid-body.js";
 import { Quadrant } from "../../../constants/enums.js";
 import { IObjectPool, IQuadtree, IQuadtreeNode } from "../../../types/common-interfaces.js";
 import { Vector2 } from "../../../maths/vector2.js";
@@ -23,8 +21,6 @@ export class Quadtree implements IQuadtree {
       "quadtreeNodes",
       QuadtreeNode,
       (node, id, pos, size, nodePool, depth, maxDepth, maxChildren) => {
-        node.rigidBody = undefined;
-        node.collider = undefined;
         node.init(id, pos, size, nodePool, depth!, maxDepth!, maxChildren!);
       }
     );
@@ -34,18 +30,14 @@ export class Quadtree implements IQuadtree {
     this.root = this.nodePool.acquire(-1, pos, size, this.nodePool, 0, maxDepth, maxChildren);
   }
 
-  insert(id: number, rigidBody: RigidBody, collider: Collider): void {
-    const position = rigidBody.transform.position.clone().add(collider.offset);
-    const node = this.nodePool.acquire(id, position, collider.boundsSize, this.nodePool);
-    node.rigidBody = rigidBody;
-    node.collider = collider;
+  insert(id: number, position: Vector2, bounds: Vector2): void {
+    const node = this.nodePool.acquire(id, position, bounds, this.nodePool);
     this.size++;
     this.root.insert(node);
   }
 
-  retrieve(rigidBody: RigidBody, collider: Collider): IQuadtreeNode[] {
-    const position = rigidBody.transform.position.clone().add(collider.offset);
-    const node = this.nodePool.acquire(-1, position, collider.boundsSize, this.nodePool);
+  retrieve(position: Vector2, bounds: Vector2): IQuadtreeNode[] {
+    const node = this.nodePool.acquire(-1, position, bounds, this.nodePool);
     const result = this.root.retrieve(node);
     this.nodePool.release(node);
     return result;
@@ -123,8 +115,6 @@ export class Quadtree implements IQuadtree {
 
 export class QuadtreeNode implements IQuadtreeNode {
   id!: number;
-  rigidBody?: RigidBody;
-  collider?: Collider;
   position!: Vector2;
   size!: Vector2;
   nodes!: IQuadtreeNode[];

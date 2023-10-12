@@ -1,4 +1,4 @@
-import { BaseComponent, Collider, RigidBody } from "../components/index.js";
+import { BaseComponent } from "../components/index.js";
 import { PriorityLevel, Quadrant } from "../constants/enums.js";
 import { Vector2 } from "../maths/vector2.js";
 import { BaseSystem } from "../systems/base-system.js";
@@ -156,8 +156,8 @@ export interface IObjectPool<T, Args extends any[] = any[]> {
 }
 
 export interface IQuadtree {
-  insert(id: number, rigidBody: RigidBody, collider: Collider): void;
-  retrieve(rigidBody: RigidBody, collider: Collider): IQuadtreeNode[];
+  insert(id: number, position: Vector2, bounds: Vector2): void;
+  retrieve(position: Vector2, bounds: Vector2): IQuadtreeNode[];
   retrieveById(id: number, node?: IQuadtreeNode): Nullable<IQuadtreeNode>;
   removeById(id: number, node?: IQuadtreeNode): boolean;
   drawBoundaries(color?: string): void;
@@ -170,8 +170,6 @@ export interface IQuadtreeNode {
   size: Vector2;
   children: IQuadtreeNode[];
   overlappingChildren: IQuadtreeNode[];
-  rigidBody?: RigidBody;
-  collider?: Collider;
 
   init(
     id: number,
