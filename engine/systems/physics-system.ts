@@ -1,9 +1,9 @@
 import { BaseSystem } from "./base-system.js";
 import { BaseComponent, RigidBody } from "../components/index.js";
 import { GameContext } from "../core/context.js";
-import { SystemType } from "../types/common-types.js";
 import { PhysicsContext } from "../physics/context.js";
 import { ColliderEntity } from "../physics/collision/data.js";
+import { SystemType } from "../types/common-types.js";
 
 export class PhysicsSystem extends BaseSystem {
   priority: number = 5;
