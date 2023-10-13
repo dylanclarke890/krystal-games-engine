@@ -17,47 +17,44 @@ import { config } from "./config.js";
 import { GameContext } from "./context.js";
 import { InvalidOperationError } from "../types/errors.js";
 import { GameEvents } from "../constants/enums.js";
+import { PhysicsContext } from "../physics/context.js";
+import { World } from "../physics/world.js";
 
 export class KrystalGameEngine {
-  context: GameContext;
+  gameContext: GameContext;
+  physicsContext: PhysicsContext;
   loop: ILoop;
 
   constructor(canvasId: Nullable<string>, width: number, height: number) {
     const viewport = new Viewport(width, height, canvasId);
-    const eventManager = new EventManager();
+    const events = new EventManager();
     const configManager = new ConfigManager(config);
-    const objectPoolManager = new ObjectPoolManager();
-    const entityManager = new EntityManager(eventManager);
-    const systemManager = new SystemManager(entityManager, eventManager);
-    const inputManager = new InputManager(eventManager, viewport);
+    const objectPools = new ObjectPoolManager();
+    const entities = new EntityManager(events);
+    const systems = new SystemManager(entities, events);
+    const input = new InputManager(events, viewport);
+    this.gameContext = new GameContext(events, entities, systems, input, configManager, objectPools, viewport);
 
-    this.context = new GameContext(
-      eventManager,
-      entityManager,
-      systemManager,
-      inputManager,
-      configManager,
-      objectPoolManager,
-      viewport
-    );
-
-    const quadtree = new Quadtree(this.context, { maxDepth: configManager.getInt("quadtreeMaxDepth") });
-    const detector = new CollisionDetector(this.context, quadtree);
-    const resolver = new CollisionResolver(this.context);
     const integrator = this.#getIntegrator();
+    const broadphase = new Quadtree(this.gameContext);
+    const detector = new CollisionDetector(this.gameContext);
+    const resolver = new CollisionResolver(this.gameContext);
+    const world = new World();
+    this.physicsContext = new PhysicsContext(integrator, broadphase, detector, resolver, world);
 
-    this.context.events.on(GameEvents.LOOP_STARTED, this.context.systems.update.bind(this.context.systems));
-    this.context.systems.addSystem(new InputSystem(this.context));
-    this.context.systems.addSystem(new PhysicsSystem(this.context, quadtree, detector, resolver, integrator));
-    this.context.systems.addSystem(new RenderSystem(this.context));
-    this.loop = new GameLoop(this.context);
+    this.gameContext.systems.addSystem(new InputSystem(this.gameContext));
+    this.gameContext.systems.addSystem(new PhysicsSystem(this.gameContext, this.physicsContext));
+    this.gameContext.systems.addSystem(new RenderSystem(this.gameContext));
+
+    this.loop = new GameLoop(this.gameContext);
+    events.on(GameEvents.LOOP_STARTED, this.gameContext.systems.update.bind(this.gameContext.systems));
   }
 
   #getIntegrator(): BaseIntegrator {
-    const integratorType = this.context.config.getString("physicsIntegrator") ?? "euler";
+    const integratorType = this.gameContext.config.getString("physicsIntegrator") ?? "euler";
     switch (integratorType) {
       case "euler":
-        return new SemiImplicitEulerIntegrator(this.context);
+        return new SemiImplicitEulerIntegrator(this.gameContext);
       case "verlet":
       case "rk4":
       default:

@@ -1,94 +1,115 @@
-import { CollisionResponseType, ShapeType } from "../constants/enums.js";
+import { ShapeType } from "../constants/enums.js";
+import { AABB } from "../maths/aabb.js";
 import { Vector2 } from "../maths/vector2.js";
 import { ComponentType } from "../types/common-types.js";
 import { InvalidOperationError } from "../types/errors.js";
-import { BaseComponent, RigidBody, Transform } from "./index.js";
+import { BaseComponent } from "./base.js";
 import { PhysicsMaterial } from "./physics-material.js";
+import { RigidBody } from "./rigid-body.js";
+import { Transform } from "./transform.js";
 
 export abstract class Collider extends BaseComponent {
+  abstract shapeType: ShapeType;
   type: ComponentType = "collider";
-  rigidBody?: RigidBody;
-  transform: Transform;
-  material: PhysicsMaterial;
-  shape: ShapeType;
-  bounds: Vector2;
-  radius?: number;
-  vertices?: Vector2[];
 
-  collisionLayer: number = 0;
-  collisionMask: number = 0xffffffff;
-  responseType: CollisionResponseType = CollisionResponseType.Physical;
+  transform: Transform;
+  rigidBody?: RigidBody;
+  material: PhysicsMaterial;
+  aabb: AABB;
   isTrigger: boolean;
 
-  constructor(material: PhysicsMaterial, shape: ShapeType, isTrigger?: boolean) {
+  constructor(transform: Transform, material: PhysicsMaterial, isTrigger = false) {
     super();
-    this.shape = shape;
-    this.isTrigger = isTrigger ?? false;
+    this.transform = transform;
     this.material = material;
-    this.bounds = new Vector2();
-    this.transform = new Transform();
+    this.isTrigger = isTrigger;
+    this.aabb = new AABB();
   }
 
-  protected calculateBoundingBox() {
-    switch (this.shape) {
-      case ShapeType.Rectangle:
-        break;
-      case ShapeType.Circle:
-        if (typeof this.radius === "undefined") {
-          throw new InvalidOperationError("radius must be defined", this);
-        }
-        this.bounds.x = this.radius * 2;
-        this.bounds.y = this.radius * 2;
-        break;
-      case ShapeType.Polygon:
-        if (!Array.isArray(this.vertices) || this.vertices.length < 3) {
-          throw new InvalidOperationError("vertices must be defined and at contain at least 3 points", this);
-        }
-        let minX = Infinity;
-        let minY = Infinity;
-        let maxX = -Infinity;
-        let maxY = -Infinity;
-
-        this.vertices.forEach((v) => {
-          minX = minX < v.x ? minX : v.x;
-          maxX = maxX > v.x ? maxX : v.x;
-          minY = minY < v.y ? minY : v.y;
-          maxY = maxY > v.y ? maxY : v.y;
-        });
-
-        this.bounds.x = Math.abs(maxX - minX);
-        this.bounds.y = Math.abs(maxY - minY);
-        break;
-    }
-  }
+  abstract computeAABB(): void;
 
   getAbsolutePosition() {
-    if (typeof this.rigidBody === "undefined") {
-      return this.transform.position.clone();
+    const position = this.transform.position.clone();
+    if (this.rigidBody) {
+      position.add(this.rigidBody.transform.position);
     }
-    return this.rigidBody.transform.position.clone().add(this.transform.position);
+    return position;
   }
 }
 
 export class CircleCollider extends Collider {
-  constructor(material: PhysicsMaterial, radius: number, isTrigger?: boolean) {
-    super(material, ShapeType.Circle, isTrigger);
+  shapeType: ShapeType = ShapeType.Circle;
+  radius: number;
+
+  constructor(transform: Transform, material: PhysicsMaterial, radius: number, isTrigger?: boolean) {
+    super(transform, material, isTrigger);
     this.radius = radius;
-    this.calculateBoundingBox();
+    this.computeAABB();
+  }
+
+  computeAABB() {
+    const position = this.getAbsolutePosition();
+    this.aabb.minX = position.x - this.radius;
+    this.aabb.maxX = position.x + this.radius;
+    this.aabb.minY = position.y - this.radius;
+    this.aabb.maxY = position.y + this.radius;
   }
 }
 
 export class RectCollider extends Collider {
-  constructor(material: PhysicsMaterial, dimensions: Vector2, isTrigger?: boolean) {
-    super(material, ShapeType.Rectangle, isTrigger);
-    this.bounds = dimensions;
+  shapeType: ShapeType = ShapeType.Rectangle;
+  size: Vector2;
+
+  constructor(transform: Transform, material: PhysicsMaterial, size: Vector2, isTrigger?: boolean) {
+    super(transform, material, isTrigger);
+    this.size = size;
+    this.computeAABB();
+  }
+
+  computeAABB() {
+    const position = this.getAbsolutePosition();
+    this.aabb.minX = position.x;
+    this.aabb.maxX = position.x + this.size.x;
+    this.aabb.minY = position.y;
+    this.aabb.maxY = position.y + this.size.y;
   }
 }
 
 export class PolygonCollider extends Collider {
-  constructor(material: PhysicsMaterial, vertices: Vector2[], isTrigger?: boolean) {
-    super(material, ShapeType.Polygon, isTrigger);
+  shapeType: ShapeType = ShapeType.Polygon;
+  vertices: Vector2[];
+
+  constructor(transform: Transform, material: PhysicsMaterial, vertices: Vector2[], isTrigger?: boolean) {
+    super(transform, material, isTrigger);
     this.vertices = vertices;
-    this.calculateBoundingBox();
+    this.computeAABB();
+  }
+
+  computeAABB() {
+    if (this.vertices.length < 3) {
+      throw new InvalidOperationError("vertices must be defined and contain at least 3 points", this);
+    }
+
+    const position = this.getAbsolutePosition();
+
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+
+    this.vertices.forEach((v) => {
+      const absX = position.x + v.x;
+      const absY = position.y + v.y;
+
+      minX = Math.min(minX, absX);
+      maxX = Math.max(maxX, absX);
+      minY = Math.min(minY, absY);
+      maxY = Math.max(maxY, absY);
+    });
+
+    this.aabb.minX = minX;
+    this.aabb.minY = minY;
+    this.aabb.maxX = maxX;
+    this.aabb.maxY = maxY;
   }
 }

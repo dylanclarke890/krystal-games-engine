@@ -8,12 +8,12 @@ export class LargeEntityCountTest extends KrystalGameEngine {
   static MAX_ENTITIES = 500;
   constructor() {
     super("canvas1", 500, 500);
-    this.context.events.on(GameEvents.LOOP_STARTED, this.update.bind(this));
+    this.gameContext.events.on(GameEvents.LOOP_STARTED, this.update.bind(this));
     this.start();
   }
 
   update() {
-    const em = this.context.entities;
+    const em = this.gameContext.entities;
     if (em.entities.size < LargeEntityCountTest.MAX_ENTITIES) {
       const newEntity = em.createEntity();
 
@@ -22,19 +22,18 @@ export class LargeEntityCountTest extends KrystalGameEngine {
 
       const rigidBody = new RigidBody(transform);
       rigidBody.velocity = new Vector2(10, 0);
-      rigidBody.colliders.push(new CircleCollider(new PhysicsMaterial(), 3));
+      rigidBody.colliders.push(new CircleCollider(new Transform(), new PhysicsMaterial(), 3));
 
       em.addComponent(newEntity, transform);
       em.addComponent(newEntity, rigidBody);
       em.addComponent(newEntity, new RenderableShape(transform, new Circle(3, "yellow")));
     }
 
-    const collisionDetector = this.context.systems.getSystem("physics")!.detector;
-    const viewport = this.context.viewport;
+    const collisionDetector = this.physicsContext.detector;
+    const viewport = this.gameContext.viewport;
     viewport.drawText(`${em.entities.size} objects`, 10, 20);
-    viewport.drawText(`${collisionDetector.collisionChecksThisFrame} entity collisions checked`, 10, 40);
-    viewport.drawText(`${collisionDetector.entityCollisions.size} entity collisions found`, 10, 60);
-    viewport.drawText(`${collisionDetector.viewportCollisions.size} viewport collisions found`, 10, 80);
+    viewport.drawText(`${collisionDetector.collisionsChecked} collisions checked`, 10, 40);
+    viewport.drawText(`${collisionDetector.collisionsFound} collisions found`, 10, 60);
   }
 }
 

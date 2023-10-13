@@ -16,11 +16,11 @@ export abstract class BaseSystem {
   abstract isInterestedInComponent(component: BaseComponent): boolean;
   abstract belongsToSystem(entity: number): boolean;
 
-  context: GameContext;
+  gameContext: GameContext;
   enabled: boolean;
 
-  constructor(context: GameContext, enabled?: boolean) {
-    this.context = context;
+  constructor(gameContext: GameContext, enabled?: boolean) {
+    this.gameContext = gameContext;
     this.enabled = enabled ?? true;
   }
 

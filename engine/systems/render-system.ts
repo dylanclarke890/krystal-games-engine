@@ -19,15 +19,15 @@ export class RenderSystem extends BaseSystem {
   }
 
   belongsToSystem(entity: number): boolean {
-    const renderable = this.context.entities.getComponent(entity, "renderable");
+    const renderable = this.gameContext.entities.getComponent(entity, "renderable");
     return typeof renderable !== "undefined";
   }
 
   update(dt: number, entities: Set<number>) {
-    this.context.viewport.clear();
+    this.gameContext.viewport.clear();
 
     for (const id of entities) {
-      const entity = this.context.entities.getComponent(id, "renderable");
+      const entity = this.gameContext.entities.getComponent(id, "renderable");
       if (typeof entity === "undefined") {
         continue;
       }
@@ -65,12 +65,12 @@ export class RenderSystem extends BaseSystem {
   drawSprite(sprite: Sprite, position: Vector2, sourceX: number, sourceY: number): void {
     const { x, y } = position;
     const { width, height, image } = sprite;
-    this.context.viewport.ctx.drawImage(image, sourceX, sourceY, width, height, x, y, width, height);
+    this.gameContext.viewport.ctx.drawImage(image, sourceX, sourceY, width, height, x, y, width, height);
   }
 
   drawShape(shape: Shape, position: Vector2) {
     const { x, y } = position;
-    const viewport = this.context.viewport;
+    const viewport = this.gameContext.viewport;
     viewport.ctx.fillStyle = shape.color;
 
     switch (shape.shapeType) {

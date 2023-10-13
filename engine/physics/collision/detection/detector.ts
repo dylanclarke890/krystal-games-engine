@@ -1,87 +1,44 @@
-import { areRectsColliding } from "./detection-strategies.js";
-import { IQuadtree } from "../../../types/common-interfaces.js";
-import { Collidable } from "../../../types/common-types.js";
-import { RigidBody } from "../../../components/rigid-body.js";
-import { Collider } from "../../../components/collider.js";
 import { ShapeType } from "../../../constants/enums.js";
-import { InvalidOperationError } from "../../../types/errors.js";
 import { GameContext } from "../../../core/context.js";
+import { ColliderEntity, CollisionInfo } from "../data.js";
+import * as Strategies from "./detection-strategies.js";
 
 export class CollisionDetector {
   context: GameContext;
-  quadtree: IQuadtree;
-  entityCollisions: Set<Pair<Collidable>>;
-  checkForCollisionsWithViewport: boolean;
-  viewportCollisions: Set<Collidable>;
-  collisionChecksThisFrame: number;
+  collisionsChecked: number;
+  collisionsFound: number;
+  strategies: Map<string, (a: ColliderEntity, b: ColliderEntity) => CollisionInfo | undefined>;
 
-  constructor(context: GameContext, quadtree: IQuadtree) {
+  constructor(context: GameContext) {
     this.context = context;
-    this.quadtree = quadtree;
-
-    this.checkForCollisionsWithViewport = context.config.getBool("handleViewportCollisions") ?? false;
-    this.entityCollisions = new Set();
-    this.viewportCollisions = new Set();
-    this.collisionChecksThisFrame = 0;
+    this.collisionsChecked = 0;
+    this.collisionsFound = 0;
+    this.strategies = new Map();
+    this.strategies.set(ShapeType.Circle + ShapeType.Circle, Strategies.checkCirclesCollision);
+    this.strategies.set(ShapeType.Rectangle + ShapeType.Rectangle, Strategies.checkRectsCollision);
+    this.strategies.set(ShapeType.Circle + ShapeType.Rectangle, Strategies.checkCircleRectCollision);
+    this.strategies.set(ShapeType.Rectangle + ShapeType.Circle, Strategies.checkCircleRectCollision);
   }
 
-  detect(collidables: Collidable[]) {
-    this.entityCollisions.clear();
-    this.viewportCollisions.clear();
-    this.collisionChecksThisFrame = 0;
+  detect(possibleCollisions: Pair<ColliderEntity>[]): CollisionInfo[] {
+    this.collisionsChecked = 0;
+    this.collisionsFound = 0;
 
-    for (let i = 0; i < collidables.length; i++) {
-      const [aId, aRigidBody, aCollider] = collidables[i];
-
-      if (this.checkForCollisionsWithViewport && this.viewportCollisionCheck(aRigidBody, aCollider)) {
-        this.viewportCollisions.add(collidables[i]);
+    const collisions = [];
+    for (const [a, b] of possibleCollisions) {
+      const strategy = this.strategies.get(a.collider.shapeType + b.collider.shapeType);
+      if (typeof strategy === "undefined") {
+        continue;
       }
 
-      const position = aRigidBody.transform.position.clone().add(aCollider.transform.position);
-      const possibleCollisions = this.quadtree.retrieve(position, aCollider.bounds);
-
-      for (let j = 0; j < possibleCollisions.length; j++) {
-        this.collisionChecksThisFrame++;
-        const bEntityNode = possibleCollisions[j];
-        if (aId === bEntityNode.id) {
-          continue;
-        }
-
-        if (areRectsColliding(aRigidBody.transform.position, aCollider.bounds, bEntityNode.position, bEntityNode.size)) {
-          const bRigidBody = this.context.entities.getComponent(bEntityNode.id, "rigid-body")
-          this.entityCollisions.add([
-            [aId, aRigidBody, aCollider],
-            [bEntityNode.id, bEntityNode.rigidBody!, bEntityNode.collider!],
-          ]);
-        }
+      const info = strategy(a, b);
+      if (typeof info !== "undefined") {
+        collisions.push(info);
+        this.collisionsFound++;
       }
-    }
-  }
-
-  viewportCollisionCheck(rigidBody: RigidBody, collider: Collider): boolean {
-    const pos = rigidBody.transform.position;
-    const size = collider.bounds;
-    const viewport = this.context.viewport;
-
-    switch (collider.shape) {
-      case ShapeType.Circle:
-        const rx = collider.bounds.x / 2;
-        const ry = collider.bounds.y / 2;
-        if (pos.x - rx < 0 || pos.x + rx > viewport.width || pos.y - rx < 0 || pos.y + ry > viewport.height) {
-          return true;
-        }
-        break;
-      case ShapeType.Rectangle:
-        if (pos.x < 0 || pos.x + size.x > viewport.width || pos.y < 0 || pos.y + size.y > viewport.height) {
-          return true;
-        }
-        break;
-      case ShapeType.Polygon:
-        break;
-      default:
-        throw new InvalidOperationError("Unknown collider shape type", collider);
+      this.collisionsChecked++;
     }
 
-    return false;
+    return collisions;
   }
 }

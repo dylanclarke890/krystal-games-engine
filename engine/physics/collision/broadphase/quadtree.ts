@@ -1,226 +1,132 @@
-import { Quadrant } from "../../../constants/enums.js";
-import { IObjectPool, IQuadtree, IQuadtreeNode } from "../../../types/common-interfaces.js";
+import { IBroadphase } from "../../../types/common-interfaces.js";
 import { Vector2 } from "../../../maths/vector2.js";
 import { GameContext } from "../../../core/context.js";
+import { AABB } from "../../../maths/aabb.js";
+import { Quadrant } from "../../../constants/enums.js";
+import { ColliderEntity } from "../data.js";
 
-export class Quadtree implements IQuadtree {
-  /** The node representing the entire viewport/bounds. */
-  root: IQuadtreeNode;
-  size: number;
-  nodePool: IObjectPool<IQuadtreeNode, ConstructorParameters<typeof QuadtreeNode>>;
+export class Quadtree implements IBroadphase {
   context: GameContext;
+  root: QuadtreeNode;
 
-  /**
-   * @param maxDepth The maximum number of levels that the quadtree will create. Default is 4.
-   * @param maxChildren The maximum number of items per quadrant before subdividing. Default is 4.
-   **/
-  constructor(context: GameContext, { maxDepth = 4, maxChildren = 4 } = {}) {
-    this.size = 0;
+  constructor(context: GameContext) {
     this.context = context;
-    this.nodePool = context.objectPools.create(
-      "quadtreeNodes",
-      QuadtreeNode,
-      (node, id, pos, size, nodePool, depth, maxDepth, maxChildren) => {
-        node.init(id, pos, size, nodePool, depth!, maxDepth!, maxChildren!);
+
+    const position = new Vector2(0, 0);
+    const size = new Vector2(this.context.viewport.width, this.context.viewport.height);
+    this.root = new QuadtreeNode(position, size, 0);
+  }
+
+  add(entity: ColliderEntity): void {
+    this.root.insert(entity);
+  }
+
+  computePairs(): Pair<ColliderEntity>[] {
+    const collisions: Pair<ColliderEntity>[] = [];
+    const quadrantsToCheck = [this.root];
+
+    while (quadrantsToCheck.length) {
+      const currentQuadrant = quadrantsToCheck.pop()!;
+
+      if (currentQuadrant.quadrants.length) {
+        quadrantsToCheck.push(...currentQuadrant.quadrants);
+        continue;
       }
-    );
+      if (currentQuadrant.entities.length <= 1) {
+        continue;
+      }
 
-    const pos = new Vector2(0, 0);
-    const size = new Vector2(context.viewport.width, context.viewport.height);
-    this.root = this.nodePool.acquire(-1, pos, size, this.nodePool, 0, maxDepth, maxChildren);
-  }
-
-  insert(id: number, position: Vector2, bounds: Vector2): void {
-    const node = this.nodePool.acquire(id, position, bounds, this.nodePool);
-    this.size++;
-    this.root.insert(node);
-  }
-
-  retrieve(position: Vector2, bounds: Vector2): IQuadtreeNode[] {
-    const node = this.nodePool.acquire(-1, position, bounds, this.nodePool);
-    const result = this.root.retrieve(node);
-    this.nodePool.release(node);
-    return result;
-  }
-
-  retrieveById(id: number, node: IQuadtreeNode = this.root): Nullable<IQuadtreeNode> {
-    if (node.id === id) {
-      return node;
-    }
-
-    // If the node has children, search them
-    for (let child of node.children) {
-      const foundNode = this.retrieveById(id, child);
-      if (foundNode) {
-        return foundNode;
+      // This is the deepest quadrant in this branch, Compare the entities for collisions.
+      for (const a of currentQuadrant.entities) {
+        for (const b of currentQuadrant.entities) {
+          if (a !== b && a.collider.aabb.intersects(b.collider.aabb)) {
+            collisions.push([a, b]);
+          }
+        }
       }
     }
 
-    // If the node has overlapping children, search them as well
-    for (let overlappingChild of node.overlappingChildren) {
-      const foundNode = this.retrieveById(id, overlappingChild);
-      if (foundNode) {
-        return foundNode;
+    return collisions;
+  }
+
+  pick(point: Vector2): Nullable<ColliderEntity> {
+    const quadrantsToCheck = [this.root];
+
+    while (quadrantsToCheck.length) {
+      const currentQuadrant = quadrantsToCheck.pop()!;
+
+      if (currentQuadrant.contains(point)) {
+        if (currentQuadrant.quadrants.length) {
+          quadrantsToCheck.push(...currentQuadrant.quadrants);
+          continue;
+        }
+
+        // This is the deepest quadrant in this branch, search the nodes.
+        return currentQuadrant.entities.find((node) => node.collider.aabb.contains(point));
       }
     }
 
-    // Node was not found in this branch
     return undefined;
   }
 
-  drawBoundaries(color?: string) {
-    this.context.viewport.ctx.fillStyle = color ?? "white";
-  }
+  query(aabb: AABB, output: ColliderEntity[]): void {
+    const quadrantsToCheck = [this.root];
 
-  removeById(id: number, node: IQuadtreeNode = this.root): boolean {
-    // If the node has children, search them
-    for (let i = 0; i < node.children.length; i++) {
-      const child = node.children[i];
-      if (child.id === id) {
-        node.children.splice(i, 1);
-        this.nodePool.release(child);
-        return true;
+    while (quadrantsToCheck.length) {
+      const currentQuadrant = quadrantsToCheck.pop()!;
+      if (!currentQuadrant.intersects(aabb)) {
+        continue;
       }
 
-      const wasRemoved = this.removeById(id, node.children[i]);
-      if (wasRemoved) {
-        return true;
-      }
-    }
-
-    // If the node has overlapping children, search them as well
-    for (let i = 0; i < node.overlappingChildren.length; i++) {
-      const child = node.overlappingChildren[i];
-      if (child.id === id) {
-        node.overlappingChildren.splice(i, 1);
-        this.nodePool.release(child);
-        return true;
+      if (currentQuadrant.quadrants.length) {
+        quadrantsToCheck.push(...currentQuadrant.quadrants);
+        continue;
       }
 
-      const wasRemoved = this.removeById(id, child);
-      if (wasRemoved) {
-        return true;
+      // This is the deepest level the aabb fits into, go through colliders and add them to the output array.
+      for (const entity of currentQuadrant.entities) {
+        if (entity.collider.aabb.intersects(aabb)) {
+          output.push(entity);
+        }
       }
     }
-
-    // Node was not found in this branch
-    return false;
   }
 
-  clear() {
+  clear(): void {
     this.root.clear();
-    this.size = 0;
+  }
+
+  draw(color?: string): void {
+    this.context.viewport.ctx.strokeStyle = color ?? "white";
+    this.root.draw(this.context.viewport.ctx);
   }
 }
 
-export class QuadtreeNode implements IQuadtreeNode {
-  id!: number;
-  position!: Vector2;
-  size!: Vector2;
-  nodes!: IQuadtreeNode[];
-  children!: IQuadtreeNode[];
-  overlappingChildren!: IQuadtreeNode[];
-  maxChildren!: number;
-  depth!: number;
-  maxDepth!: number;
-  nodePool!: IObjectPool<IQuadtreeNode, ConstructorParameters<typeof QuadtreeNode>>;
+class QuadtreeNode {
+  static MAX_NODES = 5;
+  static MAX_DEPTH = 15;
 
-  constructor(
-    id: number,
-    position: Vector2,
-    size: Vector2,
-    nodePool: IObjectPool<IQuadtreeNode>,
-    depth = 0,
-    maxDepth = 4,
-    maxChildren = 4
-  ) {
-    this.init(id, position, size, nodePool, depth, maxDepth, maxChildren);
-  }
+  position: Vector2;
+  size: Vector2;
 
-  init(
-    id: number,
-    position: Vector2,
-    size: Vector2,
-    nodePool: IObjectPool<IQuadtreeNode>,
-    depth: number,
-    maxDepth: number,
-    maxChildren: number
-  ) {
-    this.id = id;
-    this.nodePool = nodePool;
-    this.depth = depth;
-    this.maxChildren = maxChildren;
-    this.maxDepth = maxDepth;
-    this.nodes = [];
-    this.children = [];
-    this.overlappingChildren = [];
+  quadrants: QuadtreeNode[];
+  entities: ColliderEntity[];
+  depth: number;
+
+  constructor(position: Vector2, size: Vector2, depth: number) {
     this.position = position;
     this.size = size;
+    this.depth = depth;
+    this.quadrants = [];
+    this.entities = [];
   }
 
-  insert(node: IQuadtreeNode | IQuadtreeNode[]): void {
-    if (Array.isArray(node)) {
-      node.forEach((n) => this.insert(n));
-      return;
-    }
+  findQuadrant(aabb: AABB): Quadrant {
+    const centerX = aabb.minX + (aabb.maxX - aabb.minX) / 2;
+    const centerY = aabb.minY + (aabb.maxY - aabb.minY) / 2;
 
-    if (this.children.length) {
-      const quadrant = this.findQuadrant(node);
-      const index = quadrant.valueOf();
-
-      if (this.#isInBounds(node, this.children[index])) {
-        this.children[index].insert(node);
-      } else {
-        this.overlappingChildren.push(node);
-      }
-      return;
-    }
-
-    this.nodes.push(node);
-
-    if (this.nodes.length > this.maxChildren && this.depth < this.maxDepth) {
-      this.subdivide();
-    }
-  }
-
-  retrieve(node: IQuadtreeNode): IQuadtreeNode[] {
-    // If this node is subdivided
-    if (this.children.length) {
-      const quadrant = this.findQuadrant(node);
-      const index = quadrant.valueOf();
-
-      return this.children[index].retrieve(node).concat(this.overlappingChildren);
-    }
-
-    return this.nodes;
-  }
-
-  subdivide(): void {
-    const halfWidth = this.size.x / 2;
-    const halfHeight = this.size.y / 2;
-
-    // Positions of the children quadrants
-    const positions = [
-      new Vector2(this.position.x, this.position.y), // NW
-      new Vector2(this.position.x + halfWidth, this.position.y), // NE
-      new Vector2(this.position.x, this.position.y + halfHeight), // SW
-      new Vector2(this.position.x + halfWidth, this.position.y + halfHeight), // SE
-    ];
-
-    const size = new Vector2(halfWidth, halfHeight);
-
-    this.children = positions.map((pos) =>
-      this.nodePool.acquire(-1, pos, size, this.nodePool, this.depth + 1, this.maxDepth, this.maxChildren)
-    );
-
-    const nodes = [...this.nodes];
-    this.nodes.length = 0;
-    this.insert(nodes);
-  }
-
-  findQuadrant(node: IQuadtreeNode): Quadrant {
-    const left = node.position.x < this.position.x + this.size.x / 2;
-    const top = node.position.y < this.position.y + this.size.y / 2;
+    const left = centerX < this.position.x + this.size.x / 2;
+    const top = centerY < this.position.y + this.size.y / 2;
 
     if (left) {
       return top ? Quadrant.NorthWest : Quadrant.SouthWest;
@@ -229,29 +135,72 @@ export class QuadtreeNode implements IQuadtreeNode {
     return top ? Quadrant.NorthEast : Quadrant.SouthEast;
   }
 
-  #isInBounds(a: IQuadtreeNode, b: IQuadtreeNode): boolean {
-    return (
-      a.position.x >= b.position.x &&
-      a.position.x + a.size.x <= b.position.x + b.size.x &&
-      a.position.y >= b.position.y &&
-      a.position.y + a.size.y <= b.position.y + b.size.y
-    );
+  subdivide(): void {
+    const size = this.size.clone().divScalar(2);
+
+    const quadrantPositions = [
+      this.position.clone(), // NW
+      new Vector2(this.position.x + size.x, this.position.y), // NE
+      new Vector2(this.position.x, this.position.y + size.y), // SW
+      this.position.clone().add(size), // SE
+    ];
+
+    this.quadrants = quadrantPositions.map((pos) => new QuadtreeNode(pos, size, this.depth + 1));
+  }
+
+  insert(entity: ColliderEntity): void {
+    if (this.quadrants.length) {
+      const quadrant = this.findQuadrant(entity.collider.aabb).valueOf();
+      this.quadrants[quadrant].insert(entity);
+      return;
+    }
+
+    this.entities.push(entity);
+
+    if (
+      this.entities.length > QuadtreeNode.MAX_NODES &&
+      this.depth < QuadtreeNode.MAX_DEPTH &&
+      !this.quadrants.length
+    ) {
+      this.subdivide();
+      // After subdividing, re-insert the nodes
+      while (this.entities.length) {
+        const node = this.entities.pop()!;
+        this.insert(node);
+      }
+    }
   }
 
   clear(): void {
-    this.children.forEach((child) => {
-      this.nodePool.release(child);
-    });
-    this.overlappingChildren.forEach((child) => {
-      this.nodePool.release(child);
-    });
-    this.nodes.forEach((n) => {
-      n.clear();
-      this.nodePool.release(n);
-    });
+    for (const quadrant of this.quadrants) {
+      quadrant.clear();
+    }
 
-    this.children.length = 0;
-    this.overlappingChildren.length = 0;
-    this.nodes.length = 0;
+    this.entities = [];
+  }
+
+  draw(ctx: CanvasRenderingContext2D): void {
+    ctx.strokeRect(this.position.x, this.position.y, this.size.x, this.size.y);
+    for (const quadrant of this.quadrants) {
+      quadrant.draw(ctx);
+    }
+  }
+
+  intersects(aabb: AABB): boolean {
+    return (
+      this.position.x <= aabb.minX &&
+      this.position.x + this.size.x >= aabb.maxX &&
+      this.position.y <= aabb.minY &&
+      this.position.y + this.size.y >= aabb.maxY
+    );
+  }
+
+  contains(point: Vector2): boolean {
+    return (
+      this.position.x <= point.x &&
+      this.position.x + this.size.x >= point.x &&
+      this.position.y <= point.y &&
+      this.position.y + this.size.y >= point.y
+    );
   }
 }

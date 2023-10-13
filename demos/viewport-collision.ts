@@ -9,13 +9,13 @@ export class ViewportCollisionTest extends KrystalGameEngine {
 
   constructor() {
     super("canvas1", 500, 500);
-    this.context.events.on(GameEvents.LOOP_STARTED, this.update.bind(this));
+    this.gameContext.events.on(GameEvents.LOOP_STARTED, this.update.bind(this));
     this.createTestEntity();
     this.start();
   }
 
   createTestEntity() {
-    const em = this.context.entities;
+    const em = this.gameContext.entities;
     const newEntity = em.createEntity();
     this.testEntityId = newEntity;
 
@@ -24,7 +24,7 @@ export class ViewportCollisionTest extends KrystalGameEngine {
     const material = new PhysicsMaterial();
     const rigidBody = new RigidBody(transform);
     rigidBody.velocity = new Vector2(5, 10);
-    rigidBody.colliders.push(new CircleCollider(material, 3));
+    rigidBody.colliders.push(new CircleCollider(new Transform(), material, 3));
 
     em.addComponent(newEntity, transform);
     em.addComponent(newEntity, rigidBody);
@@ -32,12 +32,12 @@ export class ViewportCollisionTest extends KrystalGameEngine {
   }
 
   update() {
-    const rigidBody = this.context.entities.getComponent(this.testEntityId, "rigid-body")!;
+    const rigidBody = this.gameContext.entities.getComponent(this.testEntityId, "rigid-body")!;
     const pos = rigidBody.transform.position;
     const vel = rigidBody.velocity;
 
-    this.context.viewport.drawText(`position - x: ${pos.x}, y: ${pos.y}`, 10, 20);
-    this.context.viewport.drawText(`velocity - x: ${vel.x}, y: ${vel.y}`, 10, 40);
+    this.gameContext.viewport.drawText(`position - x: ${pos.x}, y: ${pos.y}`, 10, 20);
+    this.gameContext.viewport.drawText(`velocity - x: ${vel.x}, y: ${vel.y}`, 10, 40);
   }
 }
 

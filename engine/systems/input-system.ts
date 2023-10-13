@@ -17,12 +17,12 @@ export class InputSystem extends BaseSystem {
   }
 
   belongsToSystem(entity: number): boolean {
-    return typeof this.context.entities.getComponent(entity, "input") !== "undefined";
+    return typeof this.gameContext.entities.getComponent(entity, "input") !== "undefined";
   }
 
   update(_dt: number, entities: Set<number>) {
-    const em = this.context.entities;
-    this.context.input.clearPressed();
+    const em = this.gameContext.entities;
+    this.gameContext.input.clearPressed();
 
     for (const id of entities) {
       const input = em.getComponent(id, "input");
@@ -31,7 +31,7 @@ export class InputSystem extends BaseSystem {
       }
 
       for (const action of input.actions) {
-        input.setState(action, this.context.input.getState(action))!;
+        input.setState(action, this.gameContext.input.getState(action))!;
       }
     }
   }

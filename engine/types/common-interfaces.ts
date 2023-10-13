@@ -1,9 +1,18 @@
 import { BaseComponent } from "../components/index.js";
-import { PriorityLevel, Quadrant } from "../constants/enums.js";
+import { PriorityLevel } from "../constants/enums.js";
+import { AABB } from "../maths/aabb.js";
 import { Vector2 } from "../maths/vector2.js";
+import { ColliderEntity } from "../physics/collision/data.js";
 import { BaseSystem } from "../systems/base-system.js";
 import { Enum } from "../utils/enum.js";
-import { ComponentMap, ComponentType, EntityTemplate, SystemMap, SystemType } from "./common-types.js";
+import {
+  ComponentMap,
+  ComponentType,
+  EntityTemplate,
+  ObjectPoolSettings,
+  SystemMap,
+  SystemType,
+} from "./common-types.js";
 
 export interface IConfigManager<T> {
   config: T;
@@ -92,16 +101,21 @@ export interface IEntityManager {
 }
 
 export interface IObjectPoolManager {
-  get<T, Args extends any[] = any[]>(name: string): IObjectPool<T, Args> | undefined;
+  get<T extends new () => InstanceType<T>>(name: string): IObjectPool<T> | undefined;
   has(name: string): boolean;
-  create<T, Args extends any[] = any[]>(
+  create<T extends new (...args: any[]) => InstanceType<T>>(
     name: string,
-    ClassConstructor: ClassConstructor<T, Args>,
-    onReuse?: (obj: T, ...args: Args) => void,
-    size?: number
-  ): IObjectPool<T, Args>;
+    settings: ObjectPoolSettings<T>
+  ): IObjectPool<T>;
   clear(name: string): void;
   clearAll(): void;
+}
+
+export interface IObjectPool<TConstructor extends new () => InstanceType<TConstructor>> {
+  initialiseReserve(size: number): void;
+  acquire(): InstanceType<TConstructor>;
+  release(obj: InstanceType<TConstructor>): void;
+  clear(): void;
 }
 
 export interface ISystemManager {
@@ -149,40 +163,11 @@ export interface IObjectFactory<T, Args extends any[] = any[]> {
   create(...args: Args): T;
 }
 
-export interface IObjectPool<T, Args extends any[] = any[]> {
-  acquire(...args: Args): T;
-  release(obj: T): void;
-  clear(): void;
-}
-
-export interface IQuadtree {
-  insert(id: number, position: Vector2, bounds: Vector2): void;
-  retrieve(position: Vector2, bounds: Vector2): IQuadtreeNode[];
-  retrieveById(id: number, node?: IQuadtreeNode): Nullable<IQuadtreeNode>;
-  removeById(id: number, node?: IQuadtreeNode): boolean;
-  drawBoundaries(color?: string): void;
-  clear(): void;
-}
-
-export interface IQuadtreeNode {
-  id: number;
-  position: Vector2;
-  size: Vector2;
-  children: IQuadtreeNode[];
-  overlappingChildren: IQuadtreeNode[];
-
-  init(
-    id: number,
-    position: Vector2,
-    size: Vector2,
-    nodePool: IObjectPool<IQuadtreeNode>,
-    depth: number,
-    maxDepth: number,
-    maxChildren: number
-  ): void;
-  insert(node: IQuadtreeNode | IQuadtreeNode[]): void;
-  retrieve(node: IQuadtreeNode): IQuadtreeNode[];
-  subdivide(): void;
-  findQuadrant(node: IQuadtreeNode): Quadrant;
+export interface IBroadphase {
+  add(entity: ColliderEntity): void;
+  computePairs(): Pair<ColliderEntity>[];
+  pick(point: Vector2): ColliderEntity | undefined;
+  query(aabb: AABB, output: ColliderEntity[]): void;
+  draw(color?: string): void;
   clear(): void;
 }

@@ -1,41 +1,33 @@
-import { CollisionDetector, CollisionResolver } from "../physics/collision/index.js";
-import { IQuadtree } from "../types/common-interfaces.js";
 import { BaseSystem } from "./base-system.js";
-import { BaseComponent } from "../components/index.js";
-import { Collidable, SystemType } from "../types/common-types.js";
-import { CollisionResponseType } from "../constants/enums.js";
+import { BaseComponent, RigidBody } from "../components/index.js";
 import { GameContext } from "../core/context.js";
-import { BaseIntegrator } from "../physics/integrators/base-integrator.js";
+import { SystemType } from "../types/common-types.js";
+import { PhysicsContext } from "../physics/context.js";
+import { ColliderEntity } from "../physics/collision/data.js";
 
 export class PhysicsSystem extends BaseSystem {
   priority: number = 5;
   name: SystemType = "physics";
+  physicsContext: PhysicsContext;
 
-  quadtree: IQuadtree;
-  detector: CollisionDetector;
-  resolver: CollisionResolver;
-  integrator: BaseIntegrator;
+  constructor(gameContext: GameContext, physicsContext: PhysicsContext) {
+    super(gameContext);
+    this.physicsContext = physicsContext;
+  }
 
-  constructor(
-    context: GameContext,
-    quadtree: IQuadtree,
-    detector: CollisionDetector,
-    resolver: CollisionResolver,
-    integrator: BaseIntegrator
-  ) {
-    super(context);
-    this.integrator = integrator;
-    this.quadtree = quadtree;
-    this.detector = detector;
-    this.resolver = resolver;
+  isInterestedInComponent(component: BaseComponent): boolean {
+    return component.type === "rigid-body" || component.type === "collider";
+  }
+
+  belongsToSystem(entity: number): boolean {
+    return this.gameContext.entities.hasComponents(entity, ["rigid-body", "collider"]);
   }
 
   update(dt: number, entities: Set<number>) {
-    const em = this.context.entities;
-    const dynamicCollidables: Collidable[] = [];
-    const staticCollidables: any[] = [];
-    this.quadtree.clear();
+    const em = this.gameContext.entities;
+    this.physicsContext.broadphase.clear();
 
+    const rigidBodies: RigidBody[] = [];
     for (const id of entities) {
       const rigidBody = em.getComponent(id, "rigid-body");
 
@@ -44,41 +36,31 @@ export class PhysicsSystem extends BaseSystem {
         if (typeof collider === "undefined") {
           continue;
         }
-
-        staticCollidables.push([id, collider]);
-        this.quadtree.insert(id, collider.getAbsolutePosition(), collider.bounds);
-      } else if (!rigidBody.isStatic) {
-        this.integrator.integrate(id, rigidBody, dt);
-
-        for (const collider of rigidBody.colliders) {
-          if (collider.responseType === CollisionResponseType.None) {
-            continue;
-          }
-
-          dynamicCollidables.push([id, rigidBody, collider]);
-          this.quadtree.insert(id, collider.getAbsolutePosition(), collider.bounds);
-        }
-      }
-    }
-
-    this.detector.detect(dynamicCollidables);
-    this.resolver.resolve(this.detector);
-
-    // Reset forces back to zero
-    for (const id of entities) {
-      const rigidBody = em.getComponent(id, "rigid-body");
-      if (typeof rigidBody === "undefined" || rigidBody.isStatic) {
+        const entity = new ColliderEntity(id, collider);
+        this.physicsContext.broadphase.add(entity);
         continue;
       }
-      rigidBody.force.set(0, 0);
+
+      if (rigidBody.isStatic) {
+        continue;
+      }
+
+      rigidBodies.push(rigidBody);
+      rigidBody.applyForce(this.physicsContext.world.gravity.clone().mulScalar(rigidBody.mass));
+      this.physicsContext.integrator.integrate(id, rigidBody, dt);
+
+      for (const collider of rigidBody.colliders) {
+        const entity = new ColliderEntity(id, collider);
+        this.physicsContext.broadphase.add(entity);
+      }
     }
-  }
 
-  isInterestedInComponent(component: BaseComponent): boolean {
-    return component.type === "rigid-body" || component.type === "collider";
-  }
+    const possibleCollisions = this.physicsContext.broadphase.computePairs();
+    const actualCollisions = this.physicsContext.detector.detect(possibleCollisions);
+    this.physicsContext.resolver.resolve(actualCollisions);
 
-  belongsToSystem(entity: number): boolean {
-    return this.context.entities.hasComponents(entity, ["rigid-body", "collider"]);
+    for (const body of rigidBodies) {
+      body.force.set(0, 0);
+    }
   }
 }

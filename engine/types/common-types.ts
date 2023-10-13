@@ -50,3 +50,13 @@ export type SystemMap = {
 export type EntityTemplate = {
   [componentType: string]: BaseComponent;
 };
+
+export type ObjectPoolSettings<TConstructor extends new (...args: any[]) => InstanceType<TConstructor>> = {
+  ClassConstructor: TConstructor;
+  initialReserveSize?: number;
+  events?: {
+    onCreate?: (obj: InstanceType<TConstructor>) => void;
+    onReuse?: (obj: InstanceType<TConstructor>) => void;
+    onRelease?: (obj: InstanceType<TConstructor>) => void;
+  };
+};

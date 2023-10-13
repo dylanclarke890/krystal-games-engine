@@ -92,7 +92,11 @@ export class Vector2 {
     return this.divScalar(this.magnitude());
   }
 
+  distanceSquared() {
+    return this.x * this.x + this.y * this.y;
+  }
+
   magnitude() {
-    return Math.sqrt(this.x * this.x + this.y * this.y);
+    return Math.sqrt(this.distanceSquared());
   }
 }

@@ -256,8 +256,8 @@ export class CollisionResponseType extends Enum {
   static Event = new CollisionResponseType();
 }
 
-export class ShapeType extends Enum {
-  static Circle = new ShapeType();
-  static Rectangle = new ShapeType();
-  static Polygon = new ShapeType();
+export enum ShapeType {
+  Circle = "Circle",
+  Rectangle = "Rectangle",
+  Polygon = "Polygon",
 }

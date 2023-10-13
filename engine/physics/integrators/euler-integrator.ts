@@ -1,7 +1,5 @@
 import { RigidBody } from "../../components/rigid-body.js";
-import { SideOfCollision } from "../../constants/enums.js";
 import { Vector2 } from "../../maths/vector2.js";
-import { ViewportCollisionEvent } from "../../types/events.js";
 import { BaseIntegrator } from "./base-integrator.js";
 
 /**
@@ -9,8 +7,6 @@ import { BaseIntegrator } from "./base-integrator.js";
  * @see https://en.wikipedia.org/wiki/Semi-implicit_Euler_method */
 export class SemiImplicitEulerIntegrator extends BaseIntegrator {
   integrate(_entityId: number, rigidBody: RigidBody, dt: number): void {
-    rigidBody.applyForce(this.context.world.gravity.clone().mulScalar(rigidBody.mass));
-
     // Update velocity
     const acceleration = this.vectorPool.acquire().assign(rigidBody.force).mulScalar(dt);
     rigidBody.velocity.add(acceleration);
@@ -25,30 +21,5 @@ export class SemiImplicitEulerIntegrator extends BaseIntegrator {
     this.pooledVectors.push(velocity);
 
     this.releasePooledVectors();
-  }
-
-  bounceOffViewportBoundaries(event: ViewportCollisionEvent) {
-    const { collider, rigidBody, sides } = event;
-    const viewport = this.context.viewport;
-
-    if (sides.has(SideOfCollision.LEFT)) {
-      rigidBody.transform.position.x = collider.bounds.x / 2 + this.adjustmentBuffer;
-      rigidBody.velocity.x *= -collider.material.bounciness;
-    }
-
-    if (sides.has(SideOfCollision.RIGHT)) {
-      rigidBody.transform.position.x = viewport.width - collider.bounds.x / 2 - this.adjustmentBuffer;
-      rigidBody.velocity.x *= -collider.material.bounciness;
-    }
-
-    if (sides.has(SideOfCollision.TOP)) {
-      rigidBody.transform.position.y = collider.bounds.y / 2 + this.adjustmentBuffer;
-      rigidBody.velocity.y *= -collider.material.bounciness;
-    }
-
-    if (sides.has(SideOfCollision.BOTTOM)) {
-      rigidBody.transform.position.y = viewport.height - collider.bounds.y / 2 - this.adjustmentBuffer;
-      rigidBody.velocity.y *= -collider.material.bounciness;
-    }
   }
 }

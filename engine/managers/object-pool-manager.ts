@@ -1,31 +1,27 @@
 import { IObjectPool, IObjectPoolManager } from "../types/common-interfaces.js";
-import { ObjectFactory } from "../utils/factories/object-factory.js";
+import { ObjectPoolSettings } from "../types/common-types.js";
 import { ObjectPool } from "../utils/object-pool.js";
 
 export class ObjectPoolManager implements IObjectPoolManager {
-  pools: Map<string, IObjectPool<any, any[]>> = new Map();
+  pools: Map<string, IObjectPool<any>> = new Map();
 
-  get<T, Args extends any[] = any[]>(name: string): IObjectPool<T, Args> | undefined {
-    return this.pools.get(name) as IObjectPool<T, Args> | undefined;
+  get<T extends new (...args: any[]) => InstanceType<T>>(name: string): IObjectPool<T> | undefined {
+    return this.pools.get(name) as IObjectPool<T> | undefined;
   }
 
   has(name: string): boolean {
     return this.pools.has(name);
   }
 
-  create<T, Args extends any[]>(
+  create<T extends new (...args: any[]) => InstanceType<T>>(
     name: string,
-    ClassConstructor: ClassConstructor<T, Args>,
-    onReuse?: (obj: T, ...args: Args) => void,
-    size?: number
-  ): IObjectPool<T, Args> {
+    settings: ObjectPoolSettings<T>
+  ): IObjectPool<T> {
     if (this.has(name)) {
       return this.get(name)!;
     }
 
-    const factory = new ObjectFactory<T, Args>(ClassConstructor);
-    const pool = new ObjectPool<T, Args>(factory, onReuse, size);
-
+    const pool = new ObjectPool<T>(settings);
     this.pools.set(name, pool);
     return pool;
   }
