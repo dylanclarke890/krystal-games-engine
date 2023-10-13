@@ -1,6 +1,6 @@
 import { Circle, CircleCollider, RenderableShape, RigidBody, Transform } from "../engine/components/index.js";
 import { PhysicsMaterial } from "../engine/components/physics-material.js";
-import { GameEvents } from "../engine/constants/enums.js";
+import { GameEventType } from "../engine/constants/events.js";
 import { KrystalGameEngine } from "../engine/core/engine.js";
 import { Vector2 } from "../engine/maths/vector2.js";
 
@@ -8,7 +8,7 @@ export class LargeEntityCountTest extends KrystalGameEngine {
   static MAX_ENTITIES = 500;
   constructor() {
     super("canvas1", 500, 500);
-    this.gameContext.events.on(GameEvents.LOOP_STARTED, this.update.bind(this));
+    this.gameContext.events.on(GameEventType.LOOP_STARTED, this.update.bind(this));
     this.start();
   }
 

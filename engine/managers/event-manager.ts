@@ -1,10 +1,10 @@
 import { PriorityLevel } from "../constants/enums.js";
 import { PriorityQueue } from "../utils/priority-queue.js";
-import { Enum } from "../utils/enum.js";
 import { IEventManager } from "../types/common-interfaces.js";
+import { GameEventHandler, GameEventMap } from "../constants/events.js";
 
 export class EventManager implements IEventManager {
-  #subscribers: Map<Enum, PriorityQueue<EventHandler<any>>>;
+  #subscribers: Map<Key<GameEventMap>, PriorityQueue<EventHandler<any>>>;
   #parent: Nullable<IEventManager>;
 
   constructor(parent?: IEventManager) {
@@ -18,7 +18,11 @@ export class EventManager implements IEventManager {
     return this.#parent;
   }
 
-  on<T>(event: Enum, listener: EventHandler<T>, priority: number | PriorityLevel = PriorityLevel.None) {
+  on<T extends Key<GameEventMap>>(
+    event: T,
+    listener: GameEventHandler<T>,
+    priority: number | PriorityLevel = PriorityLevel.None
+  ) {
     priority ??= PriorityLevel.None;
     if (!this.#subscribers.has(event)) {
       this.#subscribers.set(event, new PriorityQueue());
@@ -28,7 +32,7 @@ export class EventManager implements IEventManager {
     this.#subscribers.get(event)!.add(listener, priorityLevel);
   }
 
-  off<T>(event: Enum, listener: EventHandler<T>) {
+  off<T extends Key<GameEventMap>>(event: T, listener: GameEventHandler<T>) {
     const queue = this.#subscribers.get(event);
 
     if (typeof queue === "undefined") {
@@ -38,7 +42,7 @@ export class EventManager implements IEventManager {
     return queue.remove(listener);
   }
 
-  trigger<T>(event: Enum, data?: T) {
+  trigger<T extends Key<GameEventMap>>(event: T, data?: GameEventMap[T]) {
     const queue = this.#subscribers.get(event);
 
     if (typeof queue !== "undefined") {

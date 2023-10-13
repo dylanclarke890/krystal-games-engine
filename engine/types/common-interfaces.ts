@@ -4,7 +4,6 @@ import { AABB } from "../maths/aabb.js";
 import { Vector2 } from "../maths/vector2.js";
 import { ColliderEntity } from "../physics/collision/data.js";
 import { BaseSystem } from "../systems/base-system.js";
-import { Enum } from "../utils/enum.js";
 import {
   ComponentMap,
   ComponentType,
@@ -13,6 +12,7 @@ import {
   SystemMap,
   SystemType,
 } from "./common-types.js";
+import { GameEventHandler, GameEventMap } from "../constants/events.js";
 
 export interface IConfigManager<T> {
   config: T;
@@ -37,13 +37,13 @@ export interface IEventManager {
   get parent(): Nullable<IEventManager>;
 
   /** Subscribe to an event. */
-  on<T>(event: Enum, listener: EventHandler<T>, priority?: number | PriorityLevel): void;
+  on<T extends Key<GameEventMap>>(event: T, listener: GameEventHandler<T>, priority?: number | PriorityLevel): void;
 
   /** Unsubscribe from an event. */
-  off<T>(event: Enum, listener: EventHandler<T>): void;
+  off<T extends Key<GameEventMap>>(event: T, listener: GameEventHandler<T>): void;
 
   /** Trigger an event. */
-  trigger<T>(event: Enum, data?: T): void;
+  trigger<T extends Key<GameEventMap>>(event: T, data?: GameEventMap[T]): void;
 }
 
 export interface IEntityManager {

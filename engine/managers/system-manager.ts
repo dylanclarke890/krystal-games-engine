@@ -1,9 +1,8 @@
-import { GameEvents } from "../constants/enums.js";
 import { BaseSystem } from "../systems/base-system.js";
 import { IEntityManager, IEventManager, ISystemManager } from "../types/common-interfaces.js";
 import { SystemMap, SystemType } from "../types/common-types.js";
 import { SystemError } from "../types/errors.js";
-import { ComponentEvent } from "../types/events.js";
+import { ComponentEvent, GameEventType } from "../constants/events.js";
 import { PriorityQueue } from "../utils/priority-queue.js";
 
 export class SystemManager implements ISystemManager {
@@ -40,7 +39,7 @@ export class SystemManager implements ISystemManager {
     this.executionQueue.add(system, system.priority);
     system.init?.();
 
-    this.eventManager.trigger(GameEvents.SYSTEM_ADDED);
+    this.eventManager.trigger(GameEventType.SYSTEM_ADDED, system);
   }
 
   removeSystem(systemName: SystemType): void {
@@ -54,7 +53,7 @@ export class SystemManager implements ISystemManager {
     this.systems.delete(systemName);
     this.systemEntities.delete(systemName);
 
-    this.eventManager.trigger(GameEvents.SYSTEM_REMOVED);
+    this.eventManager.trigger(GameEventType.SYSTEM_REMOVED);
   }
 
   getSystem<T extends SystemType>(name: T): SystemMap[T] | undefined {
@@ -70,9 +69,9 @@ export class SystemManager implements ISystemManager {
   }
 
   #bindEvents() {
-    this.eventManager.on(GameEvents.COMPONENT_ADDED, this.#onComponentAdded.bind(this));
-    this.eventManager.on(GameEvents.COMPONENT_REMOVED, this.#onComponentRemoved.bind(this));
-    this.eventManager.on(GameEvents.ENTITY_DESTROYED, this.#onEntityDestroyed.bind(this));
+    this.eventManager.on(GameEventType.COMPONENT_ADDED, this.#onComponentAdded.bind(this));
+    this.eventManager.on(GameEventType.COMPONENT_REMOVED, this.#onComponentRemoved.bind(this));
+    this.eventManager.on(GameEventType.ENTITY_DESTROYED, this.#onEntityDestroyed.bind(this));
   }
 
   #onComponentAdded(event: ComponentEvent): void {

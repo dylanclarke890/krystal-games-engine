@@ -1,5 +1,5 @@
 import { BaseComponent } from "../components/base.js";
-import { GameEvents } from "../constants/enums.js";
+import { GameEventType } from "../constants/events.js";
 import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
 import { ComponentMap, ComponentType, EntityTemplate } from "../types/common-types.js";
 import { EntityCreationError } from "../types/errors.js";
@@ -33,7 +33,7 @@ export class EntityManager implements IEntityManager {
     const entity = this.#nextEntityId++;
 
     this.entities.add(entity);
-    this.eventManager.trigger(GameEvents.ENTITY_CREATED, entity);
+    this.eventManager.trigger(GameEventType.ENTITY_CREATED, entity);
 
     return entity;
   }
@@ -52,7 +52,7 @@ export class EntityManager implements IEntityManager {
     this.#entityMasks.delete(id);
     this.entities.delete(id);
 
-    this.eventManager.trigger(GameEvents.ENTITY_DESTROYED, id);
+    this.eventManager.trigger(GameEventType.ENTITY_DESTROYED, id);
   }
 
   registerEntityTemplate(name: string, template: EntityTemplate): void {
@@ -91,7 +91,7 @@ export class EntityManager implements IEntityManager {
     }
     this.#entityMasks.get(entity)!.add(componentType);
 
-    this.eventManager.trigger(GameEvents.COMPONENT_ADDED, { entity, component });
+    this.eventManager.trigger(GameEventType.COMPONENT_ADDED, { entity, component });
   }
 
   removeComponent(entity: number, type: ComponentType): void {
@@ -103,7 +103,7 @@ export class EntityManager implements IEntityManager {
 
     this.#components.delete(componentMapKey);
     this.#entityMasks.get(entity)!.delete(type);
-    this.eventManager.trigger(GameEvents.COMPONENT_REMOVED, { entity, component });
+    this.eventManager.trigger(GameEventType.COMPONENT_REMOVED, { entity, component });
   }
 
   getComponent<T extends ComponentType>(entity: number, type: T): ComponentMap[T] | undefined {

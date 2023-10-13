@@ -1,54 +1,5 @@
 import { Enum } from "../utils/enum.js";
 
-export enum SideOfCollision {
-  LEFT = 0x1,
-  RIGHT = 0x2,
-  TOP = 0x4,
-  BOTTOM = 0x8,
-}
-
-export class GameEvents extends Enum {
-  // #region Loop
-  static LOOP_BEFORE_START = new GameEvents();
-  static LOOP_STARTED = new GameEvents();
-  static LOOP_PAUSED = new GameEvents();
-  static LOOP_UNPAUSED = new GameEvents();
-  static LOOP_STOPPED = new GameEvents();
-  static LOOP_RESTARTED = new GameEvents();
-  // #endregion Loop
-
-  // #region System
-  static SYSTEM_ADDED = new GameEvents();
-  static SYSTEM_ENABLED = new GameEvents();
-  static SYSTEM_DISABLED = new GameEvents();
-  static SYSTEM_REMOVED = new GameEvents();
-  // #endregion System
-
-  // #region Entity
-  static ENTITY_CREATED = new GameEvents();
-  static ENTITY_DESTROYED = new GameEvents();
-  static ENTITY_COLLIDED = new GameEvents();
-  static VIEWPORT_COLLISION = new GameEvents();
-  // #endregion Entity
-
-  // #region Component
-  static COMPONENT_ADDED = new GameEvents();
-  static COMPONENT_REMOVED = new GameEvents();
-  // #endregion Component
-
-  // #region Input
-  static MOUSE_DOWN = new GameEvents();
-  static MOUSE_MOVE = new GameEvents();
-  static MOUSE_UP = new GameEvents();
-  static MOUSE_CLICK = new GameEvents();
-  static WINDOW_RESIZED = new GameEvents();
-  // #endregion Input
-
-  static {
-    this.freeze();
-  }
-}
-
 export class InputKeys extends Enum {
   //#region Mouse
   static Mouse_BtnOne = new InputKeys();

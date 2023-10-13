@@ -1,4 +1,4 @@
-import { GameEvents } from "../constants/enums.js";
+import { GameEventType } from "../constants/events.js";
 import { ILoop } from "../types/common-interfaces.js";
 import { GameContext } from "../core/context.js";
 import { LoopSettings } from "../core/config.js";
@@ -47,13 +47,13 @@ export class GameLoop implements ILoop {
 
     // If it's been enough time, update the game logic and reduce the accumulator
     while (this.#accumulator >= this.fpsInterval) {
-      this.context.events.trigger(GameEvents.LOOP_STARTED, this.fpsInterval / 1000);
+      this.context.events.trigger(GameEventType.LOOP_STARTED, this.fpsInterval / 1000);
       this.#accumulator -= this.fpsInterval;
     }
   }
 
   stop(unloadAssets?: boolean): void {
     this.stopped = true;
-    this.context.events.trigger(GameEvents.LOOP_STOPPED, !!unloadAssets);
+    this.context.events.trigger(GameEventType.LOOP_STOPPED, !!unloadAssets);
   }
 }
