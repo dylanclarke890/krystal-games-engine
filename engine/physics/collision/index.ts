@@ -1,4 +1,3 @@
-export * from "./resolution/resolution-strategies.js";
-export * from "./resolution/resolver.js";
-export * from "./detection/detection-strategies.js";
+export * from "./broadphase/quadtree.js";
 export * from "./detection/detector.js";
+export * from "./resolution/resolver.js";

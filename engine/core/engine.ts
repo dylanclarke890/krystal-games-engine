@@ -1,4 +1,4 @@
-import { CollisionDetector, CollisionResolver } from "../physics/collision/index.js";
+import { CollisionDetector, CollisionResolver, Quadtree } from "../physics/collision/index.js";
 import {
   EntityManager,
   EventManager,
@@ -7,7 +7,6 @@ import {
   ObjectPoolManager,
   ConfigManager,
 } from "../managers/index.js";
-import { Quadtree } from "../physics/collision/broadphase/quadtree.js";
 import { Viewport } from "../graphics/viewport.js";
 import { InputSystem, RenderSystem, PhysicsSystem } from "../systems/index.js";
 import { GameLoop } from "../time/game-loop.js";
