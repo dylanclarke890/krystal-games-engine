@@ -4,7 +4,7 @@ import { IEventManager } from "../types/common-interfaces.js";
 import { GameEventHandler, GameEventMap } from "../constants/events.js";
 
 export class EventManager implements IEventManager {
-  #subscribers: Map<Key<GameEventMap>, PriorityQueue<EventHandler<any>>>;
+  #subscribers: Map<Key<GameEventMap>, PriorityQueue<GameEventHandler<any>>>;
   #parent: Nullable<IEventManager>;
 
   constructor(parent?: IEventManager) {
