@@ -1,4 +1,4 @@
-import { InputKeys } from "./enums.js";
+import { InputKeys } from "./input-keys.js";
 
 export const keyboardMap: { [x: string]: InputKeys } = {
   a: InputKeys.A,

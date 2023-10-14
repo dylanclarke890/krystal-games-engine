@@ -1,9 +1,9 @@
-import { InputKeys } from "../constants/enums.js";
 import { Viewport } from "../graphics/viewport.js";
 import { Vector2 } from "../maths/vector2.js";
 import { Vector3 } from "../maths/vector3.js";
 import { UserAgent } from "../utils/user-agent.js";
-import { keyboardMap } from "../constants/keyboard-map.js";
+import { InputKeys } from "../input/input-keys.js";
+import { keyboardMap } from "../input/keyboard-map.js";
 import { IEventManager } from "../types/common-interfaces.js";
 import { InputActionStatus, InputStatus } from "../types/common-types.js";
 import { InvalidOperationError } from "../types/errors.js";
