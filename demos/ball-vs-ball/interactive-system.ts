@@ -1,5 +1,6 @@
 import { BaseComponent, CircleCollider, RigidBody } from "../../engine/components/index.js";
 import { GameContext } from "../../engine/core/context.js";
+import { InputKey } from "../../engine/input/input-keys.js";
 import { isPointWithinCircle } from "../../engine/physics/utils.js";
 import { BaseSystem } from "../../engine/systems/base-system.js";
 import { SystemType } from "../../engine/types/common-types.js";
@@ -11,6 +12,7 @@ export class InteractiveSystem extends BaseSystem {
 
   constructor(gameContext: GameContext, enabled?: boolean) {
     super(gameContext, enabled);
+    this.gameContext.input.bind(InputKey.Mouse_BtnOne, "left-click");
   }
 
   isInterestedInComponent(component: BaseComponent): boolean {
@@ -26,7 +28,6 @@ export class InteractiveSystem extends BaseSystem {
     const mouse = this.gameContext.input.getMouseCoords();
     const leftClickState = this.gameContext.input.getLeftClickState();
     if (leftClickState.pressed) {
-      console.log("click pressed");
       this.selectedEntity = undefined;
       for (const id of entities) {
         const rigidBody = em.getComponent(id, "rigid-body");
@@ -42,26 +43,11 @@ export class InteractiveSystem extends BaseSystem {
     }
 
     if (leftClickState.held) {
-      console.log("click held");
       this.selectedEntity?.transform.position.assign(mouse);
     }
 
     if (leftClickState.released) {
-      console.log("click released");
       this.selectedEntity = undefined;
-    }
-
-    const arrowLeft = this.gameContext.input.getState("left");
-    if (arrowLeft.pressed) {
-      console.log("arrowLeft pressed");
-    }
-
-    if (arrowLeft.held) {
-      console.log("arrowLeft held");
-    }
-
-    if (arrowLeft.released) {
-      console.log("arrowLeft released");
     }
   }
 }

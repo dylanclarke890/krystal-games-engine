@@ -28,8 +28,6 @@ export class InputManager {
     this.accelerometerHandler = new AccelerometerInputHandler();
     this.mouseHandler = new MouseInputHandler(this.#actions, this.#bindings, this.viewport);
     this.keyboardHandler = new KeyboardInputHandler(this.#actions, this.#bindings);
-    this.bind(InputKey.Mouse_BtnOne, "left-click");
-    this.bind(InputKey.Arrow_Left, "left");
   }
 
   getMouseCoords() {
