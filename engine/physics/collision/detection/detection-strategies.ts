@@ -1,6 +1,6 @@
 import { CircleCollider, RectCollider } from "../../../components/collider.js";
 import { ShapeType } from "../../../constants/enums.js";
-import { constrain } from "../../../maths/number.js";
+import { clamp } from "../../../maths/number.js";
 import { Vector2 } from "../../../maths/vector2.js";
 import { ColliderEntity, CollisionInfo } from "../data.js";
 
@@ -86,8 +86,8 @@ export function checkCircleRectCollision(a: ColliderEntity, b: ColliderEntity): 
 
   const circlePos = circle.getAbsolutePosition();
   const closestPoint = new Vector2(
-    constrain(circlePos.x, rect.aabb.minX, rect.aabb.maxX),
-    constrain(circlePos.y, rect.aabb.minY, rect.aabb.maxY)
+    clamp(circlePos.x, rect.aabb.minX, rect.aabb.maxX),
+    clamp(circlePos.y, rect.aabb.minY, rect.aabb.maxY)
   );
 
   const delta = circlePos.sub(closestPoint);

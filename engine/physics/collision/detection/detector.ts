@@ -7,7 +7,7 @@ export class CollisionDetector {
   context: GameContext;
   collisionsChecked: number;
   collisionsFound: number;
-  strategies: Map<string, (a: ColliderEntity, b: ColliderEntity) => CollisionInfo | undefined>;
+  strategies: Map<string, (a: ColliderEntity, b: ColliderEntity) => Nullable<CollisionInfo>>;
 
   constructor(context: GameContext) {
     this.context = context;
