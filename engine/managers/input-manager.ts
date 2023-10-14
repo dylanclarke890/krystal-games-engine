@@ -11,7 +11,6 @@ export class InputManager {
   viewport: Viewport;
   #actions: Map<string, InputStatus>;
   #bindings: Map<InputKey, string>;
-  #using;
 
   accelerometerHandler: AccelerometerInputHandler;
   mouseHandler: MouseInputHandler;

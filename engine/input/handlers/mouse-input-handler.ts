@@ -21,18 +21,18 @@ export class MouseInputHandler extends BaseInputHandler {
     }
 
     const canvas = this.viewport.canvas;
-    canvas.addEventListener("wheel", this.onMouseWheel.bind(this), { passive: false }); // Stops Chrome warning
+    canvas.addEventListener("wheel", this.onMouseWheel.bind(this), { passive: false }); // passive: false- stops Chrome warning
     canvas.addEventListener("contextmenu", this.onContextMenu.bind(this), false);
     canvas.addEventListener("mousedown", this.onMousedown.bind(this), false);
     canvas.addEventListener("mouseup", this.onMouseup.bind(this), false);
-    canvas.addEventListener("mousemove", this.onMouseMove.bind(this), false);
+    canvas.addEventListener("mousemove", this.onMousemove.bind(this), false);
 
     // TODO: replace use of UserAgent
     if (UserAgent.instance.device.touchDevice) {
-      canvas.addEventListener("touchstart", this.onTouchStart.bind(this), false);
-      canvas.addEventListener("touchend", this.onTouchEnd.bind(this), false);
-      canvas.addEventListener("touchcancel", this.onTouchEnd.bind(this), false);
-      canvas.addEventListener("touchmove", this.onMouseMove.bind(this), false);
+      canvas.addEventListener("touchstart", this.onTouchstart.bind(this), false);
+      canvas.addEventListener("touchend", this.onTouchend.bind(this), false);
+      canvas.addEventListener("touchcancel", this.onTouchend.bind(this), false);
+      canvas.addEventListener("touchmove", this.onMousemove.bind(this), false);
     }
   }
 
@@ -57,7 +57,7 @@ export class MouseInputHandler extends BaseInputHandler {
     return super.getStateByInputKey(key);
   }
 
-  private onMouseMove(e: TouchEvent | MouseEvent): void {
+  private onMousemove(e: TouchEvent | MouseEvent): void {
     const viewport = this.viewport;
     const internalWidth = viewport.canvas.offsetWidth || viewport.realWidth;
     const scale = viewport.scale * (internalWidth / viewport.realWidth);
@@ -69,7 +69,7 @@ export class MouseInputHandler extends BaseInputHandler {
   }
 
   private onMousedown(e: MouseEvent): void {
-    this.onMouseMove(e);
+    this.onMousemove(e);
 
     const state = this.getMouseActionState(e);
     if (typeof state === "undefined") {
@@ -94,14 +94,14 @@ export class MouseInputHandler extends BaseInputHandler {
     e.stopPropagation();
   }
 
-  private onTouchStart(e: TouchEvent): void {
+  private onTouchstart(e: TouchEvent): void {
     // Focus window element for mouse clicks. Prevents issues when running the game in an iframe.
     if (UserAgent.instance.device.mobile) {
       // TODO: replace use of UserAgent
       window.focus();
     }
 
-    this.onMouseMove(e);
+    this.onMousemove(e);
 
     const state = super.getStateByInputKey(InputKey.Touch_Start);
     if (typeof state === "undefined") {
@@ -113,7 +113,7 @@ export class MouseInputHandler extends BaseInputHandler {
     e.stopPropagation();
   }
 
-  private onTouchEnd(e: TouchEvent): void {
+  private onTouchend(e: TouchEvent): void {
     const state = super.getStateByInputKey(InputKey.Touch_End);
     if (typeof state === "undefined") {
       return;
