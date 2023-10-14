@@ -7,6 +7,7 @@ import { UserAgent } from "../utils/user-agent.js";
 import { keyboardMap } from "../constants/keyboard-map.js";
 import { IEventManager } from "../types/common-interfaces.js";
 import { InputActionStatus } from "../types/common-types.js";
+import { InvalidOperationError } from "../types/errors.js";
 
 export class InputManager {
   viewport: Viewport;
@@ -40,13 +41,19 @@ export class InputManager {
       keyboard: false,
       accelerometer: false,
     };
+
+    this.bind(InputKeys.Mouse_BtnOne, "left-click");
+  }
+
+  getLeftClickState(): InputActionStatus {
+    const state = this.getState("left-click");
+    if (typeof state === "undefined") {
+      throw new InvalidOperationError("Left click state was requested but not bound");
+    }
+    return state;
   }
 
   //#region Initialise
-
-  enableMouse() {
-    this.#initializeMouseEvents();
-  }
 
   #initializeMouseEvents() {
     if (this.#using.mouse) return;

@@ -2,6 +2,7 @@ export * from "./animation.js";
 export * from "./base.js";
 export * from "./collider.js";
 export * from "./input.js";
+export * from "./physics-material.js";
 export * from "./renderable.js";
 export * from "./rigid-body.js";
 export * from "./shape.js";

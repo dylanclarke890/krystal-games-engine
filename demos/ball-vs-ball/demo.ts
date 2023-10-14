@@ -1,15 +1,19 @@
-import { CircleCollider } from "../engine/components/collider.js";
-import { PhysicsMaterial } from "../engine/components/physics-material.js";
-import { RenderableShape } from "../engine/components/renderable.js";
-import { RigidBody } from "../engine/components/rigid-body.js";
-import { Circle } from "../engine/components/shape.js";
-import { Transform } from "../engine/components/transform.js";
-import { KrystalGameEngine } from "../engine/core/engine.js";
-import { Vector2 } from "../engine/maths/vector2.js";
+import {
+  CircleCollider,
+  PhysicsMaterial,
+  RenderableShape,
+  RigidBody,
+  Circle,
+  Transform,
+} from "../../engine/components/index.js";
+import { KrystalGameEngine } from "../../engine/core/engine.js";
+import { Vector2 } from "../../engine/maths/vector2.js";
+import { InteractiveSystem } from "./interactive-system.js";
 
 export class Game extends KrystalGameEngine {
   constructor() {
     super("canvas1", 500, 500);
+    this.gameContext.systems.addSystem(new InteractiveSystem(this.gameContext));
 
     const screenWidth = this.gameContext.viewport.width;
     const screenHeight = this.gameContext.viewport.height;
