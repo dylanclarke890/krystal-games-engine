@@ -1,20 +1,20 @@
 import { IConfigManager } from "../types/common-interfaces.js";
 
 export class ConfigManager<T> implements IConfigManager<T> {
+  static ISO8601_DATE_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
   config: T;
 
   constructor(config: T | string) {
-    if (typeof config === "string") {
-      const parsed: T = JSON.parse(config, (_key, value) => {
-        const ISO8601_DATE_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
-        if (typeof value === "string" && ISO8601_DATE_REGEX.test(value)) {
-          return new Date(value);
-        }
-        return value;
-      });
-      config = parsed;
-    }
-    this.config = config;
+    this.config = typeof config === "string" ? this.#parseConfig(config) : config;
+  }
+
+  #parseConfig(jsonString: string): T {
+    return JSON.parse(jsonString, (_key, value) => {
+      if (typeof value === "string" && ConfigManager.ISO8601_DATE_REGEX.test(value)) {
+        return new Date(value);
+      }
+      return value;
+    });
   }
 
   #navigateConfig(keys: string[], config: any): any {
