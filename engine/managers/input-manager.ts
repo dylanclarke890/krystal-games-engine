@@ -25,7 +25,7 @@ export class InputManager {
 
     this.#bindings = new Map();
     this.#actions = new Map();
-    this.accelerometerHandler = new AccelerometerInputHandler();
+    this.accelerometerHandler = new AccelerometerInputHandler(this.#actions, this.#bindings);
     this.mouseHandler = new MouseInputHandler(this.#actions, this.#bindings, this.viewport);
     this.keyboardHandler = new KeyboardInputHandler(this.#actions, this.#bindings);
   }
