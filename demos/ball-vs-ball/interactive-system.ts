@@ -26,7 +26,7 @@ export class InteractiveSystem extends BaseSystem {
     const mouse = this.gameContext.input.mouse;
     const leftClickState = this.gameContext.input.getLeftClickState();
     if (leftClickState.pressed) {
-      console.log("pressed");
+      console.log("click pressed");
       this.selectedEntity = undefined;
       for (const id of entities) {
         const rigidBody = em.getComponent(id, "rigid-body");
@@ -42,13 +42,26 @@ export class InteractiveSystem extends BaseSystem {
     }
 
     if (leftClickState.held) {
-      console.log("held");
+      console.log("click held");
       this.selectedEntity?.transform.position.assign(mouse);
     }
 
     if (leftClickState.released) {
-      console.log("released");
+      console.log("click released");
       this.selectedEntity = undefined;
+    }
+
+    const arrowLeft = this.gameContext.input.getState("left");
+    if (arrowLeft.pressed) {
+      console.log("arrowLeft pressed");
+    }
+
+    if (arrowLeft.held) {
+      console.log("arrowLeft held");
+    }
+
+    if (arrowLeft.released) {
+      console.log("arrowLeft released");
     }
   }
 }

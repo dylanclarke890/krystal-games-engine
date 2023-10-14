@@ -43,6 +43,7 @@ export class InputManager {
     };
 
     this.bind(InputKeys.Mouse_BtnOne, "left-click");
+    this.bind(InputKeys.Arrow_Left, "left");
   }
 
   getLeftClickState(): InputActionStatus {
