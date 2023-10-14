@@ -35,6 +35,14 @@ export abstract class Collider extends BaseComponent {
     }
     return position;
   }
+
+  setAbsolutePosition(vector: Vector2) {
+    if (this.rigidBody) {
+      this.rigidBody.transform.position.assign(vector);
+    } else {
+      this.transform.position.assign(vector);
+    }
+  }
 }
 
 export class CircleCollider extends Collider {
