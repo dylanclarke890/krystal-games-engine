@@ -21,13 +21,12 @@ export class InputManager {
   constructor(eventManager: IEventManager, viewport: Viewport) {
     this.eventManager = eventManager;
     this.viewport = viewport;
-    this.eventManager.on(GameEventType.LOOP_AFTER_UPDATE, this.clearPressed.bind(this));
-
     this.#bindings = new Map();
     this.#actions = new Map();
     this.accelerometerHandler = new AccelerometerInputHandler(this.#actions, this.#bindings);
     this.mouseHandler = new MouseInputHandler(this.#actions, this.#bindings, this.viewport);
     this.keyboardHandler = new KeyboardInputHandler(this.#actions, this.#bindings);
+    this.eventManager.on(GameEventType.LOOP_AFTER_UPDATE, this.clearPressed.bind(this));
   }
 
   getMouseCoords() {
