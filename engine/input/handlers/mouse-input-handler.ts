@@ -19,6 +19,7 @@ export class MouseInputHandler extends BaseInputHandler {
     if (this.hasInitialised) {
       return;
     }
+    this.hasInitialised = true;
 
     const canvas = this.viewport.canvas;
     canvas.addEventListener("wheel", this.onMouseWheel.bind(this), { passive: false }); // passive: false- stops Chrome warning
@@ -54,7 +55,7 @@ export class MouseInputHandler extends BaseInputHandler {
       return undefined;
     }
 
-    return super.getStateByInputKey(key);
+    return super.getStatusByInputKey(key);
   }
 
   private onMousemove(e: TouchEvent | MouseEvent): void {
@@ -76,6 +77,7 @@ export class MouseInputHandler extends BaseInputHandler {
       return;
     }
 
+    state.held = true;
     state.pressed = true;
 
     e.preventDefault();
@@ -103,18 +105,19 @@ export class MouseInputHandler extends BaseInputHandler {
 
     this.onMousemove(e);
 
-    const state = super.getStateByInputKey(InputKey.Touch_Start);
+    const state = super.getStatusByInputKey(InputKey.Touch_Start);
     if (typeof state === "undefined") {
       return;
     }
 
+    state.held = true;
     state.pressed = true;
     e.preventDefault();
     e.stopPropagation();
   }
 
   private onTouchend(e: TouchEvent): void {
-    const state = super.getStateByInputKey(InputKey.Touch_End);
+    const state = super.getStatusByInputKey(InputKey.Touch_End);
     if (typeof state === "undefined") {
       return;
     }
@@ -129,7 +132,7 @@ export class MouseInputHandler extends BaseInputHandler {
     const scrollAmount = Math.sign(e.deltaY);
     const key = scrollAmount > 0 ? InputKey.Mouse_WheelDown : InputKey.Mouse_WheelUp;
 
-    const state = super.getStateByInputKey(key);
+    const state = super.getStatusByInputKey(key);
     if (typeof state === "undefined") {
       return;
     }

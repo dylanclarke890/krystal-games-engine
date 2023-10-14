@@ -17,7 +17,6 @@ export class InputSystem extends BaseSystem {
 
   update(_dt: number, entities: Set<number>) {
     const em = this.gameContext.entities;
-    this.gameContext.input.clearPressed();
 
     for (const id of entities) {
       const input = em.getComponent(id, "input");

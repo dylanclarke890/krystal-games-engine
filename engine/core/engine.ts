@@ -46,7 +46,7 @@ export class KrystalGameEngine {
     this.gameContext.systems.addSystem(new RenderSystem(this.gameContext));
 
     this.loop = new GameLoop(this.gameContext);
-    events.on(GameEventType.LOOP_STARTED, this.gameContext.systems.update.bind(this.gameContext.systems));
+    events.on(GameEventType.LOOP_UPDATE, this.gameContext.systems.update.bind(this.gameContext.systems));
   }
 
   #getIntegrator(): BaseIntegrator {

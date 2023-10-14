@@ -5,7 +5,8 @@ import { BaseSystem } from "../systems/base-system.js";
 export enum GameEventType {
   // #region Loop
   LOOP_BEFORE_START,
-  LOOP_STARTED,
+  LOOP_UPDATE,
+  LOOP_AFTER_UPDATE,
   LOOP_PAUSED,
   LOOP_UNPAUSED,
   LOOP_STOPPED,
@@ -36,7 +37,8 @@ export type ComponentEvent = {
 export type GameEventHandler<T extends keyof GameEventMap> = (data: GameEventMap[T]) => void;
 
 export type GameEventMap = {
-  [GameEventType.LOOP_STARTED]: number;
+  [GameEventType.LOOP_UPDATE]: number;
+  [GameEventType.LOOP_AFTER_UPDATE]: number;
   [GameEventType.LOOP_STOPPED]: boolean;
 
   [GameEventType.ENTITY_CREATED]: number;

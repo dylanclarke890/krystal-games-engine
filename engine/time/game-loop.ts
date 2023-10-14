@@ -9,6 +9,7 @@ export class GameLoop implements ILoop {
   #accumulator: number;
   context: GameContext;
   fpsInterval: number;
+  fpsIntervalInSecs: number;
   targetFps: number;
   stopped: boolean;
   maxFrameTime: number;
@@ -19,6 +20,7 @@ export class GameLoop implements ILoop {
     this.targetFps = loopSettings?.targetFps ?? 60;
     this.maxFrameTime = loopSettings?.maxFrameTime ?? 100;
     this.fpsInterval = 1000 / this.targetFps;
+    this.fpsIntervalInSecs = this.fpsInterval / 1000;
     this.#lastFrame = -1;
     this.#requestAnimationFrameId = -1;
     this.#accumulator = 0;
@@ -47,9 +49,11 @@ export class GameLoop implements ILoop {
 
     // If it's been enough time, update the game logic and reduce the accumulator
     while (this.#accumulator >= this.fpsInterval) {
-      this.context.events.trigger(GameEventType.LOOP_STARTED, this.fpsInterval / 1000);
+      this.context.events.trigger(GameEventType.LOOP_UPDATE, this.fpsIntervalInSecs);
       this.#accumulator -= this.fpsInterval;
     }
+
+    this.context.events.trigger(GameEventType.LOOP_AFTER_UPDATE, this.fpsIntervalInSecs);
   }
 
   stop(unloadAssets?: boolean): void {

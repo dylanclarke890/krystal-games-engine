@@ -1,28 +1,33 @@
 import { Viewport } from "../graphics/viewport.js";
 import { InputKey } from "../input/input-keys.js";
-import { keyboardMap } from "../input/keyboard-map.js";
 import { IEventManager } from "../types/common-interfaces.js";
 import { InputActionStatus, InputStatus } from "../types/common-types.js";
 import { InvalidOperationError } from "../types/errors.js";
 import { AccelerometerInputHandler } from "../input/handlers/accelerometer-input-handler.js";
 import { MouseInputHandler } from "../input/handlers/mouse-input-handler.js";
+import { KeyboardInputHandler } from "../input/handlers/keyboard-input-handler.js";
+import { GameEventType } from "../constants/events.js";
 
 export class InputManager {
+  eventManager: IEventManager;
   viewport: Viewport;
+
   #actions: Map<string, InputStatus>;
   #bindings: Map<InputKey, string>;
-
   accelerometerHandler: AccelerometerInputHandler;
+  keyboardHandler: KeyboardInputHandler;
   mouseHandler: MouseInputHandler;
-  eventManager: IEventManager;
 
   constructor(eventManager: IEventManager, viewport: Viewport) {
     this.eventManager = eventManager;
     this.viewport = viewport;
+    this.eventManager.on(GameEventType.LOOP_AFTER_UPDATE, this.clearPressed.bind(this));
+
     this.#bindings = new Map();
     this.#actions = new Map();
     this.accelerometerHandler = new AccelerometerInputHandler();
     this.mouseHandler = new MouseInputHandler(this.#actions, this.#bindings, this.viewport);
+    this.keyboardHandler = new KeyboardInputHandler(this.#actions, this.#bindings);
     this.bind(InputKey.Mouse_BtnOne, "left-click");
     this.bind(InputKey.Arrow_Left, "left");
   }
@@ -39,17 +44,7 @@ export class InputManager {
     return state;
   }
 
-  //#region Initialise
-
-  #initializeKeyboardEvents(): void {
-    if (this.#using.keyboard) return;
-    this.#using.keyboard = true;
-
-    document.addEventListener("keydown", (e) => this.#onKeyDown(e));
-    document.addEventListener("keyup", (e) => this.#onKeyUp(e));
-  }
-
-  #initInputTypeEvents(key: InputKey): void {
+  private initInputTypeEvents(key: InputKey): void {
     switch (key) {
       case InputKey.Mouse_BtnOne:
       case InputKey.Mouse_BtnTwo:
@@ -64,14 +59,10 @@ export class InputManager {
         this.accelerometerHandler.init();
         return;
       default:
-        this.#initializeKeyboardEvents();
+        this.keyboardHandler.init();
         return;
     }
   }
-
-  //#endregion Initialise
-
-  //#region Api
 
   /**
    * Bind an input key to an action.
@@ -84,7 +75,8 @@ export class InputManager {
     }
 
     this.#bindings.set(key, action);
-    this.#initInputTypeEvents(key);
+    this.#actions.set(action, { pressed: false, held: false, released: false, locked: false });
+    this.initInputTypeEvents(key);
   }
 
   /** Unbind an action from a key. */
@@ -109,22 +101,18 @@ export class InputManager {
     this.#actions.clear();
   }
 
-  /** Returns a boolean value indicating whether the input action began being pressed this frame. */
   pressed(action: string): boolean {
     return !!this.#actions.get(action)?.pressed;
   }
 
-  /** Returns a boolean value indicating whether the input action is currently held down. */
   held(action: string): boolean {
     return !!this.#actions.get(action)?.held;
   }
 
-  /** Returns a boolean value indicating whether the input action was released in the last frame. */
   released(action: string): boolean {
     return !!this.#actions.get(action)?.released;
   }
 
-  /** Returns the current state of the action (pressed, held, released). */
   getState(action: string): InputActionStatus {
     const state = this.#actions.get(action);
     if (typeof state === "undefined") {
@@ -134,80 +122,14 @@ export class InputManager {
     return { pressed: state.pressed, held: state.held, released: state.released };
   }
 
-  /**
-   * Clears any inputs that were pressed in the previous frame and updates the state of the inputs.
-   * Should be called at the start of each game frame, before any input processing is done.
-   * Any inputs that were released in the previous frame will still be stored in the delayedActions map and can be
-   * checked using `released()`.
-   * After calling this method, `pressed()` will return false for all inputs that were pressed in the previous
-   * frame.
-   * Any inputs that are still held down will remain in the pressed state and can be checked using `state()`.
-   */
-  clearPressed(): void {}
-
-  //#endregion Api
-
-  //#region Events
-
-  #targetIsInputOrText(event: any): boolean {
-    const { tagName } = event.target;
-    return tagName === "INPUT" || tagName === "TEXTAREA";
-  }
-
-  /** @param orPropagate Defaults to true */
-  #preventDefault(e: Event, orPropagate?: boolean): void {
-    e.preventDefault();
-    if (orPropagate ?? true === true) {
-      e.stopPropagation();
+  clearPressed(): void {
+    for (const actionStatus of this.#actions.values()) {
+      if (actionStatus.released) {
+        actionStatus.held = false;
+        actionStatus.locked = false;
+      }
+      actionStatus.released = false;
+      actionStatus.pressed = false;
     }
   }
-
-  #getKeyboardAction(e: KeyboardEvent): Nullable<string> {
-    if (this.#targetIsInputOrText(e)) {
-      return undefined;
-    }
-
-    const key = keyboardMap[e.key.toLowerCase() as keyof typeof keyboardMap];
-    if (typeof key === "undefined") {
-      return undefined;
-    }
-
-    return this.#bindings.get(key);
-  }
-
-  #onKeyDown(e: KeyboardEvent): void {
-    const action = this.#getKeyboardAction(e);
-    if (typeof action === "undefined") {
-      return;
-    }
-
-    const state = this.#actions.get(action);
-    if (typeof state === "undefined") {
-      return;
-    }
-
-    if (!state.locked) {
-      state.pressed = true;
-      state.locked = true;
-    }
-
-    this.#preventDefault(e, false);
-  }
-
-  #onKeyUp(e: KeyboardEvent): void {
-    const action = this.#getKeyboardAction(e);
-    if (typeof action === "undefined") {
-      return;
-    }
-
-    const state = this.#actions.get(action);
-    if (typeof state === "undefined") {
-      return;
-    }
-
-    state.released = true;
-    this.#preventDefault(e, false);
-  }
-
-  //#endregion Events
 }
