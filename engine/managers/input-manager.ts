@@ -1,12 +1,12 @@
 import { Viewport } from "../graphics/viewport.js";
 import { Vector2 } from "../maths/vector2.js";
-import { Vector3 } from "../maths/vector3.js";
 import { UserAgent } from "../utils/user-agent.js";
 import { InputKeys } from "../input/input-keys.js";
 import { keyboardMap } from "../input/keyboard-map.js";
 import { IEventManager } from "../types/common-interfaces.js";
 import { InputActionStatus, InputStatus } from "../types/common-types.js";
 import { InvalidOperationError } from "../types/errors.js";
+import { AccelerometerInputHandler } from "../input/handlers/accelerometer-input-handler.js";
 
 export class InputManager {
   viewport: Viewport;
@@ -14,8 +14,9 @@ export class InputManager {
   #bindings: Map<InputKeys, string>;
   #using;
 
+  accelerometerHandler: AccelerometerInputHandler;
+
   mouse: Vector2;
-  accel: Vector3;
   eventManager: IEventManager;
 
   constructor(eventManager: IEventManager, viewport: Viewport) {
@@ -24,7 +25,7 @@ export class InputManager {
     this.#bindings = new Map();
     this.actions = new Map();
     this.mouse = new Vector2();
-    this.accel = new Vector3();
+    this.accelerometerHandler = new AccelerometerInputHandler();
     this.#using = {
       mouse: false,
       touch: false,
@@ -85,12 +86,6 @@ export class InputManager {
     document.addEventListener("keyup", (e) => this.#onKeyUp(e));
   }
 
-  #initializeAccelerometer(): void {
-    if (this.#using.accelerometer) return;
-    this.#using.accelerometer = true;
-    window.addEventListener("devicemotion", (e) => this.onDeviceMotion(e), false);
-  }
-
   #initInputTypeEvents(key: InputKeys): void {
     switch (key) {
       case InputKeys.Mouse_BtnOne:
@@ -105,7 +100,7 @@ export class InputManager {
         this.#initializeTouchEvents();
         return;
       case InputKeys.Device_Motion:
-        this.#initializeAccelerometer();
+        this.accelerometerHandler.init();
         return;
       default:
         this.#initializeKeyboardEvents();
@@ -388,14 +383,6 @@ export class InputManager {
   #onContextMenu(e: MouseEvent): void {
     if (this.#bindings.has(InputKeys.Context_Menu)) {
       this.#preventDefault(e);
-    }
-  }
-
-  onDeviceMotion(e: DeviceMotionEvent): void {
-    if (e.accelerationIncludingGravity !== null) {
-      this.accel.x = e.accelerationIncludingGravity.x ?? 0;
-      this.accel.y = e.accelerationIncludingGravity.y ?? 0;
-      this.accel.z = e.accelerationIncludingGravity.z ?? 0;
     }
   }
 
