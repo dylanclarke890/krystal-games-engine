@@ -8,10 +8,8 @@ export class EventManager implements IEventManager {
   #parent: Nullable<IEventManager>;
 
   constructor(parent?: IEventManager) {
+    this.#parent = parent;
     this.#subscribers = new Map();
-    if (typeof parent !== "undefined") {
-      this.#parent = parent;
-    }
   }
 
   get parent(): Nullable<IEventManager> {
@@ -28,29 +26,17 @@ export class EventManager implements IEventManager {
       this.#subscribers.set(event, new PriorityQueue());
     }
 
-    const priorityLevel = priority instanceof PriorityLevel ? priority.valueOf() : priority;
-    this.#subscribers.get(event)!.add(listener, priorityLevel);
+    this.#subscribers.get(event)!.add(listener, priority.valueOf());
   }
 
   off<T extends Key<GameEventMap>>(event: T, listener: GameEventHandler<T>) {
     const queue = this.#subscribers.get(event);
-
-    if (typeof queue === "undefined") {
-      return;
-    }
-
-    return queue.remove(listener);
+    return queue?.remove(listener);
   }
 
-  trigger<T extends Key<GameEventMap>>(event: T, data?: GameEventMap[T]) {
+  trigger<T extends Key<GameEventMap>>(event: T, data: GameEventMap[T]) {
     const queue = this.#subscribers.get(event);
-
-    if (typeof queue !== "undefined") {
-      queue.forEach((listener) => listener(data));
-    }
-
-    if (typeof this.#parent !== "undefined") {
-      this.#parent.trigger(event, data);
-    }
+    queue?.forEach((listener) => listener(data));
+    this.#parent?.trigger(event, data);
   }
 }

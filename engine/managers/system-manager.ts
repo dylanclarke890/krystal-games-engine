@@ -53,7 +53,7 @@ export class SystemManager implements ISystemManager {
     this.systems.delete(systemName);
     this.systemEntities.delete(systemName);
 
-    this.eventManager.trigger(GameEventType.SYSTEM_REMOVED);
+    this.eventManager.trigger(GameEventType.SYSTEM_REMOVED, system);
   }
 
   getSystem<T extends SystemType>(name: T): SystemMap[T] | undefined {

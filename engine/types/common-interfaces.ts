@@ -43,7 +43,7 @@ export interface IEventManager {
   off<T extends Key<GameEventMap>>(event: T, listener: GameEventHandler<T>): void;
 
   /** Trigger an event. */
-  trigger<T extends Key<GameEventMap>>(event: T, data?: GameEventMap[T]): void;
+  trigger<T extends Key<GameEventMap>>(event: T, data: GameEventMap[T]): void;
 }
 
 export interface IEntityManager {
