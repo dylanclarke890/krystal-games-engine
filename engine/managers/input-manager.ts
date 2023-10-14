@@ -1,40 +1,35 @@
 import { Viewport } from "../graphics/viewport.js";
-import { Vector2 } from "../maths/vector2.js";
-import { UserAgent } from "../utils/user-agent.js";
-import { InputKeys } from "../input/input-keys.js";
+import { InputKey } from "../input/input-keys.js";
 import { keyboardMap } from "../input/keyboard-map.js";
 import { IEventManager } from "../types/common-interfaces.js";
 import { InputActionStatus, InputStatus } from "../types/common-types.js";
 import { InvalidOperationError } from "../types/errors.js";
 import { AccelerometerInputHandler } from "../input/handlers/accelerometer-input-handler.js";
+import { MouseInputHandler } from "../input/handlers/mouse-input-handler.js";
 
 export class InputManager {
   viewport: Viewport;
-  actions: Map<string, InputStatus>;
-  #bindings: Map<InputKeys, string>;
+  #actions: Map<string, InputStatus>;
+  #bindings: Map<InputKey, string>;
   #using;
 
   accelerometerHandler: AccelerometerInputHandler;
-
-  mouse: Vector2;
+  mouseHandler: MouseInputHandler;
   eventManager: IEventManager;
 
   constructor(eventManager: IEventManager, viewport: Viewport) {
     this.eventManager = eventManager;
     this.viewport = viewport;
     this.#bindings = new Map();
-    this.actions = new Map();
-    this.mouse = new Vector2();
+    this.#actions = new Map();
     this.accelerometerHandler = new AccelerometerInputHandler();
-    this.#using = {
-      mouse: false,
-      touch: false,
-      keyboard: false,
-      accelerometer: false,
-    };
+    this.mouseHandler = new MouseInputHandler(this.#actions, this.#bindings, this.viewport);
+    this.bind(InputKey.Mouse_BtnOne, "left-click");
+    this.bind(InputKey.Arrow_Left, "left");
+  }
 
-    this.bind(InputKeys.Mouse_BtnOne, "left-click");
-    this.bind(InputKeys.Arrow_Left, "left");
+  getMouseCoords() {
+    return this.mouseHandler.mouse.clone();
   }
 
   getLeftClickState(): InputActionStatus {
@@ -47,37 +42,6 @@ export class InputManager {
 
   //#region Initialise
 
-  #initializeMouseEvents(): void {
-    if (this.#using.mouse) return;
-    this.#using.mouse = true;
-
-    const canvas = this.viewport.canvas;
-    canvas.addEventListener("wheel", (e) => this.#onMouseWheel(e), { passive: false }); // Stops Chrome warning
-    canvas.addEventListener("contextmenu", (e) => this.#onContextMenu(e), false);
-    canvas.addEventListener("mousedown", (e) => this.#onMouseDown(e), false);
-    canvas.addEventListener("mouseup", (e) => this.#onMouseUp(e), false);
-    canvas.addEventListener("mousemove", (e) => this.#onMouseMove(e), false);
-    if (UserAgent.instance.device.touchDevice) this.#initializeTouchEvents();
-  }
-
-  #initializeTouchEvents(): void {
-    if (this.#using.touch) return;
-    this.#using.touch = true;
-
-    const canvas = this.viewport.canvas;
-    // Standard
-    canvas.addEventListener("touchstart", (e) => this.#onTouchStart(e), false);
-    canvas.addEventListener("touchend", (e) => this.#onTouchEnd(e), false);
-    canvas.addEventListener("touchcancel", (e) => this.#onTouchEnd(e), false);
-    canvas.addEventListener("touchmove", (e) => this.#onMouseMove(e), false);
-
-    // MS
-    canvas.addEventListener("MSPointerDown", (e) => this.#onTouchStart(e as TouchEvent), false);
-    canvas.addEventListener("MSPointerUp", (e) => this.#onTouchEnd(e as TouchEvent), false);
-    canvas.addEventListener("MSPointerMove", (e) => this.#onMouseMove(e as TouchEvent), false);
-    canvas.style.touchAction = "none";
-  }
-
   #initializeKeyboardEvents(): void {
     if (this.#using.keyboard) return;
     this.#using.keyboard = true;
@@ -86,20 +50,18 @@ export class InputManager {
     document.addEventListener("keyup", (e) => this.#onKeyUp(e));
   }
 
-  #initInputTypeEvents(key: InputKeys): void {
+  #initInputTypeEvents(key: InputKey): void {
     switch (key) {
-      case InputKeys.Mouse_BtnOne:
-      case InputKeys.Mouse_BtnTwo:
-      case InputKeys.Mouse_Move:
-      case InputKeys.Mouse_WheelDown:
-      case InputKeys.Mouse_WheelUp:
-        this.#initializeMouseEvents();
+      case InputKey.Mouse_BtnOne:
+      case InputKey.Mouse_BtnTwo:
+      case InputKey.Mouse_Move:
+      case InputKey.Mouse_WheelDown:
+      case InputKey.Mouse_WheelUp:
+      case InputKey.Touch_Start:
+      case InputKey.Touch_End:
+        this.mouseHandler.init();
         return;
-      case InputKeys.Touch_Start:
-      case InputKeys.Touch_End:
-        this.#initializeTouchEvents();
-        return;
-      case InputKeys.Device_Motion:
+      case InputKey.Device_Motion:
         this.accelerometerHandler.init();
         return;
       default:
@@ -114,10 +76,10 @@ export class InputManager {
 
   /**
    * Bind an input key to an action.
-   * @param {InputKeys} key
+   * @param {InputKey} key
    * @param {string} action
    */
-  bind(key: InputKeys, action: string): void {
+  bind(key: InputKey, action: string): void {
     if (this.#bindings.has(key)) {
       console.warn(`${key} was already bound to action ${this.#bindings.get(key)}`);
     }
@@ -127,13 +89,13 @@ export class InputManager {
   }
 
   /** Unbind an action from a key. */
-  unbind(key: InputKeys): void {
+  unbind(key: InputKey): void {
     const action = this.#bindings.get(key);
     if (typeof action === "undefined") {
       return;
     }
 
-    const state = this.actions.get(action);
+    const state = this.#actions.get(action);
     if (typeof state === "undefined") {
       return;
     }
@@ -145,27 +107,27 @@ export class InputManager {
   /** Unbind all actions. */
   unbindAll(): void {
     this.#bindings.clear();
-    this.actions.clear();
+    this.#actions.clear();
   }
 
   /** Returns a boolean value indicating whether the input action began being pressed this frame. */
   pressed(action: string): boolean {
-    return !!this.actions.get(action)?.pressed;
+    return !!this.#actions.get(action)?.pressed;
   }
 
   /** Returns a boolean value indicating whether the input action is currently held down. */
   held(action: string): boolean {
-    return !!this.actions.get(action)?.held;
+    return !!this.#actions.get(action)?.held;
   }
 
   /** Returns a boolean value indicating whether the input action was released in the last frame. */
   released(action: string): boolean {
-    return !!this.actions.get(action)?.released;
+    return !!this.#actions.get(action)?.released;
   }
 
   /** Returns the current state of the action (pressed, held, released). */
   getState(action: string): InputActionStatus {
-    const state = this.actions.get(action);
+    const state = this.#actions.get(action);
     if (typeof state === "undefined") {
       throw new InvalidOperationError("Tried to fetch state for an action that wasn't bound", action);
     }
@@ -220,7 +182,7 @@ export class InputManager {
       return;
     }
 
-    const state = this.actions.get(action);
+    const state = this.#actions.get(action);
     if (typeof state === "undefined") {
       return;
     }
@@ -239,151 +201,13 @@ export class InputManager {
       return;
     }
 
-    const state = this.actions.get(action);
+    const state = this.#actions.get(action);
     if (typeof state === "undefined") {
       return;
     }
 
     state.released = true;
     this.#preventDefault(e, false);
-  }
-
-  #onMouseWheel(e: WheelEvent): void {
-    const scrollAmount = Math.sign(e.deltaY);
-    const key = scrollAmount > 0 ? InputKeys.Mouse_WheelDown : InputKeys.Mouse_WheelUp;
-
-    const action = this.#bindings.get(key);
-    if (typeof action === "undefined") {
-      return;
-    }
-
-    const state = this.actions.get(action);
-    if (typeof state === "undefined") {
-      return;
-    }
-
-    state.pressed = true;
-    state.released = true;
-
-    this.#preventDefault(e);
-  }
-
-  #onMouseMove(e: TouchEvent | MouseEvent): void {
-    const viewport = this.viewport;
-    const internalWidth = viewport.canvas.offsetWidth || viewport.realWidth;
-    const scale = viewport.scale * (internalWidth / viewport.realWidth);
-
-    const pos = viewport.canvas.getBoundingClientRect();
-    const { clientX, clientY } = "touches" in e ? e.touches[0] : e;
-    this.mouse.x = (clientX - pos.left) / scale;
-    this.mouse.y = (clientY - pos.top) / scale;
-  }
-
-  #getMouseAction(e: MouseEvent): Nullable<string> {
-    if (this.#targetIsInputOrText(e)) {
-      return undefined;
-    }
-
-    let key;
-    switch (e.button) {
-      case 0:
-      case 1:
-        key = InputKeys.Mouse_BtnOne;
-        break;
-      case 2:
-        key = InputKeys.Mouse_BtnTwo;
-        break;
-      default:
-        break;
-    }
-
-    if (typeof key === "undefined") {
-      return undefined;
-    }
-
-    return this.#bindings.get(key);
-  }
-
-  #onMouseDown(e: MouseEvent): void {
-    this.#onMouseMove(e);
-
-    const action = this.#getMouseAction(e);
-    if (typeof action === "undefined") {
-      return;
-    }
-
-    const state = this.actions.get(action);
-    if (typeof state === "undefined") {
-      return;
-    }
-
-    state.pressed = true;
-    this.#preventDefault(e);
-  }
-
-  #onMouseUp(e: MouseEvent): void {
-    const action = this.#getMouseAction(e);
-    if (typeof action === "undefined") {
-      return;
-    }
-
-    const state = this.actions.get(action);
-    if (typeof state === "undefined") {
-      return;
-    }
-
-    state.released = true;
-    this.#preventDefault(e);
-  }
-
-  #onTouchStart(e: TouchEvent): void {
-    if (this.#targetIsInputOrText(e)) {
-      return;
-    }
-
-    // Focus window element for mouse clicks. Prevents issues when running the game in an iframe.
-    if (UserAgent.instance.device.mobile) {
-      window.focus();
-    }
-    this.#onMouseMove(e);
-
-    const action = this.#bindings.get(InputKeys.Touch_Start);
-    if (typeof action === "undefined") {
-      return;
-    }
-
-    const state = this.actions.get(action);
-    if (typeof state === "undefined") {
-      return;
-    }
-
-    state.pressed = true;
-    this.#preventDefault(e);
-  }
-
-  #onTouchEnd(e: TouchEvent): void {
-    if (this.#targetIsInputOrText(e)) {
-      return;
-    }
-
-    const action = this.#bindings.get(InputKeys.Touch_End);
-    if (typeof action === "undefined") {
-      return;
-    }
-
-    const state = this.actions.get(action);
-    if (typeof state === "undefined") {
-      return;
-    }
-
-    state.released = true;
-    this.#preventDefault(e);
-  }
-
-  #onContextMenu(e: MouseEvent): void {
-    if (this.#bindings.has(InputKeys.Context_Menu)) {
-      this.#preventDefault(e);
-    }
   }
 
   //#endregion Events
