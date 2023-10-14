@@ -1,4 +1,4 @@
-export class TouchEventHandler {
+export class TouchInputHandler {
   hasInitialised;
 
   constructor() {

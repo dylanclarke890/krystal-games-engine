@@ -1,4 +1,4 @@
-export class AccelerometerEventHandler {
+export class AccelerometerInputHandler {
   hasInitialised;
 
   constructor() {

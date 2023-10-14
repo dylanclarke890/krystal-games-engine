@@ -1,4 +1,4 @@
-export class MouseEventHandler {
+export class MouseInputHandler {
   hasInitialised;
 
   constructor() {

@@ -1,4 +1,4 @@
-export class KeyboardEventHandler {
+export class KeyboardInputHandler {
   hasInitialised;
 
   constructor() {
