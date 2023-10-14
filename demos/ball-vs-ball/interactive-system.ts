@@ -26,7 +26,7 @@ export class InteractiveSystem extends BaseSystem {
   update(_dt: number, entities: Set<number>): void {
     const em = this.gameContext.entities;
     const mouse = this.gameContext.input.getMouseCoords();
-    const leftClickState = this.gameContext.input.getLeftClickState();
+    const leftClickState = this.gameContext.input.getState("left-click");
     if (leftClickState.pressed) {
       this.selectedEntity = undefined;
       for (const id of entities) {

@@ -34,14 +34,6 @@ export class InputManager {
     return this.mouseHandler.mouse.clone();
   }
 
-  getLeftClickState(): InputActionStatus {
-    const state = this.getState("left-click");
-    if (typeof state === "undefined") {
-      throw new InvalidOperationError("Left click state was requested but not bound");
-    }
-    return state;
-  }
-
   private initInputTypeEvents(key: InputKey): void {
     switch (key) {
       case InputKey.Mouse_BtnOne:
