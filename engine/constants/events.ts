@@ -48,4 +48,6 @@ export type GameEventMap = {
 
   [GameEventType.SYSTEM_ADDED]: BaseSystem;
   [GameEventType.SYSTEM_REMOVED]: BaseSystem;
+  [GameEventType.SYSTEM_ENABLED]: BaseSystem;
+  [GameEventType.SYSTEM_DISABLED]: BaseSystem;
 };

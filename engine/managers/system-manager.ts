@@ -45,7 +45,7 @@ export class SystemManager implements ISystemManager {
   removeSystem(systemName: SystemType): void {
     const system = this.systems.get(systemName);
     if (typeof system === "undefined") {
-      return;
+      throw new SystemError("Cannot find a matching system to remove.", systemName);
     }
 
     this.executionQueue.remove(system);
@@ -63,9 +63,10 @@ export class SystemManager implements ISystemManager {
   setSystemEnabled(systemName: SystemType, enabled: boolean): void {
     const system = this.systems.get(systemName);
     if (typeof system === "undefined") {
-      return;
+      throw new SystemError("Cannot find a matching system to update.", systemName);
     }
     system.enabled = enabled;
+    this.eventManager.trigger(enabled ? GameEventType.SYSTEM_ENABLED : GameEventType.SYSTEM_DISABLED, system);
   }
 
   #bindEvents() {
