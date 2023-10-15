@@ -1,5 +1,4 @@
 import { BaseComponent, CircleCollider, RigidBody } from "../../engine/components/index.js";
-import { GameEventType } from "../../engine/constants/events.js";
 import { GameContext } from "../../engine/core/context.js";
 import { InputKey } from "../../engine/input/input-keys.js";
 import { isPointWithinCircle } from "../../engine/physics/utils.js";
@@ -14,9 +13,6 @@ export class InteractiveSystem extends BaseSystem {
   constructor(gameContext: GameContext, enabled?: boolean) {
     super(gameContext, enabled);
     this.gameContext.input.bind(InputKey.Mouse_BtnOne, "left-click");
-    this.gameContext.events.on(GameEventType.ENTITY_COLLIDED, (data) => {
-      console.log({ ...data });
-    });
   }
 
   isInterestedInComponent(component: BaseComponent): boolean {

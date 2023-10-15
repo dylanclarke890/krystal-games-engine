@@ -71,7 +71,7 @@ export function checkCirclesCollision(a: ColliderEntity, b: ColliderEntity): Nul
   info.normal = normal;
 
   // Find the point on the edge of circle A that is closest to circle B, based on their radii.
-  const contactPoint = aPosition.add(normal.mulScalar(aCollider.radius - info.penetration / 2));
+  const contactPoint = aPosition.add(normal.clone().mulScalar(aCollider.radius - info.penetration / 2));
   info.contactPoints.push(contactPoint);
 
   return info;
