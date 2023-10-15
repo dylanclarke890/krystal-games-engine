@@ -52,7 +52,6 @@ export class CircleCollider extends Collider {
   constructor(transform: Transform, material: PhysicsMaterial, radius: number, isTrigger?: boolean) {
     super(transform, material, isTrigger);
     this.radius = radius;
-    this.computeAABB();
   }
 
   computeAABB() {
@@ -71,7 +70,6 @@ export class RectCollider extends Collider {
   constructor(transform: Transform, material: PhysicsMaterial, size: Vector2, isTrigger?: boolean) {
     super(transform, material, isTrigger);
     this.size = size;
-    this.computeAABB();
   }
 
   computeAABB() {
@@ -90,7 +88,6 @@ export class PolygonCollider extends Collider {
   constructor(transform: Transform, material: PhysicsMaterial, vertices: Vector2[], isTrigger?: boolean) {
     super(transform, material, isTrigger);
     this.vertices = vertices;
-    this.computeAABB();
   }
 
   computeAABB() {

@@ -41,6 +41,7 @@ export class RigidBody extends BaseComponent {
       throw new InvalidOperationError("Collider is already attached to a rigid body.", collider);
     }
     collider.rigidBody = this;
+    collider.computeAABB();
     this.colliders.push(collider);
   }
 }

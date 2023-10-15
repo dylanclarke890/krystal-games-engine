@@ -1,7 +1,8 @@
-import { BaseComponent, CircleCollider, RigidBody } from "../../engine/components/index.js";
+import { BaseComponent, CircleCollider, RectCollider, RigidBody } from "../../engine/components/index.js";
+import { ShapeType } from "../../engine/constants/enums.js";
 import { GameContext } from "../../engine/core/context.js";
 import { InputKey } from "../../engine/input/input-keys.js";
-import { isPointWithinCircle } from "../../engine/physics/utils.js";
+import { isPointWithinCircle, isPointWithinRect } from "../../engine/physics/utils.js";
 import { BaseSystem } from "../../engine/systems/base-system.js";
 import { SystemType } from "../../engine/types/common-types.js";
 
@@ -36,14 +37,38 @@ export class InteractiveSystem extends BaseSystem {
           continue;
         }
 
-        if (isPointWithinCircle(mouse, rigidBody.colliders[0] as CircleCollider)) {
-          this.selectedEntity = rigidBody;
+        const collider = rigidBody.colliders[0];
+        switch (collider.shapeType) {
+          case ShapeType.Circle:
+            if (isPointWithinCircle(mouse, collider as CircleCollider)) {
+              this.selectedEntity = rigidBody;
+            }
+            break;
+          case ShapeType.Rectangle:
+            if (isPointWithinRect(mouse, collider as RectCollider)) {
+              this.selectedEntity = rigidBody;
+            }
+            break;
+          case ShapeType.Polygon:
+          default:
+            break;
         }
       }
     }
 
-    if (leftClickState.held) {
-      this.selectedEntity?.transform.position.assign(mouse);
+    if (leftClickState.held && typeof this.selectedEntity !== "undefined") {
+      const collider = this.selectedEntity.colliders[0];
+      switch (collider.shapeType) {
+        case ShapeType.Circle:
+          collider.setAbsolutePosition(mouse);
+          break;
+        case ShapeType.Rectangle:
+          collider.setAbsolutePosition(mouse.sub((collider as RectCollider).size.clone().divScalar(2)));
+          break;
+        case ShapeType.Polygon:
+        default:
+          break;
+      }
     }
 
     if (leftClickState.released) {

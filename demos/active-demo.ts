@@ -1,3 +1,3 @@
-import { Game } from "./ball-vs-ball/demo.js";
+import { ShapeVsShape } from "./ball-vs-ball/demo.js";
 
-new Game();
+new ShapeVsShape();
