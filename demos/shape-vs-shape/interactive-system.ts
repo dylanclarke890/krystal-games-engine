@@ -6,7 +6,7 @@ import { isPointWithinCircle, isPointWithinRect } from "../../engine/physics/uti
 import { BaseSystem } from "../../engine/systems/base-system.js";
 import { SystemType } from "../../engine/types/common-types.js";
 
-export class InteractiveSystem extends BaseSystem {
+export class ShapeVsShapeSystem extends BaseSystem {
   name: SystemType = "custom";
   priority: number = 8;
   selectedEntity?: RigidBody;

@@ -10,12 +10,12 @@ import {
 } from "../../engine/components/index.js";
 import { KrystalGameEngine } from "../../engine/core/engine.js";
 import { Vector2 } from "../../engine/maths/vector2.js";
-import { InteractiveSystem } from "./interactive-system.js";
+import { ShapeVsShapeSystem } from "./interactive-system.js";
 
 export class ShapeVsShape extends KrystalGameEngine {
   constructor() {
     super("canvas1", 500, 500);
-    this.gameContext.systems.addSystem(new InteractiveSystem(this.gameContext));
+    this.gameContext.systems.addSystem(new ShapeVsShapeSystem(this.gameContext));
 
     const screenWidth = this.gameContext.viewport.width;
     const screenHeight = this.gameContext.viewport.height;
