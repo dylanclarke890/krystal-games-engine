@@ -75,6 +75,5 @@ export class ShapeVsShapeSystem extends BaseSystem {
     if (leftClickState.released) {
       this.selectedEntity = undefined;
     }
-
   }
 }
