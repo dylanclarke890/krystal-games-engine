@@ -54,6 +54,7 @@ export class PhysicsSystem extends BaseSystem {
       this.physicsContext.integrator.integrate(id, rigidBody, dt);
 
       for (const collider of rigidBody.colliders) {
+        collider.computeAABB();
         const entity = new ColliderEntity(id, collider);
         this.physicsContext.broadphase.add(entity);
       }

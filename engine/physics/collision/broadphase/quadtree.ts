@@ -2,8 +2,15 @@ import { IBroadphase } from "../../../types/common-interfaces.js";
 import { Vector2 } from "../../../maths/vector2.js";
 import { GameContext } from "../../../core/context.js";
 import { AABB } from "../../../maths/aabb.js";
-import { Quadrant } from "../../../constants/enums.js";
 import { ColliderEntity } from "../data.js";
+import { BitwiseFlags } from "../../../utils/bitwise-flags.js";
+
+enum Quadrant {
+  NorthWest = 1 << 0,
+  NorthEast = 1 << 1,
+  SouthWest = 1 << 2,
+  SouthEast = 1 << 3,
+}
 
 export class Quadtree implements IBroadphase {
   context: GameContext;
@@ -108,31 +115,45 @@ class QuadtreeNode {
 
   position: Vector2;
   size: Vector2;
-
   quadrants: QuadtreeNode[];
   entities: ColliderEntity[];
   depth: number;
+  quadrantsResult: BitwiseFlags<number>;
 
   constructor(position: Vector2, size: Vector2, depth: number) {
     this.position = position;
     this.size = size;
+    this.quadrantsResult = new BitwiseFlags();
     this.depth = depth;
     this.quadrants = [];
     this.entities = [];
   }
 
-  findQuadrant(aabb: AABB): Quadrant {
-    const centerX = aabb.minX + (aabb.maxX - aabb.minX) / 2;
-    const centerY = aabb.minY + (aabb.maxY - aabb.minY) / 2;
+  findQuadrants(aabb: AABB): void {
+    this.quadrantsResult.clear();
 
-    const left = centerX < this.position.x + this.size.x / 2;
-    const top = centerY < this.position.y + this.size.y / 2;
+    const boundaryX = this.position.x + this.size.x / 2;
+    const boundaryY = this.position.y + this.size.y / 2;
 
-    if (left) {
-      return top ? Quadrant.NorthWest : Quadrant.SouthWest;
+    // Check NorthWest quadrant
+    if (aabb.minX < boundaryX && aabb.minY < boundaryY) {
+      this.quadrantsResult.add(Quadrant.NorthWest);
     }
 
-    return top ? Quadrant.NorthEast : Quadrant.SouthEast;
+    // Check NorthEast quadrant
+    if (aabb.maxX > boundaryX && aabb.minY < boundaryY) {
+      this.quadrantsResult.add(Quadrant.NorthEast);
+    }
+
+    // Check SouthWest quadrant
+    if (aabb.minX < boundaryX && aabb.maxY > boundaryY) {
+      this.quadrantsResult.add(Quadrant.SouthWest);
+    }
+
+    // Check SouthEast quadrant
+    if (aabb.maxX > boundaryX && aabb.maxY > boundaryY) {
+      this.quadrantsResult.add(Quadrant.SouthEast);
+    }
   }
 
   subdivide(): void {
@@ -150,8 +171,19 @@ class QuadtreeNode {
 
   insert(entity: ColliderEntity): void {
     if (this.quadrants.length) {
-      const quadrant = this.findQuadrant(entity.collider.aabb).valueOf();
-      this.quadrants[quadrant].insert(entity);
+      this.findQuadrants(entity.collider.aabb);
+      if (this.quadrantsResult.has(Quadrant.NorthWest)) {
+        this.quadrants[0].insert(entity);
+      }
+      if (this.quadrantsResult.has(Quadrant.NorthEast)) {
+        this.quadrants[1].insert(entity);
+      }
+      if (this.quadrantsResult.has(Quadrant.SouthWest)) {
+        this.quadrants[2].insert(entity);
+      }
+      if (this.quadrantsResult.has(Quadrant.SouthEast)) {
+        this.quadrants[3].insert(entity);
+      }
       return;
     }
 
@@ -176,7 +208,8 @@ class QuadtreeNode {
       quadrant.clear();
     }
 
-    this.entities = [];
+    this.quadrants.length = 0;
+    this.entities.length = 0;
   }
 
   draw(ctx: CanvasRenderingContext2D): void {

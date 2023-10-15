@@ -4,10 +4,18 @@ import { ShapeType } from "../constants/enums.js";
 import { Vector2 } from "../maths/vector2.js";
 import { InvalidOperationError } from "../types/errors.js";
 import { SystemType } from "../types/common-types.js";
+import { GameContext } from "../core/context.js";
+import { PhysicsContext } from "../physics/context.js";
 
 export class RenderSystem extends BaseSystem {
   name: SystemType = "render";
   priority: number = 10;
+  physicsContext: PhysicsContext;
+
+  constructor(gameContext: GameContext, physicsContext: PhysicsContext) {
+    super(gameContext);
+    this.physicsContext = physicsContext;
+  }
 
   isInterestedInComponent(component: BaseComponent): boolean {
     return component.type === "renderable";
@@ -55,6 +63,8 @@ export class RenderSystem extends BaseSystem {
         this.drawSprite(entity.sprite, entity.transform.position, sourceX, sourceY);
       }
     }
+
+    this.physicsContext.broadphase.draw("green");
   }
 
   drawSprite(sprite: Sprite, position: Vector2, sourceX: number, sourceY: number): void {

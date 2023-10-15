@@ -16,16 +16,7 @@ export class PriorityLevel extends Enum {
   }
 }
 
-export class Quadrant extends Enum {
-  static NorthWest = new Quadrant();
-  static NorthEast = new Quadrant();
-  static SouthWest = new Quadrant();
-  static SouthEast = new Quadrant();
 
-  static {
-    this.freeze();
-  }
-}
 
 export class CollisionResponseType extends Enum {
   /** No response, just notifies */

@@ -9,6 +9,7 @@ import {
   RectCollider,
 } from "../../engine/components/index.js";
 import { KrystalGameEngine } from "../../engine/core/engine.js";
+import { randomInt } from "../../engine/maths/number.js";
 import { Vector2 } from "../../engine/maths/vector2.js";
 import { ShapeVsShapeSystem } from "./interactive-system.js";
 
@@ -20,10 +21,13 @@ export class ShapeVsShape extends KrystalGameEngine {
     const screenWidth = this.gameContext.viewport.width;
     const screenHeight = this.gameContext.viewport.height;
     const defaultRadius = 20;
+    for (let i = 0; i < 10; i++) {
+      this.addBall(randomInt(0, screenWidth), randomInt(0, screenHeight), defaultRadius, false);
+    }
 
-    this.addBall(0, 0, defaultRadius, true);
-    this.addBall(screenWidth * 0.25, screenHeight * 0.5, defaultRadius, true);
-    this.addBall(screenWidth * 0.75, screenHeight * 0.5, defaultRadius, true);
+    // this.addBall(0, 0, defaultRadius, true);
+    // this.addBall(screenWidth * 0.25, screenHeight * 0.5, defaultRadius, true);
+    // this.addBall(screenWidth * 0.75, screenHeight * 0.5, defaultRadius, true);
     this.physicsContext.world.gravity.y = 0;
 
     this.start();

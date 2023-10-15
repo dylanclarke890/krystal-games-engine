@@ -43,7 +43,7 @@ export class KrystalGameEngine {
 
     this.gameContext.systems.addSystem(new InputSystem(this.gameContext));
     this.gameContext.systems.addSystem(new PhysicsSystem(this.gameContext, this.physicsContext));
-    this.gameContext.systems.addSystem(new RenderSystem(this.gameContext));
+    this.gameContext.systems.addSystem(new RenderSystem(this.gameContext, this.physicsContext));
 
     this.loop = new GameLoop(this.gameContext);
     events.on(GameEventType.LOOP_UPDATE, this.gameContext.systems.update.bind(this.gameContext.systems));
