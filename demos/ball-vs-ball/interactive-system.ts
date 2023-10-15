@@ -38,6 +38,7 @@ export class InteractiveSystem extends BaseSystem {
         }
 
         const collider = rigidBody.colliders[0];
+        collider.computeAABB();
         switch (collider.shapeType) {
           case ShapeType.Circle:
             if (isPointWithinCircle(mouse, collider as CircleCollider)) {

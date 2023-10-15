@@ -39,6 +39,7 @@ export class PhysicsSystem extends BaseSystem {
         }
 
         const entity = new ColliderEntity(id, collider);
+        collider.computeAABB();
         this.physicsContext.broadphase.add(entity);
         continue;
       }
