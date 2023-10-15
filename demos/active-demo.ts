@@ -1,3 +1,7 @@
 import { ShapeVsShape } from "./shape-vs-shape/demo.js";
 
-new ShapeVsShape();
+const AVAILABLE_DEMOS = {
+  shapeVsShape: ShapeVsShape,
+};
+
+new AVAILABLE_DEMOS.shapeVsShape();
