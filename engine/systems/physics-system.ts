@@ -20,7 +20,8 @@ export class PhysicsSystem extends BaseSystem {
   }
 
   belongsToSystem(entity: number): boolean {
-    return this.gameContext.entities.hasComponents(entity, ["rigid-body", "collider"]);
+    const em = this.gameContext.entities;
+    return em.hasComponent(entity, "rigid-body") && em.hasComponent(entity, "collider");
   }
 
   update(dt: number, entities: Set<number>) {
@@ -36,6 +37,7 @@ export class PhysicsSystem extends BaseSystem {
         if (typeof collider === "undefined") {
           continue;
         }
+
         const entity = new ColliderEntity(id, collider);
         this.physicsContext.broadphase.add(entity);
         continue;
@@ -46,6 +48,7 @@ export class PhysicsSystem extends BaseSystem {
       }
 
       rigidBodies.push(rigidBody);
+
       rigidBody.applyForce(this.physicsContext.world.gravity.clone().mulScalar(rigidBody.mass));
       this.physicsContext.integrator.integrate(id, rigidBody, dt);
 

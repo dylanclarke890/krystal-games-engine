@@ -1,5 +1,6 @@
 import { ShapeType } from "../../../constants/enums.js";
 import { GameContext } from "../../../core/context.js";
+import { PairedSet } from "../../../utils/paired-set.js";
 import { ColliderEntity, CollisionInfo } from "../data.js";
 import * as Strategies from "./detection-strategies.js";
 
@@ -25,7 +26,13 @@ export class CollisionDetector {
     this.collisionsFound = 0;
 
     const collisions = [];
+    const checked = new PairedSet<number>();
     for (const [a, b] of possibleCollisions) {
+      if (checked.has(a.id, b.id)) {
+        continue;
+      }
+
+      checked.add(a.id, b.id);
       const strategy = this.strategies.get(a.collider.shapeType + b.collider.shapeType);
       if (typeof strategy === "undefined") {
         continue;

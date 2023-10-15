@@ -21,6 +21,7 @@ export class Game extends KrystalGameEngine {
 
     this.addBall(screenWidth * 0.25, screenHeight * 0.5, defaultRadius);
     this.addBall(screenWidth * 0.75, screenHeight * 0.5, defaultRadius);
+    this.physicsContext.world.gravity.y = 0;
 
     this.start();
   }

@@ -16,9 +16,18 @@ export class PairedSet<T extends number | string | boolean> {
     const pair: Pair<T> = [a, b];
     this.#sort(pair);
     const key = `${pair[0]}-${pair[1]}`;
-    if (this.#entries.has(key)) return;
+    if (this.#entries.has(key)) {
+      return;
+    }
     this.#entries.add(key);
     this.#set.push(pair);
+  }
+
+  has(a: T, b: T) {
+    const pair: Pair<T> = [a, b];
+    this.#sort(pair);
+    const key = `${pair[0]}-${pair[1]}`;
+    return this.#entries.has(key);
   }
 
   forEach(callbackfn: (value: Pair<T>, index: number) => void) {

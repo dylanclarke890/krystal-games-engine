@@ -24,7 +24,8 @@ export class SystemManager implements ISystemManager {
   update(dt: number): void {
     this.executionQueue.forEach((system) => {
       if (system.enabled) {
-        system.update(dt, this.systemEntities.get(system.name)!);
+        // TODO: Get the specific set of entities for this system.
+        system.update(dt, this.entityManager.entities);
       }
     });
   }
