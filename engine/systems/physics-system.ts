@@ -3,11 +3,11 @@ import { BaseComponent, RigidBody } from "../components/index.js";
 import { GameContext } from "../core/context.js";
 import { PhysicsContext } from "../physics/context.js";
 import { ColliderEntity } from "../physics/collision/data.js";
-import { SystemType } from "../types/common-types.js";
+import { SystemGroup } from "../types/common-types.js";
 
 export class PhysicsSystem extends BaseSystem {
-  priority: number = 5;
-  name: SystemType = "physics";
+  name: string = "krystal__physics-system";
+  group: SystemGroup = "physics";
   physicsContext: PhysicsContext;
 
   constructor(gameContext: GameContext, physicsContext: PhysicsContext) {
@@ -21,7 +21,7 @@ export class PhysicsSystem extends BaseSystem {
 
   belongsToSystem(entity: number): boolean {
     const em = this.gameContext.entities;
-    return em.hasComponent(entity, "rigid-body") && em.hasComponent(entity, "collider");
+    return em.hasComponent(entity, "rigid-body") || em.hasComponent(entity, "collider");
   }
 
   update(dt: number, entities: Set<number>) {

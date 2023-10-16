@@ -4,11 +4,11 @@ import { GameContext } from "../../engine/core/context.js";
 import { InputKey } from "../../engine/input/input-keys.js";
 import { isPointWithinCircle, isPointWithinRect } from "../../engine/physics/utils.js";
 import { BaseSystem } from "../../engine/systems/base-system.js";
-import { SystemType } from "../../engine/types/common-types.js";
+import { SystemGroup } from "../../engine/types/common-types.js";
 
 export class ShapeVsShapeSystem extends BaseSystem {
-  name: SystemType = "custom";
-  priority: number = 8;
+  name: string = "shape-vs-shape";
+  group: SystemGroup = "post-physics";
   selectedEntity?: RigidBody;
 
   constructor(gameContext: GameContext, enabled?: boolean) {

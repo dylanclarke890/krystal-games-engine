@@ -1,20 +1,23 @@
 import { BaseComponent } from "../components/index.js";
 import { GameContext } from "../core/context.js";
-import { SystemType } from "../types/common-types.js";
+import { SystemGroup } from "../types/common-types.js";
 
 export abstract class BaseSystem {
   /** The name of this system.*/
-  abstract name: SystemType;
-  /** Priority rating for order of execution when updating systems.*/
-  abstract priority: number;
-  /** Components that an entity should have for this system to process it. */
+  abstract name: string;
+  /** The group this system belongs to. Systems in the "custom" group will run after all other systems.*/
+  abstract group: SystemGroup;
+  /** Priority rating for order of execution when updating system groups.*/
+  priority: number = 0;
+
+  abstract isInterestedInComponent(component: BaseComponent): boolean;
+  abstract belongsToSystem(entity: number): boolean;
+
   /**
    * @param dt Delta time since last frame.
    * @param entities Entities for the system to update.
    */
   abstract update(dt: number, entities: Set<number>): void;
-  abstract isInterestedInComponent(component: BaseComponent): boolean;
-  abstract belongsToSystem(entity: number): boolean;
 
   gameContext: GameContext;
   enabled: boolean;

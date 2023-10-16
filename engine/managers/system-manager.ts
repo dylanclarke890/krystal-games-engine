@@ -1,33 +1,50 @@
 import { BaseSystem } from "../systems/base-system.js";
 import { IEntityManager, IEventManager, ISystemManager } from "../types/common-interfaces.js";
-import { SystemMap, SystemType } from "../types/common-types.js";
+import { SystemGroup } from "../types/common-types.js";
 import { SystemError } from "../types/errors.js";
 import { ComponentEvent, GameEventType } from "../constants/events.js";
 import { PriorityQueue } from "../utils/priority-queue.js";
 
 export class SystemManager implements ISystemManager {
+  static GroupExecutionOrder: SystemGroup[] = [
+    "pre-input",
+    "input",
+    "post-input",
+    "pre-physics",
+    "physics",
+    "post-physics",
+    "pre-render",
+    "render",
+    "post-render",
+    "custom",
+  ];
   entityManager: IEntityManager;
   eventManager: IEventManager;
-  executionQueue: PriorityQueue<BaseSystem>;
-  systems: Map<SystemType, SystemMap[SystemType]>;
-  systemEntities: Map<SystemType, Set<number>>;
+  systems: Map<string, BaseSystem>;
+  systemEntities: Map<string, Set<number>>;
+  systemGroups: Map<SystemGroup, PriorityQueue<BaseSystem>>;
 
   constructor(entityManager: IEntityManager, eventManager: IEventManager) {
     this.entityManager = entityManager;
     this.eventManager = eventManager;
-    this.executionQueue = new PriorityQueue<BaseSystem>((a, b) => a.priority - b.priority);
     this.systems = new Map();
     this.systemEntities = new Map();
+    this.systemGroups = new Map();
+    for (let group of SystemManager.GroupExecutionOrder) {
+      this.systemGroups.set(group, new PriorityQueue<BaseSystem>((a, b) => a.priority - b.priority));
+    }
     this.#bindEvents();
   }
 
   update(dt: number): void {
-    this.executionQueue.forEach((system) => {
-      if (system.enabled) {
-        // TODO: Get the specific set of entities for this system.
-        system.update(dt, this.entityManager.entities);
-      }
-    });
+    for (let group of SystemManager.GroupExecutionOrder) {
+      const priorityQueue = this.systemGroups.get(group)!;
+      priorityQueue.forEach((system) => {
+        if (system.enabled) {
+          system.update(dt, this.systemEntities.get(system.name)!);
+        }
+      });
+    }
   }
 
   addSystem(system: BaseSystem): void {
@@ -37,34 +54,34 @@ export class SystemManager implements ISystemManager {
 
     this.systems.set(system.name, system);
     this.systemEntities.set(system.name, new Set());
-    this.executionQueue.add(system, system.priority);
-    system.init?.();
+    this.systemGroups.get(system.group)!.add(system, system.priority);
 
+    system.init?.();
     this.eventManager.trigger(GameEventType.SYSTEM_ADDED, system);
   }
 
-  removeSystem(systemName: SystemType): void {
-    const system = this.systems.get(systemName);
+  removeSystem(name: string): void {
+    const system = this.systems.get(name);
     if (typeof system === "undefined") {
-      throw new SystemError("Cannot find a matching system to remove.", systemName);
+      throw new SystemError("Cannot find a matching system to remove.", name);
     }
-
-    this.executionQueue.remove(system);
     system.cleanup?.();
-    this.systems.delete(systemName);
-    this.systemEntities.delete(systemName);
+
+    this.systemGroups.get(system.group)!.remove(system);
+    this.systems.delete(name);
+    this.systemEntities.delete(name);
 
     this.eventManager.trigger(GameEventType.SYSTEM_REMOVED, system);
   }
 
-  getSystem<T extends SystemType>(name: T): SystemMap[T] | undefined {
-    return this.systems.get(name) as SystemMap[T] | undefined;
+  getSystem<T extends BaseSystem>(name: string): T | undefined {
+    return this.systems.get(name) as T | undefined;
   }
 
-  setSystemEnabled(systemName: SystemType, enabled: boolean): void {
-    const system = this.systems.get(systemName);
+  setSystemEnabled(name: string, enabled: boolean): void {
+    const system = this.systems.get(name);
     if (typeof system === "undefined") {
-      throw new SystemError("Cannot find a matching system to update.", systemName);
+      throw new SystemError("Cannot find a matching system to update.", name);
     }
     system.enabled = enabled;
     this.eventManager.trigger(enabled ? GameEventType.SYSTEM_ENABLED : GameEventType.SYSTEM_DISABLED, system);

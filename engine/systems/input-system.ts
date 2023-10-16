@@ -1,18 +1,17 @@
 import { BaseSystem } from "./base-system.js";
 import { BaseComponent } from "../components/base.js";
-import { SystemType } from "../types/common-types.js";
+import { SystemGroup } from "../types/common-types.js";
 
 export class InputSystem extends BaseSystem {
-  name: SystemType = "input";
-  priority: number = 0;
+  name: string = "krystal__input-system";
+  group: SystemGroup = "input";
 
   isInterestedInComponent(component: BaseComponent): boolean {
-    if (component.type === "input") return true;
-    return false;
+    return component.type === "input";
   }
 
   belongsToSystem(entity: number): boolean {
-    return typeof this.gameContext.entities.getComponent(entity, "input") !== "undefined";
+    return this.gameContext.entities.hasComponent(entity, "input");
   }
 
   update(_dt: number, entities: Set<number>) {

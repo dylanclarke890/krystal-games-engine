@@ -15,6 +15,8 @@ enum Quadrant {
 export class Quadtree implements IBroadphase {
   context: GameContext;
   root: QuadtreeNode;
+  totalPotential: number;
+  totalFound: number;
 
   constructor(context: GameContext) {
     this.context = context;
@@ -22,6 +24,8 @@ export class Quadtree implements IBroadphase {
     const position = new Vector2(0, 0);
     const size = new Vector2(this.context.viewport.width, this.context.viewport.height);
     this.root = new QuadtreeNode(position, size, 0);
+    this.totalPotential = 0;
+    this.totalFound = 0;
   }
 
   add(entity: ColliderEntity): void {
@@ -29,6 +33,8 @@ export class Quadtree implements IBroadphase {
   }
 
   computePairs(): Pair<ColliderEntity>[] {
+    this.totalPotential = 0;
+    this.totalFound = 0;
     const collisions: Pair<ColliderEntity>[] = [];
     const quadrantsToCheck = [this.root];
 
@@ -44,6 +50,7 @@ export class Quadtree implements IBroadphase {
       }
 
       // This is the deepest quadrant in this branch, Compare the entities for collisions.
+      this.totalPotential += currentQuadrant.entities.length;
       for (const a of currentQuadrant.entities) {
         for (const b of currentQuadrant.entities) {
           if (a !== b && a.collider.aabb.intersects(b.collider.aabb)) {
@@ -53,6 +60,7 @@ export class Quadtree implements IBroadphase {
       }
     }
 
+    this.totalFound = collisions.length;
     return collisions;
   }
 

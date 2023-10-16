@@ -6,14 +6,14 @@ import * as Strategies from "./detection-strategies.js";
 
 export class CollisionDetector {
   context: GameContext;
-  collisionsChecked: number;
-  collisionsFound: number;
+  totalPotential: number;
+  totalFound: number;
   strategies: Map<string, (a: ColliderEntity, b: ColliderEntity) => Nullable<CollisionInfo>>;
 
   constructor(context: GameContext) {
     this.context = context;
-    this.collisionsChecked = 0;
-    this.collisionsFound = 0;
+    this.totalPotential = 0;
+    this.totalFound = 0;
     this.strategies = new Map();
     this.strategies.set(ShapeType.Circle + ShapeType.Circle, Strategies.checkCirclesCollision);
     this.strategies.set(ShapeType.Rectangle + ShapeType.Rectangle, Strategies.checkRectsCollision);
@@ -22,8 +22,8 @@ export class CollisionDetector {
   }
 
   detect(possibleCollisions: Pair<ColliderEntity>[]): CollisionInfo[] {
-    this.collisionsChecked = 0;
-    this.collisionsFound = 0;
+    this.totalPotential = 0;
+    this.totalFound = 0;
 
     const collisions = [];
     const checked = new PairedSet<number>();
@@ -31,6 +31,7 @@ export class CollisionDetector {
       if (checked.has(a.id, b.id)) {
         continue;
       }
+      this.totalPotential++;
 
       checked.add(a.id, b.id);
       const strategy = this.strategies.get(a.collider.shapeType + b.collider.shapeType);
@@ -41,9 +42,8 @@ export class CollisionDetector {
       const info = strategy(a, b);
       if (typeof info !== "undefined") {
         collisions.push(info);
-        this.collisionsFound++;
+        this.totalFound++;
       }
-      this.collisionsChecked++;
     }
 
     return collisions;

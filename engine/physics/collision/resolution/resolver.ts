@@ -6,12 +6,12 @@ import { CollisionInfo } from "../data.js";
 
 export class CollisionResolver {
   context: GameContext;
-  collisionsResolved: number;
+  totalResolved: number;
   strategies: Map<string, (info: CollisionInfo) => void>;
 
   constructor(context: GameContext) {
     this.context = context;
-    this.collisionsResolved = 0;
+    this.totalResolved = 0;
     this.strategies = new Map();
     this.strategies.set(ShapeType.Circle + ShapeType.Circle, Strategies.resolveCircleCircleCollision);
     // this.strategies.set(ShapeType.Rectangle + ShapeType.Rectangle, Strategies.checkRectsCollision);
@@ -20,6 +20,7 @@ export class CollisionResolver {
   }
 
   resolve(collisions: CollisionInfo[]) {
+    this.totalResolved = 0;
     for (const collision of collisions) {
       const resolveStrategy = this.strategies.get(
         collision.entityA.collider.shapeType + collision.entityB.collider.shapeType
@@ -30,7 +31,7 @@ export class CollisionResolver {
 
       resolveStrategy(collision);
 
-      this.collisionsResolved++;
+      this.totalResolved++;
       this.context.events.trigger(GameEventType.ENTITY_COLLIDED, collision);
     }
   }

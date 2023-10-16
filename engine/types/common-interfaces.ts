@@ -4,14 +4,7 @@ import { AABB } from "../maths/aabb.js";
 import { Vector2 } from "../maths/vector2.js";
 import { ColliderEntity } from "../physics/collision/data.js";
 import { BaseSystem } from "../systems/base-system.js";
-import {
-  ComponentMap,
-  ComponentType,
-  EntityTemplate,
-  ObjectPoolSettings,
-  SystemMap,
-  SystemType,
-} from "./common-types.js";
+import { ComponentMap, ComponentType, EntityTemplate, ObjectPoolSettings } from "./common-types.js";
 import { GameEventHandler, GameEventMap } from "../constants/events.js";
 
 export interface IConfigManager<T> {
@@ -133,22 +126,22 @@ export interface ISystemManager {
 
   /**
    * Unregister a system.
-   * @param systemName The name of the system to unregister.
+   * @param name The name of the system to unregister.
    */
-  removeSystem(systemName: SystemType): void;
+  removeSystem(name: string): void;
 
   /**
    * Fetch a system by it's name.
    * @param name The name of the system.
    */
-  getSystem<T extends SystemType>(name: T): SystemMap[T] | undefined;
+  getSystem<T extends BaseSystem>(name: string): T | undefined;
 
   /**
    * Enable or disable a system.
    * @param name The name of the system.
    * @param enabled Whether the system should be enabled or disabled.
    */
-  setSystemEnabled(name: SystemType, enabled: boolean): void;
+  setSystemEnabled(name: string, enabled: boolean): void;
 }
 
 export interface ILoop {
@@ -164,6 +157,10 @@ export interface IObjectFactory<T, Args extends any[] = any[]> {
 }
 
 export interface IBroadphase {
+  /** For debugging. */
+  totalPotential: number;
+  /** For debugging. */
+  totalFound: number;
   add(entity: ColliderEntity): void;
   computePairs(): Pair<ColliderEntity>[];
   pick(point: Vector2): ColliderEntity | undefined;

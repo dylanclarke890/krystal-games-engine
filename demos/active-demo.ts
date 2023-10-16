@@ -1,4 +1,4 @@
-import { ShapeVsShape } from "./shape-vs-shape/demo.js";
+import { ShapeVsShape } from "./ball-vs-ball/demo.js";
 
 const AVAILABLE_DEMOS = {
   shapeVsShape: ShapeVsShape,

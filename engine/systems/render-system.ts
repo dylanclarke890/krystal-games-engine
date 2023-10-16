@@ -3,13 +3,13 @@ import { Sprite, Shape, BaseComponent } from "../components/index.js";
 import { ShapeType } from "../constants/enums.js";
 import { Vector2 } from "../maths/vector2.js";
 import { InvalidOperationError } from "../types/errors.js";
-import { SystemType } from "../types/common-types.js";
 import { GameContext } from "../core/context.js";
 import { PhysicsContext } from "../physics/context.js";
+import { SystemGroup } from "../types/common-types.js";
 
 export class RenderSystem extends BaseSystem {
-  name: SystemType = "render";
-  priority: number = 10;
+  name: string = "krystal__render-system";
+  group: SystemGroup = "render";
   physicsContext: PhysicsContext;
 
   constructor(gameContext: GameContext, physicsContext: PhysicsContext) {
@@ -63,8 +63,6 @@ export class RenderSystem extends BaseSystem {
         this.drawSprite(entity.sprite, entity.transform.position, sourceX, sourceY);
       }
     }
-
-    this.physicsContext.broadphase.draw("green");
   }
 
   drawSprite(sprite: Sprite, position: Vector2, sourceX: number, sourceY: number): void {
