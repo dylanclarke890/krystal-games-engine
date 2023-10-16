@@ -159,10 +159,10 @@ export interface IObjectFactory<T, Args extends any[] = any[]> {
 export interface IBroadphase {
   /** For debugging. */
   totalPotential: number;
-  /** For debugging. */
-  totalFound: number;
+  collisionPairs: Pair<ColliderEntity>[];
+
   add(entity: ColliderEntity): void;
-  computePairs(): Pair<ColliderEntity>[];
+  computePairs(): void;
   pick(point: Vector2): ColliderEntity | undefined;
   query(aabb: AABB, output: ColliderEntity[]): void;
   draw(color?: string): void;

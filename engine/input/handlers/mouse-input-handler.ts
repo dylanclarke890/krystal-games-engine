@@ -145,7 +145,8 @@ export class MouseInputHandler extends BaseInputHandler {
   }
 
   private onContextMenu(e: MouseEvent): void {
-    if (this.bindings.has(InputKey.Context_Menu)) {
+    // TODO: do we need both?
+    if (this.bindings.has(InputKey.Context_Menu) || this.bindings.has(InputKey.Mouse_BtnTwo)) {
       e.preventDefault();
       e.stopPropagation();
     }

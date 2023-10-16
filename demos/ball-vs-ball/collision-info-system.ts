@@ -26,7 +26,7 @@ export class CollisionInfoSystem extends BaseSystem {
       `Total entities: ${entityCount}`,
       `N² collisions: ${entityCount * entityCount}`,
       `Broadphase checked: ${broadphase.totalPotential}`,
-      `Broadphase found: ${broadphase.totalFound}`,
+      `Broadphase found: ${broadphase.collisionPairs.length}`,
       `Detector checked: ${detector.totalPotential}`,
       `Detector found: ${detector.totalFound}`,
       `Collisions resolved: ${resolver.totalResolved}`,
@@ -34,6 +34,22 @@ export class CollisionInfoSystem extends BaseSystem {
     stats.forEach((msg, i) => {
       this.gameContext.viewport.drawText(msg, 20, (i + 1) * 20, font, color);
     });
+
+    const ctx = this.gameContext.viewport.ctx;
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 3;
+
+    broadphase.collisionPairs.forEach(([a, b]) => {
+      const aPos = a.collider.getAbsolutePosition();
+      const bPos = b.collider.getAbsolutePosition();
+
+      ctx.beginPath();
+      ctx.moveTo(aPos.x, aPos.y);
+      ctx.lineTo(bPos.x, bPos.y);
+      ctx.stroke();
+    });
+
+    ctx.lineWidth = 1;
   }
 
   isInterestedInComponent(_component: BaseComponent): boolean {

@@ -60,8 +60,8 @@ export class PhysicsSystem extends BaseSystem {
       }
     }
 
-    const possibleCollisions = this.physicsContext.broadphase.computePairs();
-    const actualCollisions = this.physicsContext.detector.detect(possibleCollisions);
+    this.physicsContext.broadphase.computePairs();
+    const actualCollisions = this.physicsContext.detector.detect(this.physicsContext.broadphase.collisionPairs);
     this.physicsContext.resolver.resolve(actualCollisions);
 
     for (const body of rigidBodies) {

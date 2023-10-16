@@ -8,12 +8,13 @@ import { SystemGroup } from "../../engine/types/common-types.js";
 
 export class InteractiveSystem extends BaseSystem {
   name: string = "shape-vs-shape";
-  group: SystemGroup = "post-physics";
+  group: SystemGroup = "post-render";
   selectedEntity?: RigidBody;
 
   constructor(gameContext: GameContext, enabled?: boolean) {
     super(gameContext, enabled);
     this.gameContext.input.bind(InputKey.Mouse_BtnOne, "left-click");
+    this.gameContext.input.bind(InputKey.Mouse_BtnTwo, "right-click");
   }
 
   isInterestedInComponent(component: BaseComponent): boolean {
@@ -28,7 +29,8 @@ export class InteractiveSystem extends BaseSystem {
     const em = this.gameContext.entities;
     const mouse = this.gameContext.input.getMouseCoords();
     const leftClickState = this.gameContext.input.getState("left-click");
-    if (leftClickState.pressed) {
+    const rightClickState = this.gameContext.input.getState("right-click");
+    if (leftClickState.pressed || rightClickState.pressed) {
       this.selectedEntity = undefined;
       for (const id of entities) {
         const rigidBody = em.getComponent(id, "rigid-body");
@@ -72,8 +74,50 @@ export class InteractiveSystem extends BaseSystem {
       }
     }
 
-    if (leftClickState.released) {
+    if (rightClickState.released && typeof this.selectedEntity !== "undefined") {
+      const velocity = this.selectedEntity.transform.position.clone().sub(mouse).mulScalar(5);
+      this.selectedEntity.velocity.assign(velocity);
+    }
+
+    if (leftClickState.released || rightClickState.released) {
       this.selectedEntity = undefined;
+    }
+
+    const { width, height } = this.gameContext.viewport;
+    for (const id of entities) {
+      const rigidBody = em.getComponent(id, "rigid-body");
+
+      if (typeof rigidBody === "undefined") {
+        continue;
+      }
+
+      if (rigidBody.transform.position.x < 0) {
+        rigidBody.transform.position.x += width;
+      }
+
+      if (rigidBody.transform.position.x > width) {
+        rigidBody.transform.position.x -= width;
+      }
+
+      if (rigidBody.transform.position.y < 0) {
+        rigidBody.transform.position.y += height;
+      }
+
+      if (rigidBody.transform.position.y < 0) {
+        rigidBody.transform.position.y -= height;
+      }
+    }
+
+    if (typeof this.selectedEntity !== "undefined") {
+      const ctx = this.gameContext.viewport.ctx;
+      const entityPos = this.selectedEntity.transform.position;
+      ctx.strokeStyle = "orange";
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(entityPos.x, entityPos.y);
+      ctx.lineTo(mouse.x, mouse.y);
+      ctx.stroke();
+      ctx.lineWidth = 1;
     }
   }
 }

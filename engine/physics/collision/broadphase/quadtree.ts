@@ -16,7 +16,7 @@ export class Quadtree implements IBroadphase {
   context: GameContext;
   root: QuadtreeNode;
   totalPotential: number;
-  totalFound: number;
+  collisionPairs: Pair<ColliderEntity>[];
 
   constructor(context: GameContext) {
     this.context = context;
@@ -25,17 +25,16 @@ export class Quadtree implements IBroadphase {
     const size = new Vector2(this.context.viewport.width, this.context.viewport.height);
     this.root = new QuadtreeNode(position, size, 0);
     this.totalPotential = 0;
-    this.totalFound = 0;
+    this.collisionPairs = [];
   }
 
   add(entity: ColliderEntity): void {
     this.root.insert(entity);
   }
 
-  computePairs(): Pair<ColliderEntity>[] {
+  computePairs(): void {
     this.totalPotential = 0;
-    this.totalFound = 0;
-    const collisions: Pair<ColliderEntity>[] = [];
+    this.collisionPairs.length = 0;
     const quadrantsToCheck = [this.root];
 
     while (quadrantsToCheck.length) {
@@ -54,14 +53,11 @@ export class Quadtree implements IBroadphase {
       for (const a of currentQuadrant.entities) {
         for (const b of currentQuadrant.entities) {
           if (a !== b && a.collider.aabb.intersects(b.collider.aabb)) {
-            collisions.push([a, b]);
+            this.collisionPairs.push([a, b]);
           }
         }
       }
     }
-
-    this.totalFound = collisions.length;
-    return collisions;
   }
 
   pick(point: Vector2): Nullable<ColliderEntity> {
