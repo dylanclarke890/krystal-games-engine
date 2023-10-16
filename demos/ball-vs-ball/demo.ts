@@ -12,12 +12,12 @@ import { KrystalGameEngine } from "../../engine/core/engine.js";
 import { randomInt } from "../../engine/maths/number.js";
 import { Vector2 } from "../../engine/maths/vector2.js";
 import { CollisionInfoSystem } from "./collision-info-system.js";
-import { ShapeVsShapeSystem } from "./interactive-system.js";
+import { InteractiveSystem } from "./interactive-system.js";
 
 export class ShapeVsShape extends KrystalGameEngine {
   constructor() {
     super("canvas1", 500, 500);
-    this.gameContext.systems.addSystem(new ShapeVsShapeSystem(this.gameContext));
+    this.gameContext.systems.addSystem(new InteractiveSystem(this.gameContext));
     this.gameContext.systems.addSystem(new CollisionInfoSystem(this.gameContext, this.physicsContext));
 
     const screenWidth = this.gameContext.viewport.width;
