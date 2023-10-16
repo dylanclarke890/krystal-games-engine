@@ -2,7 +2,6 @@ import { BaseComponent, CircleCollider, RectCollider, RigidBody } from "../../en
 import { ShapeType } from "../../engine/constants/enums.js";
 import { GameContext } from "../../engine/core/context.js";
 import { InputKey } from "../../engine/input/input-keys.js";
-import { Vector2 } from "../../engine/maths/vector2.js";
 import { isPointWithinCircle, isPointWithinRect } from "../../engine/physics/utils.js";
 import { BaseSystem } from "../../engine/systems/base-system.js";
 import { SystemGroup } from "../../engine/types/common-types.js";
@@ -85,7 +84,7 @@ export class InteractiveSystem extends BaseSystem {
     }
 
     const { width, height } = this.gameContext.viewport;
-    let fastestSpeed = new Vector2();
+    let totalSpeed = 0;
     for (const id of entities) {
       const rigidBody = em.getComponent(id, "rigid-body");
 
@@ -93,28 +92,18 @@ export class InteractiveSystem extends BaseSystem {
         continue;
       }
 
-      if (rigidBody.transform.position.x < 0) {
-        rigidBody.transform.position.x += width;
+      if (rigidBody.transform.position.x < 0 || rigidBody.transform.position.x > width) {
+        rigidBody.velocity.x *= -1;
       }
 
-      if (rigidBody.transform.position.x > width) {
-        rigidBody.transform.position.x -= width;
+      if (rigidBody.transform.position.y < 0 || rigidBody.transform.position.y > height) {
+        rigidBody.velocity.y *= -1;
       }
 
-      if (rigidBody.transform.position.y < 0) {
-        rigidBody.transform.position.y += height;
-      }
-
-      if (rigidBody.transform.position.y > height) {
-        rigidBody.transform.position.y -= height;
-      }
-
-      if (rigidBody.velocity.magnitude() > fastestSpeed.magnitude()) {
-        fastestSpeed.assign(rigidBody.velocity);
-      }
+      totalSpeed += rigidBody.velocity.magnitude();
     }
 
-    this.gameContext.viewport.drawText(`Fastest: ${fastestSpeed.x}, ${fastestSpeed.y}`, 300, 20, "Arial 20px", "green");
+    this.gameContext.viewport.drawText(`Total speed: ${totalSpeed}`, 300, 20, "Arial 20px", "green");
 
     if (typeof this.selectedEntity !== "undefined") {
       const ctx = this.gameContext.viewport.ctx;

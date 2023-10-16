@@ -99,4 +99,8 @@ export class Vector2 {
   magnitude() {
     return Math.sqrt(this.distanceSquared());
   }
+
+  dot(other: Vector2) {
+    return this.x * other.x + this.y * other.y;
+  }
 }
