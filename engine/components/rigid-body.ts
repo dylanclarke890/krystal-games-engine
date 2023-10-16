@@ -13,15 +13,17 @@ export class RigidBody extends BaseComponent {
   transform: Transform;
   force: Vector2;
   mass: number;
+  damping: number;
   velocity: Vector2;
   colliders: Collider[];
 
-  constructor(transform: Transform, velocity = new Vector2(0, 0), force = new Vector2(0, 0), mass = 1) {
+  constructor(transform: Transform, velocity = new Vector2(0, 0), force = new Vector2(0, 0), mass = 1, damping = 0.99) {
     super();
     this.transform = transform;
     this.velocity = velocity;
     this.force = force;
     this.mass = mass;
+    this.damping = damping;
     this.isStatic = false;
     this.isSleeping = false;
     this.colliders = [];

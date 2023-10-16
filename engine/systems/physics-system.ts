@@ -50,8 +50,7 @@ export class PhysicsSystem extends BaseSystem {
 
       rigidBodies.push(rigidBody);
 
-      rigidBody.applyForce(this.physicsContext.world.gravity.clone().mulScalar(rigidBody.mass));
-      this.physicsContext.integrator.integrate(id, rigidBody, dt);
+      this.physicsContext.integrator.integrate(id, rigidBody, this.physicsContext.world.gravity, dt);
 
       for (const collider of rigidBody.colliders) {
         collider.computeAABB();
