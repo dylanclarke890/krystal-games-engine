@@ -42,6 +42,7 @@ export class ShapeVsShape extends KrystalGameEngine {
     transform.position = new Vector2(x, y);
 
     const rigidBody = new RigidBody(transform);
+    rigidBody.mass = size * 10;
     const material = new PhysicsMaterial(undefined, 0.2);
     const collider = isRect
       ? new RectCollider(new Transform(), material, new Vector2(size, size))
