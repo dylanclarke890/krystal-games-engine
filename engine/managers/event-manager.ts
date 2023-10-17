@@ -1,4 +1,3 @@
-import { PriorityLevel } from "../constants/enums.js";
 import { PriorityQueue } from "../utils/priority-queue.js";
 import { IEventManager } from "../types/common-interfaces.js";
 import { GameEventHandler, GameEventMap } from "../constants/events.js";
@@ -16,17 +15,12 @@ export class EventManager implements IEventManager {
     return this.#parent;
   }
 
-  on<T extends Key<GameEventMap>>(
-    event: T,
-    listener: GameEventHandler<T>,
-    priority: number | PriorityLevel = PriorityLevel.None
-  ) {
-    priority ??= PriorityLevel.None;
+  on<T extends Key<GameEventMap>>(event: T, listener: GameEventHandler<T>, priority = 0) {
     if (!this.#subscribers.has(event)) {
       this.#subscribers.set(event, new PriorityQueue());
     }
 
-    this.#subscribers.get(event)!.add(listener, priority.valueOf());
+    this.#subscribers.get(event)!.add(listener, priority);
   }
 
   off<T extends Key<GameEventMap>>(event: T, listener: GameEventHandler<T>) {

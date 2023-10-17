@@ -1,5 +1,4 @@
 import { BaseComponent } from "../components/index.js";
-import { PriorityLevel } from "../constants/enums.js";
 import { AABB } from "../maths/aabb.js";
 import { Vector2 } from "../maths/vector2.js";
 import { ColliderEntity } from "../physics/collision/data.js";
@@ -30,7 +29,7 @@ export interface IEventManager {
   get parent(): Nullable<IEventManager>;
 
   /** Subscribe to an event. */
-  on<T extends Key<GameEventMap>>(event: T, listener: GameEventHandler<T>, priority?: number | PriorityLevel): void;
+  on<T extends Key<GameEventMap>>(event: T, listener: GameEventHandler<T>, priority?: number): void;
 
   /** Unsubscribe from an event. */
   off<T extends Key<GameEventMap>>(event: T, listener: GameEventHandler<T>): void;
