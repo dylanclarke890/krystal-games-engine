@@ -9,16 +9,10 @@ import {
   Transform,
   Animation,
 } from "../components/index.js";
-import { Vector2 } from "../maths/vector2.js";
-
-export type Bounds = { position: Vector2; size: Vector2 };
 
 export type InputAction = "held" | "pressed" | "released";
 export type InputActionStatus = { [K in InputAction]: boolean };
 export type InputStatus = InputActionStatus & { locked: boolean };
-
-export type CollisionLayer = "DEFAULT" | "PLAYER" | "ENEMY";
-export type Collidable = [number, RigidBody, Collider];
 
 export type ComponentType =
   | "renderable"
