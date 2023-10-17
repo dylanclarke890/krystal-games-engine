@@ -7,6 +7,7 @@ import {
   IObjectPoolManager,
   ISystemManager,
 } from "../types/common-interfaces.js";
+import { UserAgent } from "../utils/user-agent.js";
 import { GameConfig } from "./config.js";
 
 export class GameContext {
@@ -17,6 +18,7 @@ export class GameContext {
   config: IConfigManager<GameConfig>;
   objectPools: IObjectPoolManager;
   viewport: Viewport;
+  agent: UserAgent;
 
   constructor(
     eventManager: IEventManager,
@@ -25,7 +27,8 @@ export class GameContext {
     inputManager: InputManager,
     configManager: IConfigManager<GameConfig>,
     objectPoolManager: IObjectPoolManager,
-    viewport: Viewport
+    viewport: Viewport,
+    agent: UserAgent
   ) {
     this.events = eventManager;
     this.entities = entityManager;
@@ -34,5 +37,6 @@ export class GameContext {
     this.config = configManager;
     this.objectPools = objectPoolManager;
     this.viewport = viewport;
+    this.agent = agent;
   }
 }

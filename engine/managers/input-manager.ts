@@ -7,8 +7,10 @@ import { AccelerometerInputHandler } from "../input/handlers/accelerometer-input
 import { MouseInputHandler } from "../input/handlers/mouse-input-handler.js";
 import { KeyboardInputHandler } from "../input/handlers/keyboard-input-handler.js";
 import { GameEventType } from "../constants/events.js";
+import { UserAgent } from "../utils/user-agent.js";
 
 export class InputManager {
+  agent: UserAgent;
   eventManager: IEventManager;
   viewport: Viewport;
 
@@ -18,14 +20,15 @@ export class InputManager {
   keyboardHandler: KeyboardInputHandler;
   mouseHandler: MouseInputHandler;
 
-  constructor(eventManager: IEventManager, viewport: Viewport) {
+  constructor(agent: UserAgent, eventManager: IEventManager, viewport: Viewport) {
+    this.agent = agent;
     this.eventManager = eventManager;
     this.viewport = viewport;
     this.#bindings = new Map();
     this.#actions = new Map();
-    this.accelerometerHandler = new AccelerometerInputHandler(this.#actions, this.#bindings);
-    this.mouseHandler = new MouseInputHandler(this.#actions, this.#bindings, this.viewport);
-    this.keyboardHandler = new KeyboardInputHandler(this.#actions, this.#bindings);
+    this.accelerometerHandler = new AccelerometerInputHandler(agent, this.#actions, this.#bindings);
+    this.mouseHandler = new MouseInputHandler(agent, this.#actions, this.#bindings, this.viewport);
+    this.keyboardHandler = new KeyboardInputHandler(agent, this.#actions, this.#bindings);
     this.eventManager.on(GameEventType.LOOP_AFTER_UPDATE, this.clearPressed.bind(this));
   }
 

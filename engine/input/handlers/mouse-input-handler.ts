@@ -9,8 +9,13 @@ export class MouseInputHandler extends BaseInputHandler {
   viewport: Viewport;
   mouse: Vector2;
 
-  constructor(actions: Map<string, InputStatus>, bindings: Map<InputKey, string>, viewport: Viewport) {
-    super(actions, bindings);
+  constructor(
+    agent: UserAgent,
+    actions: Map<string, InputStatus>,
+    bindings: Map<InputKey, string>,
+    viewport: Viewport
+  ) {
+    super(agent, actions, bindings);
     this.viewport = viewport;
     this.mouse = new Vector2();
   }
@@ -28,8 +33,7 @@ export class MouseInputHandler extends BaseInputHandler {
     canvas.addEventListener("mouseup", this.onMouseup.bind(this), false);
     canvas.addEventListener("mousemove", this.onMousemove.bind(this), false);
 
-    // TODO: replace use of UserAgent
-    if (UserAgent.instance.device.touchDevice) {
+    if (this.agent.deviceInfo.isTouchDevice) {
       canvas.addEventListener("touchstart", this.onTouchstart.bind(this), false);
       canvas.addEventListener("touchend", this.onTouchend.bind(this), false);
       canvas.addEventListener("touchcancel", this.onTouchend.bind(this), false);
@@ -98,7 +102,7 @@ export class MouseInputHandler extends BaseInputHandler {
 
   private onTouchstart(e: TouchEvent): void {
     // Focus window element for mouse clicks. Prevents issues when running the game in an iframe.
-    if (UserAgent.instance.device.mobile) {
+    if (this.agent.deviceInfo.isMobile) {
       // TODO: replace use of UserAgent
       window.focus();
     }

@@ -1,5 +1,6 @@
 import { Vector3 } from "../../maths/vector3.js";
 import { InputStatus } from "../../types/common-types.js";
+import { UserAgent } from "../../utils/user-agent.js";
 import { InputKey } from "../input-keys.js";
 import { BaseInputHandler } from "./base-input-handler.js";
 
@@ -7,8 +8,8 @@ export class AccelerometerInputHandler extends BaseInputHandler {
   acceleration: Vector3;
   accelerationIncludingGravity: Vector3;
 
-  constructor(actions: Map<string, InputStatus>, bindings: Map<InputKey, string>) {
-    super(actions, bindings);
+  constructor(agent: UserAgent, actions: Map<string, InputStatus>, bindings: Map<InputKey, string>) {
+    super(agent, actions, bindings);
     this.acceleration = new Vector3();
     this.accelerationIncludingGravity = new Vector3();
   }

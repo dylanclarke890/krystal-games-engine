@@ -18,6 +18,7 @@ import { InvalidOperationError } from "../types/errors.js";
 import { GameEventType } from "../constants/events.js";
 import { PhysicsContext } from "../physics/context.js";
 import { World } from "../physics/world.js";
+import { UserAgent } from "../utils/user-agent.js";
 
 export class KrystalGameEngine {
   gameContext: GameContext;
@@ -26,13 +27,14 @@ export class KrystalGameEngine {
 
   constructor(canvasId: Nullable<string>, width: number, height: number) {
     const viewport = new Viewport(width, height, canvasId);
+    const agent = new UserAgent();
     const events = new EventManager();
     const configManager = new ConfigManager(config);
     const objectPools = new ObjectPoolManager();
     const entities = new EntityManager(events);
     const systems = new SystemManager(entities, events);
-    const input = new InputManager(events, viewport);
-    this.gameContext = new GameContext(events, entities, systems, input, configManager, objectPools, viewport);
+    const input = new InputManager(agent, events, viewport);
+    this.gameContext = new GameContext(events, entities, systems, input, configManager, objectPools, viewport, agent);
 
     const integrator = this.#getIntegrator();
     const broadphase = new Quadtree(this.gameContext);
