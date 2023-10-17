@@ -84,7 +84,6 @@ export class InteractiveSystem extends BaseSystem {
     }
 
     const { width, height } = this.gameContext.viewport;
-    let totalSpeed = 0;
     for (const id of entities) {
       const rigidBody = em.getComponent(id, "rigid-body");
 
@@ -100,10 +99,15 @@ export class InteractiveSystem extends BaseSystem {
         rigidBody.velocity.y *= -1;
       }
 
-      totalSpeed += rigidBody.velocity.magnitude();
+      const { x, y } = rigidBody.velocity;
+      this.gameContext.viewport.drawText(
+        `${x}, ${y}`,
+        rigidBody.transform.position.x,
+        rigidBody.transform.position.y - 30,
+        undefined,
+        "magenta"
+      );
     }
-
-    this.gameContext.viewport.drawText(`Total speed: ${totalSpeed}`, 300, 20, "Arial 20px", "green");
 
     if (typeof this.selectedEntity !== "undefined") {
       const ctx = this.gameContext.viewport.ctx;

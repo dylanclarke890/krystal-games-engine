@@ -20,22 +20,26 @@ export class ShapeVsShape extends KrystalGameEngine {
     this.gameContext.systems.addSystem(new InteractiveSystem(this.gameContext));
     this.gameContext.systems.addSystem(new CollisionInfoSystem(this.gameContext, this.physicsContext));
 
-    const screenWidth = this.gameContext.viewport.width;
+    // const screenWidth = this.gameContext.viewport.width;
     const screenHeight = this.gameContext.viewport.height;
     const defaultRadius = 20;
     // for (let i = 0; i < 10; i++) {
     //   this.addBall(randomInt(0, screenWidth), randomInt(0, screenHeight), defaultRadius, false);
     // }
 
-    this.addBall(0, 0, defaultRadius, false);
-    this.addBall(screenWidth * 0.25, screenHeight * 0.5, defaultRadius, false);
-    this.addBall(screenWidth * 0.75, screenHeight * 0.5, defaultRadius, false);
+    // this.addBall(0, 0, defaultRadius, false);
+    const a = this.addBall(200, screenHeight * 0.5, defaultRadius, false);
+    a.velocity.x = 50;
+    a.mass = 5;
+    const b = this.addBall(400, screenHeight * 0.5, defaultRadius, false);
+    b.velocity.x = -25;
+    b.mass = 10;
     this.physicsContext.world.gravity.y = 0;
 
     this.start();
   }
 
-  addBall(x: number, y: number, size: number, isRect: boolean): void {
+  addBall(x: number, y: number, size: number, isRect: boolean): RigidBody {
     const em = this.gameContext.entities;
     const id = em.createEntity();
     const transform = new Transform();
@@ -43,8 +47,8 @@ export class ShapeVsShape extends KrystalGameEngine {
 
     const rigidBody = new RigidBody(transform);
     rigidBody.mass = size * 10;
-    rigidBody.damping = 0.5;
-    
+    rigidBody.damping = 0.0;
+
     const material = new PhysicsMaterial();
     const collider = isRect
       ? new RectCollider(new Transform(), material, new Vector2(size, size))
@@ -58,5 +62,7 @@ export class ShapeVsShape extends KrystalGameEngine {
 
     em.addComponent(id, renderableShape);
     em.addComponent(id, rigidBody);
+
+    return rigidBody;
   }
 }

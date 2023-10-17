@@ -29,15 +29,6 @@ export class RigidBody extends BaseComponent {
     this.colliders = [];
   }
 
-  applyForce(force: Vector2): void {
-    if (!this.isStatic) {
-      this.isSleeping = false;
-      const forceCopy = force.clone();
-      forceCopy.divScalar(this.mass);
-      this.force.add(forceCopy);
-    }
-  }
-
   addCollider(collider: Collider): void {
     if (typeof collider.rigidBody !== "undefined") {
       throw new InvalidOperationError("Collider is already attached to a rigid body.", collider);

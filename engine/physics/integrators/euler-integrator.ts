@@ -8,11 +8,11 @@ import { BaseIntegrator } from "./base-integrator.js";
 export class SemiImplicitEulerIntegrator extends BaseIntegrator {
   integrate(_entityId: number, rigidBody: RigidBody, gravity: Vector2, dt: number): void {
     // Apply forces - gravity, drag
-    rigidBody.applyForce(gravity.clone().mulScalar(rigidBody.mass));
-    rigidBody.applyForce(rigidBody.velocity.clone().negate().mulScalar(rigidBody.damping));
+    rigidBody.velocity.mulScalar(1 - rigidBody.damping);
+    rigidBody.force.add(gravity.clone().mulScalar(rigidBody.mass));
 
     // Update velocity
-    const acceleration = this.vectorPool.acquire().assign(rigidBody.force).mulScalar(dt);
+    const acceleration = rigidBody.force.clone().mulScalar(dt);
     rigidBody.velocity.add(acceleration);
     if (rigidBody.velocity.magnitude() <= this.velocityEpsilon) {
       rigidBody.velocity.assign(Vector2.zero);
@@ -21,8 +21,5 @@ export class SemiImplicitEulerIntegrator extends BaseIntegrator {
     // Update position
     const velocity = this.vectorPool.acquire().assign(rigidBody.velocity).mulScalar(dt);
     rigidBody.transform.position.add(velocity);
-
-    this.vectorPool.release(acceleration);
-    this.vectorPool.release(velocity);
   }
 }

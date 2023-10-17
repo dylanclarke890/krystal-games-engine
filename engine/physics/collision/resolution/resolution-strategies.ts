@@ -5,39 +5,56 @@ export class ResolutionStrategies {
   static resolveCircles(info: CollisionInfo): void {
     const a = info.entityA;
     const b = info.entityB;
-    const overlap = info.normal.clone().mulScalar(info.penetration);
+
+    const aRigidBody = a.collider.rigidBody;
+    const bRigidBody = b.collider.rigidBody;
+    if (typeof aRigidBody === "undefined" || typeof bRigidBody === "undefined") {
+      return;
+    }
+
+    const aMass = aRigidBody.mass;
+    const bMass = bRigidBody.mass;
+    const totalMass = aMass + bMass;
+
+    const aBounciness = a.collider.material.bounciness;
+    const bBounciness = b.collider.material.bounciness;
+    const restitution = Math.min(aBounciness, bBounciness);
+
+    const aFriction = a.collider.material.friction;
+    const bFriction = b.collider.material.friction;
+    const friction = Math.sqrt(aFriction * bFriction);
+
+    const totalOverlap = info.normal.clone().mulScalar(info.penetration);
+    const overlapA = totalOverlap.clone().mulScalar(bMass / totalMass);
+    const overlapB = totalOverlap.clone().mulScalar(aMass / totalMass);
 
     // Current
     const aPosition = a.collider.getAbsolutePosition();
-    aPosition.sub(overlap);
+    aPosition.sub(overlapA);
     a.collider.setAbsolutePosition(aPosition);
 
     // Target
     const bPosition = b.collider.getAbsolutePosition();
-    bPosition.add(overlap);
+    bPosition.add(overlapB);
     b.collider.setAbsolutePosition(bPosition);
 
-    if (typeof a.collider.rigidBody === "undefined" || typeof b.collider.rigidBody === "undefined") {
-      return;
-    }
-
     const tangent = new Vector2(-info.normal.y, info.normal.x);
-    const aMass = a.collider.rigidBody.mass;
-    const bMass = b.collider.rigidBody.mass;
-    const aVelocity = a.collider.rigidBody.velocity;
-    const bVelocity = b.collider.rigidBody.velocity;
+    const aVelocity = aRigidBody.velocity;
+    const bVelocity = bRigidBody.velocity;
 
     // Dot Product Tangent
-    const aDotTan = aVelocity.clone().dot(tangent);
-    const bDotTan = bVelocity.clone().dot(tangent);
+    const aDotTan = aVelocity.dot(tangent) * friction;
+    const bDotTan = bVelocity.dot(tangent) * friction;
 
     // Dot Product Normal
-    const aDotNormal = aVelocity.clone().dot(info.normal);
-    const bDotNormal = bVelocity.clone().dot(info.normal);
+    const aDotNormal = aVelocity.dot(info.normal);
+    const bDotNormal = bVelocity.dot(info.normal);
 
-    // Conservation of momentum in 1D
-    const aMomentum = (aDotNormal * (aMass - bMass) + 2 * bMass * bDotNormal) / (aMass + bMass);
-    const bMomentum = (bDotNormal * (bMass - aMass) + 2 * aMass * aDotNormal) / (aMass + bMass);
+    // Compute new normal velocities using restitution
+    const aMomentum =
+      (restitution * bMass * (bDotNormal - aDotNormal) + aMass * aDotNormal + bMass * bDotNormal) / totalMass;
+    const bMomentum =
+      (restitution * aMass * (aDotNormal - bDotNormal) + aMass * aDotNormal + bMass * bDotNormal) / totalMass;
 
     // Update ball velocities
     aVelocity.x = tangent.x * aDotTan + info.normal.x * aMomentum;

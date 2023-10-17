@@ -84,6 +84,12 @@ export class Vector2 {
     return this;
   }
 
+  abs() {
+    this.x = Math.abs(this.x);
+    this.y = Math.abs(this.y);
+    return this;
+  }
+
   clone() {
     return new Vector2(this.x, this.y);
   }
