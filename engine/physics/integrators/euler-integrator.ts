@@ -9,10 +9,10 @@ export class SemiImplicitEulerIntegrator extends BaseIntegrator {
   integrate(_entityId: number, rigidBody: RigidBody, gravity: Vector2, dt: number): void {
     // Apply forces - gravity, drag
     rigidBody.velocity.mulScalar(1 - rigidBody.damping);
-    rigidBody.force.add(gravity.clone().mulScalar(rigidBody.mass));
+    rigidBody.acceleration.add(gravity.clone().mulScalar(rigidBody.mass));
 
     // Update velocity
-    const acceleration = rigidBody.force.clone().mulScalar(dt);
+    const acceleration = rigidBody.acceleration.clone().mulScalar(dt);
     rigidBody.velocity.add(acceleration);
     if (rigidBody.velocity.magnitude() <= this.velocityEpsilon) {
       rigidBody.velocity.assign(Vector2.zero);

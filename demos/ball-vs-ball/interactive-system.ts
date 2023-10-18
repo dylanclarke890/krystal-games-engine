@@ -39,7 +39,7 @@ export class InteractiveSystem extends BaseSystem {
           continue;
         }
 
-        const collider = rigidBody.colliders[0];
+        const collider = rigidBody.collider;
         collider.computeAABB();
         switch (collider.shapeType) {
           case ShapeType.Circle:
@@ -60,7 +60,7 @@ export class InteractiveSystem extends BaseSystem {
     }
 
     if (leftClickState.held && typeof this.selectedEntity !== "undefined") {
-      const collider = this.selectedEntity.colliders[0];
+      const collider = this.selectedEntity.collider;
       switch (collider.shapeType) {
         case ShapeType.Circle:
           collider.setAbsolutePosition(mouse);

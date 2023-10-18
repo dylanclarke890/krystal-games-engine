@@ -45,15 +45,14 @@ export class ShapeVsShape extends KrystalGameEngine {
     const transform = new Transform();
     transform.position = new Vector2(x, y);
 
-    const rigidBody = new RigidBody(transform);
-    rigidBody.mass = size * 10;
-    rigidBody.damping = 0.0;
-
     const material = new PhysicsMaterial();
     const collider = isRect
       ? new RectCollider(new Transform(), material, new Vector2(size, size))
       : new CircleCollider(new Transform(), material, size);
-    rigidBody.addCollider(collider);
+    const rigidBody = new RigidBody(transform, collider);
+    rigidBody.mass = size * 10;
+    rigidBody.damping = 0.0;
+
 
     const renderableShape = new RenderableShape(
       transform,
