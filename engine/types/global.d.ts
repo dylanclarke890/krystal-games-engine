@@ -23,3 +23,5 @@ declare type Pair<T> = [T, T];
 declare type Nullable<T> = T | undefined;
 
 declare type ClassConstructor<T, Args extends any[] = any[]> = new (...args: Args) => T;
+
+declare type Bit = 0 | 1;
