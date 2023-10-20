@@ -1,5 +1,5 @@
 import { BaseSystem } from "./base-system.js";
-import { Sprite, Shape, BaseComponent } from "../components/index.js";
+import { Sprite, Shape, BaseComponent, Renderable } from "../components/index.js";
 import { ShapeType } from "../constants/enums.js";
 import { Vector2 } from "../maths/vector2.js";
 import { InvalidOperationError } from "../types/errors.js";
@@ -18,7 +18,7 @@ export class RenderSystem extends BaseSystem {
   }
 
   isInterestedInComponent(component: BaseComponent): boolean {
-    return component.type === "renderable";
+    return component.name === "renderable";
   }
 
   belongsToSystem(entity: number): boolean {
@@ -30,7 +30,7 @@ export class RenderSystem extends BaseSystem {
     this.gameContext.viewport.clear();
 
     for (const id of entities) {
-      const entity = this.gameContext.entities.getComponent(id, "renderable");
+      const entity = this.gameContext.entities.getComponent<Renderable>(id, "renderable");
       if (typeof entity === "undefined") {
         continue;
       }

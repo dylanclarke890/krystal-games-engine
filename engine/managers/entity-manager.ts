@@ -1,7 +1,7 @@
 import { BaseComponent } from "../components/base.js";
 import { GameEventType } from "../constants/events.js";
 import { IEntityManager, IEventManager } from "../types/common-interfaces.js";
-import { ComponentMap, ComponentType, EntityTemplate } from "../types/common-types.js";
+import { EntityTemplate } from "../types/common-types.js";
 import { EntityCreationError } from "../types/errors.js";
 
 export class EntityManager implements IEntityManager {
@@ -11,8 +11,8 @@ export class EntityManager implements IEntityManager {
   entities: Set<number>;
 
   #nextEntityId: number;
-  #entityMasks: Map<number, Set<ComponentType>>;
-  #componentTypeToEntities: Map<ComponentType, Set<number>>;
+  #entityMasks: Map<number, Set<string>>;
+  #componentTypeToEntities: Map<string, Set<number>>;
   #components: Map<string, BaseComponent>;
 
   #entityTemplates: Map<string, EntityTemplate>;
@@ -78,7 +78,7 @@ export class EntityManager implements IEntityManager {
   }
 
   addComponent(entity: number, component: BaseComponent): void {
-    const componentType = component.type;
+    const componentType = component.name;
     this.#components.set(entity + componentType, component);
 
     if (!this.#componentTypeToEntities.has(componentType)) {
@@ -94,7 +94,7 @@ export class EntityManager implements IEntityManager {
     this.eventManager.trigger(GameEventType.COMPONENT_ADDED, { entity, component });
   }
 
-  removeComponent(entity: number, type: ComponentType): void {
+  removeComponent(entity: number, type: string): void {
     const componentMapKey = entity + type;
     const component = this.#components.get(componentMapKey);
     if (typeof component === "undefined") {
@@ -106,11 +106,11 @@ export class EntityManager implements IEntityManager {
     this.eventManager.trigger(GameEventType.COMPONENT_REMOVED, { entity, component });
   }
 
-  getComponent<T extends ComponentType>(entity: number, type: T): ComponentMap[T] | undefined {
-    return this.#components.get(entity + type) as ComponentMap[T] | undefined;
+  getComponent<T extends BaseComponent>(entity: number, type: string): T | undefined {
+    return this.#components.get(entity + type) as T | undefined;
   }
 
-  getComponents(entity: number, types: ComponentType[]): { [x: string]: BaseComponent | undefined } {
+  getComponents(entity: number, types: string[]): { [x: string]: BaseComponent | undefined } {
     const components: { [x: string]: BaseComponent | undefined } = {};
 
     types.forEach((componentType) => {
@@ -120,7 +120,7 @@ export class EntityManager implements IEntityManager {
     return components;
   }
 
-  hasComponent(entity: number, type: ComponentType): boolean {
+  hasComponent(entity: number, type: string): boolean {
     const mask = this.#entityMasks.get(entity);
     if (typeof mask === "undefined") {
       return false;
@@ -128,7 +128,7 @@ export class EntityManager implements IEntityManager {
     return mask.has(type);
   }
 
-  hasComponents(entity: number, types: ComponentType[]) {
+  hasComponents(entity: number, types: string[]) {
     const mask = this.#entityMasks.get(entity);
     if (typeof mask === "undefined") {
       return false;
@@ -136,11 +136,11 @@ export class EntityManager implements IEntityManager {
     return types.every((componentType) => mask.has(componentType));
   }
 
-  hasComponentType(type: ComponentType) {
+  hasComponentType(type: string) {
     return this.#componentTypeToEntities.has(type);
   }
 
-  getEntitiesWithComponents(types: ComponentType[]): Set<number> {
+  getEntitiesWithComponents(types: string[]): Set<number> {
     const entities = new Set<number>();
     const firstComponentType = types[0];
 

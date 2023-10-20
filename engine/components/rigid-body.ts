@@ -1,10 +1,9 @@
 import { Vector2 } from "../maths/vector2.js";
-import { ComponentType } from "../types/common-types.js";
 import { InvalidOperationError } from "../types/errors.js";
 import { BaseComponent, Collider, Transform } from "./index.js";
 
 export class RigidBody extends BaseComponent {
-  type: ComponentType = "rigid-body";
+  name = "rigid-body";
 
   /** Indicates whether this rigid body should move or not. */
   isStatic: boolean;

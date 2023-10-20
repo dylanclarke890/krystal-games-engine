@@ -1,9 +1,9 @@
-import { ComponentType, InputActionStatus } from "../types/common-types.js";
+import { InputActionStatus } from "../types/common-types.js";
 import { InvalidOperationError } from "../types/errors.js";
 import { BaseComponent } from "./base.js";
 
 export class Input extends BaseComponent {
-  type: ComponentType = "input";
+  name = "input";
   actions: Set<string>;
   state: Map<string, InputActionStatus>;
 

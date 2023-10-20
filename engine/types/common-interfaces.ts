@@ -3,7 +3,7 @@ import { AABB } from "../maths/aabb.js";
 import { Vector2 } from "../maths/vector2.js";
 import { ColliderEntity } from "../physics/collision/data.js";
 import { BaseSystem } from "../systems/base-system.js";
-import { ComponentMap, ComponentType, EntityTemplate, ObjectPoolSettings } from "./common-types.js";
+import { EntityTemplate, ObjectPoolSettings } from "./common-types.js";
 import { GameEventHandler, GameEventMap } from "../constants/events.js";
 
 export interface IConfigManager<T> {
@@ -65,31 +65,31 @@ export interface IEntityManager {
    * @param id entity id.
    * @param type type of component to remove
    */
-  removeComponent(id: number, type: ComponentType): void;
+  removeComponent(id: number, type: string): void;
 
-  getComponent<T extends ComponentType>(entity: number, type: T): ComponentMap[T] | undefined;
-  getComponents(entity: number, types: ComponentType[]): { [x: string]: BaseComponent | undefined };
+  getComponent<T extends BaseComponent>(entity: number, type: string): T | undefined;
+  getComponents(entity: number, types: string[]): { [x: string]: BaseComponent | undefined };
 
   /** Get all entities that have a set of components. */
-  getEntitiesWithComponents(types: ComponentType[]): Set<number>;
+  getEntitiesWithComponents(types: string[]): Set<number>;
 
   /**
    * Check if any entity has a specific component.
    * @param type the component type to check.
    */
-  hasComponentType(type: ComponentType): boolean;
+  hasComponentType(type: string): boolean;
 
   /**
    * Check if an entity has a particular component type.
    * @param type the type to check.
    */
-  hasComponent(entity: number, type: ComponentType): boolean;
+  hasComponent(entity: number, type: string): boolean;
 
   /**
    * Check if an entity has a range of component types.
    * @param types the component types to check.
    */
-  hasComponents(entity: number, types: ComponentType[]): boolean;
+  hasComponents(entity: number, types: string[]): boolean;
 }
 
 export interface IObjectPoolManager {

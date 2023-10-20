@@ -1,5 +1,5 @@
 import { BaseSystem } from "./base-system.js";
-import { BaseComponent } from "../components/index.js";
+import { BaseComponent, RigidBody } from "../components/index.js";
 import { GameContext } from "../core/context.js";
 import { PhysicsContext } from "../physics/context.js";
 import { ColliderEntity } from "../physics/collision/data.js";
@@ -16,7 +16,7 @@ export class PhysicsSystem extends BaseSystem {
   }
 
   isInterestedInComponent(component: BaseComponent): boolean {
-    return component.type === "rigid-body";
+    return component.name === "rigid-body";
   }
 
   belongsToSystem(entity: number): boolean {
@@ -28,7 +28,7 @@ export class PhysicsSystem extends BaseSystem {
     this.physicsContext.broadphase.clear();
 
     for (const id of entities) {
-      const rigidBody = em.getComponent(id, "rigid-body");
+      const rigidBody = em.getComponent<RigidBody>(id, "rigid-body");
 
       if (typeof rigidBody === "undefined" || rigidBody.isStatic || rigidBody.isSleeping) {
         continue;

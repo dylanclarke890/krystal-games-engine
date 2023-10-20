@@ -1,10 +1,9 @@
 import { ShapeType } from "../constants/enums.js";
 import { Vector2 } from "../maths/vector2.js";
-import { ComponentType } from "../types/common-types.js";
 import { BaseComponent } from "./index.js";
 
 export abstract class Shape extends BaseComponent {
-  type: ComponentType = "shape";
+  name = "shape";
   shapeType: ShapeType;
 
   color: string;

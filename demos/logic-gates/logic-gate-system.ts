@@ -9,7 +9,7 @@ export class LogicGateSystem extends BaseSystem {
   group: SystemGroup = "post-physics";
 
   isInterestedInComponent(component: BaseComponent): boolean {
-    return component.type === "renderable";
+    return component.name === "renderable";
   }
 
   belongsToSystem(entity: number): boolean {

@@ -18,7 +18,7 @@ export class InteractiveSystem extends BaseSystem {
   }
 
   isInterestedInComponent(component: BaseComponent): boolean {
-    return component.type === "rigid-body";
+    return component.name === "rigid-body";
   }
 
   belongsToSystem(entity: number): boolean {
@@ -33,7 +33,7 @@ export class InteractiveSystem extends BaseSystem {
     if (leftClickState.pressed || rightClickState.pressed) {
       this.selectedEntity = undefined;
       for (const id of entities) {
-        const rigidBody = em.getComponent(id, "rigid-body");
+        const rigidBody = em.getComponent<RigidBody>(id, "rigid-body");
 
         if (typeof rigidBody === "undefined") {
           continue;
@@ -85,7 +85,7 @@ export class InteractiveSystem extends BaseSystem {
 
     const { width, height } = this.gameContext.viewport;
     for (const id of entities) {
-      const rigidBody = em.getComponent(id, "rigid-body");
+      const rigidBody = em.getComponent<RigidBody>(id, "rigid-body");
 
       if (typeof rigidBody === "undefined") {
         continue;

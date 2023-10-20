@@ -1,13 +1,14 @@
 import { BaseSystem } from "./base-system.js";
 import { BaseComponent } from "../components/base.js";
 import { SystemGroup } from "../types/common-types.js";
+import { Input } from "../components/input.js";
 
 export class InputSystem extends BaseSystem {
   name: string = "krystal__input-system";
   group: SystemGroup = "input";
 
   isInterestedInComponent(component: BaseComponent): boolean {
-    return component.type === "input";
+    return component.name === "input";
   }
 
   belongsToSystem(entity: number): boolean {
@@ -18,7 +19,7 @@ export class InputSystem extends BaseSystem {
     const em = this.gameContext.entities;
 
     for (const id of entities) {
-      const input = em.getComponent(id, "input");
+      const input = em.getComponent<Input>(id, "input");
       if (typeof input === "undefined") {
         continue;
       }

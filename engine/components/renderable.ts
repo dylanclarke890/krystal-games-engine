@@ -1,8 +1,7 @@
-import { ComponentType } from "../types/common-types.js";
 import { Animation, Shape, Sprite, Transform, BaseComponent } from "./index.js";
 
 export abstract class Renderable extends BaseComponent {
-  type: ComponentType = "renderable";
+  name = "renderable";
 
   transform: Transform;
   sprite?: Sprite;

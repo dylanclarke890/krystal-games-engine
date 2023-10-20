@@ -1,7 +1,6 @@
 import { ShapeType } from "../constants/enums.js";
 import { AABB } from "../maths/aabb.js";
 import { Vector2 } from "../maths/vector2.js";
-import { ComponentType } from "../types/common-types.js";
 import { InvalidOperationError } from "../types/errors.js";
 import { BaseComponent } from "./base.js";
 import { PhysicsMaterial } from "./physics-material.js";
@@ -10,7 +9,7 @@ import { Transform } from "./transform.js";
 
 export abstract class Collider extends BaseComponent {
   abstract shapeType: ShapeType;
-  type: ComponentType = "collider";
+  name = "collider";
 
   transform: Transform;
   rigidBody?: RigidBody;
